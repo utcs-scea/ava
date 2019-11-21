@@ -1,0 +1,3 @@
+[submodule "include/common"]
+	path = include/common
+	url = git@bitbucket.org:hyu-scea/header-vgpu.git

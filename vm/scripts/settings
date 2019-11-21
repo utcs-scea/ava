@@ -1,0 +1,74 @@
+## Basic parameters 
+cdrom="no"
+virtio="yes"
+cache="yes"
+virtfs="no"
+virtgpu="no"
+
+graphics="no"
+sound="no"
+serial="no"
+autoballoon="no"
+
+snapshot="no"
+debug="yes"
+qmp="yes"
+
+tap="no"
+monitor="no"
+
+kernel="yes"
+
+CDROM=cdrom${cdrom}
+VIRTIO=virtio${virtio}
+CACHE=cache${cache}
+VIRTFS=virtfs${virtfs}
+VIRTGPU=virtgpu${virtgpu}
+
+SMP="-smp 4"
+GRAPHICS=graphics${graphics}
+SOUND=sound${sound}
+SERIAL=serial${serial}
+AUTOBALLOON=autoballoon${autoballoon}
+QMP=qmp${qmp}
+
+TAP=tap${tap}
+
+SNAPSHOT=snapshot${snapshot}
+DEBUG=debug${debug}
+MONITOR=monitor${monitor}
+
+# Key parameters
+QEMU_BIN=${DIR_QEMU}/x86_64-softmmu/qemu-system-x86_64
+
+MEM_SIZE=${MEM_SIZE:-4000}
+MEM_OPT="-m ${MEM_SIZE}"
+
+IMAGE_FILE=${DIR_BASE}/images/dev.img
+#DISK_FILE=/home/hyu/vm_images/extra_disk.img
+IMAGE="-drive format=raw,file=${IMAGE_FILE}${!VIRTIO}${!CACHE}"
+#IMAGE="-drive file=${IMAGE_FILE}${!VIRTIO}${!CACHE} \
+#       -drive file=${DISK_FILE}${!VIRTIO}${!CACHE}"
+
+KERNEL=kernel${kernel}
+
+# Network
+NET_IF=${!TAP}
+#NET_DHCP="-net user,net=10.0.0.0/8,dhcpstart=10.0.0.1"
+# For tap, configure net via our hypercall mechanism
+#if [ "${tap}" = "no" ]; then
+#    NET_HTTP="-redir tcp:8080:10.0.0.1:80"
+#    NET_SSH="-redir tcp:2200:10.0.0.1:22 -redir tcp:2222:10.0.0.1:2222"
+#fi
+NET="${NET_IF} ${NET_HTTP} ${NET_SSH}"
+
+MOUNT=$(mount | grep '/dev/nbd0p1' || echo 0)
+if [ "${MOUNT}" != "0" ]; then
+    echo -n "It looks like the disk image is still mounted, disconnected? [Y/n] "
+    read resp
+    if [ "${resp:0:1}" == "n" -o "${resp:0:1}" == "N" ]; then
+	echo "Ok..."
+    else
+	${UTILS_DIR}/disconnect_hd
+    fi
+fi

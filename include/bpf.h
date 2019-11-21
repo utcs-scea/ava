@@ -1,0 +1,19 @@
+#ifndef __AVA_KVM_BPF_H__
+#define __AVA_KVM_BPF_H__
+
+enum {
+    BPF_FUNC_TYPE_CONSUME = 0,
+    BPF_FUNC_TYPE_SCHEDULE,
+    BPF_FUNC_TYPE_VM_INIT,
+    BPF_FUNC_TYPE_VM_FINI,
+    BPF_FUNC_TYPE_MAX
+};
+
+enum {
+    BPF_AVA_SUCCESS = 0,
+    BPF_AVA_ERROR,
+    BPF_AVA_CONTINUE,
+    BPF_AVA_DELAY,
+};
+
+#endif

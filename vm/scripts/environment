@@ -1,0 +1,19 @@
+IMAGE_NAME=${NAME:-vm.img}
+
+# Directories about scripts
+DIR_CURRENT=$(pwd)
+DIR_BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+DIR_SCRIPTS=${DIR_BASE}/scripts
+
+# Directories about virtual machine
+DIR_QEMU=${DIR_BASE}/../qemu
+#DIR_QEMU=/home/hyu/Projects/qemu-try
+DIR_KERNEL=/home/hyu/Projects
+DIR_KVM_MODULE=${DIR_BASE}/host/kvm
+
+# environment for connecting the hd
+QEMU_NBD=${DIR_QEMU}/qemu-nbd
+NBD_DEVICE=/dev/nbd0
+VM_DISK=/mnt/vm1
+
+IMAGE=${IMAGE_NAME}

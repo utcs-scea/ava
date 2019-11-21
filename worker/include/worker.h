@@ -1,0 +1,30 @@
+#ifndef __EXECUTOR_WORKER_H__
+#define __EXECUTOR_WORKER_H__
+
+#include <pthread.h>
+#include <stdint.h>
+#include <unistd.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct MemoryRegion {
+    void *addr;
+    size_t size;
+} MemoryRegion;
+
+void nw_report_storage_resource_allocation(const char* const name, ssize_t amount);
+void nw_report_throughput_resource_consumption(const char* const name, ssize_t amount);
+
+/* For Python wrapper */
+int init_manager_vsock();
+struct command_base *poll_client(int listen_fd, int *client_fd, int *guest_cid);
+void respond_client(int client_fd, int worker_id);
+void close_client(int client_fd);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

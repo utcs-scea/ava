@@ -1,0 +1,10 @@
+KERNEL_SRC := ../kvm
+
+.PHONY: all
+
+all:
+	$(MAKE) -C $(KERNEL_SRC) O=$(abspath .) prepare
+
+.config:
+	@echo "No config file present, taking $(KERNEL_SRC)/kvm.config"
+	cp $(KERNEL_SRC)/kvm.config .config

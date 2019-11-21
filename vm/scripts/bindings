@@ -1,0 +1,18 @@
+vfio_conf=${DIR_SCRIPTS}/etc/vfio-pci-gpu.cfg
+
+vfiobind() {
+    dev="$1"
+    vendor=$(cat /sys/bus/pci/devices/$dev/vendor)
+    device=$(cat /sys/bus/pci/devices/$dev/device)
+    if [ -e /sys/bus/pci/devices/$dev/driver ]; then
+            sudo sh -c "echo $dev > /sys/bus/pci/devices/$dev/driver/unbind"
+    fi
+    sudo sh -c "echo $vendor $device > /sys/bus/pci/drivers/vfio-pci/new_id"
+}
+
+modprobe vfio-pci
+
+cat $vfio_conf | while read line; do
+    echo $line | grep ^# >/dev/null 2>&1 && continue
+    vfiobind $line
+done
