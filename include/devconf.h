@@ -16,13 +16,33 @@
 
 /**
  * Interposition flags
+ * We are refactoring the command scheduler and will transit to new
+ * interposition method finally. The old scheduler does not have an
+ * in-kernel buffer for forwarded commands, which does not meet the
+ * normal design of schedulers.
  */
-#define AVA_VSOCK_INTERPOSITION
-#define ENABLE_KVM_MEDIATION 1
-#define ENABLE_RATE_LIMIT    1
-#define ENABLE_SWAP          1
+#undef AVA_VSOCK_INTERPOSITION
+
+#if defined(AVA_VSOCK_INTERPOSITION)
+    #undef AVA_VSOCK_INTERPOSITION_NOBUF
+#else
+    #define AVA_VSOCK_INTERPOSITION_NOBUF
+#endif
+
+#if defined(AVA_VSOCK_INTERPOSITION) || defined(AVA_VSOCK_INTERPOSITION_NOBUF)
+    #define AVA_ENABLE_KVM_MEDIATION
+#else
+    #undef AVA_ENABLE_KVM_MEDIATION
+#endif
+
+/**
+ * Worker report flags
+ */
 #define ENABLE_REPORT_BATCH  0
 
+/**
+ * VM configurations
+ */
 #define MAX_VM_NUM           4
 
 #define VGPU_DEV_NAME "ava-vdev"

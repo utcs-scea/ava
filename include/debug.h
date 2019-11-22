@@ -22,4 +22,7 @@
     #define DEBUG_PRINT(fmt, args...)
 #endif
 
+/* comment out experimental code */
+#define EXPERIMENTAL_CODE 0
+
 #endif
