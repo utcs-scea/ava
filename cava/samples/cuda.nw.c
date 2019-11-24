@@ -18,6 +18,7 @@ ava_functions {
 #include <cuda.h>
 ava_begin_utility;
 #include <time.h>
+#include <stdio.h>
 #include <sys/time.h>
 ava_end_utility;
 
@@ -33,7 +34,7 @@ typedef struct {
 
 ava_register_metadata(Metadata);
 
-ava_throughput_resource command_rate;
+//ava_throughput_resource command_rate;
 //ava_throughput_resource device_time;
 
 CUresult CUDAAPI
@@ -58,15 +59,64 @@ cuCtxCreate(CUcontext *pctx,
     }
 }
 
+ava_utility size_t __helper_load_cubin_size(const char *fname) {
+    FILE *fp;
+    size_t cubin_size;
+
+    fp = fopen(fname, "rb");
+    if (!fp) {
+        return NULL;
+    }
+    fseek(fp, 0, SEEK_END);
+    cubin_size = ftell(fp);
+    fclose(fp);
+
+    return cubin_size;
+}
+
+ava_utility void *__helper_load_cubin(const char *fname, size_t size) {
+    FILE *fp;
+    void *cubin;
+
+    fp = fopen(fname, "rb");
+    if (!fp) {
+        return NULL;
+    }
+    cubin = malloc(size);
+    fread(cubin, 1, size, fp);
+    fclose(fp);
+
+    return cubin;
+}
+
 CUresult CUDAAPI
 cuModuleLoad(CUmodule *module,
              const char *fname)
 {
+    ava_disable_native_call;
+    int res;
+
     ava_argument(module) {
         ava_out; ava_buffer(1);
     }
     ava_argument(fname) {
         ava_in; ava_buffer(strlen(fname) + 1);
+    }
+
+    ava_implicit_argument
+    size_t size = __helper_load_cubin_size(fname);
+
+    ava_implicit_argument
+    void *cubin = __helper_load_cubin(fname, size);
+    ava_argument(cubin) {
+        ava_in; ava_buffer(size);
+    }
+
+    if (ava_is_worker) {
+        if (!cubin)
+            return CUDA_ERROR_FILE_NOT_FOUND;
+        res = cuModuleLoadData(module, cubin);
+        return res;
     }
 }
 
@@ -214,7 +264,7 @@ cuLaunchKernel(CUfunction f,
     }
     ava_consumes_resource(device_time, used_time);
     */
-    ava_consumes_resource(command_rate, 1);
+    //ava_consumes_resource(command_rate, 1);
 }
 
 CUresult CUDAAPI

@@ -2,7 +2,7 @@ ava_name("CUDA Runtime");
 ava_version("10.0.0");
 ava_identifier(CUDART);
 ava_number(9);
-ava_cflags(-I/usr/local/cuda-10.0/include -I..);
+ava_cflags(-I/usr/local/cuda-10.0/include -I../headers);
 ava_libs(-L/usr/local/cuda-10.0/lib64 -lcudart -lcuda -lcublas -lcudnn);
 ava_export_qualifier();
 

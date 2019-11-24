@@ -1,0 +1,10 @@
+/*
+/*/
+
+!/.gitignore
+!/Makefile.setup
+!/README.md
+!/*.config
+!/.gitconfig
+
+.config

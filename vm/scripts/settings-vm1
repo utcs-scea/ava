@@ -11,7 +11,7 @@ serial="no"
 autoballoon="no"
 
 snapshot="no"
-debug="yes"
+debug="no"
 qmp="yes"
 
 tap="no"
@@ -44,9 +44,9 @@ QEMU_BIN=${DIR_QEMU}/x86_64-softmmu/qemu-system-x86_64
 MEM_SIZE=${MEM_SIZE:-4000}
 MEM_OPT="-m ${MEM_SIZE}"
 
-#IMAGE_FILE=${DIR_BASE}/images/dev.img
+#IMAGE_FILE=/data/kvm/disk/dev-vm1.img
 #DISK_FILE=/home/hyu/vm_images/extra_disk.img
-IMAGE="-drive format=raw,file=${IMAGE_FILE}${!VIRTIO}${!CACHE}"
+IMAGE="-drive format=raw,file=${IMAGE_FILE_VM1}${!VIRTIO}${!CACHE}"
 #IMAGE="-drive file=${IMAGE_FILE}${!VIRTIO}${!CACHE} \
 #       -drive file=${DISK_FILE}${!VIRTIO}${!CACHE}"
 

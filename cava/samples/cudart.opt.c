@@ -2,7 +2,7 @@ ava_name("CUDA Runtime");
 ava_version("10.0.0");
 ava_identifier(CUDART);
 ava_number(9);
-ava_cflags(-I/usr/local/cuda-10.0/include -I..);
+ava_cflags(-I/usr/local/cuda-10.0/include -I../headers);
 ava_libs(-L/usr/local/cuda-10.0/lib64 -lcudart -lcuda -lcublas -lcudnn);
 ava_export_qualifier();
 
@@ -551,6 +551,21 @@ __cudaRegisterFunction(
 }
 ava_end_replacement;
 
+ava_begin_replacement;
+void CUDARTAPI
+__cudaRegisterVar(
+        void **fatCubinHandle,
+        char  *hostVar,
+        char  *deviceAddress,
+  const char  *deviceName,
+        int    ext,
+        size_t size,
+        int    constant,
+        int    global)
+{
+}
+ava_end_replacement;
+
 __host__ __device__ unsigned CUDARTAPI
 __cudaPushCallConfiguration(dim3   gridDim,
                             dim3   blockDim,
@@ -665,6 +680,20 @@ cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args,
     }
 }
 
+ava_begin_replacement;
+__host__ cudaError_t CUDARTAPI
+cudaMallocHost(void **ptr, size_t size)
+{
+    *ptr = malloc(size);
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaFreeHost(void *ptr)
+{
+    free(ptr);
+}
+ava_end_replacement;
+
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
 cudaMalloc(void **devPtr, size_t size)
 {
@@ -753,6 +782,17 @@ cudaDeviceReset(void);
 
 __host__ cudaError_t CUDARTAPI
 cudaSetDevice(int device);
+
+__host__ cudaError_t CUDARTAPI
+cudaMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset, enum cudaMemcpyKind kind)
+{
+    ava_argument(symbol) {
+        ava_opaque;
+    }
+    ava_argument(src) {
+        ava_in; ava_buffer(count);
+    }
+}
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
 cudaMemcpyAsync(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream)
@@ -846,6 +886,12 @@ ava_callback_decl void __callback_cuda_stream_add_callback(
     }
 }
 
+__host__ cudaError_t CUDARTAPI
+cudaEventSynchronize(cudaEvent_t event)
+{
+    ava_argument(event) ava_handle;
+}
+
 /*
 __host__ cudaError_t CUDARTAPI
 cudaStreamAddCallback(cudaStream_t stream,
@@ -876,6 +922,17 @@ cudaGetErrorString(cudaError_t error)
     ava_return_value {
         ava_out; ava_buffer(strlen(ret) + 1);
         ava_lifetime_static;
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaMemGetInfo(size_t *_free, size_t *total)
+{
+    ava_argument(_free) {
+        ava_out; ava_buffer(1);
+    }
+    ava_argument(total) {
+        ava_out; ava_buffer(1);
     }
 }
 
@@ -1504,8 +1561,8 @@ cublasSgemm_v2 (cublasHandle_t handle, cublasOperation_t transa,
 {
     ava_async;
     ava_argument(handle) ava_handle;
-	 ava_argument(transa) ava_opaque;
-	 ava_argument(transb) ava_opaque;
+	ava_argument(transa) ava_opaque;
+	ava_argument(transb) ava_opaque;
     ava_argument(A) ava_handle;
     ava_argument(B) ava_handle;
     ava_argument(C) ava_handle;

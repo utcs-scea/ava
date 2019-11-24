@@ -19,3 +19,4 @@ fpga_nw/
 trivial_nw/
 mvnc_nw/
 gti_nw/
+cudart_nw/

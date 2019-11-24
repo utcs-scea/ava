@@ -32,7 +32,7 @@ void command_channel_hv_report_storage_resource_allocation(struct command_channe
 
 void command_channel_hv_report_throughput_resource_consumption(struct command_channel* c, const char* const name, ssize_t amount)
 {
-#if ENABLE_RATE_LIMIT
+#ifdef AVA_ENABLE_KVM_MEDIATION
     struct command_channel_hv* chan = (struct command_channel_hv *)c;
     struct command_base *raw_msg = (struct command_base *)NLMSG_DATA(chan->nlh);
 
@@ -82,7 +82,7 @@ struct command_channel *command_channel_hv_new(int worker_port)
     memset(chan, 0, sizeof(struct command_channel_hv));
 
     /* connect hypervisor */
-#if ENABLE_SWAP | ENABLE_RATE_LIMIT
+#ifdef AVA_ENABLE_KVM_MEDIATION
     printf("establish netlink channel for worker@%d\n", worker_port);
 
     chan->netlink_fd = init_netlink_socket(&chan->src_addr, &chan->dst_addr);

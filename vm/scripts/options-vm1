@@ -1,0 +1,60 @@
+## Base Definitions
+
+# CDROM
+cdromyes="-cdrom /data/hyu/os/ubuntu-16.04.3-server-amd64.iso -boot d"
+cdromno=""
+
+# IO virtualization
+virtioyes=",if=virtio"
+virtiono=""
+cacheyes=",cache=writeback"
+cacheno=",cache=none"
+virtfsyes="-fsdev local,id=fs1,path=/lib/modules,security_model=passthrough \
+    -fsdev local,id=fs2,path=${DIR_KERNEL},security_model=passthrough \
+	-device virtio-9p-pci,fsdev=fs1,mount_tag=modules
+	-device virtio-9p-pci,fsdev=fs2,mount_tag=repository"
+virtfsno=""
+virtgpuyes="-device ioh3420,bus=pcie.0,addr=1c.0,multifunction=on,port=1,chassis=1,id=root.1 \
+    -device vfio-pci,host=02:00.0,bus=root.1,addr=00.0,multifunction=on,x-vga=on \
+    -device vfio-pci,host=02:00.1,bus=root.1,addr=00.1 \
+    -M q35 \
+    -bios /usr/share/qemu/bios.bin \
+    -acpitable file=/usr/share/qemu/q35-acpi-dsdt.aml \
+    -device ahci,bus=pcie.0,id=ahci"
+virtgpuno=""
+
+# Devices
+graphicsyes="-display sdl"
+#graphicsno="-display vnc=:0"
+graphicsno="--nographic"
+soundyes="-soundhw hda"
+soundno=""
+serialyes="-serial tcp::4444,server,nowait"
+serialno=""
+autoballoonyes="-device virtio-balloon,automatic=true"
+autoballoonno=""
+qmpyes="-qmp unix:/tmp/qmp_${0#\./},server,nowait"
+qmpno=""
+
+# Network
+#tapyes="-net tap,script=${DIR_SCRIPTS}/qemu-ifup.sh,downscript=${DIR_SCRIPTS}/qemu-ifdown.sh"
+#tapyes="${tapyes} -net nic,model=virtio,macaddr=18:03:00:00:00:01"
+
+tapno="-netdev user,id=net0,net=192.168.122.0/24,dhcpstart=192.168.122.10,hostfwd=tcp::2223-:22"
+tapno="${tapno} -device e1000,netdev=net0,mac=18:03:00:00:00:02"
+
+# Debugging
+snapshotyes="--snapshot"
+snapshotno=""
+#debugyes="-gdb tcp::6666"
+debugyes="-s"
+debugno=""
+#monitoryes="-monitor tcp::5555,server,nowait"
+monitoryes="-monitor unix:/tmp/qmp_${0#\./},server,nowait"
+monitorno=""
+
+# Kernel
+KERNEL_IMG=${DIR_KERNEL}/kbuild-4.13.12/arch/x86_64/boot/bzImage
+KERNEL_APPEND="root=/dev/vda1 console=tty0 console=ttyS0 page_owner=on"
+#kernelyes=-kernel ${KERNEL_IMG} -append "${KERNEL_APPEND}"
+kernelno=""

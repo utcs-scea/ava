@@ -2,8 +2,8 @@ ava_name("CUDA Runtime");
 ava_version("10.0.0");
 ava_identifier(CUDART);
 ava_number(9);
-ava_cflags(-I/usr/local/cuda-10.0/include -I..);
-ava_libs(-L/usr/local/cuda-10.0/lib64 -lcudart -lcuda -lcublas);
+ava_cflags(-I/usr/local/cuda-10.0/include -I../headers);
+ava_libs(-L/usr/local/cuda-10.0/lib64 -lcudart -lcuda -lcublas -lcudnn);
 ava_export_qualifier();
 
 /**
@@ -28,6 +28,7 @@ ava_begin_utility;
 #include <driver_types.h>
 #include <fatbinary.h>
 #include <cublas_v2.h>
+#include <cudnn.h>
 #include <glib.h>
 #include "cudart_nw_internal.h"
 
@@ -164,7 +165,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
 
     while (fgets(line, sizeof(line), fp_pipe) != NULL) {
         /* Search functions */
-        if (strncmp(line, ".nv.info._Z", 11) == 0) {
+        if (strncmp(line, ".nv.info.", 9) == 0) {
             sprintf(name, line + 9, strlen(line) - 10);
             assert(strlen(line) - 10 < MAX_KERNEL_NAME_LEN);
             name[strlen(line) - 10] = '\0';
@@ -484,6 +485,21 @@ __cudaRegisterFunction(
     }
 }
 
+ava_begin_replacement;
+void CUDARTAPI
+__cudaRegisterVar(
+        void **fatCubinHandle,
+        char  *hostVar,
+        char  *deviceAddress,
+  const char  *deviceName,
+        int    ext,
+        size_t size,
+        int    constant,
+        int    global)
+{
+}
+ava_end_replacement;
+
 __host__ __device__ unsigned CUDARTAPI
 __cudaPushCallConfiguration(dim3   gridDim,
                             dim3   blockDim,
@@ -595,6 +611,20 @@ cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args,
     }
 }
 
+ava_begin_replacement;
+__host__ cudaError_t CUDARTAPI
+cudaMallocHost(void **ptr, size_t size)
+{
+    *ptr = malloc(size);
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaFreeHost(void *ptr)
+{
+    free(ptr);
+}
+ava_end_replacement;
+
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
 cudaMalloc(void **devPtr, size_t size)
 {
@@ -684,6 +714,17 @@ cudaDeviceReset(void);
 __host__ cudaError_t CUDARTAPI
 cudaSetDevice(int device);
 
+__host__ cudaError_t CUDARTAPI
+cudaMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset, enum cudaMemcpyKind kind)
+{
+    ava_argument(symbol) {
+        ava_opaque;
+    }
+    ava_argument(src) {
+        ava_in; ava_buffer(count);
+    }
+}
+
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
 cudaMemcpyAsync(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream)
 {
@@ -769,6 +810,12 @@ cudaEventDestroy(cudaEvent_t event)
 }
 
 __host__ cudaError_t CUDARTAPI
+cudaEventSynchronize(cudaEvent_t event)
+{
+    ava_argument(event) ava_handle;
+}
+
+__host__ cudaError_t CUDARTAPI
 cudaStreamAddCallback(cudaStream_t stream,
         cudaStreamCallback_t callback, void *userData, unsigned int flags)
 {
@@ -785,6 +832,17 @@ cudaGetErrorString(cudaError_t error)
     ava_return_value {
         ava_out; ava_buffer(strlen(ret) + 1);
         ava_lifetime_static;
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaMemGetInfo(size_t *_free, size_t *total)
+{
+    ava_argument(_free) {
+        ava_out; ava_buffer(1);
+    }
+    ava_argument(total) {
+        ava_out; ava_buffer(1);
     }
 }
 
@@ -1398,6 +1456,53 @@ cublasGetMatrix(int rows, int cols, int elemSize,
     }
 }
 
+ava_begin_replacement;
+CUBLASAPI cublasStatus_t CUBLASWINAPI
+cublasGetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t *mode)
+{
+    /* XXX seems ok for tensorflow but might be wrong !FIXME */
+    *mode = 0;
+    return CUBLAS_STATUS_SUCCESS;
+}
+
+CUBLASAPI cublasStatus_t CUBLASWINAPI
+cublasSetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t mode)
+{
+    /* XXX seems ok for tensorflow but might be wrong ! FIXME */
+    assert(mode == 0);
+    return CUBLAS_STATUS_SUCCESS;
+}
+ava_end_replacement;
+
+
+CUBLASAPI cublasStatus_t CUBLASWINAPI
+cublasSgemm_v2 (cublasHandle_t handle, cublasOperation_t transa,
+					 cublasOperation_t transb, int m, int n, int k,
+					 const float *alpha, /* host or device pointer */
+					 const float *A, int lda, const float *B, int ldb,
+					 const float *beta, /* host or device pointer */
+					 float *C, int ldc)
+{
+    ava_async;
+    ava_argument(handle) ava_handle;
+    ava_argument(transa) ava_opaque;
+	ava_argument(transb) ava_opaque;
+    ava_argument(A) ava_handle;
+    ava_argument(B) ava_handle;
+    ava_argument(C) ava_handle;
+	 /* XXX I _think_ these are always device pointers for tensorflow ! */
+    ava_argument(alpha) { ava_in; ava_buffer(1); }
+    ava_argument(beta)  { ava_in; ava_buffer(1); }
+}
+
+
+CUBLASAPI cublasStatus_t CUBLASWINAPI
+cublasSetStream(cublasHandle_t handle, cudaStream_t streamId)
+{
+    ava_argument(handle) ava_handle;
+    ava_argument(streamId) ava_handle;
+}
+
 CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasDestroy(cublasHandle_t handle)
 {
@@ -1416,4 +1521,347 @@ cublasSscal(cublasHandle_t handle,
         ava_in; ava_buffer(1);
     }
     ava_argument(x) ava_handle;
+}
+
+/***** CUDNN (OOF) ******/
+
+cudnnStatus_t CUDNNWINAPI
+cudnnBatchNormalizationForwardInference(cudnnHandle_t handle,
+                                        cudnnBatchNormMode_t mode,
+                                        const void *alpha, /* alpha[0] = result blend factor */
+                                        const void *beta,  /* beta[0] = dest layer blend factor */
+                                        const cudnnTensorDescriptor_t xDesc,
+                                        const void *x, /* NxCxHxW */
+                                        const cudnnTensorDescriptor_t yDesc,
+                                        void *y, /* NxCxHxW */
+                                        const cudnnTensorDescriptor_t bnScaleBiasMeanVarDesc,
+                                        const void *bnScale,
+                                        const void *bnBias,
+                                        const void *estimatedMean,
+                                        const void *estimatedVariance,
+                                        double epsilon)
+{
+   ava_async;
+   ava_argument(handle) ava_handle;
+   ava_argument(alpha) {
+      ava_type_cast(const double *);
+      ava_in; ava_buffer(1);
+   }
+   ava_argument(beta) {
+      ava_type_cast(const double *);
+      ava_in; ava_buffer(1);
+   }
+   ava_argument(xDesc) ava_handle;
+   ava_argument(x) ava_handle;
+   ava_argument(yDesc) ava_handle;
+   ava_argument(y) ava_handle;
+   ava_argument(bnScaleBiasMeanVarDesc) ava_handle;
+   ava_argument(bnScale) ava_handle;
+   ava_argument(bnBias) ava_handle;
+   ava_argument(estimatedMean) ava_handle;
+   ava_argument(estimatedVariance) ava_handle;
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnConvolutionForward(cudnnHandle_t handle,
+                        const void *alpha,
+                        const cudnnTensorDescriptor_t xDesc,
+                        const void *x,
+                        const cudnnFilterDescriptor_t wDesc,
+                        const void *w,
+                        const cudnnConvolutionDescriptor_t convDesc,
+                        cudnnConvolutionFwdAlgo_t algo,
+                        void *workSpace,
+                        size_t workSpaceSizeInBytes,
+                        const void *beta,
+                        const cudnnTensorDescriptor_t yDesc,
+                        void *y)
+{
+   ava_async;
+   ava_argument(handle) ava_handle;
+   ava_argument(alpha) {
+      ava_type_cast(const double *);
+      ava_in; ava_buffer(1);
+   }
+   ava_argument(beta) {
+      ava_type_cast(const double *);
+      ava_in; ava_buffer(1);
+   }
+   ava_argument(xDesc) ava_handle;
+   ava_argument(x) ava_handle;
+   ava_argument(wDesc) ava_handle;
+   ava_argument(w) ava_handle;
+   ava_argument(convDesc) ava_handle;
+   ava_argument(workSpace) ava_handle;
+   ava_argument(yDesc) ava_handle;
+   ava_argument(y) ava_handle;
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnCreate(cudnnHandle_t *handle)
+{
+   ava_argument(handle) {
+      ava_out; ava_buffer(1);
+      ava_element ava_handle;
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnCreateConvolutionDescriptor(cudnnConvolutionDescriptor_t *convDesc)
+{
+   ava_argument(convDesc) {
+      ava_out; ava_buffer(1);
+      ava_element ava_handle;
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnCreateFilterDescriptor(cudnnFilterDescriptor_t *filterDesc)
+{
+   ava_argument(filterDesc) {
+      ava_out; ava_buffer(1);
+      ava_element ava_handle;
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnCreatePoolingDescriptor(cudnnPoolingDescriptor_t *poolingDesc)
+{
+   ava_argument(poolingDesc) {
+      ava_out; ava_buffer(1);
+      ava_element ava_handle;
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnCreateTensorDescriptor(cudnnTensorDescriptor_t *tensorDesc)
+{
+   ava_argument(tensorDesc) {
+      ava_out; ava_buffer(1);
+      ava_element ava_handle;
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnDestroyConvolutionDescriptor(cudnnConvolutionDescriptor_t convDesc)
+{
+   ava_argument(convDesc) ava_handle;
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnDestroyFilterDescriptor(cudnnFilterDescriptor_t filterDesc)
+{
+   ava_argument(filterDesc) ava_handle;
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnDestroyPoolingDescriptor(cudnnPoolingDescriptor_t poolingDesc)
+{
+   ava_argument(poolingDesc) ava_handle;
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnDestroyTensorDescriptor(cudnnTensorDescriptor_t tensorDesc)
+{
+   ava_argument(tensorDesc) ava_handle;
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnGetBatchNormalizationForwardTrainingExWorkspaceSize(cudnnHandle_t handle,
+                                                         cudnnBatchNormMode_t mode,
+                                                         cudnnBatchNormOps_t bnOps,
+                                                         const cudnnTensorDescriptor_t xDesc,
+                                                         const cudnnTensorDescriptor_t zDesc,
+                                                         const cudnnTensorDescriptor_t yDesc,
+                                                         const cudnnTensorDescriptor_t bnScaleBiasMeanVarDesc,
+                                                         const cudnnActivationDescriptor_t activationDesc,
+                                                         size_t *sizeInBytes)
+{
+   ava_argument(handle) ava_handle;
+   ava_argument(xDesc) ava_handle;
+   ava_argument(zDesc) ava_handle;
+   ava_argument(yDesc) ava_handle;
+   ava_argument(bnScaleBiasMeanVarDesc) ava_handle;
+   ava_argument(activationDesc) ava_handle;
+   ava_argument(sizeInBytes) {
+      ava_out; ava_buffer(1);
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnGetConvolutionForwardWorkspaceSize(cudnnHandle_t handle,
+                                        const cudnnTensorDescriptor_t xDesc,
+                                        const cudnnFilterDescriptor_t wDesc,
+                                        const cudnnConvolutionDescriptor_t convDesc,
+                                        const cudnnTensorDescriptor_t yDesc,
+                                        cudnnConvolutionFwdAlgo_t algo,
+                                        size_t *sizeInBytes)
+{
+   ava_argument(handle) ava_handle;
+   ava_argument(xDesc) ava_handle;
+   ava_argument(wDesc) ava_handle;
+   ava_argument(convDesc) ava_handle;
+   ava_argument(yDesc) ava_handle;
+   ava_argument(sizeInBytes) {
+      ava_out; ava_buffer(1);
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnGetProperty(libraryPropertyType type, int *value)
+{
+   ava_argument(value) {
+      ava_out; ava_buffer(1);
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnPoolingForward(cudnnHandle_t handle,
+                    const cudnnPoolingDescriptor_t poolingDesc,
+                    const void *alpha,
+                    const cudnnTensorDescriptor_t xDesc,
+                    const void *x,
+                    const void *beta,
+                    const cudnnTensorDescriptor_t yDesc,
+                    void *y)
+{
+   ava_async;
+   ava_argument(handle) ava_handle;
+   ava_argument(poolingDesc) ava_handle;
+   ava_argument(alpha) {
+      ava_type_cast(const double *);
+      ava_in; ava_buffer(1);
+   }
+   ava_argument(xDesc) ava_handle;
+   ava_argument(x) ava_handle;
+   ava_argument(beta) {
+      ava_type_cast(const double *);
+      ava_in; ava_buffer(1);
+   }
+   ava_argument(yDesc) ava_handle;
+   ava_argument(y) ava_handle;
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnSetConvolutionGroupCount(cudnnConvolutionDescriptor_t convDesc, int groupCount)
+{
+   ava_argument(convDesc) ava_handle;
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnSetConvolutionMathType(cudnnConvolutionDescriptor_t convDesc, cudnnMathType_t mathType)
+{
+   ava_argument(convDesc) ava_handle;
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnSetConvolutionNdDescriptor(cudnnConvolutionDescriptor_t convDesc,
+                                int arrayLength, /* nbDims-2 size */
+                                const int padA[],
+                                const int filterStrideA[],
+                                const int dilationA[],
+                                cudnnConvolutionMode_t mode,
+                                cudnnDataType_t computeType) /* convolution data type */
+{
+   ava_argument(convDesc) ava_handle;
+   ava_argument(padA) {
+      ava_in; ava_buffer(arrayLength);
+   }
+   ava_argument(filterStrideA) {
+      ava_in; ava_buffer(arrayLength);
+   }
+   ava_argument(dilationA) {
+      ava_in; ava_buffer(arrayLength);
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnSetFilterNdDescriptor(cudnnFilterDescriptor_t filterDesc,
+                           cudnnDataType_t dataType, /* image data type */
+                           cudnnTensorFormat_t format,
+                           int nbDims,
+                           const int filterDimA[])
+{
+   ava_argument(filterDesc) ava_handle;
+   ava_argument(filterDimA) {
+      ava_in; ava_buffer(nbDims);
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnSetPoolingNdDescriptor(cudnnPoolingDescriptor_t poolingDesc,
+                            const cudnnPoolingMode_t mode,
+                            const cudnnNanPropagation_t maxpoolingNanOpt,
+                            int nbDims,
+                            const int windowDimA[],
+                            const int paddingA[],
+                            const int strideA[])
+{
+   ava_argument(poolingDesc) ava_handle;
+   ava_argument(windowDimA) {
+      ava_in; ava_buffer(nbDims);
+   }
+   ava_argument(paddingA) {
+      ava_in; ava_buffer(nbDims);
+   }
+   ava_argument(strideA) {
+      ava_in; ava_buffer(nbDims);
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnSetStream(cudnnHandle_t handle, cudaStream_t streamId)
+{
+    ava_argument(handle) ava_handle;
+    ava_argument(streamId) ava_handle;
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnSetTensorNdDescriptor(cudnnTensorDescriptor_t tensorDesc,
+                           cudnnDataType_t dataType,
+                           int nbDims,
+                           const int dimA[],
+                           const int strideA[])
+{
+    ava_argument(tensorDesc) ava_handle;
+   ava_argument(dimA) {
+      ava_in; ava_buffer(nbDims);
+   }
+   ava_argument(strideA) {
+      ava_in; ava_buffer(nbDims);
+   }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnPoolingBackward(cudnnHandle_t handle,
+                     const cudnnPoolingDescriptor_t poolingDesc,
+                     const void *alpha,
+                     const cudnnTensorDescriptor_t yDesc,
+                     const void *y,
+                     const cudnnTensorDescriptor_t dyDesc,
+                     const void *dy,
+                     const cudnnTensorDescriptor_t xDesc,
+                     const void *x,
+                     const void *beta,
+                     const cudnnTensorDescriptor_t dxDesc,
+                     void *dx)
+{
+   ava_argument(handle) ava_handle;
+   ava_argument(poolingDesc) ava_handle;
+   ava_argument(alpha) {
+      ava_type_cast(const double *);
+      ava_in; ava_buffer(1);
+   }
+   ava_argument(yDesc) ava_handle;
+   ava_argument(y) ava_handle;
+   ava_argument(dyDesc) ava_handle;
+   ava_argument(dy) ava_handle;
+   ava_argument(xDesc) ava_handle;
+   ava_argument(x) ava_handle;
+   ava_argument(beta) {
+      ava_type_cast(const double *);
+      ava_in; ava_buffer(1);
+   }
+   ava_argument(dxDesc) ava_handle;
+   ava_argument(dx) ava_handle;
 }

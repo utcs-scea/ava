@@ -4,8 +4,8 @@
 . $(dirname $0)/scripts/environment
 
 # Set up options
-. $(dirname $0)/scripts/options
-. $(dirname $0)/scripts/settings
+. $(dirname $0)/scripts/options-vm1
+. $(dirname $0)/scripts/settings-vm1
 . $(dirname $0)/scripts/bindings
 
 # Probe drivers
@@ -19,5 +19,5 @@ ${QEMU_BIN} ${MEM_OPT} ${IMAGE} ${!CDROM} ${!VIRTFS} ${!VIRTGPU} \
     ${SMP} ${!GRAPHICS} ${!SOUND} ${!SERIAL} ${!AUTOBALLOON} ${NET} ${!QMP} \
     ${!SNAPSHOT} ${!DEBUG} ${!MONITOR} \
     -enable-kvm -machine accel=kvm -cpu host,kvm=on \
-    -device vhost-vsock-pci,guest-cid=5 \
+    -device vhost-vsock-pci,guest-cid=6 \
     -device ava-vdev

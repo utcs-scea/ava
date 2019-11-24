@@ -3,3 +3,9 @@
 cmake-build-*
 *.so
 *.a
+
+# Cloned repository
+benchmark/
+llvm/
+kvm/
+qemu/
