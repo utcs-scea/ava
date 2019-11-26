@@ -26,9 +26,9 @@ GHashTable *worker_info;
 static int kvm_fd;
 static int policy_id;
 static struct sched_policy sched_policy = {
-    .module_name           = "ava_policy_qat_throughput",
-    .cb_struct             = "qat_throughput_func",
-    .consume_func_name     = "consume_vm_qat_throughput",
+    .module_name           = "ava_policy_device_time_hp",
+    .cb_struct             = "device_time_hp_func",
+    .consume_func_name     = "consume_vm_device_time_hp",
 };
 
 static int worker_pool_enabled;
@@ -43,10 +43,10 @@ void sigint_handler(int signo)
 
     if (policy_enabled && policy_id > 0) {
         if (ioctl(kvm_fd, KVM_REMOVE_SCHEDULING_POLICY, policy_id) < 0) {
-            printf("failed to uninstall policy: %s\n", sched_policy.module_name);
+            printf("\nFailed to uninstall policy: %s\n", sched_policy.module_name);
         }
         else {
-            printf("uninstall policy: %s\n", sched_policy.module_name);
+            printf("\n* Uninstall policy: %s\n", sched_policy.module_name);
         }
         close(kvm_fd);
     }
@@ -57,23 +57,31 @@ void sigint_handler(int signo)
 
 int main(int argc, char *argv[])
 {
-    /* parse arguments */
+    /* Parse arguments */
     int i;
     if (argc > 1) {
+        /* Help menu */
+        for (i = 1; i < argc; i++) {
+            if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
+                fprintf(stderr, "%s [--help] [--policy]\n", argv[0]);
+                return 0;
+            }
+        }
+
         for (i = 1; i < argc; i++)
-            if (strcmp(argv[i], "-policy") == 0) {
-                printf("* install policy: %s\n", sched_policy.module_name);
+            if (strcmp(argv[i], "--policy") == 0 || strcmp(argv[i], "-p") == 0) {
+                printf("* Install policy: %s\n", sched_policy.module_name);
                 policy_enabled = 1;
             }
     }
 
     /* parse environment variables */
     worker_pool_enabled = (getenv("AVA_WPOOL") && !strcmp(getenv("AVA_WPOOL"), "TRUE"));
-    printf("* worker pool: %s\n", worker_pool_enabled ? "enabled" : "disabled");
+    printf("* API server pool: %s\n", worker_pool_enabled ? "enabled" : "disabled");
 
     /* setup signal handler */
     if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR)
-        printf("failed to catch SIGINT\n");
+        printf("Failed to catch SIGINT\n");
 
     /* setup worker info hash table */
     worker_info = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free);
@@ -85,12 +93,15 @@ int main(int argc, char *argv[])
         sched_policy.consume_func_name_len = strlen(sched_policy.consume_func_name) + 1;
 
         if ((kvm_fd = open("/dev/kvm-vgpu", O_RDWR | O_NONBLOCK)) < 0) {
-            printf("failed to open /dev/kvm-vgpu\n");
+            fprintf(stderr, "Failed to open /dev/kvm-vgpu\n");
             exit(0);
         }
         if ((policy_id = ioctl(kvm_fd, KVM_SET_SCHEDULING_POLICY, (unsigned long)&sched_policy)) <= 0) {
-            printf("resource policy is not found\n");
+            fprintf(stderr, "Resource policy is not found\n");
             exit(0);
+        }
+        else {
+            printf("* Assigned policy ID %d\n", policy_id);
         }
     }
 
@@ -139,12 +150,12 @@ int main(int argc, char *argv[])
 
             case COMMAND_START_MIGRATION:
                 worker_port = (uintptr_t *)msg.reserved_area;
-                printf("[manager] request to migrate from worker@%lu to worker%d\n",
+                printf("[manager] Request to migrate from worker@%lu to worker%d\n",
                         *worker_port, worker_id + WORKER_PORT_BASE);
                 pb_hash = (struct param_block_info *)g_hash_table_lookup(worker_info, GINT_TO_POINTER(*worker_port));
 
                 if (!pb_hash) {
-                    printf("[manager] worker_info faults\n");
+                    printf("[manager] Worker_info faults\n");
                     close(client_fd);
                     exit(0);
                 }
@@ -182,7 +193,7 @@ int main(int argc, char *argv[])
 
     /* spawn worker */
 spawn_worker:
-    printf("[manager] spawn new worker port=%s\n", str_port);
+    printf("[manager] Spawn new worker port=%s\n", str_port);
     if (execv("./worker", argv_list) < 0) {
         perror("execv worker");
     }

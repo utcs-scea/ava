@@ -2,7 +2,6 @@ ava_name("OpenCL");
 ava_version("1.2");
 ava_identifier(CL);
 ava_number(2);
-ava_cflags();
 ava_libs(-lOpenCL);
 ava_export_qualifier(CL_API_ENTRY);
 
@@ -16,17 +15,16 @@ ava_non_transferable_types {
 
 #include <CL/cl.h>
 
+ava_begin_utility;
+#include <sys/time.h>
+ava_end_utility;
+
 ava_type(cl_int) {
     ava_success(CL_SUCCESS);
 }
 
 typedef struct {
     size_t size;
-    void* related_buffer;
-    cl_bitfield flags;
-
-    /* buffer object */
-    size_t buffer_size;
 
     /* argument types */
     int kernel_argc;
@@ -35,10 +33,26 @@ typedef struct {
 
 ava_register_metadata(Metadata);
 
-ava_throughput_resource command_rate;
-ava_storage_resource device_memory;
+ava_throughput_resource device_time;
 
-#define cl_in_out_buffer(x, y) ({ if(ava_is_in) ava_buffer(x); else ava_buffer(min(x, y == NULL ? x : *y)); })
+#define cl_in_out_buffer(x, y) \
+    ({ if(ava_is_in) ava_buffer(x); \
+       else ava_buffer(min(x, y == NULL ? x : *y)); \
+     })
+
+ava_callback_decl void cl_pfn_notify(const char *errinfo, const void *private_info, size_t cb, void *user_data) {
+    ava_argument(errinfo) {
+        ava_buffer(strlen(errinfo) + 1);
+        ava_in;
+    }
+    ava_argument(private_info) {
+        ava_buffer(cb);
+        ava_in;
+    }
+    ava_argument(user_data) {
+        ava_userdata;
+    }
+}
 
 cl_int
 clGetPlatformIDs(cl_uint          num_entries,
@@ -99,12 +113,7 @@ clCreateProgramWithSource(cl_context     context,
 cl_int
 clReleaseProgram(cl_program program)
 {
-    ava_argument(program) ava_deallocates;
-}
-
-ava_utility size_t clEnqueueRWImage_ptr_size(size_t row_pitch, size_t slice_pitch, const size_t *region) {
-#warning image size is not computed
-    return 0;
+    ava_argument(program) { ava_deallocates; }
 }
 
 cl_int
@@ -120,25 +129,7 @@ clEnqueueWriteImage(cl_command_queue command_queue,
                     const cl_event * event_wait_list,
                     cl_event *       event)
 {
-    if(blocking_write == CL_TRUE)
-        ava_sync;
-    else
-        ava_async;
-    ava_argument(origin) { ava_in; ava_buffer(3); }
-    ava_argument(region) { ava_in; ava_buffer(3); }
-    ava_argument(ptr) {
-        ava_in;
-        ava_buffer(clEnqueueRWImage_ptr_size(input_row_pitch, input_slice_pitch, region));
-    }
-    ava_argument(event_wait_list) {
-        ava_in;
-        ava_buffer(num_events_in_wait_list);
-    }
-    ava_argument(event) {
-        ava_out;
-        ava_buffer(1);
-        ava_element ava_allocates;
-    }
+    ava_unsupported;
 }
 
 cl_int
@@ -149,7 +140,7 @@ clGetDeviceIDs(cl_platform_id platform,
                cl_uint *      num_devices)
 {
     ava_argument(devices) {
-        ava_out; ava_buffer(num_entries);
+        ava_out; cl_in_out_buffer(num_entries, num_devices);
     }
     ava_argument(num_devices) {
         ava_out; ava_buffer(1);
@@ -203,14 +194,12 @@ clCreateContext(const cl_context_properties * properties,
         ava_out; ava_buffer(1);
     }
     ava_argument(pfn_notify) {
-        ava_opaque;
+        ava_callback(cl_pfn_notify);
     }
     ava_argument(user_data) {
-        ava_opaque;
         ava_userdata;
     }
     ava_return_value ava_allocates;
-#warning callback not annotated
 }
 
 cl_context
@@ -229,17 +218,15 @@ clCreateContextFromType(const cl_context_properties * properties,
         }
     }
     ava_argument(pfn_notify) {
-        ava_opaque;
+        ava_callback(cl_pfn_notify);
     }
     ava_argument(user_data) {
-        ava_opaque;
         ava_userdata;
     }
     ava_argument(errcode_ret) {
         ava_out; ava_buffer(1);
     }
     ava_return_value ava_allocates;
-#warning callback not annotated
 }
 
 cl_int
@@ -254,7 +241,9 @@ clGetContextInfo(cl_context      context,
         cl_in_out_buffer(param_value_size, param_value_size_ret);
         if (ava_is_worker && param_name == CL_CONTEXT_DEVICES) {
             ava_type_cast(void**);
-            ava_element ava_handle;
+            ava_element {
+                ava_handle;
+            }
         }
         else {
             ava_element ava_opaque;
@@ -268,7 +257,7 @@ clGetContextInfo(cl_context      context,
 cl_int
 clReleaseContext(cl_context context)
 {
-    ava_argument(context) ava_deallocates;
+    ava_argument(context) { ava_deallocates; }
 }
 
 
@@ -287,7 +276,7 @@ clCreateCommandQueue(cl_context                  context,
 cl_int
 clReleaseCommandQueue(cl_command_queue command_queue)
 {
-    ava_argument(command_queue) ava_deallocates;
+    ava_argument(command_queue) { ava_deallocates; }
 }
 
 cl_kernel
@@ -333,7 +322,7 @@ clCreateKernel(cl_program   program,
 cl_int
 clReleaseKernel(cl_kernel kernel)
 {
-    ava_argument(kernel) ava_deallocates;
+    ava_argument(kernel) { ava_deallocates; }
 }
 
 cl_int
@@ -351,10 +340,9 @@ clBuildProgram(cl_program           program,
         ava_in; ava_buffer(strlen(options) + 1);
     }
     ava_argument(pfn_notify) {
-        ava_opaque;
+        ava_callback(cl_pfn_notify);
     }
     ava_argument(user_data) {
-        ava_opaque;
         ava_userdata;
     }
 
@@ -370,9 +358,8 @@ clBuildProgram(cl_program           program,
     }
     ava_execute();
     if (ava_is_worker) {
-        free(options);
+        free((void *)options);
     }
-#warning callback not annotated
 }
 
 cl_int
@@ -400,63 +387,16 @@ clCreateBuffer(cl_context   context,
 {
     ava_argument(host_ptr) {
         ava_in;
-        // if(flags & CL_MEM_USE_HOST_PTR) buffer_lifetime(ret)
         ava_buffer(size);
     }
     ava_argument(errcode_ret) {
         ava_out; ava_buffer(1);
     }
-    ava_return_value {
-        ava_allocates_resource(device_memory, size);
-    }
-
-    cl_mem ret = ava_execute();
-    ava_metadata(ret)->buffer_size = size;
 }
 
 cl_int
 clReleaseMemObject(cl_mem memobj)
 {
-    ava_argument(memobj) {
-        ava_deallocates_resource(device_memory, ava_metadata(memobj)->buffer_size);
-    }
-}
-
-ava_utility size_t clCreateImage_host_ptr_size(const cl_image_desc * image_format) {
-  switch (image_format->image_type) {
-  case  CL_MEM_OBJECT_IMAGE2D:
-    return image_format->image_row_pitch * image_format->image_height;
-  case  CL_MEM_OBJECT_IMAGE3D:
-    return image_format->image_slice_pitch * image_format->image_depth;
-  case  CL_MEM_OBJECT_IMAGE2D_ARRAY:
-    return image_format->image_slice_pitch * image_format->image_array_size;
-  case  CL_MEM_OBJECT_IMAGE1D:
-    return image_format->image_row_pitch;
-  case  CL_MEM_OBJECT_IMAGE1D_ARRAY:
-    return image_format->image_row_pitch * image_format->image_array_size;
-  case  CL_MEM_OBJECT_IMAGE1D_BUFFER:
-    return image_format->image_row_pitch;
-  }
-  abort();
-}
-
-ava_utility size_t clCreateImage_dims(const cl_image_desc * image_format) {
-  switch (image_format->image_type) {
-  case  CL_MEM_OBJECT_IMAGE1D:
-  case  CL_MEM_OBJECT_IMAGE1D_ARRAY:
-  case  CL_MEM_OBJECT_IMAGE1D_BUFFER:
-    return 1;
-  case  CL_MEM_OBJECT_IMAGE2D_ARRAY:
-  case  CL_MEM_OBJECT_IMAGE2D:
-    return 2;
-  case  CL_MEM_OBJECT_IMAGE3D:
-    return 3;
-  }
-  abort();
-}
-
-ava_utility size_t clCreateImage2D_host_ptr_size(size_t image_height, size_t image_row_pitch) {
-    return image_height * image_row_pitch;
 }
 
 cl_mem
@@ -467,21 +407,7 @@ clCreateImage(cl_context              context,
               void * host_ptr,
               cl_int *                errcode_ret)
 {
-    ava_argument(image_format) {
-        ava_in; ava_buffer(1);
-    }
-    ava_argument(image_desc) {
-        ava_in; ava_buffer(1);
-    }
-    ava_argument(host_ptr) {
-        ava_in;
-        // if(flags & CL_MEM_USE_HOST_PTR) buffer_lifetime(ret)
-        ava_buffer(clCreateImage_host_ptr_size(image_desc));
-    }
-    ava_argument(errcode_ret) {
-        ava_out, ava_buffer(1);
-    }
-    ava_return_value ava_allocates;
+    ava_unsupported;
 }
 
 cl_mem
@@ -494,18 +420,7 @@ clCreateImage2D(cl_context              context,
                 void *                  host_ptr,
                 cl_int *                errcode_ret)
 {
-    ava_argument(image_format) {
-        ava_in; ava_buffer(1);
-    }
-    ava_argument(host_ptr) {
-        ava_in;
-        // if(flags & CL_MEM_USE_HOST_PTR) buffer_lifetime(ret)
-        ava_buffer(clCreateImage2D_host_ptr_size(image_height, image_row_pitch));
-    }
-    ava_argument(errcode_ret) {
-        ava_out, ava_buffer(1);
-    }
-    ava_return_value ava_allocates;
+    ava_unsupported;
 }
 
 cl_int
@@ -519,19 +434,7 @@ clEnqueueCopyBufferToImage(cl_command_queue command_queue,
                            const cl_event * event_wait_list,
                            cl_event *       event)
 {
-    ava_argument(dst_origin) {
-        ava_in; ava_buffer(3);
-    }
-    ava_argument(region) {
-        ava_in; ava_buffer(3);
-    }
-    ava_argument(event_wait_list) {
-        ava_in; ava_buffer(num_events_in_wait_list);
-    }
-    ava_argument(event) {
-        ava_out; ava_buffer(1);
-        ava_element(ava_allocates);
-    }
+    ava_unsupported;
 }
 
 cl_int
@@ -542,42 +445,15 @@ clGetSupportedImageFormats(cl_context         context,
                            cl_image_format *  image_formats,
                            cl_uint *          num_image_formats)
 {
-    ava_argument(image_formats) {
-        ava_out; ava_buffer(num_entries);
-    }
-    ava_argument(num_image_formats) {
-        ava_out; ava_buffer(1);
-    }
-}
-
-ava_utility void** clWaitForEvents_event_list_to_buffer_list(cl_uint num_events,
-                                                         const cl_event * event_list) {
-  void ** buffer_list = (void**)malloc(num_events * sizeof(void*));
-  for (int i=0; i < num_events; i++) {
-    buffer_list[i] = ava_metadata(event_list[i])->related_buffer;
-  }
-  return buffer_list;
+    ava_unsupported;
 }
 
 cl_int
 clWaitForEvents(cl_uint          num_events,
                 const cl_event * event_list) {
-    ava_implicit_argument
-    void ** related_buffers = clWaitForEvents_event_list_to_buffer_list(num_events, event_list);
-    ava_argument(related_buffers) {
-        ava_out;
-        ava_depends_on(num_events, event_list);
-        ava_buffer(num_events);
-        ava_element ava_buffer(ava_metadata(event_list[ava_index])->size);
-        ava_deallocates;
-    }
-
     ava_argument(event_list) {
         ava_in; ava_buffer(num_events);
     }
-
-    ava_execute();
-#warning fix me
 }
 
 cl_int
@@ -586,22 +462,12 @@ clGetEventInfo(cl_event      event,
                size_t        param_value_size,
                void *        param_value,
                size_t *      param_value_size_ret) {
-    ava_implicit_argument
-    void * output_buffer = ava_metadata(event)->related_buffer;
-    ava_argument(output_buffer) {
-        if (param_name == CL_EVENT_COMMAND_EXECUTION_STATUS && *((cl_int*)param_value) == CL_COMPLETE)
-            ava_out;
-        ava_buffer(ava_metadata(event)->size);
-    }
-
     ava_argument(param_value) {
         ava_out; cl_in_out_buffer(param_value_size, param_value_size_ret);
     }
     ava_argument(param_value_size_ret) {
         ava_out; ava_buffer(1);
     }
-    ava_execute();
-#warning fix me
 }
 
 cl_int
@@ -625,18 +491,14 @@ clGetEventProfilingInfo(cl_event          event,
     }
 }
 
-/*
-ava_callback_decl ava_async
-void clSetEventCallback_callback(cl_event event, cl_int status, ava_opaque ava_userdata void* user_data) {
-  ava_implicit_argument
-    ava_in
-    ava_buffer(ava_metadata(event)->size)
-    void * output_buffer = ava_metadata(event)->related_buffer;
-  ava_execute();
-  if (ava_is_worker)
-    clReleaseEvent(event);
+ava_callback_decl
+void clSetEventCallback_callback(cl_event event, cl_int status, void* user_data) {
+    ava_argument(user_data) {
+        ava_userdata;
+    }
+    if (ava_is_guest)
+        clReleaseEvent(event);
 }
-*/
 
 cl_int
 clSetEventCallback(cl_event            event,
@@ -645,148 +507,14 @@ clSetEventCallback(cl_event            event,
                    void *              user_data)
 {
     ava_argument(pfn_notify) {
-        ava_opaque;
-        //ava_callback(unrestricted, clSetEventCallback_callback);
+        ava_callback(clSetEventCallback_callback);
     }
     ava_argument(user_data) {
-        ava_opaque;
         ava_userdata;
     }
     if (ava_is_worker)
         clRetainEvent(event);
     ava_execute();
-#warning fix callback
-}
-
-#if DISABLED
-void *
-clEnqueueMapBuffer(cl_command_queue command_queue,
-                   cl_mem           ava_buffer,
-                   cl_bool          blocking_map,
-                   cl_map_flags     map_flags,
-                   size_t           offset,
-                   size_t           size,
-                   cl_uint          num_events_in_wait_list,
-                   const cl_event * event_wait_list,
-                   cl_event *       event,
-                   cl_int *         errcode_ret) {
-    void* ret = ava_execute();
-    ava_metadata(ret)->size = size;
-    ava_metadata(ret)->flags = map_flags;
-    ava_metadata(*event)->related_buffer = ret;
-
-    if(blocking_map == CL_TRUE)
-        ava_sync;
-    else
-        ava_async;
-
-    ava_argument(event_wait_list) {
-        ava_in; ava_buffer(num_events_in_wait_list);
-    }
-    ava_argument(event) {
-        ava_out; ava_buffer(1);
-        ava_element(ava_allocates);
-    }
-    ava_argument(errcode_ret) {
-        ava_out; ava_buffer(1);
-    }
-    ava_return_value {
-        ava_allocates;
-        if(map_flags != CL_MAP_WRITE_INVALIDATE_REGION) {
-            ava_out;
-            ava_buffer(size);
-        }
-    }
-#warning fix me
-}
-
-void *
-clEnqueueMapImage(cl_command_queue command_queue,
-                  cl_mem           image,
-                  cl_bool          blocking_map,
-                  cl_map_flags     map_flags,
-                  const size_t *   origin,
-                  const size_t *   region,
-                  size_t *         image_row_pitch,
-                  size_t *         image_slice_pitch,
-                  cl_uint          num_events_in_wait_list,
-                  const cl_event * event_wait_list,
-                  cl_event *       event,
-                  cl_int *         errcode_ret)
-{
-    if(blocking_map == CL_TRUE)
-        ava_sync;
-    else
-        ava_async;
-
-    ava_argument(origin) {
-        ava_in; ava_buffer(3);
-    }
-    ava_argument(region) {
-        ava_in; ava_buffer(3);
-    }
-    ava_argument(image_row_pitch) {
-        ava_out; ava_buffer(1);
-    }
-    ava_argument(image_slice_pitch) {
-        ava_out; ava_buffer(1);
-    }
-    ava_argument(event_wait_list) {
-        ava_in; ava_buffer(num_events_in_wait_list);
-    }
-    ava_argument(event) {
-        ava_out; ava_buffer(1);
-        ava_element(ava_allocates);
-    }
-    ava_argument(errcode_ret) {
-        ava_out; ava_buffer(1);
-    }
-    ava_return_value {
-        ava_allocates;
-        if(map_flags != CL_MAP_WRITE_INVALIDATE_REGION) {
-            ava_out;
-            ava_buffer(region[0] * region[1] * region[2]);
-        }
-    }
-
-    void* ret = ava_execute();
-    ava_metadata(ret)->size = region[0] * region[1] * region[2];
-    ava_metadata(ret)->flags = map_flags;
-    ava_metadata(*event)->related_buffer = ret;
-#warning fix me
-}
-#endif
-
-cl_int
-clEnqueueUnmapMemObject(cl_command_queue command_queue,
-                        cl_mem           memobj,
-                        void *           mapped_ptr,
-                        cl_uint          num_events_in_wait_list,
-                        const cl_event * event_wait_list,
-                        cl_event *       event)
-{
-    ava_unsupported;
-
-    ava_argument(mapped_ptr) {
-        ava_deallocates;
-        #warning This use of ava_metadata is illegal because it changes the interpretation of the value being accessed.
-        if(ava_metadata(mapped_ptr)->flags != CL_MAP_READ) {
-            ava_in;
-            ava_buffer(ava_metadata(mapped_ptr)->size);
-        }
-    }
-    ava_argument(event_wait_list) {
-        ava_in; ava_buffer(num_events_in_wait_list);
-    }
-    ava_argument(event) {
-        ava_out; ava_buffer(1);
-        ava_element(ava_allocates);
-    }
-
-    ava_execute();
-    ava_metadata(mapped_ptr)->size = 0;
-    ava_metadata(mapped_ptr)->flags = 0;
-    ava_metadata(*event)->related_buffer = NULL;
 }
 
 cl_int
@@ -800,13 +528,12 @@ clEnqueueCopyBuffer(cl_command_queue command_queue,
                     const cl_event * event_wait_list,
                     cl_event *       event)
 {
-    ava_async;
     ava_argument(event_wait_list) {
         ava_in; ava_buffer(num_events_in_wait_list);
     }
     ava_argument(event) {
         ava_out; ava_buffer(1);
-        ava_element(ava_allocates);
+        ava_element ava_allocates;
     }
 }
 
@@ -833,7 +560,7 @@ clEnqueueReadBuffer(cl_command_queue command_queue,
     }
     ava_argument(event) {
         ava_out; ava_buffer(1);
-        ava_element(ava_allocates);
+        ava_element ava_allocates;
     }
 }
 
@@ -861,7 +588,7 @@ clEnqueueWriteBuffer(cl_command_queue command_queue,
     }
     ava_argument(event) {
         ava_out; ava_buffer(1);
-        ava_element(ava_allocates);
+        ava_element ava_allocates;
     }
 }
 
@@ -872,10 +599,11 @@ clSetKernelArg(cl_kernel    kernel,
                const void * arg_value)
 {
     ava_argument(arg_value) {
-        #warning TODO: This type check is incorrect. This code needs to lookup the real type information for the kernel.
         if (ava_is_worker && ava_metadata(kernel)->kernel_arg_is_handle[arg_index]) {
             ava_type_cast(void**);
-            ava_element ava_handle;
+            ava_element {
+                ava_handle;
+            }
         } else {
             ava_element ava_opaque;
         }
@@ -902,15 +630,12 @@ clEnqueueTask(cl_command_queue command_queue,
               const cl_event * event_wait_list,
               cl_event *       event)
 {
-    //ava_async;
-    //ava_consumes_resource(command_rate, 1);
-
     ava_argument(event_wait_list) {
         ava_in; ava_buffer(num_events_in_wait_list);
     }
     ava_argument(event) {
         ava_out; ava_buffer(1);
-        ava_element(ava_allocates);
+        ava_element ava_allocates;
     }
 
 	struct timeval tv_start;
@@ -936,9 +661,6 @@ clEnqueueNDRangeKernel(cl_command_queue command_queue,
                        const cl_event * event_wait_list,
                        cl_event *       event)
 {
-    //ava_async;
-    //ava_consumes_resource(command_rate, 1);
-
     ava_argument(global_work_offset) {
         ava_in; ava_buffer(work_dim);
     }
@@ -953,7 +675,7 @@ clEnqueueNDRangeKernel(cl_command_queue command_queue,
     }
     ava_argument(event) {
         ava_out; ava_buffer(1);
-        ava_element(ava_allocates);
+        ava_element ava_allocates;
     }
 
 	struct timeval tv_start;
@@ -969,9 +691,7 @@ clEnqueueNDRangeKernel(cl_command_queue command_queue,
 }
 
 cl_int
-clFinish(cl_command_queue command_queue) {
-//    ava_sync;
-}
+clFinish(cl_command_queue command_queue);
 
 cl_int
 clFlush(cl_command_queue command_queue) {

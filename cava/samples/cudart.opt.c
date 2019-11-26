@@ -20,18 +20,19 @@ ava_non_transferable_types {
 size_t __args_index_0;
 size_t __kernelParams_index_0;
 
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+#include <cublas_v2.h>
+#include <cudnn.h>
+
 ava_begin_utility;
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 
-#include <cuda.h>
-#include <cuda_runtime_api.h>
 #include <driver_types.h>
 #include <fatbinary.h>
-#include <cublas_v2.h>
-#include <cudnn.h>
 #include <glib.h>
 #include "cudart_nw_internal.h"
 

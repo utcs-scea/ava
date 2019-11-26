@@ -15,6 +15,12 @@
 #undef QEMU_MMIO_COUNTER
 
 /**
+ * Define to measure in-kernel scheduling policy.
+ * kvm/arch/x86/kvm/kvm_vgpu_measure.c
+ */
+#undef KVM_MEASURE_POLICY
+
+/**
  * Interposition flags
  * We are refactoring the command scheduler and will transit to new
  * interposition method finally. The old scheduler does not have an

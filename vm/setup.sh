@@ -2,7 +2,7 @@
 
 GUEST_AVA_ROOT=~/ava
 
-Create directory
+# Create directory
 pssh -h pssh-hosts -l hyu -i "( mkdir -p $GUEST_AVA_ROOT/cava 2>/dev/null )"
 
 # Copy guestdrv
