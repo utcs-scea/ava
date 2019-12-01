@@ -2,6 +2,8 @@
 
 The internal code name is `nightwatch`.
 
+The detailed documentation of design and usage is in [lapis.md](lapis.md).
+
 ## Requirement
 
 * Python >= 3.6

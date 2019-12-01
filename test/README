@@ -1,0 +1,37 @@
+AvA test suite
+==============
+
+The micro-benchmark is created to understand performance
+trade-offs for AvA, and for regression tests of a few
+features.
+
+Run `make` to compile both micro-benchmark and regression
+tests (libtrivial).
+
+Micro-benchmark
+---------------
+
+The micro-benchmark transfers different amounts of data per
+call and simulates accelerator computation for different
+lengths of time by spinning on the host.
+
+Set the following parameters in `run_microbenchmark_local.sh`:
+`WORK=1 SIZE=1024 REPS=10`.
+
+* `WORK`: Simulated API execution time (milliseconds).
+* `SIZE`: Transferred data size for an API call (kilobytes).
+* `REPS`: The number of repetitions to run during the call.
+
+```
+$ ./run_microbenchmark_local.sh
+```
+
+Regression test
+---------------
+
+Generate API server and guest libraray using
+`$AVA_ROOT/cava/samples/libtrivial.nw.c`, and run
+
+```
+$ ./trivial_test
+```

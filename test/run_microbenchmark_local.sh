@@ -17,7 +17,7 @@ echo "Performing clean build..."
 ) > /dev/null 2> /dev/null
 
 (
-    cd $DIR/../nwcc
+    cd $DIR/../cava
     ./nwcc libtrivial.nw.c -I ../test/
     cd trivial_nw
     make clean
@@ -31,7 +31,7 @@ echo "Running benchmark..."
 #INSTRUMENT="valgrind --tool=memcheck --trace-children=yes --show-leak-kinds=definite,indirect --leak-check=yes"
 
 function benchmark_ava() {
-    cd $DIR/../nwcc/trivial_nw
+    cd $DIR/../cava/trivial_nw
     PATH=.:$PATH $INSTRUMENT ../../worker/manager_tcp &
     sleep 1
     LD_LIBRARY_PATH=. $INSTRUMENT $DIR/micro_benchmark "$@"
