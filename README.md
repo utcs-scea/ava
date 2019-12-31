@@ -40,9 +40,9 @@ The following packages are required to build and run all AvA
 components and benchmarks:
 
 * Ubuntu (apt install): git libssl-dev libglib2.0-dev
-  libpixman-1-dev opencl-headers curl, bc, build-essential,
-  libclang-7-dev, ctags, caffe-cpu, pssh, python3, python3-pip,
-  virtualenv
+  libpixman-1-dev opencl-headers curl bc build-essential 
+  libclang-7-dev clang-7 ctags caffe-cpu pssh python3
+  python3-pip virtualenv indent
 * Python3 (pip3 install): blessings toposort astor numpy(==1.15.0)
 
 AvA was fully tested on Ubuntu 18.04 with GCC 5.5+, Python 3.6+,
