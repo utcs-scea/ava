@@ -569,6 +569,27 @@ __cudaRegisterFunction(
     }
 }
 
+ava_begin_replacement;
+void CUDARTAPI
+__cudaRegisterVar(
+        void **fatCubinHandle,
+        char  *hostVar,
+        char  *deviceAddress,
+  const char  *deviceName,
+        int    ext,
+        size_t size,
+        int    constant,
+        int    global)
+{
+}
+
+void CUDARTAPI
+__cudaRegisterFatBinaryEnd(void **fatCubinHandle)
+{
+#warning This API is called for CUDA 10.1 and 10.2, but it seems to be able to be ignored.
+}
+ava_end_replacement;
+
 __host__ __device__ unsigned CUDARTAPI
 __cudaPushCallConfiguration(dim3   gridDim,
                             dim3   blockDim,

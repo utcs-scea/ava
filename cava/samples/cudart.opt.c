@@ -565,6 +565,12 @@ __cudaRegisterVar(
         int    global)
 {
 }
+
+void CUDARTAPI
+__cudaRegisterFatBinaryEnd(void **fatCubinHandle)
+{
+#warning This API is called for CUDA 10.1 and 10.2, but it seems to be able to be ignored.
+}
 ava_end_replacement;
 
 __host__ __device__ unsigned CUDARTAPI
