@@ -1055,6 +1055,14 @@ cuDeviceGet(CUdevice *device,
 }
 
 CUresult CUDAAPI
+cuDeviceCanAccessPeer(int* canAccessPeer, CUdevice dev, CUdevice peerDev)
+{
+    ava_argument(canAccessPeer) {
+        ava_out; ava_buffer(1);
+    }
+}
+
+CUresult CUDAAPI
 cuCtxGetDevice(CUdevice *device)
 {
     ava_argument(device) {
