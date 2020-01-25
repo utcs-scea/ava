@@ -42,6 +42,7 @@ struct shadow_thread_t* shadow_thread_new(struct shadow_thread_pool_t *pool, int
     assert(t->thread != ava_id); // TODO: This may spuriously fail.
     r = g_hash_table_insert(pool->threads, (gpointer) ava_id, t);
     assert(r);
+    (void)r;
     return t;
 }
 
@@ -57,6 +58,7 @@ struct shadow_thread_t* shadow_thread_self(struct shadow_thread_pool_t *pool) {
         t->thread = pthread_self();
         gboolean r = g_hash_table_insert(pool->threads, (gpointer) ava_id, t);
         assert(r);
+        (void)r;
         pthread_setspecific(pool->key, t);
     }
     return t;

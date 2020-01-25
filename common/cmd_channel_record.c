@@ -101,6 +101,7 @@ void command_channel_log_send_command(struct command_channel* c, struct command_
     struct command_private *priv = (struct command_private *)cmd->reserved_area;
     off_t pos = lseek(chan->fd, priv->command_start_offset, SEEK_SET);
     assert(pos == priv->command_start_offset);
+    (void)pos;
     write(chan->fd, cmd, cmd->command_size);
 
     // Free the local copy of the command.
@@ -141,6 +142,7 @@ void command_channel_log_update_flags(struct command_channel_log* chan, ssize_t 
     assert(offset >= 0);
     off_t r = lseek(chan->fd, offset + sizeof(size_t), SEEK_SET);
     assert(r == offset + sizeof(size_t));
+    (void)r;
     write(chan->fd, &flags, sizeof(flags));
 }
 

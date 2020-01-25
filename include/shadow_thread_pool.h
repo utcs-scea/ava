@@ -67,6 +67,7 @@ void shadow_thread_pool_dispatch(struct shadow_thread_pool_t *pool, struct comma
 #define shadow_thread_handle_command_until(pool, predicate) while(!(predicate))  { \
         int r = shadow_thread_handle_single_command(pool);                         \
         assert(r == 0 && ("Thread exit requested while waiting for " #predicate));      \
+        (void)r; \
     }
 
 #ifdef __cplusplus

@@ -79,6 +79,7 @@ static void* internal_handle_pool_insert(struct nw_handle_pool *pool, const void
     assert(b && "handle already exists");
     b = g_hash_table_insert(pool->to_handle, id, (gpointer) handle);
     assert(b && "id already exists");
+    (void)b;
     return id;
 }
 
@@ -480,6 +481,7 @@ void ava_add_call(struct ava_endpoint *endpoint, intptr_t id, void *ptr)
     pthread_mutex_lock(&endpoint->call_map_mutex);
     gboolean b = g_hash_table_insert(endpoint->call_map, (void *)id, ptr);
     assert(b && "Adding a call ID which currently exists.");
+    (void)b;
     pthread_mutex_unlock(&endpoint->call_map_mutex);
 }
 
@@ -844,6 +846,7 @@ ava_shadow_buffer_attach_buffer(struct ava_endpoint *endpoint, struct command_ch
     void *header_offset = command_channel_attach_buffer(chan, cmd, header, sizeof(struct ava_buffer_header_t));
     void *buffer_offset = command_channel_attach_buffer(chan, cmd, data_buffer, size);
     assert(buffer_offset - header_offset == sizeof(struct ava_buffer_header_t));
+    (void)header_offset;
     return buffer_offset;
 }
 

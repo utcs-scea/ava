@@ -195,10 +195,12 @@ ava_utility CUmodule __helper_init_module(struct fatbin_wrapper *fatCubin, void 
         ret = cuInit(0);
         ava_metadata(NULL)->cuinit_called = 1;
         assert(ret == CUDA_SUCCESS && "CUDA driver init failed");
+        (void)ret;
     }
     __cudaInitModule(handle);
     ret = cuModuleLoadData(&mod, (void *)fatCubin->ptr);
     assert(ret == CUDA_SUCCESS && "Module load failed");
+    (void)ret;
 
     return mod;
 }
@@ -217,6 +219,7 @@ ava_utility void __helper_register_function(struct fatbin_function *func,
     DEBUG_PRINT("hostFun = 0x%lx, deviceName is %s\n", (intptr_t)hostFun, deviceName);
     CUresult ret = cuModuleGetFunction(&func->cufunc, module, deviceName);
     assert(ret == CUDA_SUCCESS);
+    (void)ret;
     DEBUG_PRINT("register host func 0x%lx -> device func 0x%lx\n", (uintptr_t)hostFun, (uintptr_t)func->cufunc);
     func->hostfunc = (void *)hostFun;
     func->module = module;
@@ -294,6 +297,7 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
             fatbin_size,
             fbh->headerSize + fbh->fatSize);
     assert(fatbin_size == fbh->headerSize + fbh->fatSize);
+    (void)fbh;
 
     /* Call native API to register the fatbin */
     struct fatbin_wrapper *wrapper = (struct fatbin_wrapper *)fatCubin;
