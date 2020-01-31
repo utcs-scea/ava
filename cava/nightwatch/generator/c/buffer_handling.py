@@ -19,7 +19,7 @@ from nightwatch.model import Type, Argument, ConditionalType, lines
 
 # FIXME: Add support for NW_ZEROCOPY_BUFFER
 
-DECLARE_BUFFER_SIZE_EXPR = Expr("size_t __buffer_size;")
+DECLARE_BUFFER_SIZE_EXPR = Expr("volatile size_t __buffer_size = 0;")
 
 
 def get_transfer_buffer_expr(value, type, *, not_null=False) -> ExprOrStr:

@@ -90,7 +90,7 @@ EXPORTED_WEAKLY void nw_destroy_guestlib(void)
  * */
 EXPORTED_WEAKLY void start_migration(void)
 {
-    int manager_fd;
+    int manager_fd = -1;
     uintptr_t new_worker_id;
 
     if (!getenv("AVA_CHANNEL") || !strcmp(getenv("AVA_CHANNEL"), "LOCAL")) {
