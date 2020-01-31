@@ -300,6 +300,7 @@ ava_utility void __helper_init_module(struct fatbin_wrapper *fatCubin, void **ha
     }
     __cudaInitModule(handle);
     ret = cuModuleLoadData(&ava_metadata(NULL)->cur_module, (void *)fatCubin->ptr);
+    (void)ret;
     DEBUG_PRINT("ret=%d, module=%lx\n", ret, (uintptr_t)ava_metadata(NULL)->cur_module);
     assert(ret == CUDA_SUCCESS && "Module load failed");
 }
@@ -379,6 +380,7 @@ ava_utility void __helper_register_function(struct fatbin_function *func,
 
     CUresult ret = cuModuleGetFunction(&func->cufunc, module, deviceName);
     assert(ret == CUDA_SUCCESS);
+    (void)ret;
     DEBUG_PRINT("register host func %lx -> device func %lx\n", (uintptr_t)hostFun, (uintptr_t)func->cufunc);
     func->hostfunc = (void *)hostFun;
     func->module = module;
