@@ -1513,6 +1513,18 @@ cuGetExportTable(const void **ppExportTable, const CUuuid * pExportTableId)
     ava_unsupported;
 }
 
+CUresult
+cuGetErrorName(CUresult error, const char** pStr)
+{
+    ava_argument(pStr) {
+        ava_out; ava_buffer(1);
+        ava_element {
+            ava_lifetime_manual;
+            ava_buffer(100);
+        }
+    }
+}
+
 /* CUDABLAS API */
 CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasCreate(cublasHandle_t *handle)
@@ -1800,6 +1812,49 @@ cudnnGetConvolutionForwardWorkspaceSize(cudnnHandle_t handle,
    ava_argument(sizeInBytes) {
       ava_out; ava_buffer(1);
    }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnGetConvolutionForwardAlgorithm(cudnnHandle_t                      handle,
+                                    const cudnnTensorDescriptor_t      xDesc,
+                                    const cudnnFilterDescriptor_t      wDesc,
+                                    const cudnnConvolutionDescriptor_t convDesc,
+                                    const cudnnTensorDescriptor_t      yDesc,
+                                    cudnnConvolutionFwdPreference_t    preference,
+                                    size_t                             memoryLimitInBytes,
+                                    cudnnConvolutionFwdAlgo_t         *algo)
+{
+    ava_argument(handle) ava_handle;
+    ava_argument(xDesc) ava_handle;
+    ava_argument(wDesc) ava_handle;
+    ava_argument(convDesc) ava_handle;
+    ava_argument(yDesc) ava_handle;
+    ava_argument(algo) {
+        ava_out; ava_buffer(1);
+    }
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnGetConvolutionForwardAlgorithm_v7(cudnnHandle_t                       handle,
+                                       const cudnnTensorDescriptor_t       xDesc,
+                                       const cudnnFilterDescriptor_t       wDesc,
+                                       const cudnnConvolutionDescriptor_t  convDesc,
+                                       const cudnnTensorDescriptor_t       yDesc,
+                                       const int                           requestedAlgoCount,
+                                       int                                *returnedAlgoCount,
+                                       cudnnConvolutionFwdAlgoPerf_t      *perfResults)
+{
+    ava_argument(handle) ava_handle;
+    ava_argument(xDesc) ava_handle;
+    ava_argument(wDesc) ava_handle;
+    ava_argument(convDesc) ava_handle;
+    ava_argument(yDesc) ava_handle;
+    ava_argument(returnedAlgoCount) {
+        ava_out; ava_buffer(1);
+    }
+    ava_argument(perfResults) {
+        ava_out; ava_buffer(1);
+    }
 }
 
 cudnnStatus_t CUDNNWINAPI
