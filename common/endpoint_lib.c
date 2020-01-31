@@ -23,7 +23,7 @@ struct ava_replay_command_t {
 #define counter_tag_mask 0xfL
 #define counter_count_shift 4
 #define counter_count_min 1024 / (1 << counter_count_shift)
-#define counter_count_prefix (0xffffffL << 40)
+#define counter_count_prefix (0xffffffUL << 40)
 
 // TODO: These values should be inside the endpoint, but this makes the code for handle_pool confused.
 static uintptr_t global_counter_tag = 0;
