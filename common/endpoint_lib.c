@@ -392,7 +392,7 @@ struct shadow_thread_pool_t *nw_shadow_thread_pool;
 GHashTable* nw_global_metadata_map;
 pthread_mutex_t nw_global_metadata_map_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void __attribute__ ((constructor)) init_endpoint_lib(void)
+void __attribute__ ((constructor(0))) init_endpoint_lib(void)
 {
     nw_global_handle_pool = nw_handle_pool_new();
     nw_global_metadata_map = metadata_map_new();

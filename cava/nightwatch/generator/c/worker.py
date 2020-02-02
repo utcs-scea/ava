@@ -21,7 +21,7 @@ def source(api: API, errors):
 
 {handle_command_header(api)}
 
-void __attribute__((constructor)) init_{api.identifier.lower()}_worker(void) {{
+void __attribute__((constructor(1))) init_{api.identifier.lower()}_worker(void) {{
     __handle_command_{api.identifier.lower()}_init();
 }}
 """
