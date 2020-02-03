@@ -10,9 +10,9 @@ AVA_RELEASE=yes
 endif
 
 ifdef AVA_RELEASE
-AVA_RELEASE_FLAG=-DAVA_RELEASE -DNDEBUG -O2 -flto
+AVA_RELEASE_FLAG=-DAVA_RELEASE -DNDEBUG -O2 -flto -ggdb -rdynamic
 else
-AVA_RELEASE_FLAG=-O0 -g
+AVA_RELEASE_FLAG=-O0 -g -ggdb -rdynamic
 endif
 
 CC=gcc
