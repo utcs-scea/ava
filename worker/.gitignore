@@ -6,7 +6,9 @@
 *.cubin.old
 *.bin
 *.log
+
 worker
 worker-*
 manager
 manager_tcp
+nvidia_gpu/build/
