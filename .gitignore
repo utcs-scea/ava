@@ -6,6 +6,5 @@ cmake-build-*
 
 # Cloned repository
 benchmark/
-llvm/
 kvm/
 qemu/
