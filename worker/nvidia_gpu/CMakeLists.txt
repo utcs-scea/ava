@@ -11,7 +11,7 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 
 find_library(NVML_LIB nvidia-ml ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
-add_compile_options(-Wall -Wextra -pedantic -fpermissive -Wno-write-strings)
+add_compile_options(-Wall -Wextra -pedantic -Wno-write-strings)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include ${GLIB2_INCLUDE_DIRS})
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../common/third_party/grpc_install/lib/)
 add_executable(manager manager_nv.cpp

@@ -211,7 +211,7 @@ size_t send_socket(int sockfd, const void *buf, size_t size)
             exit(0);
         }
         size -= ret;
-        buf += ret;
+        buf = (const void *)((char *)buf + ret);
     }
     return ret;
 }
@@ -226,7 +226,7 @@ size_t recv_socket(int sockfd, void *buf, size_t size)
             close(sockfd);
             exit(0);
         }
-        buf += ret;
+        buf = (const void *)((char *)buf + ret);
         left_bytes -= ret;
     }
     return size;

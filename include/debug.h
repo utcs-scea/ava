@@ -14,12 +14,12 @@
 /* debug print */
 #ifdef DEBUG
     #ifdef __KERNEL__
-    #define DEBUG_PRINT(fmt, args...) printk(KERN_INFO fmt, ## args)
+    #define DEBUG_PRINT(fmt, ...) printk(KERN_INFO fmt, ## __VA_ARGS__)
     #else
-    #define DEBUG_PRINT(fmt, args...) fprintf(stderr, fmt, ## args)
+    #define DEBUG_PRINT(fmt, ...) fprintf(stderr, fmt, ## __VA_ARGS__)
     #endif
 #else
-    #define DEBUG_PRINT(fmt, args...)
+    #define DEBUG_PRINT(fmt, ...)
 #endif
 
 /* comment out experimental code */
