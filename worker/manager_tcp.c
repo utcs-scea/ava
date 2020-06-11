@@ -24,7 +24,11 @@ int listen_fd;
 int worker_id;
 GHashTable *worker_info;
 
-int worker_pool_enabled;
+// TODO: group into a class
+int manager_port = 3333;
+int worker_port_base = 4000;
+unsigned worker_pool_size = 1;
+static int worker_pool_enabled;
 
 __sighandler_t original_sigint_handler = SIG_DFL;
 
@@ -74,7 +78,7 @@ int main(int argc, char *argv[])
     }
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(WORKER_MANAGER_PORT);
+    address.sin_port = htons(manager_port);
 
     if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address))<0) {
         perror("bind failed");
@@ -85,10 +89,10 @@ int main(int argc, char *argv[])
 
     /* spawn worker pool */
     if (worker_pool_enabled) {
-        for (; assigned_worker_id <= WORKER_POOL_SIZE; assigned_worker_id++) {
+        for (; assigned_worker_id <= worker_pool_size; assigned_worker_id++) {
             child = fork();
             if (child == 0) {
-                sprintf(str_port, "%d", assigned_worker_id + WORKER_PORT_BASE);
+                sprintf(str_port, "%d", assigned_worker_id + worker_port_base);
                 goto spawn_worker;
             }
         }
@@ -105,13 +109,13 @@ int main(int argc, char *argv[])
             case NW_NEW_APPLICATION:
                 pb_hash = (struct param_block_info *)malloc(sizeof(struct param_block_info));
                 *pb_hash = *pb_info;
-                g_hash_table_insert(worker_info, (gpointer)(uintptr_t)(worker_id + WORKER_PORT_BASE), (gpointer)pb_hash);
+                g_hash_table_insert(worker_info, (gpointer)(uintptr_t)(worker_id + worker_port_base), (gpointer)pb_hash);
                 break;
 
             case COMMAND_START_MIGRATION:
                 worker_port = (uintptr_t *)msg.reserved_area;
                 printf("[manager] request to migrate from worker@%lu to worker%d\n",
-                        *worker_port, worker_id + WORKER_PORT_BASE);
+                        *worker_port, worker_id + worker_port_base);
                 pb_hash = (struct param_block_info *)g_hash_table_lookup(worker_info, (gpointer)(*worker_port));
 
                 if (!pb_hash) {
@@ -130,7 +134,7 @@ int main(int argc, char *argv[])
         /* return worker port to guestlib */
         response.api_id = INTERNAL_API;
         worker_port = (uintptr_t *)response.reserved_area;
-        *worker_port = worker_id + WORKER_PORT_BASE;
+        *worker_port = worker_id + worker_port_base;
         send_socket(client_fd, &response, sizeof(struct command_base));
         close(client_fd);
 
@@ -147,9 +151,9 @@ int main(int argc, char *argv[])
     } while (1);
 
     if (!worker_pool_enabled)
-        sprintf(str_port, "%d", worker_id + WORKER_PORT_BASE);
+        sprintf(str_port, "%d", worker_id + worker_port_base);
     else
-        sprintf(str_port, "%d", assigned_worker_id + WORKER_PORT_BASE);
+        sprintf(str_port, "%d", assigned_worker_id + worker_port_base);
 
     /* spawn worker */
 spawn_worker:

@@ -36,8 +36,6 @@ int listen_fd;
 std::atomic<int> worker_id(1);
 GHashTable *worker_info;
 
-int worker_pool_enabled;
-
 __sighandler_t original_sigint_handler = SIG_DFL;
 
 void sigint_handler(int signo)
@@ -80,9 +78,14 @@ class Workers {
   std::mutex mtx;
 };
 
+// TODO: group into a class
+char worker_path[PATH_MAX];
 int num_assigned_app = 0;
 int total_gpu_num = 1;
+int manager_port = 3333;
 int worker_port_base = 4000;
+unsigned worker_pool_size = 1;
+int worker_pool_enabled = 1;
 
 inline int get_worker_port(int id) {
     return worker_port_base + id;
@@ -145,7 +148,7 @@ void spawn_worker(int gpu_id,
         (char*)"AVA_CHANNEL=TCP",
         NULL
     };
-    if (execvpe("./worker", argv_list, envp_list) < 0) {
+    if (execvpe(worker_path, argv_list, envp_list) < 0) {
         perror("execv worker");
     }
 }
@@ -192,7 +195,7 @@ void handle_guestlib(int client_fd,
                 reply_to_guestlib(client_fd, assigned_worker_port);
                 close(client_fd);
 
-                if (idle_workers[gpu_id].size() > WORKER_POOL_SIZE - 1)
+                if (idle_workers[gpu_id].size() > worker_pool_size - 1)
                     break;
 
                 worker_port = get_worker_port(worker_id++);
@@ -252,16 +255,30 @@ int main(int argc, char *argv[])
     int c;
     opterr = 0;
     char* config_file_name = NULL;
-    while ((c = getopt(argc, argv, "f:p:")) != -1) {
+    const char *worker_relative_path = "../worker";
+    while ((c = getopt(argc, argv, "f:w:m:p:n:")) != -1) {
         switch (c) {
         case 'f':
             config_file_name = optarg;
             break;
+        case 'w':
+            worker_relative_path = optarg;
+            break;
+        case 'm':
+            manager_port = (uint32_t)atoi(optarg);
+            break;
         case 'p':
             worker_port_base = (uint32_t)atoi(optarg);
             break;
+        case 'n':
+            worker_pool_size = (uint32_t)atoi(optarg);
+            break;
         default:
-            fprintf(stderr, "Usage: %s [-f config_file_name]\n",
+            fprintf(stderr, "Usage: %s <-f config_file_name> "
+                            "[-w worker_path {../worker}] "
+                            "[-m manager_port {3333}] "
+                            "[-p worker_port_base {4000}] "
+                            "[-n worker_pool_size {1}]\n",
                     argv[0]);
             exit(EXIT_FAILURE);
         }
@@ -270,6 +287,12 @@ int main(int argc, char *argv[])
         fprintf(stderr, "-f is mandatory. Please specify config file name\n");
         exit(EXIT_FAILURE);
     }
+    if (!realpath(worker_relative_path, worker_path)) {
+        fprintf(stderr, "Worker binary (%s) not found. -w is optional\n", worker_relative_path);
+        exit(EXIT_FAILURE);
+    }
+    fprintf(stderr, "* API server: %s\n", worker_path);
+
     std::ifstream config_file(config_file_name);
     std::vector<std::string> visible_cuda_device;
     std::vector<std::string> visible_cuda_device_uuid;
@@ -301,7 +324,6 @@ int main(int argc, char *argv[])
     }
 
     /* parse environment variables */
-    worker_pool_enabled = 1;
     printf("* worker pool: %s\n", "always");
 
     /* setup signal handler */
@@ -329,7 +351,7 @@ int main(int argc, char *argv[])
     /* Spawn worker pool for each GPU. */
     if (worker_pool_enabled) {
         for (int i = 0; i < total_gpu_num; i++) {
-            for (int j = 0; j < WORKER_POOL_SIZE; j++) {
+            for (unsigned j = 0; j < worker_pool_size; j++) {
                 worker_port = get_worker_port(worker_id);
                 idle_workers[i].enqueue(worker_port);
 
@@ -353,7 +375,7 @@ int main(int argc, char *argv[])
     }
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(WORKER_MANAGER_PORT);
+    address.sin_port = htons(manager_port);
 
     if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address))<0) {
         perror("bind failed");
