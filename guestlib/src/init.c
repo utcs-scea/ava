@@ -104,9 +104,21 @@ EXPORTED_WEAKLY void start_migration(void)
         connect(manager_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
     }
     else if (!strcmp(getenv("AVA_CHANNEL"), "SHM") || !strcmp(getenv("AVA_CHANNEL"), "VSOCK")) {
+        /**
+         * Get manager's host address from ENV('AVA_MANAGER_ADDR').
+         * The address can either be a full IP:port or only the port (3333),
+         * but the IP address is always ignored.
+         */
+        char *manager_full_address;
+        int manager_port;
+        manager_full_address = getenv("AVA_MANAGER_ADDR");
+        assert(manager_full_address != NULL && "AVA_MANAGER_ADDR is not set");
+        parseServerAddress(manager_full_address, NULL, NULL, &manager_port);
+        assert(manager_port > 0 && "Invalid manager port");
+
         /* connect worker manager and send original worker id. */
         struct sockaddr_vm sa;
-        manager_fd = init_vm_socket(&sa, VMADDR_CID_HOST, WORKER_MANAGER_PORT);
+        manager_fd = init_vm_socket(&sa, VMADDR_CID_HOST, manager_port);
         conn_vm_socket(manager_fd, &sa);
     }
 

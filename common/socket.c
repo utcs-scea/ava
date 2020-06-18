@@ -231,3 +231,23 @@ size_t recv_socket(int sockfd, void *buf, size_t size)
     }
     return size;
 }
+
+void parseServerAddress(const char* full_address, struct hostent** info,
+                        char* ip, int* port) {
+  char* port_s = strchr(full_address, ':');
+  if (!port_s) {
+    if (ip)
+      sprintf(ip, "localhost");
+    if (port)
+      *port = atoi(full_address);
+  }
+  else {
+    if (ip)
+      strncpy(ip, full_address, port_s - full_address);
+    if (port)
+      *port = atoi(port_s + 1);
+  }
+
+  if (info)
+    *info = gethostbyname(ip);
+}

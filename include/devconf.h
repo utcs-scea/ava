@@ -80,9 +80,6 @@
 #define VGPU_ZERO_COPY_SIZE       MB(16)
 
 /* Worker manager */
-#define WORKER_POOL_SIZE    1
-#define WORKER_MANAGER_PORT 3333
-#define WORKER_PORT_BASE    4000
 #define WORKER_MANAGER_SOCKET_PATH "/tmp/worker_manager"
 #define DEST_SERVER_IP      "10.0.0.2"
 
