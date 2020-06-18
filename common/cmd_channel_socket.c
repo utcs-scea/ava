@@ -10,7 +10,6 @@
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <poll.h>
@@ -259,13 +258,30 @@ struct command_channel* command_channel_min_new()
 
     chan->vm_id = nw_global_vm_id = 1;
 
-    /* connect manager to get worker port */
+    /**
+     * Get manager's host address from ENV('AVA_MANAGER_ADDR').
+     * The address can either be a full IP:port (e.g. 0.0.0.0:3333),
+     * or only the port (3333), but the IP address is always ignored as
+     * the manager is assumed to be on the local server.
+     */
+    char *manager_full_address;
+    int manager_port;
+    manager_full_address = getenv("AVA_MANAGER_ADDR");
+    assert(manager_full_address != NULL && "AVA_MANAGER_ADDR is not set");
+    parseServerAddress(manager_full_address, NULL, NULL, &manager_port);
+    assert(manager_port > 0 && "Invalid manager port");
+
+    /**
+     * Connect manager which shall return the assigned API server's
+     * address. The address can either be a full IP:port or only the port
+     * if the API server is on the same machine as the manager.
+     */
     struct sockaddr_in serv_addr;
     int manager_fd = socket(AF_INET, SOCK_STREAM, 0);
 
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(WORKER_MANAGER_PORT);
+    serv_addr.sin_port = htons(manager_port);
     inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
     connect(manager_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
 
@@ -377,9 +393,22 @@ struct command_channel* command_channel_socket_new()
 
     chan->vm_id = nw_global_vm_id = 1;
 
+    /**
+     * Get manager's host address from ENV('AVA_MANAGER_ADDR').
+     * The address can either be a full IP:port (e.g. 0.0.0.0:3333),
+     * or only the port (3333), but the IP address is always ignored as
+     * the manager is assumed to be on the local server.
+     */
+    char *manager_full_address;
+    int manager_port;
+    manager_full_address = getenv("AVA_MANAGER_ADDR");
+    assert(manager_full_address != NULL && "AVA_MANAGER_ADDR is not set");
+    parseServerAddress(manager_full_address, NULL, NULL, &manager_port);
+    assert(manager_port > 0 && "Invalid manager port");
+
     /* connect manager to get worker port */
     struct sockaddr_vm sa;
-    int manager_fd = init_vm_socket(&sa, VMADDR_CID_HOST, WORKER_MANAGER_PORT);
+    int manager_fd = init_vm_socket(&sa, VMADDR_CID_HOST, manager_port);
     conn_vm_socket(manager_fd, &sa);
 
     struct command_base* msg = command_channel_socket_new_command((struct command_channel *)chan, sizeof(struct command_base), 0);
@@ -473,21 +502,32 @@ struct command_channel *command_channel_socket_tcp_new(int worker_port, int is_g
     if (is_guest) {
         chan->vm_id = nw_global_vm_id = 1;
 
-        /* Get worker's host address */
-        char *server_name;
+        /**
+         * Get manager's host address from ENV('AVA_MANAGER_ADDR').
+         * The address can either be a full IP:port (e.g. 0.0.0.0:3333),
+         * or only the port (3333) if the manager is on the local server.
+         */
+        char *manager_full_address;
+        char manager_name[128];
+        int manager_port;
         struct hostent *server_info;
-        server_name = getenv("AVA_WORKER_ADDR");
-        assert(server_name != NULL && "AVA_WORKER_ADDR is unset");
-        server_info = gethostbyname(server_name);
-        assert(server_info != NULL && "Unknown worker address");
+        manager_full_address = getenv("AVA_MANAGER_ADDR");
+        assert(manager_full_address != NULL && "AVA_MANAGER_ADDR is not set");
+        parseServerAddress(manager_full_address, &server_info, manager_name, &manager_port);
+        assert(server_info != NULL && "Unknown manager address");
+        assert(manager_port > 0 && "Invalid manager port");
 
-        /* Connect manager to get worker port */
+        /**
+         * Connect manager which shall return the assigned API server's
+         * address. The address can either be a full IP:port or only the port
+         * if the API server is on the same machine as the manager.
+         */
         int manager_fd = socket(AF_INET, SOCK_STREAM, 0);
         address.sin_family = AF_INET;
         address.sin_addr = *(struct in_addr *)server_info->h_addr;
-        address.sin_port = htons(WORKER_MANAGER_PORT);
+        address.sin_port = htons(manager_port);
         fprintf(stderr, "Connect target manager (%s) at %s:%d\n",
-                server_name, inet_ntoa(address.sin_addr), WORKER_MANAGER_PORT);
+                manager_full_address, inet_ntoa(address.sin_addr), manager_port);
         connect(manager_fd, (struct sockaddr *)&address, sizeof(address));
 
         struct command_base* msg = command_channel_socket_new_command(
@@ -496,24 +536,31 @@ struct command_channel *command_channel_socket_tcp_new(int worker_port, int is_g
         send_socket(manager_fd, msg, sizeof(struct command_base));
 
         recv_socket(manager_fd, msg, sizeof(struct command_base));
-        uintptr_t worker_port = *((uintptr_t *)msg->reserved_area);
+        char *worker_full_address = (char *)msg->reserved_area;
+        assert(worker_full_address != NULL && "No API server is assigned");
+        char worker_name[128];
+        int worker_port;
+        struct hostent *worker_server_info;
+        parseServerAddress(worker_full_address, &worker_server_info, worker_name, &worker_port);
+        assert(worker_server_info != NULL && "Unknown API server address");
+        assert(worker_port > 0 && "Invalid API server port");
+
         assert(nw_worker_id == 0); // TODO: Move assignment to nw_worker_id out of unrelated constructor.
         chan->listen_port = nw_worker_id = worker_port;
         command_channel_socket_free_command((struct command_channel *)chan, msg);
         close(manager_fd);
 
-        /* Start TCP client to connect worker */
-        if (!getenv("AVA_WPOOL") || !strcmp(getenv("AVA_WPOOL"), "FALSE"))
-            usleep(2000000);
-
-        DEBUG_PRINT("Assigned worker at port %lu\n", worker_port);
+        /**
+         * Start a TCP client to connect API server at `worker_name:worker_port`.
+         */
+        DEBUG_PRINT("Assigned worker at %s:%d\n", worker_name, worker_port);
         chan->sock_fd = socket(AF_INET, SOCK_STREAM, 0);
         setsockopt_lowlatency(chan->sock_fd);
         address.sin_family = AF_INET;
         address.sin_addr = *(struct in_addr *)server_info->h_addr;
         address.sin_port = htons(worker_port);
-        fprintf(stderr, "Connect target worker (%s) at %s:%lu\n",
-                server_name, inet_ntoa(address.sin_addr), worker_port);
+        fprintf(stderr, "Connect target worker (%s) at %s:%d\n",
+                worker_full_address, inet_ntoa(address.sin_addr), worker_port);
         connect(chan->sock_fd, (struct sockaddr *)&address, sizeof(address));
     }
     else {
@@ -538,7 +585,7 @@ struct command_channel *command_channel_socket_tcp_new(int worker_port, int is_g
             perror("listen");
         }
 
-        printf("[target worker@%d] waiting for source worker connection\n", chan->listen_port);
+        fprintf(stderr, "[%d] Waiting for guestlib connection\n", chan->listen_port);
         chan->sock_fd = accept(chan->listen_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen);
         if (chan->sock_fd < 0) {
            perror("accept");
@@ -554,7 +601,7 @@ struct command_channel *command_channel_socket_tcp_new(int worker_port, int is_g
             struct sockaddr_in *s = (struct sockaddr_in *)&source_addr;
             char ipstr[64];
             inet_ntop(AF_INET, &s->sin_addr, ipstr, sizeof(ipstr));
-            printf("Accept source worker@%s:%d\n", ipstr, ntohs(s->sin_port));
+            fprintf(stderr, "[%d] Accept guestlib at %s:%d\n", chan->listen_fd, ipstr, ntohs(s->sin_port));
         }
 #endif
 
@@ -563,8 +610,8 @@ struct command_channel *command_channel_socket_tcp_new(int worker_port, int is_g
         recv_socket(chan->sock_fd, &init_msg, sizeof(struct command_handler_initialize_api_command));
         chan->init_command_type = init_msg.new_api_id;
         chan->vm_id = init_msg.base.vm_id;
-        printf("[worker@%d] vm_id=%d, api_id=%x\n",
-                chan->listen_port, chan->vm_id, chan->init_command_type);
+        fprintf(stderr, "[%d] Accept guestlib with API_ID=%x\n",
+                chan->listen_port, chan->init_command_type);
     }
 
     chan->pfd.fd = chan->sock_fd;

@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <netdb.h>
 
 #include <sys/socket.h>
 #include <linux/vm_sockets.h>
@@ -83,6 +84,17 @@ size_t send_socket(int sockfd, const void *buf, size_t size);
  * being used.
  **/
 size_t recv_socket(int sockfd, void *buf, size_t size);
+
+/**
+ * parseServerAddress - Get host IP and port from a given full address
+ * @full_address: can either be a full IP:port (e.g. 0.0.0.0:3333) or just
+ *     the port (3333)
+ * @ip: returned IP address. NULL if @full_address is a port
+ * @info: server info gotten by `gethostbyname`
+ * @port: return port number
+ */
+void parseServerAddress(const char* full_address, struct hostent** info,
+                        char* ip, int* port);
 
 #ifdef __cplusplus
 }

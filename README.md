@@ -71,12 +71,13 @@ manually implemented Python forwarding):
 
 Export the following variables in bash profile:
 
-| Name        | Example               | Explanation                             |
-|-------------|-----------------------|-----------------------------------------|
-| AVA_ROOT    | /project/ava          | Path to AvA source tree                 |
-| AVA_CHANNEL | SHM                   | Transport channel (SHM\|TCP\|VSOCK\|LOCAL) |
-| AVA_WPOOL   | TRUE                  | Enable API server pool                  |
-| DATA_DIR    | /project/rodinia/data | Path to Rodinia dataset                 |
+| Name             | Example               | Explanation                             |
+|------------------|-----------------------|-----------------------------------------|
+| AVA_ROOT         | /project/ava          | Path to AvA source tree                 |
+| AVA_CHANNEL      | SHM                   | Transport channel (SHM\|TCP\|VSOCK\|LOCAL) |
+| AVA_MANAGER_ADDR | 0.0.0.0:3333          | (guestlib only) AvA manager's address   |
+| AVA_WPOOL        | TRUE                  | Enable API server pool                  |
+| DATA_DIR         | /project/rodinia/data | Path to Rodinia dataset                 |
 
 More environment variables are introduces in CAvA and benchmarks'
 documentations.
@@ -297,8 +298,9 @@ The following variables must be set and consistent in the guest VM and host.
   To use LOCAL or TCP channel, the `manager_tcp` (instead of `manager`) is required to be
   started.
 
-* Worker host address `export AVA_WORKER_ADDR=<Server name or IP addreses>`.
-  The variable must be set for TCP channel.
+* AvA manager host address `export AVA_MANAGER_ADDR=<Server name or IP addreses:port>`.
+  The variable must be set for guestlib. If the address is barely a port, the server name
+  will use `localhost`.
 
 * Worker pooling `export AVA_WPOOL=TRUE|FALSE`.
   The default is `FALSE` when `AVA_WPOOL` is unset.

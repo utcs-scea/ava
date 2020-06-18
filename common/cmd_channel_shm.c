@@ -323,10 +323,23 @@ struct command_channel* command_channel_shm_new()
     nw_global_pb_info.param_block_size = chan->param_block.size;
     fprintf(stderr, "param_block size=%lx, offset=%lx, base=%lx\n", chan->param_block.size, chan->param_block.offset, (uintptr_t)chan->param_block.base);
 
+    /**
+     * Get manager's host address from ENV('AVA_MANAGER_ADDR').
+     * The address can either be a full IP:port (e.g. 0.0.0.0:3333),
+     * or only the port (3333), but the IP address is always ignored as
+     * the manager is assumed to be on the local server.
+     */
+    char *manager_full_address;
+    int manager_port;
+    manager_full_address = getenv("AVA_MANAGER_ADDR");
+    assert(manager_full_address != NULL && "AVA_MANAGER_ADDR is not set");
+    parseServerAddress(manager_full_address, NULL, NULL, &manager_port);
+    assert(manager_port > 0 && "Invalid manager port");
+
     /* connect worker manager and send vm_id, param_block offset (inside
      * the VM's shared memory region) and param_block size. */
     struct sockaddr_vm sa;
-    int manager_fd = init_vm_socket(&sa, VMADDR_CID_HOST, WORKER_MANAGER_PORT);
+    int manager_fd = init_vm_socket(&sa, VMADDR_CID_HOST, manager_port);
     conn_vm_socket(manager_fd, &sa);
 
     struct command_base* msg = command_channel_shm_new_command((struct command_channel *)chan, sizeof(struct command_base), 0);
