@@ -2,6 +2,7 @@
 	path = llvm
 	url = https://github.com/utcs-scea/ava-llvm.git
 	branch = master
+  ignore = dirty
 [submodule "third_party/abseil-cpp"]
 	path = third_party/abseil-cpp
 	url = https://github.com/abseil/abseil-cpp.git
