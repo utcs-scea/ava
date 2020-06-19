@@ -35,19 +35,7 @@ endif()
 
 ###### Build dependent libraries ######
 
-include(FetchContent)
 include(ExternalProject)
-
-# Build customized LLVM
-
-ExternalProject_Add(ava-llvm
-  PREFIX ava-llvm
-  BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/llvm/build
-  DOWNLOAD_COMMAND ""
-  CONFIGURE_COMMAND ${CMAKE_COMMAND} -DLLVM_ENABLE_PROJECTS=clang -G "Unix Makefiles" ${CMAKE_CURRENT_SOURCE_DIR}/llvm/llvm
-  BUILD_COMMAND make -j4
-  INSTALL_COMMAND ""
-)
 
 # Build RPC libraries
 
@@ -134,8 +122,9 @@ ExternalProject_Add(flatbuffers
   DEPENDS protobuf grpc
 )
 
-# Build AvA manager using a CMakeLists.txt that assumes all the dependencies
-# have already been installed.
+###### Build AvA manager ######
+
+# Build manager sing a CMakeLists.txt that assumes all the dependencies have already been installed.
 # Even though it is not really an "external project" from perspective of this build,
 # we are still importing it using ExternalProject_Add because that allows us to use find_package()
 # to locate all the dependencies (if we were building it directly in this build,
@@ -144,7 +133,25 @@ ExternalProject_Add(flatbuffers
 ExternalProject_Add(ava-manager
   PREFIX ava-manager
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker"
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/worker
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/worker"
+  INSTALL_COMMAND ""
+  CMAKE_CACHE_ARGS
+        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+        -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
+        -DZLIB_ROOT:STRING=${EXTERNAL_BINARY_DIR}/zlib
+        -Dabsl_DIR:STRING=${EXTERNAL_BINARY_DIR}/absl/lib/cmake/absl
+        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+        -DgRPC_DIR:PATH=${EXTERNAL_BINARY_DIR}/grpc/lib/cmake/grpc
+        -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
+  DEPENDS protobuf grpc
+)
+
+###### Generate and build remoting stubs ######
+
+ExternalProject_Add(ava-spec
+  PREFIX ava-spec
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cava"
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated"
   INSTALL_COMMAND ""
   CMAKE_CACHE_ARGS
         -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
