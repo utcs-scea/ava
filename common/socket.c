@@ -2,6 +2,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <netinet/tcp.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/select.h>
@@ -226,7 +227,7 @@ size_t recv_socket(int sockfd, void *buf, size_t size)
             close(sockfd);
             exit(0);
         }
-        buf = (const void *)((char *)buf + ret);
+        buf = (void *)((char *)buf + ret);
         left_bytes -= ret;
     }
     return size;
@@ -250,4 +251,18 @@ void parseServerAddress(const char* full_address, struct hostent** info,
 
   if (info)
     *info = gethostbyname(ip);
+}
+
+/**
+ * Configure fd for low-latency transmission.
+ *
+ * This currently sets TCP_NODELAY.
+ */
+int setsockopt_lowlatency(int fd)
+{
+    int enabled = 1;
+    int r = setsockopt(fd, SOL_TCP, TCP_NODELAY, &enabled, sizeof(enabled));
+    if(r)
+        perror("setsockopt TCP_NODELAY");
+    return r;
 }

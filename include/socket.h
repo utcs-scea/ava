@@ -96,6 +96,9 @@ size_t recv_socket(int sockfd, void *buf, size_t size);
 void parseServerAddress(const char* full_address, struct hostent** info,
                         char* ip, int* port);
 
+
+int setsockopt_lowlatency(int fd);
+
 #ifdef __cplusplus
 }
 #endif
