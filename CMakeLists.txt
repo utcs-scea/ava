@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.13)
 
 project(ava)
 
+###### Options ######
+
+set(AVA_ENABLE_DEBUG OFF CACHE BOOL "Enable debug prints")
+
 ###### Configure compiler ######
 
 # generate compile_commands.json
@@ -119,6 +123,24 @@ ExternalProject_Add(flatbuffers
         -DGRPC_INSTALL_PATH:PATH=${EXTERNAL_BINARY_DIR}/grpc
         -DPROTOBUF_DOWNLOAD_PATH:PATH=${EXTERNAL_BINARY_DIR}/src/protobuf
         -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers
+  DEPENDS protobuf grpc
+)
+
+###### Compile proto files ######
+
+ExternalProject_Add(ava-proto
+  PREFIX ava-proto
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/proto"
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/proto"
+  INSTALL_COMMAND ""
+  CMAKE_CACHE_ARGS
+        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+        -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
+        -DZLIB_ROOT:STRING=${EXTERNAL_BINARY_DIR}/zlib
+        -Dabsl_DIR:STRING=${EXTERNAL_BINARY_DIR}/absl/lib/cmake/absl
+        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+        -DgRPC_DIR:PATH=${EXTERNAL_BINARY_DIR}/grpc/lib/cmake/grpc
+        -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
   DEPENDS protobuf grpc
 )
 

@@ -1,0 +1,34 @@
+/*******************************************************************************
+ * This protocol defines objects and services used by AvA's essential components
+ * (e.g. command channel) and customizable components (e.g. manager). To extend
+ * the protocol, one should patch the protocol based on existing fields.
+ * Fields in tables are all optional.
+ *******************************************************************************/
+
+/**
+ * During the creation of the command channel in Guestlib, the channel requests
+ * Manager to assign an API server to the application, and then connects the API
+ * server directly to execute APIs.
+ *
+ * The request object can be extended based on supported resources. For example,
+ * `gpu_count` is the number of requested GPUs, and `gpu_mem` is a `gpu_count`-
+ * sized vector containing the memory required for each GPU. `worker_count` should
+ * be equal to or less than `gpu_count` in this case.
+ */
+table WorkerAssignRequest {
+  worker_count:int; /* Number of requested API servers */
+  gpu_count:int;    /* Number of requested GPUs */
+  gpu_mem:[ulong];  /* Available memory required for each GPU */
+}
+
+/**
+ * Manager replies with a list of API server addresses. The length of `worker_address`
+ * must equal `worker_count` in the request.
+ */
+table WorkerAssignReply {
+  worker_address:[string];
+}
+
+rpc_service ManagerService {
+  AssignWorker(WorkerAssignRequest): WorkerAssignReply;
+}

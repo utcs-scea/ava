@@ -32,6 +32,8 @@ ExternalProject_Add_Step(cava cuda-link
   DEPENDEES cuda-compile
 )
 
+add_subdirectory(cu_nw)
+
 ###### Example: compile cudart.nw.c ######
 
 # find_package(PkgConfig REQUIRED)
