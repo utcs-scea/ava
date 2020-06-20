@@ -165,7 +165,7 @@ ExternalProject_Add(ava-manager
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${EXTERNAL_BINARY_DIR}/grpc/lib/cmake/grpc
         -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
-  DEPENDS protobuf grpc
+  DEPENDS protobuf grpc flatbuffers
 )
 
 ###### Generate and build remoting stubs ######
@@ -183,5 +183,6 @@ ExternalProject_Add(ava-spec
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${EXTERNAL_BINARY_DIR}/grpc/lib/cmake/grpc
         -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
-  DEPENDS protobuf grpc
+  BUILD_ALWAYS ON
+  DEPENDS protobuf grpc flatbuffers
 )

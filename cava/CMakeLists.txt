@@ -1,3 +1,11 @@
+get_cmake_property(vars CACHE_VARIABLES)
+foreach(var ${vars})
+  if (var MATCHES ".*_DIR$" OR var MATCHES ".*_ROOT$")
+    #message(STATUS "${var} = [${${var}}]")
+    list(APPEND CL_ARGS "-D${var}=${${var}}")
+  endif()
+endforeach()
+
 project(ava-spec)
 
 include(ExternalProject)
@@ -21,18 +29,23 @@ ExternalProject_Add_Step(cava cuda-nwcc
   ALWAYS ON
   DEPENDEES install
 )
-ExternalProject_Add_Step(cava cuda-compile
-  COMMAND make clean && make -j2 R=1
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/cu_nw
+
+ExternalProject_Add_Step(cava cuda-link
+  COMMAND mkdir -p generated && ln -f -s ${CMAKE_CURRENT_BINARY_DIR}/cu_nw/libguestlib.so ${CMAKE_CURRENT_BINARY_DIR}/cu_nw/libcuda.so.1
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES cuda-nwcc
 )
-ExternalProject_Add_Step(cava cuda-link
-  COMMAND mkdir -p generated && ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/cu_nw/libguestlib.so generated/libcuda.so.1 && ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/cu_nw/worker generated/worker
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
-  DEPENDEES cuda-compile
-)
+ExternalProject_Add_StepTargets(cava cuda-link)
 
-add_subdirectory(cu_nw)
+ExternalProject_Add(cu_nw
+  PREFIX cu_nw
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cu_nw
+  BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/cu_nw
+  INSTALL_COMMAND ""
+  CMAKE_ARGS ${CL_ARGS}
+  BUILD_ALWAYS ON
+  DEPENDS cava-cuda-link
+)
 
 ###### Example: compile cudart.nw.c ######
 
@@ -44,15 +57,22 @@ add_subdirectory(cu_nw)
 #   ALWAYS ON
 #   DEPENDEES install
 # )
-# ExternalProject_Add_Step(cava cudart-compile
-#   COMMAND make clean && make -j2 R=1
-#   WORKING_DIRECTORY ${AVA_CAVA_LOCATION}/katana_cuda_nw
+#
+# ExternalProject_Add_Step(cava cudart-link
+#   COMMAND mkdir -p generated && ln -f -s ${CMAKE_CURRENT_BINARY_DIR}/cudart_nw/libguestlib.so ${CMAKE_CURRENT_BINARY_DIR}/cudart_nw/libcudart.so.10.1
+#   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
 #   DEPENDEES cudart-nwcc
 # )
-# ExternalProject_Add_Step(cava cudart-link
-#   COMMAND mkdir -p generated && ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/cudart_nw/libguestlib.so generated/libcudart.so.10.1 && ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/cudart_nw/worker generated/worker
-#   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
-#   DEPENDEES cudart-compile
-# )
+# ExternalProject_Add_StepTargets(cava cudart-link)
+#
+#ExternalProject_Add(cudart_nw
+#  PREFIX cudart_nw
+#  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cudart_nw
+#  BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/cudart_nw
+#  INSTALL_COMMAND ""
+#  CMAKE_ARGS ${CL_ARGS}
+#  BUILD_ALWAYS ON
+#  DEPENDS cava-cudart-link
+#)
 
 ###### Define your compilation below ######
