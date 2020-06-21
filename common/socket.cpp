@@ -14,11 +14,12 @@
 int init_netlink_socket(struct sockaddr_nl *src_addr, struct sockaddr_nl *dst_addr)
 {
     int sock_fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_USERSOCK);
+    int set = 1;
     if (sock_fd < 0) {
         perror("ERROR opening netlink socket");
         exit(0);
     }
-    if (setsockopt(sock_fd, SOL_NETLINK, NETLINK_NO_ENOBUFS, (int[]){1}, sizeof(int)) != 0) {
+    if (setsockopt(sock_fd, SOL_NETLINK, NETLINK_NO_ENOBUFS, &set, sizeof(int)) != 0) {
         perror("ERROR setsockopt SOL_NETLINK");
     }
 
@@ -235,7 +236,7 @@ size_t recv_socket(int sockfd, void *buf, size_t size)
 
 void parseServerAddress(const char* full_address, struct hostent** info,
                         char* ip, int* port) {
-  char* port_s = strchr(full_address, ':');
+  char* port_s = strchr((char *)full_address, ':');
   if (!port_s) {
     if (ip)
       sprintf(ip, "localhost");

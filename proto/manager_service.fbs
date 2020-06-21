@@ -24,6 +24,7 @@ table WorkerAssignRequest {
 /**
  * Manager replies with a list of API server addresses. The length of `worker_address`
  * must equal `worker_count` in the request.
+ * The returned address must follow the format of `IP:PORT`.
  */
 table WorkerAssignReply {
   worker_address:[string];

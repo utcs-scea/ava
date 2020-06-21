@@ -116,9 +116,11 @@ static const uint64_t DEV_MEM_PARTITIONS[MAX_VM_NUM+1] = {0, GB(2UL), GB(2UL)};
        _a > _b ? _a : _b; })
 
 #ifdef __KERNEL__
-    #include <linux/kernel.h>
+  #include <linux/kernel.h>
 #else
+  #ifndef __cplusplus
     #define max(a, b) vgpu_max(a, b)
+  #endif
 #endif
 
 #endif

@@ -10,12 +10,16 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <string>
+#include <vector>
+
 #include "common/cmd_channel_impl.h"
 #include "common/devconf.h"
 #include "common/debug.h"
 #include "common/guest_mem.h"
 #include "common/cmd_handler.h"
 #include "cmd_channel_socket_utilities.h"
+#include "manager_service.h"
 
 extern int nw_global_vm_id;
 
@@ -183,52 +187,29 @@ struct command_channel* command_channel_socket_tcp_new(int worker_port, int is_g
         chan->vm_id = nw_global_vm_id = 1;
 
         /**
-         * Get manager's host address from ENV('AVA_MANAGER_ADDR').
-         * The address can either be a full IP:port (e.g. 0.0.0.0:3333),
-         * or only the port (3333) if the manager is on the local server.
+         * Get manager's host address from ENV('AVA_MANAGER_ADDR') which must
+         * be a full IP:PORT (e.g. 0.0.0.0:3333).
+         * Manager shall return the assigned API servers' addresses which must
+         * be full IP:PORT addresses as well.
          */
-        char *manager_full_address;
-        char manager_name[128];
-        int manager_port;
-        struct hostent *server_info;
-        manager_full_address = getenv("AVA_MANAGER_ADDR");
-        assert(manager_full_address != NULL && "AVA_MANAGER_ADDR is not set");
-        parseServerAddress(manager_full_address, &server_info, manager_name, &manager_port);
-        assert(server_info != NULL && "Unknown manager address");
-        assert(manager_port > 0 && "Invalid manager port");
+        std::string manager_address(getenv("AVA_MANAGER_ADDR"));
+        assert(!manager_address.empty() && "Unknown manager address");
 
-        /**
-         * Connect manager which shall return the assigned API server's
-         * address. The address can either be a full IP:port or only the port
-         * if the API server is on the same machine as the manager.
-         */
-        int manager_fd = socket(AF_INET, SOCK_STREAM, 0);
-        address.sin_family = AF_INET;
-        address.sin_addr = *(struct in_addr *)server_info->h_addr;
-        address.sin_port = htons(manager_port);
-        fprintf(stderr, "Connect target manager (%s) at %s:%d\n",
-                manager_full_address, inet_ntoa(address.sin_addr), manager_port);
-        connect(manager_fd, (struct sockaddr *)&address, sizeof(address));
+        auto channel = grpc::CreateChannel(manager_address, grpc::InsecureChannelCredentials());
+        auto client  = std::make_unique<ManagerServiceClient>(channel);
+        std::vector<uint64_t> gpu_mem;
+        std::vector<std::string> worker_address = client->AssignWorker(1, 0, gpu_mem);
+        assert(!worker_address.empty() && "No API server is assigned");
 
-        struct command_base* msg = chansocketutil::command_channel_socket_new_command(
-                (struct command_channel *)chan, sizeof(struct command_base), 0);
-        msg->command_type = NW_NEW_APPLICATION;
-        send_socket(manager_fd, msg, sizeof(struct command_base));
-
-        recv_socket(manager_fd, msg, sizeof(struct command_base));
-        char *worker_full_address = (char *)msg->reserved_area;
-        assert(worker_full_address != NULL && "No API server is assigned");
         char worker_name[128];
         int worker_port;
         struct hostent *worker_server_info;
-        parseServerAddress(worker_full_address, &worker_server_info, worker_name, &worker_port);
+        parseServerAddress(worker_address[0].c_str(), &worker_server_info, worker_name, &worker_port);
         assert(worker_server_info != NULL && "Unknown API server address");
         assert(worker_port > 0 && "Invalid API server port");
 
         assert(nw_worker_id == 0); // TODO: Move assignment to nw_worker_id out of unrelated constructor.
         chan->listen_port = nw_worker_id = worker_port;
-        chansocketutil::command_channel_socket_free_command((struct command_channel *)chan, msg);
-        close(manager_fd);
 
         /**
          * Start a TCP client to connect API server at `worker_name:worker_port`.
@@ -237,10 +218,10 @@ struct command_channel* command_channel_socket_tcp_new(int worker_port, int is_g
         chan->sock_fd = socket(AF_INET, SOCK_STREAM, 0);
         setsockopt_lowlatency(chan->sock_fd);
         address.sin_family = AF_INET;
-        address.sin_addr = *(struct in_addr *)server_info->h_addr;
+        address.sin_addr = *(struct in_addr *)worker_server_info->h_addr;
         address.sin_port = htons(worker_port);
         fprintf(stderr, "Connect target worker (%s) at %s:%d\n",
-                worker_full_address, inet_ntoa(address.sin_addr), worker_port);
+                worker_address[0].c_str(), inet_ntoa(address.sin_addr), worker_port);
         connect(chan->sock_fd, (struct sockaddr *)&address, sizeof(address));
     }
     else {
