@@ -83,6 +83,9 @@ Functions are missing from {args.inputfile}, but appear in {", ".join(api.includ
             from .generator.c import makefile
             write_file_c(*makefile.source(api, errors), indent=False, filename_prefix=filename_prefix)
 
+            from .generator.c import cmakelists
+            write_file_c(*cmakelists.source(api, errors), indent=False, filename_prefix=filename_prefix)
+
             if args.build:
                 import subprocess
                 try:

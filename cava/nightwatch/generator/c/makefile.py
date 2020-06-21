@@ -40,19 +40,21 @@ WORKER_LIBS+=`pkg-config --libs glib-2.0` {api.libs}
 all: libguestlib.so worker
 
 vpath %.c ../../common/
-vpath %.c ../../worker/
+vpath %.cpp ../../common/
+vpath %.cpp ../../worker/
 vpath %.c ../../guestlib/src/
 
-GENERAL_SOURCES_C=cmd_channel.c murmur3.c cmd_handler.c endpoint_lib.c socket.c zcopy.c \
-                  cmd_channel_record.c cmd_channel_hv.c cmd_channel_socket.c shadow_thread_pool.c
+GENERAL_SOURCES_C=cmd_channel.c murmur3.c cmd_handler.c endpoint_lib.c socket.c zcopy.c \\
+                  cmd_channel_record.c cmd_channel_hv.c shadow_thread_pool.c \\
+                  cmd_channel_socket_utilities.cpp cmd_channel_socket_tcp.cpp cmd_channel_socket_vsock.cpp
 WORKER_SPECIFIC_SOURCES={api.c_worker_spelling}
-WORKER_SPECIFIC_SOURCES_C=worker.c cmd_channel_shm_worker.c
+WORKER_SPECIFIC_SOURCES_C=worker.cpp cmd_channel_shm_worker.c
 GUESTLIB_SPECIFIC_SOURCES={api.c_library_spelling}
 GUESTLIB_SPECIFIC_SOURCES_C=init.c cmd_channel_shm.c
 
-GENERAL_OBJECTS_C=$(addprefix objs/,$(GENERAL_SOURCES_C:.c=.o))
-WORKER_SPECIFIC_OBJECTS=$(addprefix objs/,$(patsubst %.cpp,%.o,$(WORKER_SPECIFIC_SOURCES:.c=.o))) 
-WORKER_SPECIFIC_OBJECTS_C=$(addprefix objs/,$(WORKER_SPECIFIC_SOURCES_C:.c=.o))
+GENERAL_OBJECTS_C=$(addprefix objs/,$(addsuffix .o,$(basename $(GENERAL_SOURCES_C))))
+WORKER_SPECIFIC_OBJECTS=$(addprefix objs/,$(patsubst %.cpp,%.o,$(WORKER_SPECIFIC_SOURCES:.c=.o)))
+WORKER_SPECIFIC_OBJECTS_C=$(addprefix objs/,$(addsuffix .o,$(basename $(WORKER_SPECIFIC_SOURCES_C))))
 GUESTLIB_SPECIFIC_OBJECTS=$(addprefix objs/,$(patsubst %.cpp,%.o,$(GUESTLIB_SPECIFIC_SOURCES:.c=.o)))
 GUESTLIB_SPECIFIC_OBJECTS_C=$(addprefix objs/,$(GUESTLIB_SPECIFIC_SOURCES_C:.c=.o))
 
@@ -76,7 +78,7 @@ objs/%.o: %.c objs/.directory
 	$(CC) -c -fPIC -I../../worker/include -I../../guestlib/include $(CFLAGS) $(CPPFLAGS) $< -o $@
 objs/%.o: %.cpp objs/.directory
 	$(CXX) -c -fPIC -I../../worker/include -I../../guestlib/include $(CXXFLAGS) $(CFLAGS) $(CPPFLAGS) $< -o $@
-    
+
 worker: $(GENERAL_OBJECTS_C) $(WORKER_SPECIFIC_OBJECTS) $(WORKER_SPECIFIC_OBJECTS_C)
 	$(LINKER) -I../../worker/include $^ $(CFLAGS) $(WORKER_LIBS) $(LIBS) -o $@
 
