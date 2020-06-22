@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <grpc++/grpc++.h>
+
+#include <iostream>
 
 #include "guestlib.h"
 #include "common/linkage.h"
@@ -26,6 +29,8 @@ static struct command_channel* channel_create()
 
 EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id)
 {
+    std::ios_base::Init();
+
 #ifdef AVA_PRINT_TIMESTAMP
     struct timeval ts;
     gettimeofday(&ts, NULL);
@@ -44,6 +49,10 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id)
     else {
         printf("Unsupported AVA_CHANNEL type (export AVA_CHANNEL=[TCP | SHM | VSOCK]\n");
         exit(0);
+    }
+    if (!chan) {
+      std::cerr << "Failed to create command channel" << std::endl;
+      exit(1);
     }
     init_command_handler(channel_create);
     init_internal_command_handler();

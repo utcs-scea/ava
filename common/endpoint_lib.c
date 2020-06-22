@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <stdatomic.h>
 
+struct ava_endpoint __ava_endpoint;
+
 struct nw_handle_pool {
     GHashTable *to_handle;
     GHashTable *to_id;

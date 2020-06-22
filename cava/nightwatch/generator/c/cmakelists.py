@@ -13,7 +13,7 @@ set(c_flags {api.cflags})
 set(cxx_flags {api.cxxflags})
 add_compile_options("$<$<COMPILE_LANGUAGE:C>:${{c_flags}}>")
 add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:${{cxx_flags}}>")
-add_compile_options(-Wall -D_FILE_OFFSET_BITS=64)
+add_compile_options(-Wall -D_FILE_OFFSET_BITS=64 -fPIC)
 
 if (AVA_ENABLE_DEBUG)
   add_compile_options(-O0 -g -ggdb -rdynamic)
@@ -92,7 +92,7 @@ target_link_libraries(worker
 )
 
 add_library(guestlib SHARED
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/init.c
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/init.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm.c
   {api.c_library_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.c
