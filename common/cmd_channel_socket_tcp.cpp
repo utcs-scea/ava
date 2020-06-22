@@ -10,6 +10,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -56,8 +57,12 @@ struct command_channel* command_channel_socket_tcp_new(int worker_port, int is_g
          * Manager shall return the assigned API servers' addresses which must
          * be full IP:PORT addresses as well.
          */
-        std::string manager_address(getenv("AVA_MANAGER_ADDR"));
-        assert(!manager_address.empty() && "Unknown manager address");
+        const char* ma_env = getenv("AVA_MANAGER_ADDR");
+        if (ma_env == NULL) {
+          std::cerr << "AVA_MANAGER_ADDR is not set: unknown manager address" << std::endl;
+          goto error;
+        }
+        std::string manager_address(ma_env);
 
         auto channel = grpc::CreateChannel(manager_address, grpc::InsecureChannelCredentials());
         auto client  = std::make_unique<ManagerServiceClient>(channel);
@@ -143,6 +148,10 @@ struct command_channel* command_channel_socket_tcp_new(int worker_port, int is_g
     chan->pfd.events = POLLIN | POLLRDHUP;
 
     return (struct command_channel *)chan;
+
+error:
+    free(chan);
+    return NULL;
 }
 
 struct command_channel* command_channel_socket_tcp_migration_new(int worker_port, int is_source)

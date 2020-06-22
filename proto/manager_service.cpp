@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "manager_service.h"
 
 grpc::Status ManagerServiceClient::RegisterDaemon(const std::string& self_address) {
@@ -29,7 +31,7 @@ std::vector<std::string> ManagerServiceClient::AssignWorker(
   auto status = stub_->AssignWorker(&context, request_msg, &response_msg);
 
   /* Parse response. */
-  if (!status.ok()) {
+  if (status.ok()) {
     const WorkerAssignReply* response = response_msg.GetRoot();
     auto wa                           = response->worker_address();
     for (auto const& addr_offset : *wa) {
@@ -37,8 +39,10 @@ std::vector<std::string> ManagerServiceClient::AssignWorker(
       std::cerr << "Assigned API server at " << _wa << std::endl;
       worker_address.push_back(_wa);
     }
+  }
+  else
     std::cerr << status.error_code() << ": " << status.error_message()
               << std::endl;
-  }
+
   return worker_address;
 }
