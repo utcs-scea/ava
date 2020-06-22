@@ -50,7 +50,7 @@ ExternalProject_Add(absl
   PREFIX absl
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/abseil-cpp"
   CMAKE_CACHE_ARGS
-        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=TRUE
+        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/absl
 )
 
@@ -74,6 +74,7 @@ ExternalProject_Add(protobuf
         -Dprotobuf_BUILD_TESTS:BOOL=OFF
         -Dprotobuf_WITH_ZLIB:BOOL=OFF
         -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF
+        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/protobuf
 )
 
@@ -82,6 +83,7 @@ ExternalProject_Add(zlib
   PREFIX zlib
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib"
   CMAKE_CACHE_ARGS
+        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/zlib
 )
 
@@ -112,6 +114,8 @@ ExternalProject_Add(grpc
         -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
         -DgRPC_SSL_PROVIDER:STRING=package
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+        -DBUILD_SHARED_LIBS:BOOL=ON
+        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/grpc
   DEPENDS c-ares protobuf zlib absl
 )
@@ -122,6 +126,7 @@ ExternalProject_Add(flatbuffers
   CMAKE_CACHE_ARGS
         -DGRPC_INSTALL_PATH:PATH=${EXTERNAL_BINARY_DIR}/grpc
         -DPROTOBUF_DOWNLOAD_PATH:PATH=${EXTERNAL_BINARY_DIR}/src/protobuf
+        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers
   DEPENDS protobuf grpc
 )
