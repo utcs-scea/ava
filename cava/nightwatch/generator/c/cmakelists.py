@@ -9,8 +9,10 @@ project({api.identifier.lower()}_nw C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_compile_options("$<$<COMPILE_LANGUAGE:C>:{api.cflags}>")
-add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:{api.cxxflags}>")
+set(c_flags {api.cflags})
+set(cxx_flags {api.cxxflags})
+add_compile_options("$<$<COMPILE_LANGUAGE:C>:${{c_flags}}>")
+add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:${{cxx_flags}}>")
 add_compile_options(-Wall -D_FILE_OFFSET_BITS=64)
 
 if (AVA_ENABLE_DEBUG)
