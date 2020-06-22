@@ -115,8 +115,9 @@ int main(int argc, char *argv[])
     /* parse arguments */
     listen_port = atoi(argv[1]);
 
-    if (!getenv("AVA_CHANNEL") || !strcmp(getenv("AVA_CHANNEL"), "LOCAL")) {
-        chan = command_channel_min_worker_new(listen_port);
+    if (!getenv("AVA_CHANNEL") || !strcmp(getenv("AVA_CHANNEL"), "TCP")) {
+        chan_hv = NULL;
+        chan = command_channel_socket_tcp_new(listen_port, 0);
     }
     else if (!strcmp(getenv("AVA_CHANNEL"), "SHM")) {
         chan_hv = command_channel_hv_new(listen_port);
@@ -126,12 +127,8 @@ int main(int argc, char *argv[])
         chan_hv = command_channel_hv_new(listen_port);
         chan = command_channel_socket_worker_new(listen_port);
     }
-    else if (!strcmp(getenv("AVA_CHANNEL"), "TCP")) {
-        chan_hv = NULL;
-        chan = command_channel_socket_tcp_new(listen_port, 0);
-    }
     else {
-        printf("Unsupported AVA_CHANNEL type (export AVA_CHANNEL=[LOCAL | SHM | VSOCK | TCP]\n");
+        printf("Unsupported AVA_CHANNEL type (export AVA_CHANNEL=[TCP | SHM | VSOCK]\n");
         return 0;
     }
 

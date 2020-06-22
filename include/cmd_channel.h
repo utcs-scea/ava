@@ -310,11 +310,9 @@ void command_execution_loop() {
 
 //! Channel constructors
 struct command_channel* command_channel_shm_new(void);
-struct command_channel* command_channel_min_new(void);
 struct command_channel* command_channel_socket_new(void);
 
 struct command_channel* command_channel_shm_worker_new(int listen_port);
-struct command_channel* command_channel_min_worker_new(int listen_port);
 struct command_channel* command_channel_socket_worker_new(int listen_port);
 struct command_channel* command_channel_socket_tcp_migration_new(int worker_port, int is_source);
 struct command_channel* command_channel_socket_tcp_new(int worker_port, int is_guest);

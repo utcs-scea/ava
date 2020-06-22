@@ -32,8 +32,8 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id)
 #endif
 
     /* Create connection to worker and start command handler thread */
-    if (!getenv("AVA_CHANNEL") || !strcmp(getenv("AVA_CHANNEL"), "LOCAL")) {
-        chan = command_channel_min_new();
+    if (!getenv("AVA_CHANNEL") || !strcmp(getenv("AVA_CHANNEL"), "TCP")) {
+        chan = command_channel_socket_tcp_new(0, 1);
     }
     else if (!strcmp(getenv("AVA_CHANNEL"), "SHM")) {
         chan = command_channel_shm_new();
@@ -41,11 +41,8 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id)
     else if (!strcmp(getenv("AVA_CHANNEL"), "VSOCK")) {
         chan = command_channel_socket_new();
     }
-    else if (!strcmp(getenv("AVA_CHANNEL"), "TCP")) {
-        chan = command_channel_socket_tcp_new(0, 1);
-    }
     else {
-        printf("Unsupported AVA_CHANNEL type (export AVA_CHANNEL=[LOCAL | SHM | VSOCK | TCP]\n");
+        printf("Unsupported AVA_CHANNEL type (export AVA_CHANNEL=[TCP | SHM | VSOCK]\n");
         exit(0);
     }
     init_command_handler(channel_create);
