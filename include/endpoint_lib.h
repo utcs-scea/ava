@@ -285,7 +285,7 @@ struct ava_endpoint {
 #endif
 };
 
-struct ava_endpoint __ava_endpoint;
+extern struct ava_endpoint __ava_endpoint;
 
 /**
  * Get the metadata for an object. This uses a lock to protect the hash_table.

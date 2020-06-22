@@ -1,6 +1,11 @@
 #ifndef __CUDART_NW_INTERNAL_H__
 #define __CUDART_NW_INTERNAL_H__
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 char CUDARTAPI
 __cudaInitModule(void **fatCubinHandle);
 
@@ -34,5 +39,9 @@ __cudaPopCallConfiguration(dim3   *gridDim,
                            dim3   *blockDim,
                            size_t *sharedMem,
                            void   *stream);
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif
 
 #endif
