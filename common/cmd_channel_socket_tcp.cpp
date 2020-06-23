@@ -20,6 +20,7 @@
 #include "common/guest_mem.h"
 #include "common/cmd_handler.h"
 #include "cmd_channel_socket_utilities.h"
+#include "guest_config.h"
 #include "manager_service.h"
 
 extern int nw_global_vm_id;
@@ -51,23 +52,11 @@ struct command_channel* command_channel_socket_tcp_new(int worker_port, int is_g
     if (is_guest) {
         chan->vm_id = nw_global_vm_id = 1;
 
-        /**
-         * Get manager's host address from ENV('AVA_MANAGER_ADDR') which must
-         * be a full IP:PORT (e.g. 0.0.0.0:3333).
-         * Manager shall return the assigned API servers' addresses which must
-         * be full IP:PORT addresses as well.
-         */
-        const char* ma_env = getenv("AVA_MANAGER_ADDR");
-        if (ma_env == NULL) {
-          std::cerr << "AVA_MANAGER_ADDR is not set: unknown manager address" << std::endl;
-          goto error;
-        }
-        std::string manager_address(ma_env);
-
-        auto channel = grpc::CreateChannel(manager_address, grpc::InsecureChannelCredentials());
+        auto channel = grpc::CreateChannel(guestconfig::config->manager_address_, grpc::InsecureChannelCredentials());
         auto client  = std::make_unique<ManagerServiceClient>(channel);
         std::vector<uint64_t> gpu_mem;
-        std::vector<std::string> worker_address = client->AssignWorker(1, 0, gpu_mem);
+        std::vector<std::string> worker_address =
+            client->AssignWorker(1, guestconfig::config->gpu_memory_.size(), guestconfig::config->gpu_memory_);
         assert(!worker_address.empty() && "No API server is assigned");
 
         char worker_name[128];
@@ -89,8 +78,9 @@ struct command_channel* command_channel_socket_tcp_new(int worker_port, int is_g
         address.sin_family = AF_INET;
         address.sin_addr = *(struct in_addr *)worker_server_info->h_addr;
         address.sin_port = htons(worker_port);
-        fprintf(stderr, "Connect target worker (%s) at %s:%d\n",
-                worker_address[0].c_str(), inet_ntoa(address.sin_addr), worker_port);
+        std::cerr <<  "Connect target API server (" << worker_address[0]
+                  << ") at " << inet_ntoa(address.sin_addr)
+                  << ":" << worker_port << std::endl;
         connect(chan->sock_fd, (struct sockaddr *)&address, sizeof(address));
     }
     else {

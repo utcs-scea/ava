@@ -244,8 +244,10 @@ void parseServerAddress(const char* full_address, struct hostent** info,
       *port = atoi(full_address);
   }
   else {
-    if (ip)
+    if (ip) {
       strncpy(ip, full_address, port_s - full_address);
+      ip[port_s - full_address] = '\0';
+    }
     if (port)
       *port = atoi(port_s + 1);
   }
