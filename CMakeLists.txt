@@ -131,6 +131,16 @@ ExternalProject_Add(flatbuffers
   DEPENDS protobuf grpc
 )
 
+# Build config parser library
+
+ExternalProject_Add(libconfig
+  PREFIX libconfig
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/libconfig"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
+        -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/libconfig
+)
+
 ###### Compile proto files ######
 
 ExternalProject_Add(ava-proto
@@ -188,6 +198,7 @@ ExternalProject_Add(ava-spec
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${EXTERNAL_BINARY_DIR}/grpc/lib/cmake/grpc
         -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
+        -Dlibconfig++_DIR:PATH=${EXTERNAL_BINARY_DIR}/libconfig/lib/cmake/libconfig
   BUILD_ALWAYS ON
-  DEPENDS protobuf grpc flatbuffers
+  DEPENDS protobuf grpc flatbuffers libconfig
 )

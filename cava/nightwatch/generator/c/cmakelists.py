@@ -46,6 +46,10 @@ message(STATUS "Using gRPC ${{gRPC_VERSION}}")
 set(_REFLECTION gRPC::grpc++_reflection)
 set(_GRPC_GRPCPP gRPC::grpc++)
 
+find_package(libconfig++ CONFIG REQUIRED)
+message(STATUS "Using libconfig++ ${{libconfig++_VERSION}}")
+set(_LIBCONFIG_CONFIG++ libconfig::config++)
+
 ###### Set generated files ######
 
 set(manager_service_grpc_srcs  "${{CMAKE_BINARY_DIR}}/../../proto/manager_service.grpc.fb.cc")
@@ -117,6 +121,7 @@ target_link_libraries(guestlib
   ${{_FLATBUFFERS}}
   ${{GLIB2_LIBRARIES}}
   Threads::Threads
+  ${{_LIBCONFIG_CONFIG++}}
 )
     """.strip()
     return "CMakeLists.txt", cmakelists

@@ -30,3 +30,6 @@
 	path = third_party/protobuf
 	url = https://github.com/google/protobuf.git
 	branch = v3.6.1
+[submodule "third_party/libconfig"]
+	path = third_party/libconfig
+	url = https://github.com/hyperrealm/libconfig.git
