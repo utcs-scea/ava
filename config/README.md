@@ -14,4 +14,4 @@ Run `setup.sh` to install an example configuration.
 | manager_address  | "0.0.0.0:3334" | "0.0.0.0:3334" | AvA manager's address                   |
 | instance_type    | "ava.xlarge"   | Ignored        | Service instance type                   |
 | gpu_count        | 2              | Ignored        | Number of requested GPU, currently represented by `gpu_memory.size()` |
-| gpu_memory       | [1024,512]     | []             | Requested GPU memory sizes, in MB       |
+| gpu_memory       | [1024L,512LL]  | []             | Requested GPU memory sizes, in MB       |

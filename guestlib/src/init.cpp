@@ -18,7 +18,6 @@
 #include "common/cmd_channel_impl.h"
 
 struct command_channel *chan;
-std::shared_ptr<GuestConfig> guest_config;
 
 struct param_block_info nw_global_pb_info = {0, 0};
 extern int nw_global_vm_id;
@@ -32,9 +31,11 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id)
 {
     std::ios_base::Init();
 
-    guest_config = readGuestConfig();
+    guestconfig::config = guestconfig::readGuestConfig();
+    if (guestconfig::config == nullptr)
+      exit(EXIT_FAILURE);
 #ifdef DEBUG
-    guest_config->print();
+    guestconfig::config->print();
 #endif
 
 #ifdef AVA_PRINT_TIMESTAMP
@@ -43,18 +44,18 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id)
 #endif
 
     /* Create connection to worker and start command handler thread */
-    if (guest_config->channel_ == "TCP") {
+    if (guestconfig::config->channel_ == "TCP") {
         chan = command_channel_socket_tcp_new(0, 1);
     }
-    else if (guest_config->channel_ == "SHM") {
+    else if (guestconfig::config->channel_ == "SHM") {
         chan = command_channel_shm_new();
     }
-    else if (guest_config->channel_ == "VSOCK") {
+    else if (guestconfig::config->channel_ == "VSOCK") {
         chan = command_channel_socket_new();
     }
     else {
         std::cerr << "Unsupported channel specified in "
-                  << GuestConfig::kConfigFilePath
+                  << guestconfig::kConfigFilePath
                   << ", expect channel = [\"TCP\" | \"SHM\" | \"VSOCK\"]" << std::endl;
         exit(0);
     }

@@ -7,12 +7,10 @@
 #include <string>
 #include <vector>
 
+namespace guestconfig {
+
 class GuestConfig {
 public:
-  static std::string const kConfigFilePath;
-  static std::string const kDefaultChannel;
-  static std::string const kDefaultManagerAddress;
-
   GuestConfig(std::string chan, std::string manager_addr, std::vector<uint64_t>gpu_mem = {}) :
     channel_(chan), manager_address_(manager_addr), gpu_memory_(gpu_mem) {}
 
@@ -35,8 +33,14 @@ public:
   std::vector<uint64_t> gpu_memory_;
 };
 
+constexpr char kConfigFilePath[]        = "/etc/ava/guest.conf";
+constexpr char kDefaultChannel[]        = "TCP";
+constexpr char kDefaultManagerAddress[] = "0.0.0.0:3334";
+
 std::shared_ptr<GuestConfig> readGuestConfig();
 
-extern std::shared_ptr<GuestConfig> guest_config;
+extern std::shared_ptr<GuestConfig> config;
+
+}  // namespace guestconfig
 
 #endif  // AVA_GUESTLIB_GUEST_CONFIG_H_

@@ -1,18 +1,18 @@
 #include <iomanip>
 #include "guest_config.h"
 
-std::string const GuestConfig::kConfigFilePath = "/etc/ava/guest.conf";
-std::string const GuestConfig::kDefaultChannel = "TCP";
-std::string const GuestConfig::kDefaultManagerAddress = "0.0.0.0:3334";
+namespace guestconfig {
+
+std::shared_ptr<GuestConfig> config;
 
 std::shared_ptr<GuestConfig> readGuestConfig() {
   libconfig::Config cfg;
 
   try {
-    cfg.readFile(GuestConfig::kConfigFilePath);
+    cfg.readFile(guestconfig::kConfigFilePath);
   }
   catch(const libconfig::FileIOException& fioex) {
-    std::cerr << "I/O error when reading " << GuestConfig::kConfigFilePath << std::endl;
+    std::cerr << "I/O error when reading " << guestconfig::kConfigFilePath << std::endl;
     return nullptr;
   }
   catch(const libconfig::ParseException& pex) {
@@ -22,31 +22,33 @@ std::shared_ptr<GuestConfig> readGuestConfig() {
   }
 
   const libconfig::Setting& root = cfg.getRoot();
-  std::string channel = GuestConfig::kDefaultChannel;
-  std::string manager_address = GuestConfig::kDefaultManagerAddress;
+  std::string channel = guestconfig::kDefaultChannel;
+  std::string manager_address = guestconfig::kDefaultManagerAddress;
   std::vector<uint64_t> gpu_memory;
 
   try {
-    std::string chan;
-    root.lookupValue("channel", chan);
-    channel = chan;
+    root.lookupValue("channel", channel);
   }
   catch(const libconfig::SettingNotFoundException& nfex) {
   }
   try {
-    std::string addr;
-    root.lookupValue("manager_address", addr);
-    manager_address = addr;
+    root.lookupValue("manager_address", manager_address);
   }
   catch(const libconfig::SettingNotFoundException& nfex) {
   }
   try {
-    const libconfig::Setting& gpu_mem_settings = root.lookup("gpu_memory");
+    const libconfig::Setting& gpu_mem_settings = cfg.lookup("gpu_memory");
     for (int i = 0; i < gpu_mem_settings.getLength(); ++i)
-      gpu_memory.push_back(gpu_mem_settings[i]);
+      gpu_memory.push_back((unsigned long long)gpu_mem_settings[i]);
   }
   catch(const libconfig::SettingNotFoundException& nfex) {
+  }
+  catch (libconfig::SettingTypeException& stex) {
+    std::cerr << "Elements in config[\"gpu_memory\"] expect \"L\" or \"LL\" suffix" << std::endl;
+    return nullptr;
   }
 
   return std::make_shared<GuestConfig>(channel, manager_address, gpu_memory);
 }
+
+}  // namespace guestconfig
