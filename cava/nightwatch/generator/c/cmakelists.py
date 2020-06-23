@@ -48,6 +48,7 @@ set(_GRPC_GRPCPP gRPC::grpc++)
 
 find_package(libconfig++ CONFIG REQUIRED)
 message(STATUS "Using libconfig++ ${{libconfig++_VERSION}}")
+include_directories(${{libconfig++_DIR}}/../../../include)
 set(_LIBCONFIG_CONFIG++ libconfig::config++)
 
 ###### Set generated files ######
@@ -97,6 +98,7 @@ target_link_libraries(worker
 
 add_library(guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/init.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/guest_config.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm.c
   {api.c_library_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.c

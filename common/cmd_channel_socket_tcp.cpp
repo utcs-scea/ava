@@ -20,6 +20,7 @@
 #include "common/guest_mem.h"
 #include "common/cmd_handler.h"
 #include "cmd_channel_socket_utilities.h"
+#include "guest_config.h"
 #include "manager_service.h"
 
 extern int nw_global_vm_id;
@@ -51,20 +52,7 @@ struct command_channel* command_channel_socket_tcp_new(int worker_port, int is_g
     if (is_guest) {
         chan->vm_id = nw_global_vm_id = 1;
 
-        /**
-         * Get manager's host address from ENV('AVA_MANAGER_ADDR') which must
-         * be a full IP:PORT (e.g. 0.0.0.0:3333).
-         * Manager shall return the assigned API servers' addresses which must
-         * be full IP:PORT addresses as well.
-         */
-        const char* ma_env = getenv("AVA_MANAGER_ADDR");
-        if (ma_env == NULL) {
-          std::cerr << "AVA_MANAGER_ADDR is not set: unknown manager address" << std::endl;
-          goto error;
-        }
-        std::string manager_address(ma_env);
-
-        auto channel = grpc::CreateChannel(manager_address, grpc::InsecureChannelCredentials());
+        auto channel = grpc::CreateChannel(guest_config->manager_address_, grpc::InsecureChannelCredentials());
         auto client  = std::make_unique<ManagerServiceClient>(channel);
         std::vector<uint64_t> gpu_mem;
         std::vector<std::string> worker_address = client->AssignWorker(1, 0, gpu_mem);

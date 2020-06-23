@@ -6,8 +6,10 @@
 #include <grpc++/grpc++.h>
 
 #include <iostream>
+#include <string.h>
 
 #include "guestlib.h"
+#include "guest_config.h"
 #include "common/linkage.h"
 #include "common/cmd_handler.h"
 #include "common/shadow_thread_pool.h"
@@ -15,9 +17,8 @@
 #include "common/cmd_channel.h"
 #include "common/cmd_channel_impl.h"
 
-#include <string.h>
-
 struct command_channel *chan;
+std::shared_ptr<GuestConfig> guest_config;
 
 struct param_block_info nw_global_pb_info = {0, 0};
 extern int nw_global_vm_id;
@@ -31,23 +32,30 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id)
 {
     std::ios_base::Init();
 
+    guest_config = readGuestConfig();
+#ifdef DEBUG
+    guest_config->print();
+#endif
+
 #ifdef AVA_PRINT_TIMESTAMP
     struct timeval ts;
     gettimeofday(&ts, NULL);
 #endif
 
     /* Create connection to worker and start command handler thread */
-    if (!getenv("AVA_CHANNEL") || !strcmp(getenv("AVA_CHANNEL"), "TCP")) {
+    if (guest_config->channel_ == "TCP") {
         chan = command_channel_socket_tcp_new(0, 1);
     }
-    else if (!strcmp(getenv("AVA_CHANNEL"), "SHM")) {
+    else if (guest_config->channel_ == "SHM") {
         chan = command_channel_shm_new();
     }
-    else if (!strcmp(getenv("AVA_CHANNEL"), "VSOCK")) {
+    else if (guest_config->channel_ == "VSOCK") {
         chan = command_channel_socket_new();
     }
     else {
-        printf("Unsupported AVA_CHANNEL type (export AVA_CHANNEL=[TCP | SHM | VSOCK]\n");
+        std::cerr << "Unsupported channel specified in "
+                  << GuestConfig::kConfigFilePath
+                  << ", expect channel = [\"TCP\" | \"SHM\" | \"VSOCK\"]" << std::endl;
         exit(0);
     }
     if (!chan) {
