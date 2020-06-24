@@ -54,9 +54,11 @@ struct command_channel* command_channel_socket_tcp_new(int worker_port, int is_g
 
         auto channel = grpc::CreateChannel(guestconfig::config->manager_address_, grpc::InsecureChannelCredentials());
         auto client  = std::make_unique<ManagerServiceClient>(channel);
-        std::vector<uint64_t> gpu_mem;
+        std::vector<uint64_t> gpu_mem_in_bytes;
+        for (auto m : guestconfig::config->gpu_memory_)
+          gpu_mem_in_bytes.push_back(m << 20);
         std::vector<std::string> worker_address =
-            client->AssignWorker(1, guestconfig::config->gpu_memory_.size(), guestconfig::config->gpu_memory_);
+            client->AssignWorker(0, guestconfig::config->gpu_memory_.size(), gpu_mem_in_bytes);
         assert(!worker_address.empty() && "No API server is assigned");
 
         char worker_name[128];
