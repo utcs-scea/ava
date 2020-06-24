@@ -23,11 +23,17 @@ std::shared_ptr<GuestConfig> readGuestConfig() {
 
   const libconfig::Setting& root = cfg.getRoot();
   std::string channel = guestconfig::kDefaultChannel;
+  unsigned long long connect_timeout = guestconfig::kDefaultConnectTimeout;
   std::string manager_address = guestconfig::kDefaultManagerAddress;
   std::vector<uint64_t> gpu_memory;
 
   try {
     root.lookupValue("channel", channel);
+  }
+  catch(const libconfig::SettingNotFoundException& nfex) {
+  }
+  try {
+    root.lookupValue("connect_timeout", connect_timeout);
   }
   catch(const libconfig::SettingNotFoundException& nfex) {
   }
@@ -48,7 +54,7 @@ std::shared_ptr<GuestConfig> readGuestConfig() {
     return nullptr;
   }
 
-  return std::make_shared<GuestConfig>(channel, manager_address, gpu_memory);
+  return std::make_shared<GuestConfig>(channel, manager_address, connect_timeout, gpu_memory);
 }
 
 }  // namespace guestconfig

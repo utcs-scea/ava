@@ -10,6 +10,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <chrono>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -75,7 +76,6 @@ struct command_channel* command_channel_socket_tcp_new(int worker_port, int is_g
          * Start a TCP client to connect API server at `worker_name:worker_port`.
          */
         DEBUG_PRINT("Assigned worker at %s:%d\n", worker_name, worker_port);
-        chan->sock_fd = socket(AF_INET, SOCK_STREAM, 0);
         setsockopt_lowlatency(chan->sock_fd);
         address.sin_family = AF_INET;
         address.sin_addr = *(struct in_addr *)worker_server_info->h_addr;
@@ -83,7 +83,23 @@ struct command_channel* command_channel_socket_tcp_new(int worker_port, int is_g
         std::cerr <<  "Connect target API server (" << worker_address[0]
                   << ") at " << inet_ntoa(address.sin_addr)
                   << ":" << worker_port << std::endl;
-        connect(chan->sock_fd, (struct sockaddr *)&address, sizeof(address));
+
+        int connect_ret = -1;
+        auto connect_start = std::chrono::steady_clock::now();
+        while (connect_ret) {
+          chan->sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+          connect_ret = connect(chan->sock_fd, (struct sockaddr *)&address, sizeof(address));
+          if (!connect_ret)
+            break;
+
+          close(chan->sock_fd);
+          auto connect_checkpoint = std::chrono::steady_clock::now();
+          if (std::chrono::duration_cast<std::chrono::milliseconds>(
+                connect_checkpoint - connect_start).count() > guestconfig::config->connect_timeout_) {
+            std::cerr << "Connection to " << worker_address[0] << " timeout" << std::endl;
+            break;
+          }
+        }
     }
     else {
         chan->listen_port = worker_port;
