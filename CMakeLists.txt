@@ -199,6 +199,8 @@ ExternalProject_Add(ava-spec
         -DgRPC_DIR:PATH=${EXTERNAL_BINARY_DIR}/grpc/lib/cmake/grpc
         -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
         -Dlibconfig++_DIR:PATH=${EXTERNAL_BINARY_DIR}/libconfig/lib/cmake/libconfig
+        -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
   BUILD_ALWAYS ON
   DEPENDS protobuf grpc flatbuffers libconfig
 )
