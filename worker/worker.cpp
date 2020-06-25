@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 
     if (!getenv("AVA_CHANNEL") || !strcmp(getenv("AVA_CHANNEL"), "TCP")) {
         chan_hv = NULL;
-        chan = command_channel_socket_tcp_new(listen_port, 0);
+        chan = command_channel_socket_tcp_worker_new(listen_port);
     }
     else if (!strcmp(getenv("AVA_CHANNEL"), "SHM")) {
         chan_hv = command_channel_hv_new(listen_port);

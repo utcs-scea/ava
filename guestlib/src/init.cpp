@@ -45,7 +45,7 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id)
 
     /* Create connection to worker and start command handler thread */
     if (guestconfig::config->channel_ == "TCP") {
-        chan = command_channel_socket_tcp_new(0, 1);
+        chan = command_channel_socket_tcp_guest_new();
     }
     else if (guestconfig::config->channel_ == "SHM") {
         chan = command_channel_shm_new();
