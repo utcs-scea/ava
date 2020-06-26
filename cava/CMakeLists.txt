@@ -12,17 +12,23 @@ include(ExternalProject)
 
 ###### Build customized LLVM ######
 
+set(flag_file ${CMAKE_CURRENT_BINARY_DIR}/llvm_build_success)
+add_custom_command(
+  OUTPUT ${flag_file}
+  COMMAND bash scripts/build.sh -DCMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../llvm
+)
+add_custom_target(llvm-gen
+  DEPENDS ${flag_file}
+)
 ExternalProject_Add(cava
   PREFIX ava-llvm
-  BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../llvm/build
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../llvm/llvm
   DOWNLOAD_COMMAND ""
-  CONFIGURE_COMMAND ${CMAKE_COMMAND} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                                     -DCMAKE_C_COMPILER_WORKS=ON
-                                     -DCMAKE_CXX_COMPILER_WORKS=ON
-                                     -DLLVM_ENABLE_PROJECTS=clang -G "Unix Makefiles" ../llvm
-  BUILD_COMMAND make -j4
+  BUILD_COMMAND ""
+  CONFIGURE_COMMAND ""
   INSTALL_COMMAND ""
+  DEPENDS llvm-gen
 )
 
 ###### Example: compile cuda.nw.c ######
