@@ -35,20 +35,8 @@ namespace {
  *
  * The `manager_tcp` is required to use the TCP channel.
  * */
-struct command_channel* command_channel_socket_tcp_guest_new()
+std::vector<struct command_channel*> command_channel_socket_tcp_guest_new()
 {
-    struct chansocketutil::command_channel_socket *chan = (struct chansocketutil::command_channel_socket *)malloc(sizeof(struct chansocketutil::command_channel_socket));
-    command_channel_preinitialize((struct command_channel *) chan, &command_channel_socket_tcp_vtable);
-    pthread_mutex_init(&chan->send_mutex, NULL);
-    pthread_mutex_init(&chan->recv_mutex, NULL);
-
-    struct sockaddr_in address;
-    int addrlen = sizeof(address);
-    int opt = 1;
-    memset(&address, 0, sizeof(address));
-
-    chan->vm_id = nw_global_vm_id = 1;
-
     auto channel = grpc::CreateChannel(guestconfig::config->manager_address_, grpc::InsecureChannelCredentials());
     auto client  = std::make_unique<ManagerServiceClient>(channel);
     std::vector<uint64_t> gpu_mem_in_bytes;
@@ -58,53 +46,66 @@ struct command_channel* command_channel_socket_tcp_guest_new()
         client->AssignWorker(0, guestconfig::config->gpu_memory_.size(), gpu_mem_in_bytes);
     assert(!worker_address.empty() && "No API server is assigned");
 
-    char worker_name[128];
-    int worker_port;
-    struct hostent *worker_server_info;
-    parseServerAddress(worker_address[0].c_str(), &worker_server_info, worker_name, &worker_port);
-    assert(worker_server_info != NULL && "Unknown API server address");
-    assert(worker_port > 0 && "Invalid API server port");
+    /* Connect API servers. */
+    std::vector<struct command_channel*> channels;
+    for (const auto& wa : worker_address) {
+      /* Create a channel for every API server. */
+      struct chansocketutil::command_channel_socket *chan = (struct chansocketutil::command_channel_socket *)malloc(sizeof(struct chansocketutil::command_channel_socket));
+      command_channel_preinitialize((struct command_channel *) chan, &command_channel_socket_tcp_vtable);
+      pthread_mutex_init(&chan->send_mutex, NULL);
+      pthread_mutex_init(&chan->recv_mutex, NULL);
+      channels.push_back((struct command_channel*)chan);
 
-    assert(nw_worker_id == 0); // TODO: Move assignment to nw_worker_id out of unrelated constructor.
-    chan->listen_port = nw_worker_id = worker_port;
+      char worker_name[128];
+      int worker_port;
+      struct hostent *worker_server_info;
+      parseServerAddress(wa.c_str(), &worker_server_info, worker_name, &worker_port);
+      assert(worker_server_info != NULL && "Unknown API server address");
+      assert(worker_port > 0 && "Invalid API server port");
+      DEBUG_PRINT("Assigned worker at %s:%d\n", worker_name, worker_port);
 
-    /**
-     * Start a TCP client to connect API server at `worker_name:worker_port`.
-     */
-    DEBUG_PRINT("Assigned worker at %s:%d\n", worker_name, worker_port);
-    setsockopt_lowlatency(chan->sock_fd);
-    address.sin_family = AF_INET;
-    address.sin_addr = *(struct in_addr *)worker_server_info->h_addr;
-    address.sin_port = htons(worker_port);
-    std::cerr <<  "Connect target API server (" << worker_address[0]
-              << ") at " << inet_ntoa(address.sin_addr)
-              << ":" << worker_port << std::endl;
+      chan->vm_id = nw_global_vm_id = 1;
+      chan->listen_port = nw_worker_id = worker_port;
 
-    int connect_ret = -1;
-    auto connect_start = std::chrono::steady_clock::now();
-    while (connect_ret) {
-      chan->sock_fd = socket(AF_INET, SOCK_STREAM, 0);
-      connect_ret = connect(chan->sock_fd, (struct sockaddr *)&address, sizeof(address));
-      if (!connect_ret)
-        break;
+      /* Start a TCP client to connect API server at `worker_name:worker_port`. */
+      struct sockaddr_in address;
+      memset(&address, 0, sizeof(address));
+      setsockopt_lowlatency(chan->sock_fd);
+      address.sin_family = AF_INET;
+      address.sin_addr = *(struct in_addr *)worker_server_info->h_addr;
+      address.sin_port = htons(worker_port);
+      std::cerr <<  "Connect target API server (" << worker_address[0]
+                << ") at " << inet_ntoa(address.sin_addr)
+                << ":" << worker_port << std::endl;
 
-      close(chan->sock_fd);
-      auto connect_checkpoint = std::chrono::steady_clock::now();
-      if (std::chrono::duration_cast<std::chrono::milliseconds>(
-            connect_checkpoint - connect_start).count() > guestconfig::config->connect_timeout_) {
-        std::cerr << "Connection to " << worker_address[0] << " timeout" << std::endl;
-        break;
+      int connect_ret = -1;
+      auto connect_start = std::chrono::steady_clock::now();
+      while (connect_ret) {
+        chan->sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+        connect_ret = connect(chan->sock_fd, (struct sockaddr *)&address, sizeof(address));
+        if (!connect_ret)
+          break;
+
+        close(chan->sock_fd);
+        auto connect_checkpoint = std::chrono::steady_clock::now();
+        if ((uint64_t)std::chrono::duration_cast<std::chrono::milliseconds>(
+              connect_checkpoint - connect_start).count() > guestconfig::config->connect_timeout_) {
+          std::cerr << "Connection to " << worker_address[0] << " timeout" << std::endl;
+          goto error;
+        }
       }
+
+      chan->pfd.fd = chan->sock_fd;
+      chan->pfd.events = POLLIN | POLLRDHUP;
     }
 
-    chan->pfd.fd = chan->sock_fd;
-    chan->pfd.events = POLLIN | POLLRDHUP;
-
-    return (struct command_channel *)chan;
+    return channels;
 
 error:
-    free(chan);
-    return NULL;
+    for (auto& chan : channels)
+      free(chan);
+    channels.clear();
+    return channels;
 }
 
 /**
@@ -178,10 +179,6 @@ struct command_channel* command_channel_socket_tcp_worker_new(int worker_port)
     chan->pfd.events = POLLIN | POLLRDHUP;
 
     return (struct command_channel *)chan;
-
-error:
-    free(chan);
-    return NULL;
 }
 
 struct command_channel* command_channel_socket_tcp_migration_new(int worker_port, int is_source)
