@@ -20,15 +20,16 @@ ExternalProject_Add(cava
   BUILD_COMMAND ""
   CONFIGURE_COMMAND ""
   INSTALL_COMMAND ""
+  UPDATE_DISCONNECTED ON
 )
 
 ###### Example: compile cuda.nw.c ######
 
 ExternalProject_Add_Step(cava cuda-nwcc
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/samples/cuda.nw.c
   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${CMAKE_CURRENT_SOURCE_DIR}/samples/cuda.nw.c -I /usr/local/cuda-10.1/include
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  ALWAYS ON
-  DEPENDEES install
+  DEPENDEES download
 )
 
 ExternalProject_Add_Step(cava cuda-link
@@ -56,6 +57,7 @@ ExternalProject_Add(cu_nw
 # find_package(PkgConfig REQUIRED)
 # pkg_search_module(GLIB2 REQUIRED glib-2.0)
 # ExternalProject_Add_Step(cava cudart-nwcc
+#   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/samples/cudart.nw.c
 #   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${CMAKE_CURRENT_SOURCE_DIR}/samples/cudart.nw.c -I /usr/local/cuda-10.1/include -I ${CMAKE_CURRENT_SOURCE_DIR}/headers ${GLIB2_CFLAGS}
 #   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 #   ALWAYS ON
