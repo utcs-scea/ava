@@ -37,7 +37,6 @@ ExternalProject_Add_Step(cava cuda-link
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES cuda-nwcc
 )
-ExternalProject_Add_StepTargets(cava cuda-link)
 
 ExternalProject_Add(cu_nw
   PREFIX cu_nw
@@ -49,7 +48,7 @@ ExternalProject_Add(cu_nw
              -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
              -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
   BUILD_ALWAYS ON
-  DEPENDS cava-cuda-link
+  DEPENDS cava
 )
 
 ###### Example: compile cudart.nw.c ######
@@ -60,8 +59,7 @@ ExternalProject_Add(cu_nw
 #   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/samples/cudart.nw.c
 #   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${CMAKE_CURRENT_SOURCE_DIR}/samples/cudart.nw.c -I /usr/local/cuda-10.1/include -I ${CMAKE_CURRENT_SOURCE_DIR}/headers ${GLIB2_CFLAGS}
 #   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#   ALWAYS ON
-#   DEPENDEES install
+#   DEPENDEES download
 # )
 #
 # ExternalProject_Add_Step(cava cudart-link
@@ -69,7 +67,6 @@ ExternalProject_Add(cu_nw
 #   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
 #   DEPENDEES cudart-nwcc
 # )
-# ExternalProject_Add_StepTargets(cava cudart-link)
 #
 #ExternalProject_Add(cudart_nw
 #  PREFIX cudart_nw
@@ -81,7 +78,7 @@ ExternalProject_Add(cu_nw
 #             -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
 #             -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
 #  BUILD_ALWAYS ON
-#  DEPENDS cava-cudart-link
+#  DEPENDS cava
 #)
 
 ###### Define your compilation below ######
