@@ -1,6 +1,8 @@
 #ifndef AVA_COMMON_CMD_CHANNEL_SOCKET_UTILITIES_H_
 #define AVA_COMMON_CMD_CHANNEL_SOCKET_UTILITIES_H_
 
+#include <vector>
+
 #include <poll.h>
 
 namespace chansocketutil {
@@ -19,6 +21,8 @@ struct command_channel_socket {
   int listen_fd;
   int listen_port;
   uint8_t init_command_type;
+
+  std::vector<struct command_channel_socket*> channels;
 };
 
 void command_channel_socket_print_command(const struct command_channel *chan,

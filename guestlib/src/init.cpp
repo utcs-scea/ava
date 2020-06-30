@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string.h>
+#include <vector>
 
 #include "guestlib.h"
 #include "guest_config.h"
@@ -45,7 +46,8 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id)
 
     /* Create connection to worker and start command handler thread */
     if (guestconfig::config->channel_ == "TCP") {
-        chan = command_channel_socket_tcp_new(0, 1);
+      std::vector<struct command_channel*> channels = command_channel_socket_tcp_guest_new();
+      chan = channels[0];
     }
     else if (guestconfig::config->channel_ == "SHM") {
         chan = command_channel_shm_new();
