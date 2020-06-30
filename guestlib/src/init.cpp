@@ -19,7 +19,6 @@
 #include "common/cmd_channel_impl.h"
 
 struct command_channel *chan;
-std::vector<struct command_channel*> channels;
 
 struct param_block_info nw_global_pb_info = {0, 0};
 extern int nw_global_vm_id;
@@ -47,8 +46,8 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id)
 
     /* Create connection to worker and start command handler thread */
     if (guestconfig::config->channel_ == "TCP") {
-        channels = command_channel_socket_tcp_guest_new();
-        chan = channels[0];
+      std::vector<struct command_channel*> channels = command_channel_socket_tcp_guest_new();
+      chan = channels[0];
     }
     else if (guestconfig::config->channel_ == "SHM") {
         chan = command_channel_shm_new();

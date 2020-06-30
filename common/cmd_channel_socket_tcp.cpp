@@ -50,7 +50,8 @@ std::vector<struct command_channel*> command_channel_socket_tcp_guest_new()
     std::vector<struct command_channel*> channels;
     for (const auto& wa : worker_address) {
       /* Create a channel for every API server. */
-      struct chansocketutil::command_channel_socket *chan = (struct chansocketutil::command_channel_socket *)malloc(sizeof(struct chansocketutil::command_channel_socket));
+      struct chansocketutil::command_channel_socket* chan =
+        (struct chansocketutil::command_channel_socket*)malloc(sizeof(struct chansocketutil::command_channel_socket));
       command_channel_preinitialize((struct command_channel *) chan, &command_channel_socket_tcp_vtable);
       pthread_mutex_init(&chan->send_mutex, NULL);
       pthread_mutex_init(&chan->recv_mutex, NULL);
@@ -74,9 +75,8 @@ std::vector<struct command_channel*> command_channel_socket_tcp_guest_new()
       address.sin_family = AF_INET;
       address.sin_addr = *(struct in_addr *)worker_server_info->h_addr;
       address.sin_port = htons(worker_port);
-      std::cerr <<  "Connect target API server (" << worker_address[0]
-                << ") at " << inet_ntoa(address.sin_addr)
-                << ":" << worker_port << std::endl;
+      std::cerr <<  "Connect target API server (" << wa << ") at "
+                << inet_ntoa(address.sin_addr) << ":" << worker_port << std::endl;
 
       int connect_ret = -1;
       auto connect_start = std::chrono::steady_clock::now();
