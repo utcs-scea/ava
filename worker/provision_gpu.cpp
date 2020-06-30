@@ -71,11 +71,35 @@ std::vector<std::string> ProvisionGpu::ParseGpuUuidList(std::string& uuid_list) 
   return result;
 }
 
-uint64_t ProvisionGpu::GetGpuMemory(unsigned gpu_id) {
+uint64_t ProvisionGpu::GetGpuTotalMemory(unsigned gpu_id) {
   if (gpu_id < memory_.size())
     return memory_[gpu_id];
   else
     return 0;
+}
+
+uint64_t ProvisionGpu::GetGpuFreeMemory(unsigned gpu_id) {
+  const std::lock_guard<std::mutex> guard(free_memory_mtx_);
+  if (gpu_id < free_memory_.size())
+    return free_memory_[gpu_id];
+  else
+    return 0;
+}
+
+int ProvisionGpu::ConsumeGpuMemory(unsigned gpu_id, uint64_t size) {
+  const std::lock_guard<std::mutex> guard(free_memory_mtx_);
+  if (gpu_id < free_memory_.size() && free_memory_[gpu_id] >= size) {
+    free_memory_[gpu_id] -= size;
+    return 0;
+  }
+  else
+    return -1;
+}
+
+void ProvisionGpu::FreeGpuMemory(unsigned gpu_id, uint64_t size) {
+  const std::lock_guard<std::mutex> guard(free_memory_mtx_);
+  if (gpu_id < free_memory_.size())
+    free_memory_[gpu_id] += size;
 }
 
 unsigned ProvisionGpu::GetGpuIndex(unsigned gpu_id) {
@@ -85,11 +109,30 @@ unsigned ProvisionGpu::GetGpuIndex(unsigned gpu_id) {
     return index_.size();  /* Any invalid GPU id. */
 }
 
-uint64_t provision_gpu_get_gpu_memory(unsigned gpu_id) {
+uint64_t provision_gpu_get_gpu_total_memory(unsigned gpu_id) {
   if (provision_gpu)
-    return provision_gpu->GetGpuMemory(gpu_id);
+    return provision_gpu->GetGpuTotalMemory(gpu_id);
   else
     return 0;
+}
+
+uint64_t provision_gpu_get_gpu_free_memory(unsigned gpu_id) {
+  if (provision_gpu)
+    return provision_gpu->GetGpuFreeMemory(gpu_id);
+  else
+    return 0;
+}
+
+int provision_gpu_consume_gpu_memory(unsigned gpu_id, uint64_t size) {
+  if (provision_gpu)
+    return provision_gpu->ConsumeGpuMemory(gpu_id, size);
+  else
+    return -1;
+}
+
+void provision_gpu_free_gpu_memory(unsigned gpu_id, uint64_t size) {
+  if (provision_gpu)
+    provision_gpu->FreeGpuMemory(gpu_id, size);
 }
 
 unsigned provision_gpu_get_gpu_index(unsigned gpu_id) {

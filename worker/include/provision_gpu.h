@@ -7,7 +7,10 @@
 extern "C" {
 #endif
 
-uint64_t provision_gpu_get_gpu_memory(unsigned gpu_id);
+uint64_t provision_gpu_get_gpu_total_memory(unsigned gpu_id);
+uint64_t provision_gpu_get_gpu_free_memory(unsigned gpu_id);
+int provision_gpu_consume_gpu_memory(unsigned gpu_id, uint64_t size);
+void provision_gpu_free_gpu_memory(unsigned gpu_id, uint64_t size);
 unsigned provision_gpu_get_gpu_index(unsigned gpu_id);
 
 #ifdef __cplusplus
@@ -16,6 +19,7 @@ unsigned provision_gpu_get_gpu_index(unsigned gpu_id);
 
 #ifdef __cplusplus
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -29,7 +33,10 @@ public:
   std::vector<uint64_t> ParseGpuMemoryList(std::string& mem_list);
   std::vector<std::string> ParseGpuUuidList(std::string& uuid_list);
 
-  uint64_t GetGpuMemory(unsigned gpu_id);
+  uint64_t GetGpuTotalMemory(unsigned gpu_id);
+  uint64_t GetGpuFreeMemory(unsigned gpu_id);
+  int ConsumeGpuMemory(unsigned gpu_id, uint64_t size);
+  void FreeGpuMemory(unsigned gpu_id, uint64_t size);
   unsigned GetGpuIndex(unsigned gpu_id);
 
 private:
@@ -40,6 +47,8 @@ private:
   std::vector<unsigned> index_;
   std::vector<std::string> uuid_;
   std::vector<uint64_t> memory_;
+  std::vector<uint64_t> free_memory_;
+  std::mutex free_memory_mtx_;
 };
 
 extern ProvisionGpu* provision_gpu;
