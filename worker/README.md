@@ -14,7 +14,8 @@ bytes). The UUIDs may be the same as those GPUs may be provisioned from a same
 physical one.
 
 ```shell
-CUDA_VISIBLE_DEVICES=uuid1,uuid2,uuid3
+CUDA_VISIBLE_DEVICES=uuid1,uuid3   # Suppose uuid1 == uuid2
+AVA_GPU_UUID=uuid1,uuid2,uuid3
 AVA_GPU_MEMORY=mem1,mem2,mem3
 ```
 

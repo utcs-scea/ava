@@ -21,8 +21,9 @@ unsigned provision_gpu_get_gpu_index(unsigned gpu_id);
 
 class ProvisionGpu {
 public:
-  ProvisionGpu(std::string& uuid_list, std::string& mem_list);
-  ProvisionGpu(std::vector<std::string>& uuid_vector,
+  ProvisionGpu(std::string& cuda_uuid_list, std::string& uuid_list, std::string& mem_list);
+  ProvisionGpu(std::vector<std::string>& cuda_uuid_vector,
+               std::vector<std::string>& uuid_vector,
                std::vector<uint64_t>& mem_vector);
 
   std::vector<uint64_t> ParseGpuMemoryList(std::string& mem_list);
@@ -32,7 +33,9 @@ public:
   unsigned GetGpuIndex(unsigned gpu_id);
 
 private:
-  void Init(std::vector<std::string>& uuid_vector, std::vector<uint64_t>& mem_vector);
+  void Init(std::vector<std::string>& cuda_uuid_vector,
+            std::vector<std::string>& uuid_vector,
+            std::vector<uint64_t>& mem_vector);
 
   std::vector<unsigned> index_;
   std::vector<std::string> uuid_;

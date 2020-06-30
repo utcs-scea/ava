@@ -88,11 +88,13 @@ int main(int argc, char *argv[])
     }
 
     /* Read GPU provision information. */
-    char const* gpu_uuid_str = getenv("CUDA_VISIBLE_DEVICES");
-    std::string gpu_uuid     = gpu_uuid_str ? std::string(gpu_uuid_str) : "";
-    char const* gpu_mem_str  = getenv("AVA_GPU_MEMORY");
-    std::string gpu_mem      = gpu_mem_str ? std::string(gpu_mem_str) : "";
-    provision_gpu            = new ProvisionGpu(gpu_uuid, gpu_mem);
+    char const* cuda_uuid_str = getenv("CUDA_VISIBLE_DEVICES");
+    std::string cuda_uuid     = cuda_uuid_str ? std::string(cuda_uuid_str) : "";
+    char const* gpu_uuid_str  = getenv("AVA_GPU_UUID");
+    std::string gpu_uuid      = gpu_uuid_str ? std::string(gpu_uuid_str) : "";
+    char const* gpu_mem_str   = getenv("AVA_GPU_MEMORY");
+    std::string gpu_mem       = gpu_mem_str ? std::string(gpu_mem_str) : "";
+    provision_gpu             = new ProvisionGpu(cuda_uuid, gpu_uuid, gpu_mem);
 
     /* setup signal handler */
     if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR)

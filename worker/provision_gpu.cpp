@@ -4,18 +4,23 @@
 
 ProvisionGpu* provision_gpu;
 
-ProvisionGpu::ProvisionGpu(std::string& uuid_list, std::string& mem_list) {
+ProvisionGpu::ProvisionGpu(std::string& cuda_uuid_list,
+                           std::string& uuid_list,
+                           std::string& mem_list) {
+  std::vector<std::string> cuda_uuid_vector = ParseGpuUuidList(cuda_uuid_list);
   std::vector<std::string> uuid_vector = ParseGpuUuidList(uuid_list);
   std::vector<uint64_t> mem_vector     = ParseGpuMemoryList(mem_list);
-  Init(uuid_vector, mem_vector);
+  Init(cuda_uuid_vector, uuid_vector, mem_vector);
 }
 
-ProvisionGpu::ProvisionGpu(std::vector<std::string>& uuid_vector,
+ProvisionGpu::ProvisionGpu(std::vector<std::string>& cuda_uuid_vector,
+                           std::vector<std::string>& uuid_vector,
                            std::vector<uint64_t>& mem_vector) {
-  Init(uuid_vector, mem_vector);
+  Init(cuda_uuid_vector, uuid_vector, mem_vector);
 }
 
-void ProvisionGpu::Init(std::vector<std::string>& uuid_vector,
+void ProvisionGpu::Init(std::vector<std::string>& cuda_uuid_vector,
+                        std::vector<std::string>& uuid_vector,
                         std::vector<uint64_t>& mem_vector) {
   if (uuid_vector.size() != mem_vector.size()) {
     std::cerr << "Mismatched UUID/Memory vector sizes" << std::endl;
@@ -25,19 +30,20 @@ void ProvisionGpu::Init(std::vector<std::string>& uuid_vector,
   uuid_ = uuid_vector;
   memory_ = mem_vector;
 
-  unsigned idx = 0;
   for (unsigned i = 0; i < uuid_vector.size(); ++i) {
     bool flag = false;
-    for (unsigned j = 0; j < index_.size(); ++j) {
-      if (uuid_[j] == uuid_[i]) {
+    for (unsigned j = 0; j < cuda_uuid_vector.size(); ++j) {
+      if (uuid_[i] == cuda_uuid_vector[j]) {
         flag = true;
-        index_.push_back(index_[i]);
+        index_.push_back(j);
         break;
       }
     }
 
-    if (!flag)
-      index_.push_back(idx++);
+    if (!flag) {
+      std::cerr << "Invalid GPU UUID" << std::endl;
+      exit(1);
+    }
   }
 }
 
