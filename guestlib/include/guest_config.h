@@ -20,7 +20,8 @@ public:
               std::string manager_addr,
               uint64_t connect_timeout = kDefaultConnectTimeout,
               std::vector<uint64_t>gpu_mem = {}) :
-    channel_(chan), manager_address_(manager_addr), gpu_memory_(gpu_mem) {}
+    channel_(chan), manager_address_(manager_addr),
+    connect_timeout_(connect_timeout), gpu_memory_(gpu_mem) {}
 
   void print() {
     std::cerr << "GuestConfig {" << std::endl
