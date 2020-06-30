@@ -13,6 +13,7 @@
 #include <sys/mman.h>
 
 #include "worker.h"
+#include "provision_gpu.h"
 #include "common/cmd_channel.h"
 #include "common/cmd_channel_impl.h"
 #include "common/cmd_handler.h"
@@ -85,6 +86,15 @@ int main(int argc, char *argv[])
                "or     %s <mode> <listen_port> \n", argv[0], argv[0]);
         return 0;
     }
+
+    /* Read GPU provision information. */
+    char const* cuda_uuid_str = getenv("CUDA_VISIBLE_DEVICES");
+    std::string cuda_uuid     = cuda_uuid_str ? std::string(cuda_uuid_str) : "";
+    char const* gpu_uuid_str  = getenv("AVA_GPU_UUID");
+    std::string gpu_uuid      = gpu_uuid_str ? std::string(gpu_uuid_str) : "";
+    char const* gpu_mem_str   = getenv("AVA_GPU_MEMORY");
+    std::string gpu_mem       = gpu_mem_str ? std::string(gpu_mem_str) : "";
+    provision_gpu             = new ProvisionGpu(cuda_uuid, gpu_uuid, gpu_mem);
 
     /* setup signal handler */
     if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR)

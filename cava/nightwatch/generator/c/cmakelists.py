@@ -70,6 +70,7 @@ add_definitions(-D_GNU_SOURCE)
 add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../worker/worker.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm_worker.c
+  ${{CMAKE_SOURCE_DIR}}/../../worker/provision_gpu.cpp
   {api.c_worker_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.c
   ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.c

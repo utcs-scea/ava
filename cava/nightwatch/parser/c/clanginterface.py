@@ -35,7 +35,8 @@ clang_flags = [
     # "-Wno-implicit-function-declaration",
     "-Wno-empty-body",
     "-nobuiltininc",
-    ] + [a for d in clang_directories for a in ["-isystem", d]]
+    ] + [a for d in clang_directories for a in ["-isystem", d]] + \
+    ["-I../worker/include"]
 
 
 @extension(Type)
