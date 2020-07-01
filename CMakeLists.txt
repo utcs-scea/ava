@@ -45,6 +45,9 @@ include(ExternalProject)
 
 set(EXTERNAL_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party)
 
+set(_GRPC_DEPEND_LIST c-ares zlib absl)
+set(_FLATBUFFERS_DEPEND_LIST "")
+
 # Builds absl project from the git submodule.
 ExternalProject_Add(absl
   PREFIX absl
@@ -65,18 +68,26 @@ ExternalProject_Add(c-ares
         -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/c-ares
 )
 
-# Builds protobuf project from the git submodule.
-ExternalProject_Add(protobuf
-  PREFIX protobuf
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/protobuf"
-  SOURCE_SUBDIR "cmake"
-  CMAKE_CACHE_ARGS
-        -Dprotobuf_BUILD_TESTS:BOOL=OFF
-        -Dprotobuf_WITH_ZLIB:BOOL=OFF
-        -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF
-        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/protobuf
-)
+find_package(Protobuf 3.6.1 CONFIG QUIET)
+if (NOT ${Protobuf_FOUND})
+  # Builds protobuf project from the git submodule.
+  ExternalProject_Add(protobuf
+    PREFIX protobuf
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/protobuf"
+    SOURCE_SUBDIR "cmake"
+    CMAKE_CACHE_ARGS
+          -Dprotobuf_BUILD_TESTS:BOOL=OFF
+          -Dprotobuf_WITH_ZLIB:BOOL=OFF
+          -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF
+          -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
+          -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/protobuf
+  )
+  set(_Protobuf_DIR "${EXTERNAL_BINARY_DIR}/protobuf/lib/cmake/protobuf")
+  list(APPEND _GRPC_DEPEND_LIST protobuf)
+  list(APPEND _FLATBUFFERS_DEPEND_LIST protobuf)
+else()
+  set(_Protobuf_DIR ${Protobuf_DIR})
+endif()
 
 # Builds zlib project from the git submodule.
 ExternalProject_Add(zlib
@@ -87,48 +98,54 @@ ExternalProject_Add(zlib
         -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/zlib
 )
 
-set(_FINDPACKAGE_PROTOBUF_CONFIG_DIR "${EXTERNAL_BINARY_DIR}/protobuf/lib/cmake/protobuf")
-
 # if OPENSSL_ROOT_DIR is set, propagate that hint path to the external projects with OpenSSL dependency.
 set(_CMAKE_ARGS_OPENSSL_ROOT_DIR "")
 if (OPENSSL_ROOT_DIR)
   set(_CMAKE_ARGS_OPENSSL_ROOT_DIR "-DOPENSSL_ROOT_DIR:PATH=${OPENSSL_ROOT_DIR}")
 endif()
 
-# Builds gRPC based on locally checked-out sources and set arguments so that all the dependencies
-# are correctly located.
-ExternalProject_Add(grpc
-  PREFIX grpc
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/grpc"
-  CMAKE_CACHE_ARGS
-        -DgRPC_INSTALL:BOOL=ON
-        -DgRPC_BUILD_TESTS:BOOL=OFF
-        -DgRPC_PROTOBUF_PROVIDER:STRING=package
-        -DgRPC_PROTOBUF_PACKAGE_TYPE:STRING=CONFIG
-        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
-        -DgRPC_ZLIB_PROVIDER:STRING=package
-        -DZLIB_ROOT:STRING=${EXTERNAL_BINARY_DIR}/zlib
-        -DgRPC_ABSL_PROVIDER:STRING=package
-        -Dabsl_DIR:STRING=${EXTERNAL_BINARY_DIR}/absl/lib/cmake/absl
-        -DgRPC_CARES_PROVIDER:STRING=package
-        -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
-        -DgRPC_SSL_PROVIDER:STRING=package
-        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-        -DBUILD_SHARED_LIBS:BOOL=ON
-        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/grpc
-  DEPENDS c-ares protobuf zlib absl
-)
+find_package(gRPC 1.15.1 CONFIG QUIET)
+if (NOT ${gRPC_FOUND})
+  # Builds gRPC based on locally checked-out sources and set arguments so that all the dependencies
+  # are correctly located.
+  ExternalProject_Add(grpc
+    PREFIX grpc
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/grpc"
+    PATCH_COMMAND patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/third_party/grpc-gettid.patch
+    CMAKE_CACHE_ARGS
+          -DgRPC_INSTALL:BOOL=ON
+          -DgRPC_BUILD_TESTS:BOOL=OFF
+          -DgRPC_PROTOBUF_PROVIDER:STRING=package
+          -DgRPC_PROTOBUF_PACKAGE_TYPE:STRING=CONFIG
+          -DProtobuf_DIR:PATH=${_Protobuf_DIR}
+          -DgRPC_ZLIB_PROVIDER:STRING=package
+          -DZLIB_DIR:STRING=${EXTERNAL_BINARY_DIR}/zlib
+          -DgRPC_ABSL_PROVIDER:STRING=package
+          -Dabsl_DIR:STRING=${EXTERNAL_BINARY_DIR}/absl/lib/cmake/absl
+          -DgRPC_CARES_PROVIDER:STRING=package
+          -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
+          -DgRPC_SSL_PROVIDER:STRING=package
+          ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+          -DBUILD_SHARED_LIBS:BOOL=ON
+          -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
+          -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/grpc
+    DEPENDS ${_GRPC_DEPEND_LIST}
+  )
+  set(_gRPC_DIR ${EXTERNAL_BINARY_DIR}/grpc/lib/cmake/grpc)
+  list(APPEND _FLATBUFFERS_DEPEND_LIST grpc)
+else()
+  set(_gRPC_DIR ${gRPC_DIR})
+endif()
 
 ExternalProject_Add(flatbuffers
   PREFIX flatbuffers
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/flatbuffers"
   CMAKE_CACHE_ARGS
-        -DGRPC_INSTALL_PATH:PATH=${EXTERNAL_BINARY_DIR}/grpc
+        -DGRPC_INSTALL_PATH:PATH=${_gRPC_DIR}/../../..
         -DPROTOBUF_DOWNLOAD_PATH:PATH=${EXTERNAL_BINARY_DIR}/src/protobuf
         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers
-  DEPENDS protobuf grpc
+  DEPENDS ${_FLATBUFFERS_DEPEND_LIST}
 )
 
 # Build config parser library
@@ -149,14 +166,14 @@ ExternalProject_Add(ava-proto
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/proto"
   INSTALL_COMMAND ""
   CMAKE_CACHE_ARGS
-        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+        -DProtobuf_DIR:PATH=${_Protobuf_DIR}
         -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
-        -DZLIB_ROOT:STRING=${EXTERNAL_BINARY_DIR}/zlib
+        -DZLIB_DIR:STRING=${EXTERNAL_BINARY_DIR}/zlib
         -Dabsl_DIR:STRING=${EXTERNAL_BINARY_DIR}/absl/lib/cmake/absl
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-        -DgRPC_DIR:PATH=${EXTERNAL_BINARY_DIR}/grpc/lib/cmake/grpc
+        -DgRPC_DIR:PATH=${_gRPC_DIR}
         -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
-  DEPENDS protobuf grpc flatbuffers
+  DEPENDS flatbuffers
 )
 
 ###### Build AvA manager ######
@@ -173,14 +190,14 @@ ExternalProject_Add(ava-manager
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/worker"
   INSTALL_COMMAND ""
   CMAKE_CACHE_ARGS
-        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+        -DProtobuf_DIR:PATH=${_Protobuf_DIR}
         -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
-        -DZLIB_ROOT:STRING=${EXTERNAL_BINARY_DIR}/zlib
+        -DZLIB_DIR:STRING=${EXTERNAL_BINARY_DIR}/zlib
         -Dabsl_DIR:STRING=${EXTERNAL_BINARY_DIR}/absl/lib/cmake/absl
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-        -DgRPC_DIR:PATH=${EXTERNAL_BINARY_DIR}/grpc/lib/cmake/grpc
+        -DgRPC_DIR:PATH=${_gRPC_DIR}
         -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
-  DEPENDS protobuf grpc flatbuffers
+  DEPENDS flatbuffers
 )
 
 ###### Generate and build remoting stubs ######
@@ -191,16 +208,16 @@ ExternalProject_Add(ava-spec
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated"
   INSTALL_COMMAND ""
   CMAKE_CACHE_ARGS
-        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+        -DProtobuf_DIR:PATH=${_Protobuf_DIR}
         -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
         -DZLIB_ROOT:STRING=${EXTERNAL_BINARY_DIR}/zlib
         -Dabsl_DIR:STRING=${EXTERNAL_BINARY_DIR}/absl/lib/cmake/absl
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-        -DgRPC_DIR:PATH=${EXTERNAL_BINARY_DIR}/grpc/lib/cmake/grpc
+        -DgRPC_DIR:PATH=${_gRPC_DIR}
         -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
         -Dlibconfig++_DIR:PATH=${EXTERNAL_BINARY_DIR}/libconfig/lib/cmake/libconfig
         -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
         -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
   BUILD_ALWAYS ON
-  DEPENDS protobuf grpc flatbuffers libconfig
+  DEPENDS flatbuffers libconfig
 )
