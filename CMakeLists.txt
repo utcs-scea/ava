@@ -111,7 +111,7 @@ if (NOT ${gRPC_FOUND})
   ExternalProject_Add(grpc
     PREFIX grpc
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/grpc"
-    PATCH_COMMAND patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/third_party/grpc-gettid.patch
+    PATCH_COMMAND patch -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/third_party/grpc-gettid.patch >/dev/null 2>&1
     CMAKE_CACHE_ARGS
           -DgRPC_INSTALL:BOOL=ON
           -DgRPC_BUILD_TESTS:BOOL=OFF
