@@ -109,6 +109,23 @@ unsigned ProvisionGpu::GetGpuIndex(unsigned gpu_id) {
     return index_.size();  /* Any invalid GPU id. */
 }
 
+unsigned ProvisionGpu::GetCurrentGpuIndex() {
+  return PerThreadCurrentGpuIndex(true);
+}
+
+void ProvisionGpu::SetCurrentGpuIndex(unsigned gpu_id) {
+  PerThreadCurrentGpuIndex(false, gpu_id);
+}
+
+unsigned ProvisionGpu::PerThreadCurrentGpuIndex(bool get, unsigned index) {
+  static thread_local unsigned current_index = 0;
+  if (get)
+    return current_index;
+  else
+    current_index = index;
+  return 0;
+}
+
 uint64_t provision_gpu_get_gpu_total_memory(unsigned gpu_id) {
   if (provision_gpu)
     return provision_gpu->GetGpuTotalMemory(gpu_id);

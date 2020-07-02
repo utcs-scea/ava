@@ -38,13 +38,16 @@ public:
   int ConsumeGpuMemory(unsigned gpu_id, uint64_t size);
   void FreeGpuMemory(unsigned gpu_id, uint64_t size);
   unsigned GetGpuIndex(unsigned gpu_id);
+  unsigned GetCurrentGpuIndex();
+  void SetCurrentGpuIndex(unsigned gpu_id);
 
 private:
   void Init(std::vector<std::string>& cuda_uuid_vector,
             std::vector<std::string>& uuid_vector,
             std::vector<uint64_t>& mem_vector);
+  unsigned PerThreadCurrentGpuIndex(bool get, unsigned index = 0);
 
-  std::vector<unsigned> index_;
+  std::vector<unsigned> index_;        /* GPU ordinal */
   std::vector<std::string> uuid_;
   std::vector<uint64_t> memory_;
   std::vector<uint64_t> free_memory_;
