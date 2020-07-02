@@ -29,6 +29,7 @@ void ProvisionGpu::Init(std::vector<std::string>& cuda_uuid_vector,
 
   uuid_ = uuid_vector;
   memory_ = mem_vector;
+  free_memory_ = mem_vector;
 
   for (unsigned i = 0; i < uuid_vector.size(); ++i) {
     bool flag = false;
