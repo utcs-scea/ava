@@ -14,6 +14,7 @@ void provision_gpu_free_gpu_memory(unsigned gpu_id, uint64_t size);
 unsigned provision_gpu_get_gpu_index(unsigned gpu_id); /* Returns real GPU index. */
 unsigned provision_gpu_get_current_gpu_index();        /* Returns provisioned GPU index. */
 void provision_gpu_set_current_gpu_index(unsigned gpu_id);
+unsigned provision_gpu_get_gpu_count();
 
 #ifdef __cplusplus
 }
@@ -42,6 +43,7 @@ public:
   unsigned GetGpuIndex(unsigned gpu_id);
   unsigned GetCurrentGpuIndex();  /* Returns provisioned GPU index. */
   void SetCurrentGpuIndex(unsigned gpu_id);
+  unsigned GetGpuCount();
 
 private:
   void Init(std::vector<std::string>& cuda_uuid_vector,

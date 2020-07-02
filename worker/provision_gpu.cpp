@@ -126,25 +126,26 @@ unsigned ProvisionGpu::PerThreadCurrentGpuIndex(bool get, unsigned index) {
   return 0;
 }
 
+unsigned ProvisionGpu::GetGpuCount() {
+  return (unsigned)index_.size();
+}
+
 uint64_t provision_gpu_get_gpu_total_memory(unsigned gpu_id) {
   if (provision_gpu)
     return provision_gpu->GetGpuTotalMemory(gpu_id);
-  else
-    return 0;
+  return 0;
 }
 
 uint64_t provision_gpu_get_gpu_free_memory(unsigned gpu_id) {
   if (provision_gpu)
     return provision_gpu->GetGpuFreeMemory(gpu_id);
-  else
-    return 0;
+  return 0;
 }
 
 int provision_gpu_consume_gpu_memory(unsigned gpu_id, uint64_t size) {
   if (provision_gpu)
     return provision_gpu->ConsumeGpuMemory(gpu_id, size);
-  else
-    return -1;
+  return -1;
 }
 
 void provision_gpu_free_gpu_memory(unsigned gpu_id, uint64_t size) {
@@ -155,18 +156,22 @@ void provision_gpu_free_gpu_memory(unsigned gpu_id, uint64_t size) {
 unsigned provision_gpu_get_gpu_index(unsigned gpu_id) {
   if (provision_gpu)
     return provision_gpu->GetGpuIndex(gpu_id);
-  else
-    return 0;
+  return 0;
 }
 
 unsigned provision_gpu_get_current_gpu_index() {
   if (provision_gpu)
     return provision_gpu->GetCurrentGpuIndex();
-  else
-    return 0;
+  return 0;
 }
 
 void provision_gpu_set_current_gpu_index(unsigned gpu_id) {
   if (provision_gpu)
     provision_gpu->SetCurrentGpuIndex(gpu_id);
+}
+
+unsigned provision_gpu_get_gpu_count() {
+  if (provision_gpu)
+    return provision_gpu->GetGpuCount();
+  return 0;
 }
