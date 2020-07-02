@@ -158,3 +158,15 @@ unsigned provision_gpu_get_gpu_index(unsigned gpu_id) {
   else
     return 0;
 }
+
+unsigned provision_gpu_get_current_gpu_index() {
+  if (provision_gpu)
+    return provision_gpu->GetCurrentGpuIndex();
+  else
+    return 0;
+}
+
+void provision_gpu_set_current_gpu_index(unsigned gpu_id) {
+  if (provision_gpu)
+    provision_gpu->SetCurrentGpuIndex(gpu_id);
+}
