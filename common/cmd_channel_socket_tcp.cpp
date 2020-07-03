@@ -71,7 +71,6 @@ std::vector<struct command_channel*> command_channel_socket_tcp_guest_new()
       /* Start a TCP client to connect API server at `worker_name:worker_port`. */
       struct sockaddr_in address;
       memset(&address, 0, sizeof(address));
-      setsockopt_lowlatency(chan->sock_fd);
       address.sin_family = AF_INET;
       address.sin_addr = *(struct in_addr *)worker_server_info->h_addr;
       address.sin_port = htons(worker_port);
@@ -82,6 +81,7 @@ std::vector<struct command_channel*> command_channel_socket_tcp_guest_new()
       auto connect_start = std::chrono::steady_clock::now();
       while (connect_ret) {
         chan->sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+        setsockopt_lowlatency(chan->sock_fd);
         connect_ret = connect(chan->sock_fd, (struct sockaddr *)&address, sizeof(address));
         if (!connect_ret)
           break;
