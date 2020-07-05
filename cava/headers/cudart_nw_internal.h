@@ -6,16 +6,16 @@ extern "C"
 {
 #endif
 
-char CUDARTAPI
+extern char CUDARTAPI
 __cudaInitModule(void **fatCubinHandle);
 
-void** CUDARTAPI
+extern void** CUDARTAPI
 __cudaRegisterFatBinary(void *fatCubin);
 
-void CUDARTAPI
+extern void CUDARTAPI
 __cudaUnregisterFatBinary(void **fatCubinHandle);
 
-void CUDARTAPI
+extern void CUDARTAPI
 __cudaRegisterFunction(
         void   **fatCubinHandle,
   const char    *hostFun,
@@ -27,6 +27,17 @@ __cudaRegisterFunction(
         dim3    *bDim,
         dim3    *gDim,
         int     *wSize);
+
+extern void CUDARTAPI __cudaRegisterVar(
+        void **fatCubinHandle,
+        char  *hostVar,
+        char  *deviceAddress,
+  const char  *deviceName,
+        int    ext,
+        size_t size,
+        int    constant,
+        int    global
+);
 
 __host__ __device__ unsigned CUDARTAPI
 __cudaPushCallConfiguration(dim3   gridDim,
