@@ -126,5 +126,8 @@ target_link_libraries(guestlib
   Threads::Threads
   ${{_LIBCONFIG_CONFIG++}}
 )
+target_compile_options(guestlib
+  PUBLIC -fvisibility=hidden
+)
     """.strip()
     return "CMakeLists.txt", cmakelists
