@@ -524,6 +524,8 @@ class API(object):
         self.libs = ""
         self.cflags = ""
         self.cxxflags = ""
+        self.guestlib_srcs = ""
+        self.worker_srcs = ""
         self.c_replacement_code = ""
         self.cplusplus = cplusplus
 

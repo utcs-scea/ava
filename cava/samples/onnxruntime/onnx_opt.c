@@ -4,6 +4,8 @@ ava_identifier(ONNX_OPT);
 ava_number(10);
 ava_cflags(-I/usr/local/cuda-10.1/include -I../headers -DAVA_PRELOAD_CUBIN);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
+ava_guestlib_srcs(extensions/tf_optimization.c extensions/cmd_batching.c);
+ava_worker_srcs(extensions/tf_optimization.c extensions/cmd_batching.c);
 ava_export_qualifier();
 
 /**
@@ -14,7 +16,6 @@ ava_export_qualifier();
  *
  * Dependencies:
  * CUDA 10.1, cuDNN 7.6.5
-
  */
 
 ava_non_transferable_types {

@@ -2,6 +2,11 @@ from nightwatch.model import API
 
 
 def source(api: API, errors):
+    guestlib_srcs = api.guestlib_srcs.split()
+    guestlib_srcs = ["${CMAKE_SOURCE_DIR}/../../guestlib/" + src for src in guestlib_srcs]
+    worker_srcs = api.worker_srcs.split()
+    worker_srcs = ["${CMAKE_SOURCE_DIR}/../../worker/" + src for src in worker_srcs]
+
     cmakelists = f"""
 cmake_minimum_required(VERSION 3.13)
 
@@ -71,6 +76,7 @@ add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../worker/worker.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm_worker.c
   ${{CMAKE_SOURCE_DIR}}/../../worker/provision_gpu.cpp
+  {' '.join(worker_srcs)}
   {api.c_worker_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.c
   ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.c
@@ -101,6 +107,7 @@ add_library(guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/init.cpp
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/guest_config.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm.c
+  {' '.join(guestlib_srcs)}
   {api.c_library_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.c
   ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.c
