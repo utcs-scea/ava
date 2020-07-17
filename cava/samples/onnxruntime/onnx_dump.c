@@ -1,6 +1,6 @@
 ava_name("CUDA Runtime for ONNX");
 ava_version("10.1.0");
-ava_identifier(CUDART_ONNX_DUMP);
+ava_identifier(ONNX_DUMP);
 ava_number(10);
 ava_cflags(-I/usr/local/cuda-10.1/include -I../headers);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
@@ -8,9 +8,12 @@ ava_export_qualifier();
 
 /**
  * The spec is used to dump the fat binaries and CUDA functions from
- * TensorFlow library.
+ * ONNXruntime library.
  * Compile by
- * ./nwcc samples/cudart.dump.c -I /usr/local/cuda-10.0/include -I headers `pkg-config --cflags glib-2.0`
+ * ./nwcc samples/onnxruntime/onnx_dump.c -I /usr/local/cuda-10.1/include -I headers `pkg-config --cflags glib-2.0`
+ *
+ * Dependencies:
+ * CUDA 10.1, cuDNN 7.6.5
  */
 
 ava_non_transferable_types {
