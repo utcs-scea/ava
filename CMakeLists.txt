@@ -221,3 +221,6 @@ ExternalProject_Add(ava-spec
   BUILD_ALWAYS ON
   DEPENDS flatbuffers libconfig
 )
+
+###### tools ######
+add_subdirectory(tools)
