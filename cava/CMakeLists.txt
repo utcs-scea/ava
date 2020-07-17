@@ -65,7 +65,9 @@ ExternalProject_Add(cu_nw
 # )
 #
 # ExternalProject_Add_Step(cava cudart-link
-#   COMMAND mkdir -p generated && ln -f -s ${CMAKE_CURRENT_BINARY_DIR}/cudart_nw/libguestlib.so ${CMAKE_CURRENT_BINARY_DIR}/cudart_nw/libcudart.so.10.1
+#   COMMAND mkdir -p generated &&
+#           ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers &&
+#           ln -f -s ${CMAKE_CURRENT_BINARY_DIR}/cudart_nw/libguestlib.so ${CMAKE_CURRENT_BINARY_DIR}/cudart_nw/libcudart.so.10.1
 #   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
 #   DEPENDEES cudart-nwcc
 # )
