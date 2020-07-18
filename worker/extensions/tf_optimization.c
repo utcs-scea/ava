@@ -1,5 +1,5 @@
-#include "common/tf_optimization.h"
 #include "common/endpoint_lib.h"
+#include "common/extensions/tf_optimization.h"
 
 #include <glib.h>
 #include <stdint.h>

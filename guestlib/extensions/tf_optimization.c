@@ -1,6 +1,6 @@
-#include "common/cmd_batch.h"
 #include "common/endpoint_lib.h"
-#include "common/tf_optimization.h"
+#include "common/extensions/cmd_batching.h"
+#include "common/extensions/tf_optimization.h"
 
 #include <glib.h>
 #include <stdint.h>

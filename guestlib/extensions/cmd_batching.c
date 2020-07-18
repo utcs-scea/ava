@@ -3,8 +3,9 @@
 #include <string.h>
 
 #include "common/debug.h"
-#include "common/cmd_batch.h"
 #include "common/cmd_channel.h"
+#include "common/endpoint_lib.h"
+#include "common/extensions/cmd_batching.h"
 #include "common/shadow_thread_pool.h"
 #include "common/linkage.h"
 
@@ -84,7 +85,6 @@ EXPORTED_WEAKLY void batch_insert_command(struct command_batch *cmd_batch,
 }
 
 #define CALL_CUDART_OPT_CU_CTX_SET_CURRENT 102
-#define nw_shadow_thread_pool tinfo[0].shadow_thread_pool
 
 static void *batch_process_thread(void *opaque)
 {
