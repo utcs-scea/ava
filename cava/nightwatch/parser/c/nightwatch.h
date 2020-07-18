@@ -394,6 +394,12 @@ typedef void (*ava_replace_function)(void* obj, void* data, size_t length);
 #define ava_guestlib_fini_epilogue(n) const char* __AVA_NAME(guestlib_fini_epilogue) = __STRINGIFY(n)
 #define ava_worker_init_epilogue(n)   const char* __AVA_NAME(worker_init_epilogue) = __STRINGIFY(n)
 
+/// The helper Python functions used to replace the send code (from guestlib to worker)
+/// and reply code (from worker to guestlib). The strings are executed in CAvA by
+/// `exec(...)`.
+#define ava_send_code(n)   const char* __AVA_NAME(send_code) = __STRINGIFY(n)
+#define ava_reply_code(n)  const char* __AVA_NAME(reply_code) = __STRINGIFY(n)
+
 /////// Enums
 
 enum ava_sync_mode_t {

@@ -43,6 +43,16 @@ def function_implementation(f: Function) -> Union[str, Expr]:
 
         alloc_list = AllocList(f)
 
+        send_code = f"""
+            command_channel_send_command(__chan, (struct command_base*)__cmd);
+        """.strip()
+
+        if (f.api.send_code):
+            import_code = f.api.send_code.encode('ascii', 'ignore').decode('unicode_escape')[1:-1]
+            ldict = locals()
+            exec(import_code, globals(), ldict)
+            send_code = ldict['send_code']
+
         return_code = is_async.if_then_else(
             forge_success,
             f"""
@@ -86,8 +96,8 @@ def function_implementation(f: Function) -> Union[str, Expr]:
                 {lines(f.prologue)}
                 {"".join(attach_for_argument(a, "__cmd") for a in f.real_arguments)}
             }}
-    
-            struct {f.call_record_spelling}* __call_record = 
+
+            struct {f.call_record_spelling}* __call_record =
                 (struct {f.call_record_spelling}*)calloc(1, sizeof(struct {f.call_record_spelling}));
             {pack_struct("__call_record", f.arguments + f.logue_declarations, "->")}
             __call_record->__call_complete = 0;
@@ -96,8 +106,8 @@ def function_implementation(f: Function) -> Union[str, Expr]:
 
             {timing_code_guest("before_send_command", str(f.name), f.generate_timing_code)}
 
-            command_channel_send_command(__chan, (struct command_base*)__cmd);
-    
+            {send_code}
+
             {alloc_list.dealloc}
 
             {return_code}

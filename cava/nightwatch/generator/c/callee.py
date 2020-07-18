@@ -210,6 +210,18 @@ def convert_result_for_argument(arg: Argument, dest) -> ExprOrStr:
 def call_command_implementation(f: Function):
     with location(f"at {term.yellow(str(f.name))}", f.location):
         alloc_list = AllocList(f)
+
+        is_async = ~Expr(f.synchrony).equals("NW_SYNC");
+        reply_code = f"""
+            command_channel_send_command(__chan, (struct command_base*)__ret);
+        """.strip()
+
+        if (f.api.reply_code):
+            import_code = f.api.reply_code.encode('ascii', 'ignore').decode('unicode_escape')[1:-1]
+            ldict = locals()
+            exec(import_code, globals(), ldict)
+            reply_code = ldict['reply_code']
+
         return f"""
         case {f.call_id_spelling}: {{\
             {timing_code_worker("before_unmarshal", str(f.name), f.generate_timing_code)}
@@ -250,7 +262,7 @@ def call_command_implementation(f: Function):
 
             {timing_code_worker("after_marshal", str(f.name), f.generate_timing_code)}
             /* Send reply message */
-            command_channel_send_command(__chan, (struct command_base*)__ret);
+            {reply_code}
             {alloc_list.dealloc}
             {lines(deallocate_managed_for_argument(a, "") for a in f.arguments)}
             break;

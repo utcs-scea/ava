@@ -532,6 +532,8 @@ class API(object):
         self.guestlib_fini_prologue = ""
         self.guestlib_fini_epilogue = ""
         self.worker_init_epilogue = ""
+        self.send_code = ""
+        self.reply_code = ""
         self.cplusplus = cplusplus
 
         self.__dict__.update(kwds)
