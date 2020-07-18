@@ -80,7 +80,7 @@ def command_print_implementation(f: Function):
             assert(__call->base.api_id == {f.api.number_spelling});
             assert(__call->base.command_size == sizeof(struct {f.call_spelling}) && "Command size does not match ID. (Can be caused by incorrectly computed buffer sizes, especially using `strlen(s)` instead of `strlen(s)+1`)");
             {unpack_struct("__call", f.arguments, "->", get_transfer_buffer_expr)}
-            {printf("<%03ld> %s(", "(long int)__call->__call_id", f'"{f.name}"')}
+            {printf("<%03ld> <thread=%012lx> %s(", "(long int)__call->__call_id", "(unsigned long int)__call->base.thread_id", f'"{f.name}"')}
             {print_comma.join(str(print_value(a, f"__call->{a.name}", a.type, False)) for a in f.arguments if a.input or not a.type.contains_buffer)}
             fprintf(file, "){snl}");
             break;
@@ -94,7 +94,7 @@ def command_print_implementation(f: Function):
                            ([] if f.return_value.type.is_void else [f.return_value]) +
                            [a for a in f.arguments if a.output and a.type.contains_buffer and not bool(a.depends_on)], 
                            "->", get_transfer_buffer_expr)}
-            {printf("<%03ld> %s(", "(long int)__ret->__call_id", f'"{f.name}"')}
+            {printf("<%03ld> <thread=%012lx> %s(", "(long int)__ret->__call_id", "(unsigned long int)__ret->base.thread_id", f'"{f.name}"')}
             {print_comma.join(str(print_value(a, f"__ret->{a.name}", a.type, True)) for a in f.arguments if a.output and a.type.contains_buffer)}
             fprintf(file, ") -> ");
             {print_value(f.return_value, f"__ret->{f.return_value.name}", f.return_value.type, True)}
