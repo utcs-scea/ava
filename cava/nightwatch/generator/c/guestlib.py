@@ -18,12 +18,16 @@ def source(api: API, errors):
 
 void __attribute__((constructor(1))) init_{api.identifier.lower()}_guestlib(void) {{
     __handle_command_{api.identifier.lower()}_init();
+    {api.guestlib_init_prologue};
     nw_init_guestlib({api.number_spelling});
+    {api.guestlib_init_epilogue};
 }}
 
 void __attribute__((destructor)) destroy_{api.identifier.lower()}_guestlib(void) {{
-    __handle_command_{api.identifier.lower()}_destroy();
+    {api.guestlib_fini_prologue};
     nw_destroy_guestlib();
+    {api.guestlib_fini_epilogue};
+    __handle_command_{api.identifier.lower()}_destroy();
 }}
 
 {handle_command_func_code}

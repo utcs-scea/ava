@@ -527,6 +527,11 @@ class API(object):
         self.guestlib_srcs = ""
         self.worker_srcs = ""
         self.c_replacement_code = ""
+        self.guestlib_init_prologue = ""
+        self.guestlib_init_epilogue = ""
+        self.guestlib_fini_prologue = ""
+        self.guestlib_fini_epilogue = ""
+        self.worker_init_epilogue = ""
         self.cplusplus = cplusplus
 
         self.__dict__.update(kwds)

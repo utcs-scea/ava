@@ -24516,3 +24516,56 @@ cudnnGetErrorString(cudnnStatus_t status)
         ava_lifetime_static;
     }
 }
+
+/**
+ * Initialization code in the generated code.
+ */
+ava_utility __helper_guestlib_init_prologue() {
+#ifdef AVA_PRELOAD_CUBIN
+    /* Preload CUDA fat binaries */
+    /* Read cubin number */
+    int fd;
+    int fatbin_num;
+    fd = open("/cuda_dumps/fatbin-info.ava", O_RDONLY, 0666);
+    read(fd, (void *)&fatbin_num, sizeof(int));
+    DEBUG_PRINT("Fatbinary number = %d\\n", fatbin_num);
+    int i;
+    ava_metadata(NULL)->num_fatbins = 0;
+    for (i = 0; i < fatbin_num; i++) {{
+        __helper_load_function_arg_info_guest();
+    }}
+#endif
+    guestlib_tf_opt_init();
+}
+
+ava_utility __helper_guestlib_fini_prologue() {
+    guestlib_tf_opt_fini();
+}
+
+ava_utility __helper_worker_init_epilogue() {
+#ifdef AVA_PRELOAD_CUBIN
+    /* Preload CUDA fat binaries */
+    fatbin_handle_list = g_ptr_array_new();
+    /* Read cubin number */
+    int fd;
+    int fatbin_num;
+    fd = open("/cuda_dumps/fatbin-info.ava", O_RDONLY, 0666);
+    read(fd, (void *)&fatbin_num, sizeof(int));
+    DEBUG_PRINT("Fatbinary number = %d\\n", fatbin_num);
+    int i;
+    void *fatCubin;
+    void **fatbin_handle;
+    for (i = 0; i < fatbin_num; i++) {{
+        fatCubin = malloc(sizeof(struct fatbin_wrapper));
+        read(fd, fatCubin, sizeof(struct fatbin_wrapper));
+        fatbin_handle = __helper_load_and_register_fatbin(fatCubin);
+        g_ptr_array_add(fatbin_handle_list, (gpointer) fatbin_handle);
+    }}
+    close(fd);
+#endif
+    worker_tf_opt_init();
+}
+
+ava_guestlib_init_prologue(__helper_guestlib_init_prologue());
+ava_guestlib_fini_prologue(__helper_guestlib_fini_prologue());
+ava_worker_init_epilogue(__helper_worker_init_epilogue());

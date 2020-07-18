@@ -4,6 +4,10 @@
 #include <glib.h>
 #include <stdint.h>
 
+#ifdef AVA_PRELOAD_CUBIN
+GPtrArray *fatbin_handle_list;
+#endif
+
 GTree *gpu_address_set; /* Not used but referenced in utility function */
 
 GQueue *cudnn_handles;

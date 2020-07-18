@@ -385,6 +385,15 @@ typedef void (*ava_replace_function)(void* obj, void* data, size_t length);
 /// See ava_begin_replacement.
 #define ava_end_replacement int __MAKE_UNIQUE(__AVA_NAME(end_replacement)) = 0
 
+/// The helper functions called in the guestlib's and worker's constructors and
+/// destructors. The endpoint library is always initialized first and destroyed
+/// last.
+#define ava_guestlib_init_prologue(n) const char* __AVA_NAME(guestlib_init_prologue) = __STRINGIFY(n)
+#define ava_guestlib_init_epilogue(n) const char* __AVA_NAME(guestlib_init_epilogue) = __STRINGIFY(n)
+#define ava_guestlib_fini_prologue(n) const char* __AVA_NAME(guestlib_fini_prologue) = __STRINGIFY(n)
+#define ava_guestlib_fini_epilogue(n) const char* __AVA_NAME(guestlib_fini_epilogue) = __STRINGIFY(n)
+#define ava_worker_init_epilogue(n)   const char* __AVA_NAME(worker_init_epilogue) = __STRINGIFY(n)
+
 /////// Enums
 
 enum ava_sync_mode_t {
