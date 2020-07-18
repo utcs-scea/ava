@@ -78,16 +78,17 @@ def function_implementation(f: Function) -> Union[str, Expr]:
             #endif
 
             {alloc_list.alloc}
-    
+
             {"".join(compute_argument_value(a) for a in f.implicit_arguments)}
-    
+
             {compute_total_size(f.arguments, lambda a: a.input)}
             struct {f.call_spelling}* __cmd = (struct {f.call_spelling}*)command_channel_new_command(
                 __chan, sizeof(struct {f.call_spelling}), __total_buffer_size);
             __cmd->base.api_id = {f.api.number_spelling};
             __cmd->base.command_id = {f.call_id_spelling};
             __cmd->base.thread_id = shadow_thread_id(nw_shadow_thread_pool);
-    
+            __cmd->base.original_thread_id = __cmd->base.thread_id;
+
             __cmd->__call_id = __call_id;
     
             {nl.join(a.declaration + ";" for a in f.logue_declarations)}

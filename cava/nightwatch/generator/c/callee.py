@@ -230,22 +230,22 @@ def call_command_implementation(f: Function):
             struct {f.call_spelling}* __call = (struct {f.call_spelling}*)__cmd;
             assert(__call->base.api_id == {f.api.number_spelling});
             assert(__call->base.command_size == sizeof(struct {f.call_spelling}) && "Command size does not match ID. (Can be caused by incorrectly computed buffer sizes, expecially using `strlen(s)` instead of `strlen(s)+1`)");
-                    
+
             /* Unpack and translate arguments */
             {lines(convert_input_for_argument(a, "__call") for a in f.arguments)}
-        
+
             {timing_code_worker("after_unmarshal", str(f.name), f.generate_timing_code)}
             /* Perform Call */
             {call_function_wrapper(f)}
             {timing_code_worker("after_execution", str(f.name), f.generate_timing_code)}
-        
+
             ava_is_in = 0; ava_is_out = 1;
             {compute_total_size(f.arguments + [f.return_value], lambda a: a.output)}
             struct {f.ret_spelling}* __ret = (struct {f.ret_spelling}*)command_channel_new_command(
                 __chan, sizeof(struct {f.ret_spelling}), __total_buffer_size);
             __ret->base.api_id = {f.api.number_spelling};
             __ret->base.command_id = {f.ret_id_spelling};
-            __ret->base.thread_id = __call->base.thread_id;
+            __ret->base.thread_id = __call->base.original_thread_id;
             __ret->__call_id = __call->__call_id;
 
             {convert_result_for_argument(f.return_value, "__ret") if not f.return_value.type.is_void else ""}
