@@ -1,7 +1,7 @@
-ava_name("CUDA Runtime for ONNX");
+ava_name("CUDA Runtime for TensorFlow");
 ava_version("10.1.0");
-ava_identifier(ONNX_OPT);
-ava_number(10);
+ava_identifier(TF_OPT);
+ava_number(9);
 ava_cflags(-I/usr/local/cuda-10.1/include -I../headers -DAVA_PRELOAD_CUBIN);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
 ava_guestlib_srcs(extensions/tf_optimization.c extensions/cmd_batching.c);
@@ -12,7 +12,7 @@ ava_export_qualifier();
  * This spec reads the dumped fat binaries and CUDA functions to
  * suppress the forwarding of __cudaRegister* APIs.
  * Compile by
- * ./nwcc samples/onnxruntime/onnx_opt.c -I /usr/local/cuda-10.1/include -I headers `pkg-config --cflags glib-2.0`
+ * ./nwcc samples/tensorflow/tf_opt.c -I /usr/local/cuda-10.0/include -I headers `pkg-config --cflags glib-2.0`
  *
  * Dependencies:
  * CUDA 10.1, cuDNN 7.6.5
@@ -46,7 +46,6 @@ ava_begin_utility;
 #include <fatbinary.h>
 #include <glib.h>
 #include "cudart_nw_internal.h"
-#include "cublas_cpp.h"
 #include "common/extensions/tf_optimization.h"
 #include "common/extensions/cmd_batching.h"
 
@@ -80,7 +79,7 @@ struct kernel_arg {
     uint32_t size;
 };
 
-#define MAX_KERNEL_ARG 30
+#define MAX_KERNEL_ARG 25
 #define MAX_KERNEL_NAME_LEN 1024
 #define MAX_ASYNC_BUFFER_NUM 16
 
@@ -331,38 +330,6 @@ __pool_cuEventDestroy(CUevent* hEvent, size_t count)
     }
 }
 
-cudnnStatus_t CUDNNWINAPI
-cudnnCreate(cudnnHandle_t *handle)
-{
-    ava_disable_native_call;
-    ava_argument(handle) {
-        ava_out; ava_buffer(1);
-        ava_element ava_handle;
-    }
-
-    cudnnStatus_t ret;
-    if (ava_is_worker) {
-        ret = __cudnnCreate(handle);
-        return ret;
-    }
-}
-
-CUBLASAPI cublasStatus_t CUBLASWINAPI
-cublasCreate(cublasHandle_t *handle)
-{
-    ava_disable_native_call;
-    ava_argument(handle) {
-        ava_out; ava_buffer(1);
-        ava_element { ava_handle; }
-    }
-
-    cublasStatus_t ret;
-    if (ava_is_worker) {
-        ret = __cublasCreate(handle);
-        return ret;
-    }
-}
-
 /* AvA internal APIs */
 
 void __do_batch_emit(void *command_buffer, size_t total_buffer_size)
@@ -375,7 +342,6 @@ void __do_batch_emit(void *command_buffer, size_t total_buffer_size)
     if (ava_is_worker) {
         // TODO: need to process return values
     }
-    // TODO: update cuda_last_error
 }
 
 /* APIs needed for a minimal program */
@@ -1200,7 +1166,7 @@ __host__ cudaError_t CUDARTAPI
 cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args,
         size_t sharedMem, cudaStream_t stream)
 {
-    /* May lead to TensorFlow internal race condition but safe for ONNX. */
+    /* Cannot be ava_async, may lead to TensorFlow internal race condition */
     ava_async;
     ava_disable_native_call;
 
@@ -1292,7 +1258,6 @@ cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind)
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
 cudaFree(void *devPtr)
 {
-    ava_async;
     ava_argument(devPtr) ava_opaque;
 }
 
@@ -1345,16 +1310,10 @@ cudaDeviceGetAttribute(int *value, enum cudaDeviceAttr attr, int device)
 }
 
 __host__ cudaError_t CUDARTAPI
-cudaDeviceReset(void)
-{
-    ava_async;
-}
+cudaDeviceReset(void);
 
 __host__ cudaError_t CUDARTAPI
-cudaSetDevice(int device)
-{
-    ava_async;
-}
+cudaSetDevice(int device);
 
 __host__ cudaError_t CUDARTAPI
 cudaMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset, enum cudaMemcpyKind kind)
@@ -1372,17 +1331,28 @@ cudaMemcpyAsync(void *dst, const void *src, size_t count, enum cudaMemcpyKind ki
 {
     /* TensorFlow always copies data between device memories */
     ava_async;
-
-    /* TensorFlow always copies data between device memories
     ava_argument(dst) ava_opaque;
     ava_argument(src) ava_opaque;
-    */
 
-    /* ONNX always copies data from host to device */
-    ava_argument(dst) ava_opaque;
-    ava_argument(src) {
-        ava_in; ava_buffer(count);
+    /*
+    ava_argument(dst) {
+        if (kind == cudaMemcpyHostToDevice) {
+            ava_opaque;
+        }
+        else if (kind == cudaMemcpyDeviceToHost) {
+            ava_out; ava_buffer(count);
+        }
     }
+
+    ava_argument(src) {
+        if (kind == cudaMemcpyHostToDevice) {
+            ava_in; ava_buffer(count);
+        }
+        else if (kind == cudaMemcpyDeviceToHost) {
+            ava_opaque;
+        }
+    }
+    */
 
     ava_argument(stream) ava_handle;
 
@@ -1545,7 +1515,6 @@ cudaStreamAddCallback(cudaStream_t stream,
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
 cudaGetLastError(void)
 {
-    return cuda_last_error;
     cudaError_t ret = cuda_last_error;
     cuda_last_error = CUDA_SUCCESS;
     return ret;
@@ -2310,6 +2279,14 @@ CUresult CUDAAPI cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(int *numBl
 }
 
 /* CUDABLAS API */
+CUBLASAPI cublasStatus_t CUBLASWINAPI
+cublasCreate(cublasHandle_t *handle)
+{
+    ava_argument(handle) {
+        ava_out; ava_buffer(1);
+        ava_element { ava_handle; }
+    }
+}
 
 CUBLASAPI cublasStatus_t  CUBLASWINAPI cublasGetAtomicsMode(cublasHandle_t handle, cublasAtomicsMode_t *mode)
 {
@@ -5195,6 +5172,27 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrmm_v2(cublasHandle_t handle, cubl
     abort();
 }
 /* BATCH GEMM */
+#if defined(__cplusplus)
+CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmBatched (cublasHandle_t handle,
+                                                          cublasOperation_t transa,
+                                                          cublasOperation_t transb,
+                                                          int m,
+                                                          int n,
+                                                          int k,
+                                                          const __half *alpha,  /* host or device pointer */
+                                                          const __half *const Aarray[],
+                                                          int lda,
+                                                          const __half *const Barray[],
+                                                          int ldb,
+                                                          const __half *beta,   /* host or device pointer */
+                                                          __half *const Carray[],
+                                                          int ldc,
+                                                          int batchCount)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
+}
+#endif
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgemmBatched (cublasHandle_t handle,
                                                           cublasOperation_t transa,
                                                           cublasOperation_t transb,
@@ -5534,6 +5532,30 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemmStridedBatched (cublasHandle_t 
     abort();
 }
 
+#if defined(__cplusplus)
+CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmStridedBatched (cublasHandle_t handle,
+                                                                 cublasOperation_t transa,
+                                                                 cublasOperation_t transb,
+                                                                 int m,
+                                                                 int n,
+                                                                 int k,
+                                                                 const __half *alpha,  /* host or device pointer */
+                                                                 const __half *A,
+                                                                 int lda,
+                                                                 long long int strideA,   /* purposely signed */
+                                                                 const __half *B,
+                                                                 int ldb,
+                                                                 long long int strideB,
+                                                                 const __half *beta,   /* host or device pointer */
+                                                                 __half *C,
+                                                                 int ldc,
+                                                                 long long int strideC,
+                                                                 int batchCount)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
+}
+#endif
 /* ---------------- CUBLAS BLAS-like extension ---------------- */
 /* GEAM */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgeam(cublasHandle_t handle,
@@ -5550,12 +5572,8 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgeam(cublasHandle_t handle,
                                                   float *C,
                                                   int ldc)
 {
-    ava_argument(handle) ava_handle;
-    ava_argument(alpha) { ava_in; ava_buffer(1); }
-    ava_argument(A) ava_opaque;
-    ava_argument(beta)  { ava_in; ava_buffer(1); }
-    ava_argument(B) ava_opaque;
-    ava_argument(C) ava_opaque;
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgeam(cublasHandle_t handle,
@@ -6195,7 +6213,6 @@ cublasSetStream(cublasHandle_t handle, cudaStream_t streamId)
 CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasDestroy(cublasHandle_t handle)
 {
-    ava_async;
     ava_argument(handle) ava_handle;
 }
 
@@ -6285,6 +6302,15 @@ cudnnConvolutionForward(cudnnHandle_t handle,
    ava_argument(workSpace) ava_opaque;
    ava_argument(yDesc) ava_handle;
    ava_argument(y) ava_opaque;
+}
+
+cudnnStatus_t CUDNNWINAPI
+cudnnCreate(cudnnHandle_t *handle)
+{
+   ava_argument(handle) {
+      ava_out; ava_buffer(1);
+      ava_element ava_handle;
+   }
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6554,14 +6580,14 @@ cudnnStatus_t CUDNNWINAPI
 cudnnSetConvolutionGroupCount(cudnnConvolutionDescriptor_t convDesc, int groupCount)
 {
     ava_async;
-    ava_argument(convDesc) ava_handle;
+   ava_argument(convDesc) ava_handle;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnSetConvolutionMathType(cudnnConvolutionDescriptor_t convDesc, cudnnMathType_t mathType)
 {
     ava_async;
-    ava_argument(convDesc) ava_handle;
+   ava_argument(convDesc) ava_handle;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7539,20 +7565,8 @@ cudnnAddTensor(cudnnHandle_t handle,
                const cudnnTensorDescriptor_t cDesc,
                void *C)
 {
-    ava_async;
-    ava_argument(handle) ava_handle;
-    ava_argument(alpha) {
-        ava_type_cast(const double *);
-        ava_in; ava_buffer(1);
-    }
-    ava_argument(aDesc) ava_handle;
-    ava_argument(A) ava_opaque;
-    ava_argument(beta) {
-        ava_type_cast(const double *);
-        ava_in; ava_buffer(1);
-    }
-    ava_argument(cDesc) ava_handle;
-    ava_argument(C) ava_opaque;
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7900,8 +7914,6 @@ cudnnFindConvolutionForwardAlgorithm(cudnnHandle_t handle,
     abort();
 }
 
-#define cu_in_out_buffer(x, y) ({ if(ava_is_in) ava_buffer(x); else ava_buffer(min(x, y == NULL ? x : *y)); })
-
 cudnnStatus_t CUDNNWINAPI
 cudnnFindConvolutionForwardAlgorithmEx(cudnnHandle_t handle,
                                        const cudnnTensorDescriptor_t xDesc,
@@ -7917,21 +7929,8 @@ cudnnFindConvolutionForwardAlgorithmEx(cudnnHandle_t handle,
                                        void *workSpace,
                                        size_t workSpaceSizeInBytes)
 {
-    ava_argument(handle) ava_handle;
-    ava_argument(xDesc) ava_handle;
-    ava_argument(x) ava_opaque;
-    ava_argument(wDesc) ava_handle;
-    ava_argument(w) ava_opaque;
-    ava_argument(convDesc) ava_handle;
-    ava_argument(yDesc) ava_handle;
-    ava_argument(y) ava_opaque;
-    ava_argument(returnedAlgoCount) {
-        ava_out; ava_buffer(1);
-    }
-    ava_argument(perfResults) {
-        ava_out; cu_in_out_buffer(requestedAlgoCount, returnedAlgoCount);
-    }
-    ava_argument(workSpace) ava_opaque;
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 
 /* Convolution functions: All of the form "output = alpha * Op(inputs) + beta * output" */
@@ -8493,9 +8492,8 @@ cudnnDeriveBNTensorDescriptor(cudnnTensorDescriptor_t derivedBnDesc,
                               const cudnnTensorDescriptor_t xDesc,
                               cudnnBatchNormMode_t mode)
 {
-    ava_async;
-    ava_argument(derivedBnDesc) ava_handle;
-    ava_argument(xDesc) ava_handle;
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -9418,10 +9416,8 @@ cudnnFusedOpsExecute(cudnnHandle_t handle, const cudnnFusedOpsPlan_t plan, cudnn
 curandStatus_t CURANDAPI
 curandCreateGenerator(curandGenerator_t *generator, curandRngType_t rng_type)
 {
-    ava_argument(generator) {
-        ava_out; ava_buffer(1);
-        ava_element ava_handle;
-    }
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 
 curandStatus_t CURANDAPI
@@ -9434,8 +9430,8 @@ curandCreateGeneratorHost(curandGenerator_t *generator, curandRngType_t rng_type
 curandStatus_t CURANDAPI
 curandDestroyGenerator(curandGenerator_t generator)
 {
-    ava_async;
-    ava_argument(generator) ava_handle;
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 
 curandStatus_t CURANDAPI
@@ -23489,10 +23485,8 @@ __host__ cudaError_t CUDARTAPI cudaStreamCreate(cudaStream_t *pStream)
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamCreateWithFlags(cudaStream_t *pStream, unsigned int flags)
 {
-    ava_argument(pStream) {
-        ava_out; ava_buffer(1);
-        ava_element ava_handle;
-    }
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamCreateWithPriority(cudaStream_t *pStream, unsigned int flags, int priority)
@@ -23566,10 +23560,8 @@ __host__ cudaError_t CUDARTAPI cudaStreamGetCaptureInfo(cudaStream_t stream, enu
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaEventCreateWithFlags(cudaEvent_t *event, unsigned int flags)
 {
-    ava_argument(event) {
-        ava_out; ava_buffer(1);
-        ava_element ava_handle;
-    }
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 
 __host__ cudaError_t CUDARTAPI cudaImportExternalMemory(cudaExternalMemory_t *extMem_out, const struct cudaExternalMemoryHandleDesc *memHandleDesc)
@@ -23936,6 +23928,12 @@ __host__ cudaError_t CUDARTAPI cudaMemcpy3DPeerAsync(const struct cudaMemcpy3DPe
     abort();
 }
 
+// __host__ cudaError_t CUDARTAPI cudaMemGetInfo(size_t *free, size_t *total)
+// {
+//     fprintf(stderr, "%s is not implemented\n", __func__);
+//     abort();
+// }
+
 __host__ cudaError_t CUDARTAPI cudaArrayGetInfo(struct cudaChannelFormatDesc *desc, struct cudaExtent *extent, unsigned int *flags, cudaArray_t array)
 {
     fprintf(stderr, "%s is not implemented\n", __func__);
@@ -23974,7 +23972,6 @@ __host__ cudaError_t CUDARTAPI cudaMemcpy2DArrayToArray(cudaArray_t dst, size_t 
 
 __host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbol(void *dst, const void *symbol, size_t count, size_t offset __dv(0), enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToHost))
 {
-    /* kind is always cudaMemcpyDeviceToHost */
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
@@ -24457,64 +24454,6 @@ __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph)
 {
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
-}
-
-/* ONNX */
-
-//#if defined(__cplusplus)
-CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmBatched (cublasHandle_t handle,
-                                                          cublasOperation_t transa,
-                                                          cublasOperation_t transb,
-                                                          int m,
-                                                          int n,
-                                                          int k,
-                                                          const __half *alpha,  /* host or device pointer */
-                                                          const __half *const Aarray[],
-                                                          int lda,
-                                                          const __half *const Barray[],
-                                                          int ldb,
-                                                          const __half *beta,   /* host or device pointer */
-                                                          __half *const Carray[],
-                                                          int ldc,
-                                                          int batchCount)
-{
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
-}
-
-CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmStridedBatched (cublasHandle_t handle,
-                                                                 cublasOperation_t transa,
-                                                                 cublasOperation_t transb,
-                                                                 int m,
-                                                                 int n,
-                                                                 int k,
-                                                                 const __half *alpha,  /* host or device pointer */
-                                                                 const __half *A,
-                                                                 int lda,
-                                                                 long long int strideA,   /* purposely signed */
-                                                                 const __half *B,
-                                                                 int ldb,
-                                                                 long long int strideB,
-                                                                 const __half *beta,   /* host or device pointer */
-                                                                 __half *C,
-                                                                 int ldc,
-                                                                 long long int strideC,
-                                                                 int batchCount)
-{
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
-}
-
-//#endif
-
-const char *CUDNNWINAPI
-cudnnGetErrorString(cudnnStatus_t status)
-{
-    const char *ret = ava_execute();
-    ava_return_value {
-        ava_out; ava_buffer(strlen(ret) + 1);
-        ava_lifetime_static;
-    }
 }
 
 /**
