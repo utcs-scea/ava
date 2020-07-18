@@ -222,6 +222,13 @@ def call_command_implementation(f: Function):
             exec(import_code, globals(), ldict)
             reply_code = ldict['reply_code']
 
+        worker_argument_process_code = ""
+        if (f.api.worker_argument_process_code):
+            import_code = f.api.worker_argument_process_code.encode('ascii', 'ignore').decode('unicode_escape')[1:-1]
+            ldict = locals()
+            exec(import_code, globals(), ldict)
+            worker_argument_process_code = ldict['worker_argument_process_code']
+
         return f"""
         case {f.call_id_spelling}: {{\
             {timing_code_worker("before_unmarshal", str(f.name), f.generate_timing_code)}
@@ -236,6 +243,7 @@ def call_command_implementation(f: Function):
 
             {timing_code_worker("after_unmarshal", str(f.name), f.generate_timing_code)}
             /* Perform Call */
+            {worker_argument_process_code}
             {call_function_wrapper(f)}
             {timing_code_worker("after_execution", str(f.name), f.generate_timing_code)}
 

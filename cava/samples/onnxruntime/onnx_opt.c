@@ -24592,3 +24592,7 @@ ava_reply_code(
     f\"\"\"\n\
     command_channel_send_command(__chan, (struct command_base*)__ret);\n\
     \"\"\".strip())");
+
+ava_worker_argument_process_code(
+"worker_argument_process_code = \"__handle_command_cudart_opt_single(__chan, handle_pool, __log, NULL);\".strip() \
+  if f.name == \"__do_batch_emit\" else \"\"");

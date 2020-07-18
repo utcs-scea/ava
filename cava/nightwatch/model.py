@@ -534,6 +534,7 @@ class API(object):
         self.worker_init_epilogue = ""
         self.send_code = ""
         self.reply_code = ""
+        self.worker_argument_process_code = ""
         self.cplusplus = cplusplus
 
         self.__dict__.update(kwds)
