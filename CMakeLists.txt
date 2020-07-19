@@ -16,6 +16,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+###### options ######
+option(AVA_GEN_TF_SPEC "Enable cuda spec used by tensorflow" OFF)
+option(AVA_GEN_ONNXRT_SPEC "Enable cuda spec used by onnxruntime" OFF)
+message(STATUS "ava gen tf spec" ${AVA_GEN_TF_SPEC})
+message("ava gen onnxrt spec true" ${AVA_GEN_ONNXRT_SPEC})
+
 # Always include debug info
 add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-g>")
 
@@ -218,6 +224,8 @@ ExternalProject_Add(ava-spec
         -Dlibconfig++_DIR:PATH=${EXTERNAL_BINARY_DIR}/libconfig/lib/cmake/libconfig
         -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
         -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+        -DAVA_GEN_TF_SPEC:BOOL=${AVA_GEN_TF_SPEC}
+        -DAVA_GEN_ONNXRT_SPEC:BOOL=${AVA_GEN_ONNXRT_SPEC}
   BUILD_ALWAYS ON
   DEPENDS flatbuffers libconfig
 )
