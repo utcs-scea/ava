@@ -1,0 +1,16 @@
+table WorkerSpawnRequest {
+  count:int;        /* Number of API servers to spawn */
+  uuid:[string];    /* GPU UUIDs */
+  gpu_mem:[ulong];  /* Requested memory of the GPUs */
+}
+
+table WorkerSpawnReply {
+  /**
+   * IP:port. The list retains the order of the request's uuid.
+   */
+  worker_address:[string];
+}
+
+rpc_service DaemonService {
+  SpawnWorker(WorkerSpawnRequest): WorkerSpawnReply;
+}

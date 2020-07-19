@@ -16,7 +16,7 @@
  * be equal to or less than `gpu_count` in this case.
  */
 table WorkerAssignRequest {
-  worker_count:int; /* Number of requested API servers */
+  worker_count:int; /* Number of requested API servers. Must be 1 */
   gpu_count:int;    /* Number of requested GPUs */
   gpu_mem:[ulong];  /* Available memory required for each GPU */
 }
@@ -30,6 +30,46 @@ table WorkerAssignReply {
   worker_address:[string];
 }
 
+/**
+ * When a spawn daemon starts, it sends this request to the manager to register its
+ * resources. In this example, the request includes the GPU memories and UUIDs.
+ */
+table DaemonRegisterRequest {
+  daemon_address:string; /* IP:port */
+  free_memory:[ulong];
+  uuid:[string];
+}
+
+table DaemonRegisterReply {
+}
+
+/**
+ * When an API server exits, the daemon which spawned the API server sends this
+ * message to the manager. In this example, the message includes the API server's
+ * full address and the visible GPU UUIDs.
+ */
+table WorkerExitNotifyRequest {
+  worker_address:string; /* IP:port */
+  uuid:[string];
+}
+
+table WorkerExitNotifyReply {
+}
+
 rpc_service ManagerService {
+  /**
+   * Optional. The manager and spawn daemon can be combined as one process, or
+   * the spawn daemon can use other ways to register itself to the manager.
+   */
+  RegisterDaemon(DaemonRegisterRequest): DaemonRegisterReply;
+
+  /**
+   * Required. The guestlib requests for the API server via this service.
+   */
   AssignWorker(WorkerAssignRequest): WorkerAssignReply;
+
+  /**
+   * Optional. It depends on the spawn daemon's implementation.
+   */
+  NotifyWorkerExit(WorkerExitNotifyRequest): WorkerExitNotifyReply;
 }
