@@ -210,6 +210,25 @@ def convert_result_for_argument(arg: Argument, dest) -> ExprOrStr:
 def call_command_implementation(f: Function):
     with location(f"at {term.yellow(str(f.name))}", f.location):
         alloc_list = AllocList(f)
+
+        is_async = ~Expr(f.synchrony).equals("NW_SYNC");
+        reply_code = f"""
+            command_channel_send_command(__chan, (struct command_base*)__ret);
+        """.strip()
+
+        if (f.api.reply_code):
+            import_code = f.api.reply_code.encode('ascii', 'ignore').decode('unicode_escape')[1:-1]
+            ldict = locals()
+            exec(import_code, globals(), ldict)
+            reply_code = ldict['reply_code']
+
+        worker_argument_process_code = ""
+        if (f.api.worker_argument_process_code):
+            import_code = f.api.worker_argument_process_code.encode('ascii', 'ignore').decode('unicode_escape')[1:-1]
+            ldict = locals()
+            exec(import_code, globals(), ldict)
+            worker_argument_process_code = ldict['worker_argument_process_code']
+
         return f"""
         case {f.call_id_spelling}: {{\
             {timing_code_worker("before_unmarshal", str(f.name), f.generate_timing_code)}
@@ -218,22 +237,23 @@ def call_command_implementation(f: Function):
             struct {f.call_spelling}* __call = (struct {f.call_spelling}*)__cmd;
             assert(__call->base.api_id == {f.api.number_spelling});
             assert(__call->base.command_size == sizeof(struct {f.call_spelling}) && "Command size does not match ID. (Can be caused by incorrectly computed buffer sizes, expecially using `strlen(s)` instead of `strlen(s)+1`)");
-                    
+
             /* Unpack and translate arguments */
             {lines(convert_input_for_argument(a, "__call") for a in f.arguments)}
-        
+
             {timing_code_worker("after_unmarshal", str(f.name), f.generate_timing_code)}
             /* Perform Call */
+            {worker_argument_process_code}
             {call_function_wrapper(f)}
             {timing_code_worker("after_execution", str(f.name), f.generate_timing_code)}
-        
+
             ava_is_in = 0; ava_is_out = 1;
             {compute_total_size(f.arguments + [f.return_value], lambda a: a.output)}
             struct {f.ret_spelling}* __ret = (struct {f.ret_spelling}*)command_channel_new_command(
                 __chan, sizeof(struct {f.ret_spelling}), __total_buffer_size);
             __ret->base.api_id = {f.api.number_spelling};
             __ret->base.command_id = {f.ret_id_spelling};
-            __ret->base.thread_id = __call->base.thread_id;
+            __ret->base.thread_id = __call->base.original_thread_id;
             __ret->__call_id = __call->__call_id;
 
             {convert_result_for_argument(f.return_value, "__ret") if not f.return_value.type.is_void else ""}
@@ -250,7 +270,7 @@ def call_command_implementation(f: Function):
 
             {timing_code_worker("after_marshal", str(f.name), f.generate_timing_code)}
             /* Send reply message */
-            command_channel_send_command(__chan, (struct command_base*)__ret);
+            {reply_code}
             {alloc_list.dealloc}
             {lines(deallocate_managed_for_argument(a, "") for a in f.arguments)}
             break;

@@ -360,6 +360,9 @@ typedef void (*ava_replace_function)(void* obj, void* data, size_t length);
 #define ava_cxxflags(n) const char* __AVA_NAME(cxxflags) = __STRINGIFY(n)
 #define ava_libs(n) const char* __AVA_NAME(libs) = __STRINGIFY(n)
 
+#define ava_guestlib_srcs(n) const char* __AVA_NAME(guestlib_srcs) = __STRINGIFY(n)
+#define ava_worker_srcs(n) const char* __AVA_NAME(worker_srcs) = __STRINGIFY(n)
+
 /// Mark a function or variable as a utility for the rest of the specification.
 /// These definitions will be passed through to the generated code without any changes.
 /// They are always static (in the C sense of static linkage).
@@ -381,6 +384,25 @@ typedef void (*ava_replace_function)(void* obj, void* data, size_t length);
 /// End a region of replacement code.
 /// See ava_begin_replacement.
 #define ava_end_replacement int __MAKE_UNIQUE(__AVA_NAME(end_replacement)) = 0
+
+/// The helper functions called in the guestlib's and worker's constructors and
+/// destructors. The endpoint library is always initialized first and destroyed
+/// last.
+#define ava_guestlib_init_prologue(n) const char* __AVA_NAME(guestlib_init_prologue) = __STRINGIFY(n)
+#define ava_guestlib_init_epilogue(n) const char* __AVA_NAME(guestlib_init_epilogue) = __STRINGIFY(n)
+#define ava_guestlib_fini_prologue(n) const char* __AVA_NAME(guestlib_fini_prologue) = __STRINGIFY(n)
+#define ava_guestlib_fini_epilogue(n) const char* __AVA_NAME(guestlib_fini_epilogue) = __STRINGIFY(n)
+#define ava_worker_init_epilogue(n)   const char* __AVA_NAME(worker_init_epilogue) = __STRINGIFY(n)
+
+/// The helper Python functions used to replace the send code (from guestlib to worker)
+/// and reply code (from worker to guestlib). The strings are executed in CAvA by
+/// `exec(...)`.
+#define ava_send_code(n)   const char* __AVA_NAME(send_code) = __STRINGIFY(n)
+#define ava_reply_code(n)  const char* __AVA_NAME(reply_code) = __STRINGIFY(n)
+
+/// The helper Python functions called before `{call_function_wrapper(f)}`. It must set
+/// a Python variable `worker_argument_process_code`.
+#define ava_worker_argument_process_code(n)  const char* __AVA_NAME(worker_argument_process_code) = __STRINGIFY(n)
 
 /////// Enums
 

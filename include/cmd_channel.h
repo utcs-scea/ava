@@ -74,6 +74,7 @@ struct command_base {
    * The ID of the thread which sent this command.
    */
   int64_t thread_id;
+  int64_t original_thread_id;
   /**
    * The status of the command execution.
    * TODO: it is defined in include/socket.h but commented.

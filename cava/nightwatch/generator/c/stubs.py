@@ -43,6 +43,16 @@ def function_implementation(f: Function) -> Union[str, Expr]:
 
         alloc_list = AllocList(f)
 
+        send_code = f"""
+            command_channel_send_command(__chan, (struct command_base*)__cmd);
+        """.strip()
+
+        if (f.api.send_code):
+            import_code = f.api.send_code.encode('ascii', 'ignore').decode('unicode_escape')[1:-1]
+            ldict = locals()
+            exec(import_code, globals(), ldict)
+            send_code = ldict['send_code']
+
         return_code = is_async.if_then_else(
             forge_success,
             f"""
@@ -68,16 +78,17 @@ def function_implementation(f: Function) -> Union[str, Expr]:
             #endif
 
             {alloc_list.alloc}
-    
+
             {"".join(compute_argument_value(a) for a in f.implicit_arguments)}
-    
+
             {compute_total_size(f.arguments, lambda a: a.input)}
             struct {f.call_spelling}* __cmd = (struct {f.call_spelling}*)command_channel_new_command(
                 __chan, sizeof(struct {f.call_spelling}), __total_buffer_size);
             __cmd->base.api_id = {f.api.number_spelling};
             __cmd->base.command_id = {f.call_id_spelling};
             __cmd->base.thread_id = shadow_thread_id(nw_shadow_thread_pool);
-    
+            __cmd->base.original_thread_id = __cmd->base.thread_id;
+
             __cmd->__call_id = __call_id;
     
             {nl.join(a.declaration + ";" for a in f.logue_declarations)}
@@ -86,8 +97,8 @@ def function_implementation(f: Function) -> Union[str, Expr]:
                 {lines(f.prologue)}
                 {"".join(attach_for_argument(a, "__cmd") for a in f.real_arguments)}
             }}
-    
-            struct {f.call_record_spelling}* __call_record = 
+
+            struct {f.call_record_spelling}* __call_record =
                 (struct {f.call_record_spelling}*)calloc(1, sizeof(struct {f.call_record_spelling}));
             {pack_struct("__call_record", f.arguments + f.logue_declarations, "->")}
             __call_record->__call_complete = 0;
@@ -96,8 +107,8 @@ def function_implementation(f: Function) -> Union[str, Expr]:
 
             {timing_code_guest("before_send_command", str(f.name), f.generate_timing_code)}
 
-            command_channel_send_command(__chan, (struct command_base*)__cmd);
-    
+            {send_code}
+
             {alloc_list.dealloc}
 
             {return_code}

@@ -55,10 +55,37 @@ This allows a Lapis compiler to build programs or other libraries using the API 
 Similarly, the build information can be used to build stubs which implement the library API.  
 
 ```c
+ava_worker_srcs(filenames...)
+ava_guestlib_srcs(filenames...)
+```
+Specify worker-specific and guestlib-specific source files.
+
+```c
 #include <header.h>
 ```
 Specify a header files (`header.h`) which declares functions in the API.
 The API can have multiple header files.
+
+```c
+ava_guestlib_[init|fini]_[prologue|epilogue](utility_1; utility_2; ...)
+ava_worker_init_epilogue(utility_1; utility_2; ...)
+```
+Specify utility functions to be called inside the guestlib's constructor and
+destructor and worker's destructor. "Prologue" means the functions are called
+right after the initialization of the endpointlib, or at the entor of the
+destructor. "Epilogue" means the functions are called right before the exit
+of the constructor, or right before the destroy of the endpointlib.
+
+```c
+ava_send_code(string)
+ava_reply_code(string)
+ava_worker_argument_process_code(string)
+```
+Specify code generators for sending commands from guestlib to API server,
+replying commands from API server to guestlib, and ad-hoc processing argument
+right before generating the calls of the wrapper functions. The strings must
+be escape sequences in string literals and will be evaluated with `exec(..)`
+in CAvA.
 
 
 # Structural Syntax

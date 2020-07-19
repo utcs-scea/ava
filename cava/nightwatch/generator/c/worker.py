@@ -23,6 +23,7 @@ def source(api: API, errors):
 
 void __attribute__((constructor(1))) init_{api.identifier.lower()}_worker(void) {{
     __handle_command_{api.identifier.lower()}_init();
+    {api.worker_init_epilogue};
 }}
 """
     stubs = f"""
