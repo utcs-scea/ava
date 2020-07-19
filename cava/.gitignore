@@ -1,3 +1,6 @@
+# Has an upstream copy but do not commit
+/CMakeLists.txt
+
 .idea
 .idea/*
 *.pyc
