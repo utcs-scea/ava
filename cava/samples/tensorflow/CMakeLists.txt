@@ -8,22 +8,9 @@ foreach(var ${vars})
   endif()
 endforeach()
 
-project(ava-spec)
+project(ava-spec-tf)
 
 include(ExternalProject)
-
-###### Build customized LLVM ######
-
-ExternalProject_Add(cava
-  PREFIX ava-llvm
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../llvm/build
-  URL "https://github.com/utcs-scea/ava-llvm/releases/download/v7.1.0/ava-llvm-release-7.1.0.tar.gz"
-  URL_HASH MD5=400832522ed255314d6a5848e8f7af6c
-  BUILD_COMMAND ""
-  CONFIGURE_COMMAND ""
-  INSTALL_COMMAND ""
-  UPDATE_DISCONNECTED ON
-)
 
 ###### Compile tensorflow/tf_dump.c ######
 
