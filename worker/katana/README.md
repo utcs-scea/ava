@@ -9,13 +9,12 @@ Start Components
 
 Assume we are at `${AVA_BUILD_DIR}`.
 Start the AvA manager by the following command (which runs the manager service
-at port `3334` and sets the API server pool size to `0`).
-Katana manager does not enable API server pool at this moment.
+at port `3334`).
 Note that the port `3333` is reserved by the manager in the current version, used
 for guestlib's connection.
 
 ```Shell
-./worker/katana/manager -m 0.0.0.0:3334 [-n 0]
+./worker/katana/manager -m 0.0.0.0:3334
 ```
 
 Open another terminal, start the AvA spawn daemon on the local machine (as

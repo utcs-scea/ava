@@ -46,14 +46,12 @@ void sigint_handler(int signo) {
 class ManagerConfig {
 public:
   static std::string const kDefaultManagerAddress;
-  static int const kDefaultWorkerPoolSize;
 
-  ManagerConfig(std::string ma = kDefaultManagerAddress,
-                int wps        = kDefaultWorkerPoolSize)
-      : manager_address_(ma), worker_pool_size_(wps) {}
+  ManagerConfig(std::string ma = kDefaultManagerAddress)
+      : manager_address_(ma) {}
 
-  ManagerConfig(ServerAddress& address, int wps = kDefaultWorkerPoolSize)
-      : manager_address_(address), worker_pool_size_(wps) {}
+  ManagerConfig(ServerAddress& address)
+      : manager_address_(address) {}
 
   DaemonInfo* FindDaemonByIp(std::string ip) {
     for (auto& d : daemons_) {
@@ -64,17 +62,14 @@ public:
   }
 
   void Print() {
-    std::cerr << "* Manager address: " << manager_address_ << std::endl
-              << "* API server pool size: " << worker_pool_size_ << std::endl;
+    std::cerr << "* Manager address: " << manager_address_ << std::endl;
   }
 
   ServerAddress manager_address_;
-  int worker_pool_size_;
   std::vector<std::unique_ptr<DaemonInfo>> daemons_;
 };
 
 std::string const ManagerConfig::kDefaultManagerAddress = "0.0.0.0:3334";
-int const ManagerConfig::kDefaultWorkerPoolSize         = 3;
 
 std::shared_ptr<ManagerConfig> config;
 
@@ -82,34 +77,22 @@ std::shared_ptr<ManagerConfig> parseArguments(int argc, char* argv[]) {
   int c;
   opterr                      = 0;
   std::string manager_address = ManagerConfig::kDefaultManagerAddress;
-  int worker_pool_size        = ManagerConfig::kDefaultWorkerPoolSize;
 
   while ((c = getopt(argc, argv, "m:n:")) != -1) {
     switch (c) {
     case 'm':
       manager_address = optarg;
       break;
-    case 'n':
-      worker_pool_size = (uint32_t)atoi(optarg);
-      break;
     default:
       fprintf(stderr,
               "Usage: %s "
-              "[-m manager_address {%s}] "
-              "[-n worker_pool_size {%d}]\n",
-              argv[0], ManagerConfig::kDefaultManagerAddress.c_str(),
-              ManagerConfig::kDefaultWorkerPoolSize);
+              "[-m manager_address {%s}]\n",
+              argv[0], ManagerConfig::kDefaultManagerAddress.c_str());
       exit(EXIT_FAILURE);
     }
   }
 
-  // FIXME(hyu): The worker pool is disabled for now. When we pool the API
-  // servers, we have no information of the requested GPUs and memories. So
-  // we need the manager to send this information to the API server when the
-  // API server is assigned.
-  worker_pool_size = 0;
-
-  return std::make_shared<ManagerConfig>(manager_address, worker_pool_size);
+  return std::make_shared<ManagerConfig>(manager_address);
 }
 
 class DaemonServiceClient {
@@ -207,26 +190,9 @@ class ManagerServiceImpl final : public ManagerService::Service {
     daemon_info->gpu_list_.AddEntries(gpu_entries);
     daemon_info->PrintGpuInfo();
 
-    /* Request daemon to spawn an API server pool.
-     * Currently each API server can see only one GPU, and every GPU has
-     * `config->worker_pool_size_` API servers running on it. */
     auto channel         = grpc::CreateChannel(daemon_address.GetAddress(),
                                        grpc::InsecureChannelCredentials());
     daemon_info->client_ = std::make_unique<DaemonServiceClient>(channel);
-    unsigned count       = config->worker_pool_size_;
-    if (count > 0) {
-      for (auto const& entry : gpu_entries) {
-        std::vector<std::string> uuid = {entry->GetUuid()};
-        std::vector<uint64_t> gpu_mem = {1};
-        std::vector<ServerAddress> assigned_workers =
-            daemon_info->client_->SpawnWorker(count, uuid, gpu_mem);
-
-        /* Register API servers in a global table */
-        for (auto const& aw : assigned_workers)
-          entry->AddIdleWorker(aw);
-      }
-    }
-
     config->daemons_.push_back(std::move(daemon_info));
     return grpc::Status::OK;
   }
@@ -334,15 +300,6 @@ private:
      * Rule 6:
      * Under Rule 5, the GPU with more available memory will be assigned first.
      *
-     * Pooling.
-     * Rule 7.
-     * Only API servers with one GPU assigned are pooled. API servers with
-     * multiple GPUs are spawned on demand.
-     * Rule 8.
-     * After assigning a pooled API server, the manager shall request to
-     * replenish the API server pool on that GPU. If no idle API server exists
-     * on the GPU, the manager requests the daemon to spawn a new API server.
-     *
      * Data structure.
      * The manager has the information of the free GPU memory on each GPU node,
      * and saves it in a list of available GPUs. The GPU list is sorted by the
@@ -408,29 +365,6 @@ private:
     /* If the resource is insufficient, return an empty vector. */
     if (assigned_entries.empty())
       return assigned_workers;
-
-    /* Try to pick an API server from the pool if only one GPU is requested. */
-    if (gpu_count == 1) {
-      auto entry  = assigned_entries[0];
-      auto worker = entry->PopIdleWorker();
-      if (worker) {
-        /* Found an idle API server, insert it into the list and spawn a new
-         * idle API server. */
-        ServerAddress address = worker->GetServerAddress();
-        std::cerr << "[" << __func__ << "] Assign pooled " << address
-                  << std::endl;
-        entry->AddBusyWorker(worker, gm[0]);
-        assigned_workers.push_back(address);
-
-        // TODO: may need to spawn asynchronously.
-        std::vector<std::string> uuid = {entry->GetUuid()};
-        std::vector<uint64_t> gpu_mem = {1};
-        std::vector<ServerAddress> new_worker_address =
-            entry->GetDaemon()->client_->SpawnWorker(1, uuid, gpu_mem);
-        entry->AddIdleWorker(new_worker_address[0]);
-        return assigned_workers;
-      }
-    }
 
     /* Spawn an API server which can see all assigned GPUs. */
     std::vector<std::string> uuid;
