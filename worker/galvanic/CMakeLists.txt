@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(katana-manager C CXX CUDA)
+project(galvanic-manager C CXX CUDA)
 
 find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
@@ -62,13 +62,13 @@ include_directories(
 )
 set(manager_service_grpc_srcs  "${CMAKE_CURRENT_BINARY_DIR}/../../proto/manager_service.grpc.fb.cc")
 
-add_executable(katana-manager
+add_executable(galvanic-manager
   manager.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../common/socket.cpp
   ${manager_service_grpc_srcs}
   ${daemon_service_grpc_srcs}
 )
-target_link_libraries(katana-manager
+target_link_libraries(galvanic-manager
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF}
@@ -76,22 +76,22 @@ target_link_libraries(katana-manager
   Threads::Threads
   ${NVML_LIB}
 )
-set_target_properties(katana-manager
+set_target_properties(galvanic-manager
   PROPERTIES OUTPUT_NAME manager
 )
 
-add_executable(katana-spawn_daemon
+add_executable(galvanic-spawn_daemon
   spawn_daemon.cpp
   ${manager_service_grpc_srcs}
   ${daemon_service_grpc_srcs}
 )
-target_link_libraries(katana-spawn_daemon
+target_link_libraries(galvanic-spawn_daemon
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF}
   ${_FLATBUFFERS}
   ${NVML_LIB}
 )
-set_target_properties(katana-spawn_daemon
+set_target_properties(galvanic-spawn_daemon
   PROPERTIES OUTPUT_NAME spawn_daemon
 )
