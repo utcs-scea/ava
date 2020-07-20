@@ -24459,14 +24459,25 @@ __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph)
 /**
  * Initialization code in the generated code.
  */
-ava_utility __helper_guestlib_init_prologue() {
+ava_utility void __helper_guestlib_init_prologue() {
 #ifdef AVA_PRELOAD_CUBIN
     /* Preload CUDA fat binaries */
     /* Read cubin number */
     int fd;
+    ssize_t ret;
     int fatbin_num;
     fd = open("/cuda_dumps/fatbin-info.ava", O_RDONLY, 0666);
-    read(fd, (void *)&fatbin_num, sizeof(int));
+    if (fd == -1) {
+        fprintf(stderr, "open /cuda_dumps/fatbin-info.ava [errno=%d, errstr=%s] at %s:%d",
+                errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    ret = read(fd, (void *)&fatbin_num, sizeof(int));
+    if (ret == -1) {
+        fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
     DEBUG_PRINT("Fatbinary number = %d\\n", fatbin_num);
     int i;
     ava_metadata(NULL)->num_fatbins = 0;
@@ -24477,26 +24488,42 @@ ava_utility __helper_guestlib_init_prologue() {
     guestlib_tf_opt_init();
 }
 
-ava_utility __helper_guestlib_fini_prologue() {
+ava_utility void __helper_guestlib_fini_prologue() {
     guestlib_tf_opt_fini();
 }
 
-ava_utility __helper_worker_init_epilogue() {
+ava_utility void __helper_worker_init_epilogue() {
 #ifdef AVA_PRELOAD_CUBIN
     /* Preload CUDA fat binaries */
     fatbin_handle_list = g_ptr_array_new();
     /* Read cubin number */
     int fd;
+    ssize_t ret;
     int fatbin_num;
     fd = open("/cuda_dumps/fatbin-info.ava", O_RDONLY, 0666);
-    read(fd, (void *)&fatbin_num, sizeof(int));
+    if (fd == -1) {
+        fprintf(stderr, "open /cuda_dumps/fatbin-info.ava [errno=%d, errstr=%s] at %s:%d",
+                errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    ret = read(fd, (void *)&fatbin_num, sizeof(int));
+    if (ret == -1) {
+        fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
     DEBUG_PRINT("Fatbinary number = %d\\n", fatbin_num);
     int i;
     void *fatCubin;
     void **fatbin_handle;
     for (i = 0; i < fatbin_num; i++) {{
         fatCubin = malloc(sizeof(struct fatbin_wrapper));
-        read(fd, fatCubin, sizeof(struct fatbin_wrapper));
+        ret = read(fd, fatCubin, sizeof(struct fatbin_wrapper));
+        if (ret == -1) {
+            fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d",
+                    errno, strerror(errno), __FILE__, __LINE__);
+            exit(EXIT_FAILURE);
+        }
         fatbin_handle = __helper_load_and_register_fatbin(fatCubin);
         g_ptr_array_add(fatbin_handle_list, (gpointer) fatbin_handle);
     }}

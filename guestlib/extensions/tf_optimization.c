@@ -21,7 +21,7 @@ GQueue *idle_cu_event_pool;
 
 cudaError_t cuda_last_error;
 
-gint gpu_address_range_cmp(gconstpointer r1, gconstpointer r2)
+gint gpu_address_range_cmp(gconstpointer r1, gconstpointer r2, gpointer user_data)
 {
     long diff = ((uintptr_t)r1 - (uintptr_t)r2);
     if (diff < 0) return -1;

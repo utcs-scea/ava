@@ -37,8 +37,8 @@ public:
   }
 
   std::string channel_;
-  uint64_t connect_timeout_;
   std::string manager_address_;
+  uint64_t connect_timeout_;
   std::string instance_type_; // not used
   int gpu_count_;             // not used, represented by gpu_memory_.size()
   std::vector<uint64_t> gpu_memory_;

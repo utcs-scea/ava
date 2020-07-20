@@ -315,6 +315,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
 
             /* Search parameters */
             func->argc = 0;
+            char* fgets_ret;
             while (fgets(line, sizeof(line), fp_pipe) != NULL) {
                 i = 0;
                 while (i < strlen(line) && isspace(line[i])) i++;
@@ -326,8 +327,26 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
                     while (i < strlen(line) && isspace(line[i])) i++;
                     if (strncmp(&line[i], "EIATTR_KPARAM_INFO", 18) == 0) {
                         /* Skip the format line */
-                        fgets(line, sizeof(line), fp_pipe);
-                        fgets(line, sizeof(line), fp_pipe);
+                        fgets_ret = fgets(line, sizeof(line), fp_pipe);
+                        if (fgets_ret == NULL) {
+                            if (feof(fp_pipe)) {
+                                fprintf(stderr, "End of file");
+                            } else if (ferror(fp_pipe)) {
+                                fprintf(stderr, "fgets [errno=%d, errstr=%s] at %s:%d",
+                                        errno, strerror(errno), __FILE__, __LINE__);
+                                exit(EXIT_FAILURE);
+                            }
+                        }
+                        fgets_ret = fgets(line, sizeof(line), fp_pipe);
+                        if (fgets_ret == NULL) {
+                            if (feof(fp_pipe)) {
+                                fprintf(stderr, "End of file");
+                            } else if (ferror(fp_pipe)) {
+                                fprintf(stderr, "fgets [errno=%d, errstr=%s] at %s:%d",
+                                        errno, strerror(errno), __FILE__, __LINE__);
+                                exit(EXIT_FAILURE);
+                            }
+                        }
 
                         /* Get ordinal and size */
                         i = 0;
@@ -608,33 +627,109 @@ ava_utility void __helper_dump_cuda_function(
 
     size_t size;
     int exists;
+    ssize_t ret;
     size = strlen(deviceFun) + 1;
-    write(fd, (const void *)&size, sizeof(size_t));
-    write(fd, (const void *)deviceFun, size);
+    ret = write(fd, (const void *)&size, sizeof(size_t));
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    ret = write(fd, (const void *)deviceFun, size);
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
     size = strlen(deviceName) + 1;
-    write(fd, (const void *)&size, sizeof(size_t));
-    write(fd, (const void *)deviceName, size);
-    write(fd, (const void *)&thread_limit, sizeof(int));
+    ret = write(fd, (const void *)&size, sizeof(size_t));
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    ret = write(fd, (const void *)deviceName, size);
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    ret = write(fd, (const void *)&thread_limit, sizeof(int));
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
     exists = (tid != NULL);
-    write(fd, (const void *)&exists, sizeof(int));
-    if (exists)
-        write(fd, (const void *)tid, sizeof(uint3));
+    ret = write(fd, (const void *)&exists, sizeof(int));
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    if (exists) {
+        ret = write(fd, (const void *)tid, sizeof(uint3));
+        if (ret == -1) {
+            fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+                errno, strerror(errno), __FILE__, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+    }
     exists = (bid != NULL);
-    write(fd, (const void *)&exists, sizeof(int));
-    if (exists)
-        write(fd, (const void *)bid, sizeof(uint3));
+    ret = write(fd, (const void *)&exists, sizeof(int));
+    if (exists) {
+        ret = write(fd, (const void *)bid, sizeof(uint3));
+        if (ret == -1) {
+            fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+                errno, strerror(errno), __FILE__, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+    }
     exists = (bDim != NULL);
-    write(fd, (const void *)&exists, sizeof(int));
-    if (exists)
-        write(fd, (const void *)bDim, sizeof(dim3));
+    ret = write(fd, (const void *)&exists, sizeof(int));
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    if (exists) {
+        ret = write(fd, (const void *)bDim, sizeof(dim3));
+        if (ret == -1) {
+            fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+                errno, strerror(errno), __FILE__, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+    }
     exists = (gDim != NULL);
-    write(fd, (const void *)&exists, sizeof(int));
-    if (exists)
-        write(fd, (const void *)gDim, sizeof(dim3));
+    ret = write(fd, (const void *)&exists, sizeof(int));
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    if (exists) {
+        ret = write(fd, (const void *)gDim, sizeof(dim3));
+        if (ret == -1) {
+            fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+                errno, strerror(errno), __FILE__, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+    }
     exists = (wSize != NULL);
-    write(fd, (const void *)&exists, sizeof(int));
-    if (exists)
-        write(fd, (const void *)wSize, sizeof(int));
+    ret = write(fd, (const void *)&exists, sizeof(int));
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    if (exists) {
+        ret = write(fd, (const void *)wSize, sizeof(int));
+        if (ret == -1) {
+            fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+                errno, strerror(errno), __FILE__, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+    }
 }
 
 void CUDARTAPI

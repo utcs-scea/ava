@@ -51,7 +51,7 @@ def get_buffer_expr(value, type: Type, *, not_null=False, size_out=None):
     size_out = ("&" + size_out) if size_out else "NULL"
     return (type.lifetime.not_equals("AVA_CALL") & (Expr(value).not_equals("NULL") | not_null)).if_then_else_expression(
         f"""
-        ({type.spelling})ava_shadow_buffer_get_buffer(&__ava_endpoint, __chan, __cmd, {value}, 
+        ({type.spelling})ava_shadow_buffer_get_buffer(&__ava_endpoint, __chan, __cmd, {value},
                 {type.lifetime}, {type.lifetime_coupled},
                 {size_out}, {type.buffer_allocator}, {type.buffer_deallocator})
         """,
@@ -214,7 +214,7 @@ def deallocate_managed_for_argument(arg: Argument, src):
         local_value, = values
         buffer_pred = (Expr(type.transfer).equals("NW_BUFFER") & f"{local_value} != NULL")
         dealloc_shadows = Expr(type.deallocates).if_then_else(
-            f"ava_shadow_buffer_free_coupled(&__ava_endpoint, {local_value});")
+            f"ava_shadow_buffer_free_coupled(&__ava_endpoint, (void *){local_value});")
 
         def simple_buffer_case():
             return ""

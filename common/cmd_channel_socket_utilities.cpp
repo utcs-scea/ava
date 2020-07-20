@@ -174,7 +174,7 @@ struct command_base* command_channel_socket_receive_command(struct command_chann
         cmd = (struct command_base *)malloc(cmd_base.command_size + cmd_base.region_size);
         memcpy(cmd, &cmd_base, sizeof(struct command_base));
 
-        recv_socket(chan->pfd.fd, (void *)cmd + sizeof(struct command_base),
+        recv_socket(chan->pfd.fd, (uint8_t *)cmd + sizeof(struct command_base),
                     cmd_base.command_size + cmd_base.region_size - sizeof(struct command_base));
         pthread_mutex_unlock(&chan->recv_mutex);
 

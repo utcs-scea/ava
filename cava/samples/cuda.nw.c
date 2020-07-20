@@ -21,6 +21,7 @@ ava_begin_utility;
 #include <time.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <errno.h>
 ava_end_utility;
 
 //ava_type(CUdeviceptr) {
@@ -66,7 +67,7 @@ ava_utility size_t __helper_load_cubin_size(const char *fname) {
 
     fp = fopen(fname, "rb");
     if (!fp) {
-        return NULL;
+        return 0;
     }
     fseek(fp, 0, SEEK_END);
     cubin_size = ftell(fp);
@@ -84,7 +85,16 @@ ava_utility void *__helper_load_cubin(const char *fname, size_t size) {
         return NULL;
     }
     cubin = malloc(size);
-    fread(cubin, 1, size, fp);
+    size_t ret = fread(cubin, 1, size, fp);
+    if (ret != size) {
+        if (feof(fp)) {
+            fprintf(stderr, "eof");
+        } else if (ferror(fp)) {
+            fprintf(stderr, "fread [errno=%d, errstr=%s] at %s:%d",
+                    errno, strerror(errno), __FILE__, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+    }
     fclose(fp);
 
     return cubin;
