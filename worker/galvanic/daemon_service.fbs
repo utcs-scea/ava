@@ -1,0 +1,25 @@
+/*******************************************************************************
+ * Protocol for resource manager and spawn daemon's communication.
+ *******************************************************************************/
+
+/**
+ * Resource manager can request multiple API servers at one time.
+ * Usually the resource manager can request one API server on demand;
+ * or it can maintain an API server pool by itself and request multiple API
+ * servers to refill the pool.
+ */
+table WorkerSpawnRequest {
+  count:int;        /* Number of API servers to spawn */
+  uuid:string;      /* GPU UUID */
+}
+
+table WorkerSpawnReply {
+  /**
+   * IP:port. The list of spawned API servers' addresses.
+   */
+  worker_address:[string];
+}
+
+rpc_service DaemonService {
+  SpawnWorker(WorkerSpawnRequest): WorkerSpawnReply;
+}
