@@ -171,6 +171,7 @@ ExternalProject_Add(ava-proto
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/proto"
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/proto"
   INSTALL_COMMAND ""
+  BUILD_ALWAYS ON
   CMAKE_CACHE_ARGS
         -DProtobuf_DIR:PATH=${_Protobuf_DIR}
         -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
