@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #include "common/debug.h"
 #include "common/cmd_channel.h"
@@ -55,7 +56,12 @@ struct command_base* command_channel_log_new_command(struct command_channel* c, 
     off_t pos = lseek(chan->fd, 0, SEEK_END); // Seek to end.
 
     struct record_command_metadata metadata = {command_struct_size + data_region_size, 0};
-    write(chan->fd, &metadata, sizeof(struct record_command_metadata));
+    ssize_t ret = write(chan->fd, &metadata, sizeof(struct record_command_metadata));
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
 
     struct command_base *cmd = (struct command_base *)malloc(command_struct_size);
     static_assert(sizeof(struct command_private) <= sizeof(cmd->reserved_area),
@@ -85,7 +91,12 @@ void* command_channel_log_attach_buffer(struct command_channel* c, struct comman
     struct command_private *priv = (struct command_private *)cmd->reserved_area;
     off_t pos = lseek(chan->fd, priv->current_buffer_offset, SEEK_SET);
     assert(pos == priv->current_buffer_offset);
-    write(chan->fd, buffer, size);
+    ssize_t ret = write(chan->fd, buffer, size); 
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
     return (void *) (pos - priv->command_start_offset);
 }
 
@@ -102,8 +113,12 @@ void command_channel_log_send_command(struct command_channel* c, struct command_
     off_t pos = lseek(chan->fd, priv->command_start_offset, SEEK_SET);
     assert(pos == priv->command_start_offset);
     (void)pos;
-    write(chan->fd, cmd, cmd->command_size);
-
+    ssize_t ret = write(chan->fd, cmd, cmd->command_size);
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
     // Free the local copy of the command.
     free(cmd);
 }
@@ -125,9 +140,25 @@ ssize_t command_channel_log_transfer_command(struct command_channel_log* c, cons
     };
 
     DEBUG_PRINT("record command %lu size %lx\n", cmd->command_id, metadata.size);
-    write(chan->fd, &metadata, sizeof(struct record_command_metadata));
-    write(chan->fd, cmd, cmd->command_size);
-    write(chan->fd, cmd_data_region, cmd->region_size);
+    ssize_t ret;
+    ret = write(chan->fd, &metadata, sizeof(struct record_command_metadata));
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    ret = write(chan->fd, cmd, cmd->command_size);
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    ret = write(chan->fd, cmd_data_region, cmd->region_size);
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
 
     return pos;
 }
@@ -143,7 +174,12 @@ void command_channel_log_update_flags(struct command_channel_log* chan, ssize_t 
     off_t r = lseek(chan->fd, offset + sizeof(size_t), SEEK_SET);
     assert(r == offset + sizeof(size_t));
     (void)r;
-    write(chan->fd, &flags, sizeof(flags));
+    ssize_t ret = write(chan->fd, &flags, sizeof(flags));
+    if (ret == -1) {
+        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+            errno, strerror(errno), __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
 }
 
 
