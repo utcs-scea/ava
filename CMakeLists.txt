@@ -19,8 +19,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 ###### options ######
 option(AVA_GEN_TF_SPEC "Enable cuda spec used by tensorflow" OFF)
 option(AVA_GEN_ONNXRT_SPEC "Enable cuda spec used by onnxruntime" OFF)
-message(STATUS "ava gen tf spec" ${AVA_GEN_TF_SPEC})
-message("ava gen onnxrt spec true" ${AVA_GEN_ONNXRT_SPEC})
+message(STATUS "ava gen tf spec: " ${AVA_GEN_TF_SPEC})
+message(STATUS "ava gen onnxrt spec: " ${AVA_GEN_ONNXRT_SPEC})
 
 # Always include debug info
 add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-g>")
