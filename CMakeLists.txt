@@ -17,7 +17,8 @@ set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 ###### options ######
-option(AVA_GEN_TF_SPEC "Enable CUDA specification for TensorFlow" OFF)
+option(AVA_ENABLE_DEBUG    "Enable debug messages" OFF)
+option(AVA_GEN_TF_SPEC     "Enable CUDA specification for TensorFlow" OFF)
 option(AVA_GEN_ONNXRT_SPEC "Enable CUDA specification for ONNXruntime" OFF)
 message(STATUS "Build TensorFlow CUDA specification: ${AVA_GEN_TF_SPEC}")
 message(STATUS "Build ONNXruntime specification: ${AVA_GEN_ONNXRT_SPEC}")
@@ -228,6 +229,7 @@ ExternalProject_Add(ava-spec
         -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
         -DAVA_GEN_TF_SPEC:BOOL=${AVA_GEN_TF_SPEC}
         -DAVA_GEN_ONNXRT_SPEC:BOOL=${AVA_GEN_ONNXRT_SPEC}
+        -DAVA_ENABLE_DEBUG:BOOL=${AVA_ENABLE_DEBUG}
   BUILD_ALWAYS ON
   DEPENDS flatbuffers libconfig
 )
