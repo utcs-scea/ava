@@ -34,7 +34,7 @@ void register_command_handler(
  */
 void print_command(FILE* file, const struct command_channel *chan, const struct command_base *cmd);
 
-#ifdef DEBUG
+#ifdef AVA_DEBUG
 #define DEBUG_PRINT_COMMAND(chan, cmd) print_command(stderr, chan, cmd)
 #else
 #define DEBUG_PRINT_COMMAND(chan, cmd)
