@@ -86,18 +86,12 @@ ExternalProject_Add(cu_nw
 #)
 
 ###### Define your compilation below ######
-message(STATUS "Whether to compile tensorflow spec")
+message(STATUS "Compile TensorFlow specification: ${AVA_GEN_TF_SPEC}")
 if(AVA_GEN_TF_SPEC)
-  message(STATUS "ON")
   include(samples/tensorflow/CMakeLists.txt)
-else()
-  message(STATUS "OFF")
 endif()
 
-message(STATUS "Whether to compile onnxruntime spec")
+message(STATUS "Compile ONNXruntime specification: ${AVA_GEN_ONNXRT_SPEC}")
 if(AVA_GEN_ONNXRT_SPEC)
-  message(STATUS "ON")
   include(samples/onnxruntime/CMakeLists.txt)
-else()
-  message(STATUS "OFF")
 endif()
