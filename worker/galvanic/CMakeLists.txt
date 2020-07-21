@@ -93,10 +93,11 @@ target_link_libraries(galvanic-spawn_daemon
   ${NVML_LIB}
 )
 set_target_properties(galvanic-spawn_daemon
-  PROPERTIES OUTPUT_NAME spawn_daemon
+  PROPERTIES OUTPUT_NAME daemon
 )
+
 include(GNUInstallDirs)
-install(TARGETS galvanic-spawn_daemon EXPORT GalvanicSpawnDaemon
+install(TARGETS galvanic-spawn_daemon EXPORT galvanic_daemon
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(TARGETS galvanic-manager EXPORT GalvanicManager
+install(TARGETS galvanic-manager EXPORT galvanic_manager
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
