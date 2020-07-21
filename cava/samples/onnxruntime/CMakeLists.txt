@@ -24,11 +24,19 @@ ExternalProject_Add_Step(cava onnx_dump-nwcc
   DEPENDEES download
 )
 
+set(onnx_dump_bin ${CMAKE_CURRENT_BINARY_DIR}/onnx_dump_nw)
 ExternalProject_Add_Step(cava onnx_dump-link
   COMMAND mkdir -p generated &&
           ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers &&
-          ln -f -s ${CMAKE_CURRENT_BINARY_DIR}/onnx_dump_nw/libguestlib.so
-                   ${CMAKE_CURRENT_BINARY_DIR}/onnx_dump_nw/libcuda.so.1
+          ln -f -s ${onnx_dump_bin}/libguestlib.so ${onnx_dump_bin}/libcuda.so.1           &&
+          ln -f -s ${onnx_dump_bin}/libguestlib.so ${onnx_dump_bin}/libcublas.so.10        &&
+          ln -f -s ${onnx_dump_bin}/libguestlib.so ${onnx_dump_bin}/libcublasLt.so.10      &&
+          ln -f -s ${onnx_dump_bin}/libguestlib.so ${onnx_dump_bin}/libcudart.so.10        &&
+          ln -f -s ${onnx_dump_bin}/libguestlib.so ${onnx_dump_bin}/libcudnn.so.7          &&
+          ln -f -s ${onnx_dump_bin}/libguestlib.so ${onnx_dump_bin}/libcufft.so.10         &&
+          ln -f -s ${onnx_dump_bin}/libguestlib.so ${onnx_dump_bin}/libcurand.so.10        &&
+          ln -f -s ${onnx_dump_bin}/libguestlib.so ${onnx_dump_bin}/libcusolver.so.10      &&
+          ln -f -s ${onnx_dump_bin}/libguestlib.so ${onnx_dump_bin}/libcusparse.so.10
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES onnx_dump-nwcc
 )
@@ -55,11 +63,19 @@ ExternalProject_Add_Step(cava onnx_opt-nwcc
   DEPENDEES download
 )
 
+set(onnx_opt_bin ${CMAKE_CURRENT_BINARY_DIR}/onnx_opt_nw)
 ExternalProject_Add_Step(cava onnx_opt-link
   COMMAND mkdir -p generated &&
           ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers &&
-          ln -f -s ${CMAKE_CURRENT_BINARY_DIR}/onnx_opt_nw/libguestlib.so
-                   ${CMAKE_CURRENT_BINARY_DIR}/onnx_opt_nw/libcuda.so.1
+          ln -f -s ${onnx_opt_bin}/libguestlib.so ${onnx_opt_bin}/libcuda.so.1             &&
+          ln -f -s ${onnx_opt_bin}/libguestlib.so ${onnx_opt_bin}/libcublas.so.10          &&
+          ln -f -s ${onnx_opt_bin}/libguestlib.so ${onnx_opt_bin}/libcublasLt.so.10        &&
+          ln -f -s ${onnx_opt_bin}/libguestlib.so ${onnx_opt_bin}/libcudart.so.10          &&
+          ln -f -s ${onnx_opt_bin}/libguestlib.so ${onnx_opt_bin}/libcudnn.so.7            &&
+          ln -f -s ${onnx_opt_bin}/libguestlib.so ${onnx_opt_bin}/libcufft.so.10           &&
+          ln -f -s ${onnx_opt_bin}/libguestlib.so ${onnx_opt_bin}/libcurand.so.10          &&
+          ln -f -s ${onnx_opt_bin}/libguestlib.so ${onnx_opt_bin}/libcusolver.so.10        &&
+          ln -f -s ${onnx_opt_bin}/libguestlib.so ${onnx_opt_bin}/libcusparse.so.10
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES onnx_opt-nwcc
 )
