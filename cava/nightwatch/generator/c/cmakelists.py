@@ -136,5 +136,10 @@ target_link_libraries(guestlib
 target_compile_options(guestlib
   PUBLIC -fvisibility=hidden
 )
+include(GNUInstallDirs)
+install(TARGETS worker
+        RUNTIME DESTINATION ${{CMAKE_INSTALL_BINDIR}})
+install(TARGETS guestlib
+        LIBRARY DESTINATION ${{CMAKE_INSTALL_LIBDIR}})
     """.strip()
     return "CMakeLists.txt", cmakelists

@@ -95,3 +95,8 @@ target_link_libraries(katana-spawn_daemon
 set_target_properties(katana-spawn_daemon
   PROPERTIES OUTPUT_NAME spawn_daemon
 )
+include(GNUInstallDirs)
+install(TARGETS katana-spawn_daemon EXPORT KatanaSpawnDaemon
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS katana-manager EXPORT KatanaManager
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

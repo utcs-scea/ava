@@ -95,3 +95,8 @@ target_link_libraries(galvanic-spawn_daemon
 set_target_properties(galvanic-spawn_daemon
   PROPERTIES OUTPUT_NAME spawn_daemon
 )
+include(GNUInstallDirs)
+install(TARGETS galvanic-spawn_daemon EXPORT GalvanicSpawnDaemon
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS galvanic-manager EXPORT GalvanicManager
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

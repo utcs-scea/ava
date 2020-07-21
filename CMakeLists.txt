@@ -20,8 +20,12 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 option(AVA_ENABLE_DEBUG    "Enable debug messages" OFF)
 option(AVA_GEN_TF_SPEC     "Enable CUDA specification for TensorFlow" OFF)
 option(AVA_GEN_ONNXRT_SPEC "Enable CUDA specification for ONNXruntime" OFF)
+option(AVA_MANAGER_GALVANIC "Enable galvanic manager" ON)
+option(AVA_MANAGER_KATANA "Enable katana manager" OFF)
 message(STATUS "Build TensorFlow CUDA specification: ${AVA_GEN_TF_SPEC}")
 message(STATUS "Build ONNXruntime specification: ${AVA_GEN_ONNXRT_SPEC}")
+message(STATUS "Enable galvanic manager: " ${AVA_MANAGER_GALVANIC})
+message(STATUS  "Enable katana manager: " ${AVA_MANAGER_KATANA})
 
 # Always include debug info
 add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-g>")
@@ -50,10 +54,9 @@ include(ExternalProject)
 
 # Build RPC libraries
 
-set(EXTERNAL_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party)
-
 set(_GRPC_DEPEND_LIST c-ares zlib absl)
 set(_FLATBUFFERS_DEPEND_LIST "")
+set(ava_DESTDIR "${CMAKE_CURRENT_BINARY_DIR}/install")
 
 # Builds absl project from the git submodule.
 ExternalProject_Add(absl
@@ -61,7 +64,8 @@ ExternalProject_Add(absl
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/abseil-cpp"
   CMAKE_CACHE_ARGS
         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/absl
+        -DCMAKE_INSTALL_PREFIX:PATH=${ava_DESTDIR}
+  INSTALL_DIR "${ava_DESTDIR}"
 )
 
 # Builds c-ares project from the git submodule.
@@ -72,7 +76,8 @@ ExternalProject_Add(c-ares
         -DCARES_SHARED:BOOL=OFF
         -DCARES_STATIC:BOOL=ON
         -DCARES_STATIC_PIC:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/c-ares
+        -DCMAKE_INSTALL_PREFIX:PATH=${ava_DESTDIR}
+  INSTALL_DIR "${ava_DESTDIR}"
 )
 
 find_package(Protobuf 3.6.1 CONFIG QUIET)
@@ -87,9 +92,10 @@ if (NOT ${Protobuf_FOUND})
           -Dprotobuf_WITH_ZLIB:BOOL=OFF
           -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF
           -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-          -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/protobuf
+          -DCMAKE_INSTALL_PREFIX:PATH=${ava_DESTDIR}
+    INSTALL_DIR "${ava_DESTDIR}"
   )
-  set(_Protobuf_DIR "${EXTERNAL_BINARY_DIR}/protobuf/lib/cmake/protobuf")
+  set(_Protobuf_DIR "${ava_DESTDIR}/lib/cmake/protobuf")
   list(APPEND _GRPC_DEPEND_LIST protobuf)
   list(APPEND _FLATBUFFERS_DEPEND_LIST protobuf)
 else()
@@ -102,7 +108,8 @@ ExternalProject_Add(zlib
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib"
   CMAKE_CACHE_ARGS
         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/zlib
+        -DCMAKE_INSTALL_PREFIX:PATH=${ava_DESTDIR}
+  INSTALL_DIR "${ava_DESTDIR}"
 )
 
 # if OPENSSL_ROOT_DIR is set, propagate that hint path to the external projects with OpenSSL dependency.
@@ -126,19 +133,20 @@ if (NOT ${gRPC_FOUND})
           -DgRPC_PROTOBUF_PACKAGE_TYPE:STRING=CONFIG
           -DProtobuf_DIR:PATH=${_Protobuf_DIR}
           -DgRPC_ZLIB_PROVIDER:STRING=package
-          -DZLIB_DIR:STRING=${EXTERNAL_BINARY_DIR}/zlib
+          -DZLIB_DIR:STRING=${ava_DESTDIR}
           -DgRPC_ABSL_PROVIDER:STRING=package
-          -Dabsl_DIR:STRING=${EXTERNAL_BINARY_DIR}/absl/lib/cmake/absl
+          -Dabsl_DIR:STRING=${ava_DESTDIR}/lib/cmake/absl
           -DgRPC_CARES_PROVIDER:STRING=package
-          -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
+          -Dc-ares_DIR:PATH=${ava_DESTDIR}/lib/cmake/c-ares
           -DgRPC_SSL_PROVIDER:STRING=package
           ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
           -DBUILD_SHARED_LIBS:BOOL=ON
           -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-          -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/grpc
+          -DCMAKE_INSTALL_PREFIX:PATH=${ava_DESTDIR}
     DEPENDS ${_GRPC_DEPEND_LIST}
+    INSTALL_DIR "${ava_DESTDIR}"
   )
-  set(_gRPC_DIR ${EXTERNAL_BINARY_DIR}/grpc/lib/cmake/grpc)
+  set(_gRPC_DIR ${ava_DESTDIR}/lib/cmake/grpc)
   list(APPEND _FLATBUFFERS_DEPEND_LIST grpc)
 else()
   set(_gRPC_DIR ${gRPC_DIR})
@@ -149,10 +157,11 @@ ExternalProject_Add(flatbuffers
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/flatbuffers"
   CMAKE_CACHE_ARGS
         -DGRPC_INSTALL_PATH:PATH=${_gRPC_DIR}/../../..
-        -DPROTOBUF_DOWNLOAD_PATH:PATH=${EXTERNAL_BINARY_DIR}/src/grpc/third_party/protobuf
+        -DPROTOBUF_DOWNLOAD_PATH:PATH=${CMAKE_CURRENT_SOURCE_DIR}/third_party/protobuf
         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers
+        -DCMAKE_INSTALL_PREFIX:PATH=${ava_DESTDIR}
   DEPENDS ${_FLATBUFFERS_DEPEND_LIST}
+  INSTALL_DIR "${ava_DESTDIR}"
 )
 
 # Build config parser library
@@ -162,7 +171,8 @@ ExternalProject_Add(libconfig
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/libconfig"
   CMAKE_CACHE_ARGS
         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIR}/libconfig
+        -DCMAKE_INSTALL_PREFIX:PATH=${ava_DESTDIR}
+  INSTALL_DIR "${ava_DESTDIR}"
 )
 
 ###### Compile proto files ######
@@ -175,12 +185,12 @@ ExternalProject_Add(ava-proto
   BUILD_ALWAYS ON
   CMAKE_CACHE_ARGS
         -DProtobuf_DIR:PATH=${_Protobuf_DIR}
-        -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
-        -DZLIB_DIR:STRING=${EXTERNAL_BINARY_DIR}/zlib
-        -Dabsl_DIR:STRING=${EXTERNAL_BINARY_DIR}/absl/lib/cmake/absl
+        -Dc-ares_DIR:PATH=${ava_DESTDIR}/lib/cmake/c-ares
+        -DZLIB_DIR:STRING=${ava_DESTDIR}
+        -Dabsl_DIR:STRING=${ava_DESTDIR}/lib/cmake/absl
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${_gRPC_DIR}
-        -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
+        -DFlatbuffers_DIR:PATH=${ava_DESTDIR}/lib/cmake/flatbuffers
   DEPENDS flatbuffers
 )
 
@@ -196,17 +206,19 @@ ExternalProject_Add(ava-manager
   PREFIX ava-manager
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker"
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/worker"
-  BUILD_ALWAYS ON
   INSTALL_COMMAND ""
+  BUILD_ALWAYS ON
   CMAKE_CACHE_ARGS
         -DProtobuf_DIR:PATH=${_Protobuf_DIR}
-        -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
-        -DZLIB_DIR:STRING=${EXTERNAL_BINARY_DIR}/zlib
-        -Dabsl_DIR:STRING=${EXTERNAL_BINARY_DIR}/absl/lib/cmake/absl
+        -Dc-ares_DIR:PATH=${ava_DESTDIR}/lib/cmake/c-ares
+        -DZLIB_DIR:STRING=${ava_DESTDIR}
+        -Dabsl_DIR:STRING=${ava_DESTDIR}/lib/cmake/absl
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${_gRPC_DIR}
-        -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
+        -DFlatbuffers_DIR:PATH=${ava_DESTDIR}/lib/cmake/flatbuffers
+        -DCMAKE_INSTALL_PREFIX:PATH=${ava_DESTDIR}
   DEPENDS flatbuffers
+  INSTALL_DIR ${ava_DESTDIR}
 )
 
 ###### Generate and build remoting stubs ######
@@ -218,18 +230,19 @@ ExternalProject_Add(ava-spec
   INSTALL_COMMAND ""
   CMAKE_CACHE_ARGS
         -DProtobuf_DIR:PATH=${_Protobuf_DIR}
-        -Dc-ares_DIR:PATH=${EXTERNAL_BINARY_DIR}/c-ares/lib/cmake/c-ares
-        -DZLIB_ROOT:STRING=${EXTERNAL_BINARY_DIR}/zlib
-        -Dabsl_DIR:STRING=${EXTERNAL_BINARY_DIR}/absl/lib/cmake/absl
+        -Dc-ares_DIR:PATH=${ava_DESTDIR}/lib/cmake/c-ares
+        -DZLIB_ROOT:STRING=${ava_DESTDIR}
+        -Dabsl_DIR:STRING=${ava_DESTDIR}/lib/cmake/absl
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${_gRPC_DIR}
-        -DFlatbuffers_DIR:PATH=${EXTERNAL_BINARY_DIR}/flatbuffers/lib/cmake/flatbuffers
-        -Dlibconfig++_DIR:PATH=${EXTERNAL_BINARY_DIR}/libconfig/lib/cmake/libconfig
+        -DFlatbuffers_DIR:PATH=${ava_DESTDIR}/lib/cmake/flatbuffers
+        -Dlibconfig++_DIR:PATH=${ava_DESTDIR}/lib/cmake/libconfig
         -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
         -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
         -DAVA_GEN_TF_SPEC:BOOL=${AVA_GEN_TF_SPEC}
         -DAVA_GEN_ONNXRT_SPEC:BOOL=${AVA_GEN_ONNXRT_SPEC}
         -DAVA_ENABLE_DEBUG:BOOL=${AVA_ENABLE_DEBUG}
+        -Dava_DESTDIR:PATH=${ava_DESTDIR}
   BUILD_ALWAYS ON
   DEPENDS flatbuffers libconfig
 )
