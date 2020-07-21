@@ -43,6 +43,7 @@ ava_begin_utility;
 #include <glib.h>
 #include "cudart_nw_internal.h"
 #include "cublas_cpp.h"
+#include "common/linkage.h"
 #include <unistd.h>
 #include <errno.h>
 
@@ -803,7 +804,7 @@ __cudaRegisterFunction(
 }
 
 ava_begin_replacement;
-void CUDARTAPI
+EXPORTED void CUDARTAPI
 __cudaRegisterVar(
         void **fatCubinHandle,
         char  *hostVar,
@@ -816,7 +817,7 @@ __cudaRegisterVar(
 {
 }
 
-void CUDARTAPI
+EXPORTED void CUDARTAPI
 __cudaRegisterFatBinaryEnd(void **fatCubinHandle)
 {
 #warning This API is called for CUDA 10.1 and 10.2, but it seems to be able to be ignored.
@@ -1136,7 +1137,7 @@ cudaStreamAddCallback(cudaStream_t stream,
 */
 
 ava_begin_replacement;
-__host__ cudaError_t CUDARTAPI
+EXPORTED __host__ cudaError_t CUDARTAPI
 cudaStreamAddCallback(cudaStream_t stream,
         cudaStreamCallback_t callback, void *userData, unsigned int flags)
 {
@@ -1898,7 +1899,7 @@ cublasStatus_t CUBLASWINAPI cublasGetMatrixAsync (int rows, int cols, int elemSi
 }
 
 ava_begin_replacement;
-CUBLASAPI cublasStatus_t CUBLASWINAPI
+EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasGetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t *mode)
 {
     /* XXX seems ok for tensorflow but might be wrong !FIXME */
@@ -1906,7 +1907,7 @@ cublasGetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t *mode)
     return CUBLAS_STATUS_SUCCESS;
 }
 
-CUBLASAPI cublasStatus_t CUBLASWINAPI
+EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasSetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t mode)
 {
     /* XXX seems ok for tensorflow but might be wrong ! FIXME */
@@ -23206,7 +23207,7 @@ __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMallocManaged(void **devPt
 }
 
 ava_begin_replacement;
-__host__ cudaError_t CUDARTAPI cudaMallocHost(void **ptr, size_t size)
+EXPORTED __host__ cudaError_t CUDARTAPI cudaMallocHost(void **ptr, size_t size)
 {
     *ptr = malloc(size);
     if (ptr)
@@ -23215,7 +23216,7 @@ __host__ cudaError_t CUDARTAPI cudaMallocHost(void **ptr, size_t size)
         return cudaErrorMemoryAllocation;
 }
 
-__host__ cudaError_t CUDARTAPI cudaFreeHost(void *ptr)
+EXPORTED __host__ cudaError_t CUDARTAPI cudaFreeHost(void *ptr)
 {
     free(ptr);
     return cudaSuccess;
