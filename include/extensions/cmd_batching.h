@@ -50,23 +50,24 @@ void batch_insert_command(struct command_batch *cmd_batch,
 void __do_batch_emit(void *command_buffer, size_t total_buffer_size);
 void __do_batch_execute(void *command_buffer, size_t total_buffer_size);
 
-void __handle_command_cudart_opt(struct command_channel *__chan,
-                                struct nw_handle_pool *handle_pool,
-                                struct command_channel *__log,
-                                const struct command_base *__cmd) __attribute__((weak));
-void __print_command_cudart_opt(FILE * file,
-                                const struct command_channel *__chan,
-                                const struct command_base *__cmd) __attribute__((weak));
 void __handle_command_cudart_opt_single(struct command_channel *chan,
                                         struct nw_handle_pool *handle_pool,
                                         struct command_channel *log,
                                         const struct command_base *cmd);
 
-void __handle_command_cudart_onnx_opt(struct command_channel *__chan,
+void __handle_command_onnx_opt(struct command_channel *__chan,
+                                struct nw_handle_pool *handle_pool,
+                                struct command_channel *__log,
+                                const struct command_base *__cmd) __attribute__((weak));
+void __print_command_onnx_opt(FILE * file,
+                                const struct command_channel *__chan,
+                                const struct command_base *__cmd) __attribute__((weak));
+
+void __handle_command_tf_opt(struct command_channel *__chan,
                                     struct nw_handle_pool *handle_pool,
                                     struct command_channel *__log,
                                     const struct command_base *__cmd) __attribute__((weak));
-void __print_command_cudart_onnx_opt(FILE * file,
+void __print_command_tf_opt(FILE * file,
                                     const struct command_channel *__chan,
                                     const struct command_base *__cmd) __attribute__((weak));
 
