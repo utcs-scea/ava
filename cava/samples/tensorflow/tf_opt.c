@@ -902,7 +902,7 @@ __cudaUnregisterFatBinary(void **fatCubinHandle)
 */
 
 ava_begin_replacement;
-void** CUDARTAPI
+EXPORTED void** CUDARTAPI
 __cudaRegisterFatBinary(void *fatCubin)
 {
     void **dummy_fatbin = malloc(sizeof(void *));
@@ -915,7 +915,7 @@ __cudaRegisterFatBinary(void *fatCubin)
     return dummy_fatbin;
 }
 
-void CUDARTAPI
+EXPORTED void CUDARTAPI
 __cudaUnregisterFatBinary(void **fatCubinHandle)
 {
 #warning Unregister fat binaries in guestlib and worker destruction code.
@@ -1017,7 +1017,7 @@ ava_utility void __helper_parse_function_args(const char *name, struct kernel_ar
 }
 
 ava_begin_replacement;
-void CUDARTAPI
+EXPORTED void CUDARTAPI
 __cudaRegisterFunction(
         void   **fatCubinHandle,
   const char    *hostFun,
@@ -1035,7 +1035,7 @@ __cudaRegisterFunction(
 ava_end_replacement;
 
 ava_begin_replacement;
-void CUDARTAPI
+EXPORTED void CUDARTAPI
 __cudaRegisterVar(
         void **fatCubinHandle,
         char  *hostVar,
@@ -1048,7 +1048,7 @@ __cudaRegisterVar(
 {
 }
 
-void CUDARTAPI
+EXPORTED void CUDARTAPI
 __cudaRegisterFatBinaryEnd(void **fatCubinHandle)
 {
 #warning This API is called for CUDA 10.1 and 10.2, but it seems to be able to be ignored.
@@ -1092,7 +1092,7 @@ __cudaPopCallConfiguration(dim3   *gridDim,
 */
 
 ava_begin_replacement;
-__host__ __device__ unsigned CUDARTAPI
+EXPORTED __host__ __device__ unsigned CUDARTAPI
 __cudaPushCallConfiguration(dim3   gridDim,
                             dim3   blockDim,
                             size_t sharedMem, // CHECKME: default argument in header
@@ -1107,7 +1107,7 @@ __cudaPushCallConfiguration(dim3   gridDim,
     return 0;
 }
 
-cudaError_t CUDARTAPI
+EXPORTED cudaError_t CUDARTAPI
 __cudaPopCallConfiguration(dim3   *gridDim,
                            dim3   *blockDim,
                            size_t *sharedMem,
@@ -1206,7 +1206,7 @@ cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args,
 }
 
 ava_begin_replacement;
-__host__ cudaError_t CUDARTAPI
+EXPORTED __host__ cudaError_t CUDARTAPI
 cudaMallocHost(void **ptr, size_t size)
 {
     *ptr = malloc(size);
@@ -1216,7 +1216,7 @@ cudaMallocHost(void **ptr, size_t size)
         return cudaErrorMemoryAllocation;
 }
 
-__host__ cudaError_t CUDARTAPI
+EXPORTED __host__ cudaError_t CUDARTAPI
 cudaFreeHost(void *ptr)
 {
     free(ptr);
@@ -1415,7 +1415,7 @@ ava_utility gint gpu_address_search_func(gconstpointer a, gconstpointer b)
 }
 
 ava_begin_replacement;
-__host__ cudaError_t CUDARTAPI
+EXPORTED __host__ cudaError_t CUDARTAPI
 cudaPointerGetAttributes(struct cudaPointerAttributes *attributes, const void *ptr)
 {
     if (!attributes)
@@ -1504,7 +1504,7 @@ cudaStreamAddCallback(cudaStream_t stream,
 */
 
 ava_begin_replacement;
-__host__ cudaError_t CUDARTAPI
+EXPORTED __host__ cudaError_t CUDARTAPI
 cudaStreamAddCallback(cudaStream_t stream,
         cudaStreamCallback_t callback, void *userData, unsigned int flags)
 {
@@ -1512,7 +1512,7 @@ cudaStreamAddCallback(cudaStream_t stream,
     return cudaSuccess;
 }
 
-__host__ __cudart_builtin__ cudaError_t CUDARTAPI
+EXPORTED __host__ __cudart_builtin__ cudaError_t CUDARTAPI
 cudaGetLastError(void)
 {
     cudaError_t ret = cuda_last_error;
@@ -1922,7 +1922,7 @@ cuMemHostAlloc(void **pp, size_t bytesize, unsigned int Flags)
 */
 
 ava_begin_replacement;
-CUresult CUDAAPI
+EXPORTED CUresult CUDAAPI
 cuMemHostAlloc(void **pp, size_t bytesize, unsigned int Flags)
 {
     *pp = __helper_cu_mem_host_alloc_portable(bytesize);
@@ -2108,7 +2108,7 @@ cuDeviceGetPCIBusId(char *pciBusId, int len, CUdevice dev)
 }
 
 ava_begin_replacement;
-CUresult CUDAAPI
+EXPORTED CUresult CUDAAPI
 cuEventCreate(CUevent *phEvent, unsigned int Flags)
 {
     CUresult res = CUDA_SUCCESS;
@@ -2149,7 +2149,7 @@ __cuEventQuery(CUevent hEvent)
 }
 
 ava_begin_replacement;
-CUresult CUDAAPI
+EXPORTED CUresult CUDAAPI
 cuEventQuery(CUevent hEvent)
 {
     return __cuEventQuery(hEvent);
@@ -2182,12 +2182,12 @@ cuEventElapsedTime(float *pMilliseconds, CUevent hStart, CUevent hEnd)
 */
 
 ava_begin_replacement;
-CUresult CUDAAPI
+EXPORTED CUresult CUDAAPI
 cuEventSynchronize(CUevent hEvent) {
     return CUDA_SUCCESS;
 }
 
-CUresult CUDAAPI
+EXPORTED CUresult CUDAAPI
 cuEventElapsedTime(float *pMilliseconds, CUevent hStart, CUevent hEnd)
 {
     *pMilliseconds = 10.0;
@@ -2196,7 +2196,7 @@ cuEventElapsedTime(float *pMilliseconds, CUevent hStart, CUevent hEnd)
 ava_end_replacement;
 
 ava_begin_replacement;
-CUresult
+EXPORTED CUresult
 cuEventDestroy(CUevent hEvent)
 {
    g_queue_push_tail(idle_cu_event_pool, (gpointer)hEvent);
@@ -2379,7 +2379,7 @@ cublasGetMatrix(int rows, int cols, int elemSize,
 }
 
 ava_begin_replacement;
-CUBLASAPI cublasStatus_t CUBLASWINAPI
+EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasGetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t *mode)
 {
     /* XXX seems ok for tensorflow but might be wrong !FIXME */
@@ -2387,7 +2387,7 @@ cublasGetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t *mode)
     return CUBLAS_STATUS_SUCCESS;
 }
 
-CUBLASAPI cublasStatus_t CUBLASWINAPI
+EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasSetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t mode)
 {
     /* XXX seems ok for tensorflow but might be wrong ! FIXME */
@@ -6320,7 +6320,7 @@ cudnnDestroy(cudnnHandle_t handle)
 }
 
 ava_begin_replacement;
-cudnnStatus_t CUDNNWINAPI
+EXPORTED cudnnStatus_t CUDNNWINAPI
 cudnnCreateConvolutionDescriptor(cudnnConvolutionDescriptor_t *convDesc)
 {
     cudnnStatus_t res = CUDNN_STATUS_SUCCESS;
@@ -6345,7 +6345,7 @@ cudnnCreateConvolutionDescriptor(cudnnConvolutionDescriptor_t *convDesc)
     return res;
 }
 
-cudnnStatus_t CUDNNWINAPI
+EXPORTED cudnnStatus_t CUDNNWINAPI
 cudnnCreateFilterDescriptor(cudnnFilterDescriptor_t *filterDesc)
 {
     cudnnStatus_t res = CUDNN_STATUS_SUCCESS;
@@ -6370,7 +6370,7 @@ cudnnCreateFilterDescriptor(cudnnFilterDescriptor_t *filterDesc)
     return res;
 }
 
-cudnnStatus_t CUDNNWINAPI
+EXPORTED cudnnStatus_t CUDNNWINAPI
 cudnnCreatePoolingDescriptor(cudnnPoolingDescriptor_t *poolingDesc)
 {
     cudnnStatus_t res = CUDNN_STATUS_SUCCESS;
@@ -6395,7 +6395,7 @@ cudnnCreatePoolingDescriptor(cudnnPoolingDescriptor_t *poolingDesc)
     return res;
 }
 
-cudnnStatus_t CUDNNWINAPI
+EXPORTED cudnnStatus_t CUDNNWINAPI
 cudnnCreateTensorDescriptor(cudnnTensorDescriptor_t *tensorDesc)
 {
     cudnnStatus_t res = CUDNN_STATUS_SUCCESS;
@@ -6420,7 +6420,7 @@ cudnnCreateTensorDescriptor(cudnnTensorDescriptor_t *tensorDesc)
     return res;
 }
 
-cudnnStatus_t CUDNNWINAPI
+EXPORTED cudnnStatus_t CUDNNWINAPI
 cudnnDestroyConvolutionDescriptor(cudnnConvolutionDescriptor_t convDesc)
 {
    g_queue_push_tail(idle_convolution_descriptor_pool, (gpointer)convDesc);
@@ -6429,7 +6429,7 @@ cudnnDestroyConvolutionDescriptor(cudnnConvolutionDescriptor_t convDesc)
     return CUDNN_STATUS_SUCCESS;
 }
 
-cudnnStatus_t CUDNNWINAPI
+EXPORTED cudnnStatus_t CUDNNWINAPI
 cudnnDestroyFilterDescriptor(cudnnFilterDescriptor_t filterDesc)
 {
    g_queue_push_tail(idle_filter_descriptor_pool, (gpointer)filterDesc);
@@ -6438,7 +6438,7 @@ cudnnDestroyFilterDescriptor(cudnnFilterDescriptor_t filterDesc)
     return CUDNN_STATUS_SUCCESS;
 }
 
-cudnnStatus_t CUDNNWINAPI
+EXPORTED cudnnStatus_t CUDNNWINAPI
 cudnnDestroyPoolingDescriptor(cudnnPoolingDescriptor_t poolingDesc)
 {
    g_queue_push_tail(idle_pooling_descriptor_pool, (gpointer)poolingDesc);
@@ -6447,7 +6447,7 @@ cudnnDestroyPoolingDescriptor(cudnnPoolingDescriptor_t poolingDesc)
     return CUDNN_STATUS_SUCCESS;
 }
 
-cudnnStatus_t CUDNNWINAPI
+EXPORTED cudnnStatus_t CUDNNWINAPI
 cudnnDestroyTensorDescriptor(cudnnTensorDescriptor_t tensorDesc)
 {
    g_queue_push_tail(idle_tensor_descriptor_pool, (gpointer)tensorDesc);
@@ -23432,7 +23432,7 @@ __host__ cudaError_t CUDARTAPI cudaDeviceGetPCIBusId(char *pciBusId, int len, in
 // }
 
 ava_begin_replacement;
-__host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaPeekAtLastError(void)
+EXPORTED __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaPeekAtLastError(void)
 {
     return cuda_last_error;
 }

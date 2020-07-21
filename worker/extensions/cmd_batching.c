@@ -61,15 +61,15 @@ EXPORTED_WEAKLY void __handle_command_cudart_opt_single(struct command_channel *
     if (cmd) {
         assert(__chan && "Command channel has not been set");
 #ifdef AVA_DEBUG
-        if (__print_command_cudart_opt)
-            __print_command_cudart_opt(stderr, __chan, cmd);
-        else if (__print_command_cudart_onnx_opt)
-            __print_command_cudart_onnx_opt(stderr, __chan, cmd);
+        if (__print_command_onnx_opt)
+            __print_command_onnx_opt(stderr, __chan, cmd);
+        else if (__print_command_tf_opt)
+            __print_command_tf_opt(stderr, __chan, cmd);
 #endif
-        if (__handle_command_cudart_opt)
-            __handle_command_cudart_opt(__chan, __handle_pool, __log, cmd);
-        else if (__handle_command_cudart_onnx_opt)
-            __handle_command_cudart_onnx_opt(__chan, __handle_pool, __log, cmd);
+        if (__handle_command_onnx_opt)
+            __handle_command_onnx_opt(__chan, __handle_pool, __log, cmd);
+        else if (__handle_command_tf_opt)
+            __handle_command_tf_opt(__chan, __handle_pool, __log, cmd);
     }
 }
 

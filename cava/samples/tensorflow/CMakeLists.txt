@@ -24,11 +24,20 @@ ExternalProject_Add_Step(cava tf_dump-nwcc
   DEPENDEES download
 )
 
+set(tf_dump_bin ${CMAKE_CURRENT_BINARY_DIR}/tf_dump_nw)
 ExternalProject_Add_Step(cava tf_dump-link
   COMMAND mkdir -p generated &&
           ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers &&
-          ln -f -s ${CMAKE_CURRENT_BINARY_DIR}/tf_dump_nw/libguestlib.so
-                   ${CMAKE_CURRENT_BINARY_DIR}/tf_dump_nw/libcuda.so.1
+          ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers &&
+          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcuda.so.1               &&
+          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcublas.so.10            &&
+          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcublasLt.so.10          &&
+          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcudart.so.10            &&
+          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcudnn.so.7              &&
+          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcufft.so.10             &&
+          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcurand.so.10            &&
+          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcusolver.so.10          &&
+          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcusparse.so.10
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES tf_dump-nwcc
 )
@@ -55,11 +64,19 @@ ExternalProject_Add_Step(cava tf_opt-nwcc
   DEPENDEES download
 )
 
+set(tf_opt_bin ${CMAKE_CURRENT_BINARY_DIR}/tf_opt_nw)
 ExternalProject_Add_Step(cava tf_opt-link
   COMMAND mkdir -p generated &&
           ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers &&
-          ln -f -s ${CMAKE_CURRENT_BINARY_DIR}/tf_opt_nw/libguestlib.so
-                   ${CMAKE_CURRENT_BINARY_DIR}/tf_opt_nw/libcuda.so.1
+          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcuda.so.1                 &&
+          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcublas.so.10              &&
+          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcublasLt.so.10            &&
+          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcudart.so.10              &&
+          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcudnn.so.7                &&
+          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcufft.so.10               &&
+          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcurand.so.10              &&
+          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcusolver.so.10            &&
+          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcusparse.so.10
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES tf_opt-nwcc
 )
