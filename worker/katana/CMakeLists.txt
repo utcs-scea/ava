@@ -96,8 +96,11 @@ set_target_properties(katana-spawn_daemon
   PROPERTIES OUTPUT_NAME daemon
 )
 
-include(GNUInstallDirs)
-install(TARGETS katana-spawn_daemon EXPORT katana_daemon
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(TARGETS katana-manager EXPORT katana_manager
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/daemon
+  TYPE BIN
+  RENAME katana_daemon
+)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/manager
+  TYPE BIN
+  RENAME katana_manager
+)

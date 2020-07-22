@@ -208,7 +208,6 @@ ExternalProject_Add(ava-manager
   PREFIX ava-manager
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker"
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/worker"
-  INSTALL_COMMAND ""
   BUILD_ALWAYS ON
   CMAKE_CACHE_ARGS
         -DProtobuf_DIR:PATH=${_Protobuf_DIR}

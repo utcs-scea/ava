@@ -96,8 +96,11 @@ set_target_properties(galvanic-spawn_daemon
   PROPERTIES OUTPUT_NAME daemon
 )
 
-include(GNUInstallDirs)
-install(TARGETS galvanic-spawn_daemon EXPORT galvanic_daemon
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(TARGETS galvanic-manager EXPORT galvanic_manager
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/daemon
+  TYPE BIN
+  RENAME galvanic_daemon
+)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/manager
+  TYPE BIN
+  RENAME galvanic_manager
+)
