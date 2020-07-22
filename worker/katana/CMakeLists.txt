@@ -93,5 +93,14 @@ target_link_libraries(katana-spawn_daemon
   ${NVML_LIB}
 )
 set_target_properties(katana-spawn_daemon
-  PROPERTIES OUTPUT_NAME spawn_daemon
+  PROPERTIES OUTPUT_NAME daemon
+)
+
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/daemon
+  TYPE BIN
+  RENAME katana_daemon
+)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/manager
+  TYPE BIN
+  RENAME katana_manager
 )

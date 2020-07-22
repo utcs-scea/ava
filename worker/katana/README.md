@@ -21,7 +21,7 @@ Open another terminal, start the AvA spawn daemon on the local machine (as
 this example) or a remote GPU server:
 
 ```Shell
-./worker/katana/spawn_daemon -f gpu.conf -w generated/cu_nw/worker -m 0.0.0.0:3334 -d 0.0.0.0:3335
+./worker/katana/daemon -f gpu.conf -w generated/cu_nw/worker -m 0.0.0.0:3334 -d 0.0.0.0:3335
 ```
 
 The daemon's address can be set with `-d 0.0.0.0:3335`, and the API server's base port can be set

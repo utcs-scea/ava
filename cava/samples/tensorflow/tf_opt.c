@@ -48,6 +48,7 @@ ava_begin_utility;
 #include "cudart_nw_internal.h"
 #include "common/extensions/tf_optimization.h"
 #include "common/extensions/cmd_batching.h"
+#include "common/linkage.h"
 
 #include <stdio.h>
 #include <errno.h>

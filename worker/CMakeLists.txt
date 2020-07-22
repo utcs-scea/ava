@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.13)
 project(ava-manager)
 
-add_subdirectory(galvanic)
-add_subdirectory(katana)
+if(AVA_MANAGER_GALVANIC)
+  add_subdirectory(galvanic)
+endif()
+
+if(AVA_MANAGER_KATANA)
+  add_subdirectory(katana)
+endif()

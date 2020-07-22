@@ -42,6 +42,7 @@ ava_begin_utility;
 #include <cusolverDn.h>
 #include <glib.h>
 #include "cudart_nw_internal.h"
+#include "common/linkage.h"
 #include <unistd.h>
 #include <errno.h>
 

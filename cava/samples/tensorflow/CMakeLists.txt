@@ -24,20 +24,20 @@ ExternalProject_Add_Step(cava tf_dump-nwcc
   DEPENDEES download
 )
 
-set(tf_dump_bin ${CMAKE_CURRENT_BINARY_DIR}/tf_dump_nw)
+set(tf_dump_install ${CMAKE_CURRENT_BINARY_DIR}/tf_dump_nw)
 ExternalProject_Add_Step(cava tf_dump-link
   COMMAND mkdir -p generated &&
-          ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers &&
-          ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers &&
-          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcuda.so.1               &&
-          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcublas.so.10            &&
-          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcublasLt.so.10          &&
-          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcudart.so.10            &&
-          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcudnn.so.7              &&
-          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcufft.so.10             &&
-          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcurand.so.10            &&
-          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcusolver.so.10          &&
-          ln -f -s ${tf_dump_bin}/libguestlib.so ${tf_dump_bin}/libcusparse.so.10
+          mkdir -p ${tf_dump_install}/lib &&
+          ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers        &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcuda.so.1      &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcublas.so.10   &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcublasLt.so.10 &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcudart.so.10   &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcudnn.so.7     &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcufft.so.10    &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcurand.so.10   &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcusolver.so.10 &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcusparse.so.10
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES tf_dump-nwcc
 )
@@ -46,11 +46,12 @@ ExternalProject_Add(tf_dump_nw
   PREFIX tf_dump_nw
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tf_dump_nw
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tf_dump_nw
+  INSTALL_DIR ${tf_dump_install}
   DOWNLOAD_COMMAND ""
-  INSTALL_COMMAND ""
   CMAKE_ARGS ${CL_ARGS}
              -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
              -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+             -DCMAKE_INSTALL_PREFIX:PATH=${tf_dump_install}
   BUILD_ALWAYS ON
   DEPENDS cava
 )
@@ -64,19 +65,20 @@ ExternalProject_Add_Step(cava tf_opt-nwcc
   DEPENDEES download
 )
 
-set(tf_opt_bin ${CMAKE_CURRENT_BINARY_DIR}/tf_opt_nw)
+set(tf_opt_install ${CMAKE_CURRENT_BINARY_DIR}/tf_opt_nw)
 ExternalProject_Add_Step(cava tf_opt-link
   COMMAND mkdir -p generated &&
-          ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers &&
-          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcuda.so.1                 &&
-          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcublas.so.10              &&
-          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcublasLt.so.10            &&
-          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcudart.so.10              &&
-          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcudnn.so.7                &&
-          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcufft.so.10               &&
-          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcurand.so.10              &&
-          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcusolver.so.10            &&
-          ln -f -s ${tf_opt_bin}/libguestlib.so ${tf_opt_bin}/libcusparse.so.10
+          mkdir -p ${tf_opt_install}/lib &&
+          ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers      &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcuda.so.1      &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcublas.so.10   &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcublasLt.so.10 &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcudart.so.10   &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcudnn.so.7     &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcufft.so.10    &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcurand.so.10   &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcusolver.so.10 &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcusparse.so.10
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES tf_opt-nwcc
 )
@@ -85,11 +87,12 @@ ExternalProject_Add(tf_opt_nw
   PREFIX tf_opt_nw
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tf_opt_nw
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tf_opt_nw
+  INSTALL_DIR ${tf_opt_install}
   DOWNLOAD_COMMAND ""
-  INSTALL_COMMAND ""
   CMAKE_ARGS ${CL_ARGS}
              -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
              -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+             -DCMAKE_INSTALL_PREFIX:PATH=${tf_opt_install}
   BUILD_ALWAYS ON
   DEPENDS cava
 )
