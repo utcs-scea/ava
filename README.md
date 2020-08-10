@@ -22,13 +22,13 @@ Related repositories
 
 Clone the repositories into a single directory:
 
-```
-$ git clone git@github.com:utcs-scea/ava.git
-$ cd ava
-$ git clone https://github.com/utcs-scea/ava-benchmarks benchmark
-$ git clone https://github.com/utcs-scea/ava-llvm llvm
-$ git clone https://github.com/utcs-scea/ava-qemu qemu
-$ git clone https://github.com/utcs-scea/ava-kvm  kvm
+``` bash
+git clone git@github.com:utcs-scea/ava.git
+cd ava
+git clone https://github.com/utcs-scea/ava-benchmarks benchmark
+git clone https://github.com/utcs-scea/ava-llvm llvm
+git clone https://github.com/utcs-scea/ava-qemu qemu
+git clone https://github.com/utcs-scea/ava-kvm  kvm
 ```
 
 Install
@@ -91,9 +91,9 @@ interposition). We provide kernel configuration and Kbuild script in
 
 ```
 ## In $AVA_ROOT/kbuild
-$ cp 4.14.config .config && make -f Makefile.setup
-$ make -j16 && make modules
-$ sudo make modules_install ; sudo make install 
+cp 4.14.config .config && make -f Makefile.setup
+make -j16 && make modules
+sudo make modules_install ; sudo make install 
 ```
 
 Reboot and verify the installed kernel by `uname -r`. Because AvA depends
@@ -104,7 +104,7 @@ before starting any AvA components. Or it can be automatically loaded by
 ## In /etc/modules-load.d/modules.conf
 vhost_vsock
 ## Reboot the machine
-$ sudo reboot
+sudo reboot
 ```
 
 ## Compile QEMU
@@ -115,8 +115,8 @@ binary.
 
 ```
 ## In $AVA_ROOT/qemu
-$ ./configure
-$ make -j16
+./configure
+make -j16
 ```
 
 ## Compile LLVM
@@ -126,11 +126,11 @@ You do not need to install them. CAvA will find them in their build locations.
 
 ```
 ## In $AVA_ROOT/llvm
-$ mkdir build
-$ cd build
-$ cmake -DLLVM_ENABLE_PROJECTS=clang \
+mkdir build
+cd build
+cmake -DLLVM_ENABLE_PROJECTS=clang \
         -G "Unix Makefiles" ../llvm
-$ make
+make
 ```
 
 ### Compile generated stack and API server
@@ -140,14 +140,14 @@ CAvA's help menu, please run `./nwcc -v` in `$AVA_ROOT/cava`.
 
 ```
 ## In $AVA_ROOT/cava
-$ ./nwcc samples/opencl.nw.c
-$ ./nwcc samples/cuda.nw.c \
+./nwcc samples/opencl.nw.c
+./nwcc samples/cuda.nw.c \
          -I /usr/local/cuda-10.0/include
-$ ./nwcc samples/cudart.nw.c \
+./nwcc samples/cudart.nw.c \
          -I headers
          -I /usr/local/cuda-10.0/include \
          `pkg-config --cflags glib-2.0`
-$ ./nwcc samples/mvnc.nw.c
+./nwcc samples/mvnc.nw.c
 ```
 
 The guest libraries and workers for those APIs are generated into `cl_nw`,
@@ -164,12 +164,12 @@ Simply execute `make` in `$AVA_ROOT/worker`.
 Installing the missing packages will just work fine:
 
 ```
-$ wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
-$ sudo add-apt-repository \"deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main\"
-$ sudo add-apt-repository ppa:jonathonf/python-3.6
-$ sudo apt update
-$ sudo apt install libclang-7-dev
-$ sudo apt install python3.6
+wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
+sudo add-apt-repository \"deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main\"
+sudo add-apt-repository ppa:jonathonf/python-3.6
+sudo apt update
+sudo apt install libclang-7-dev
+sudo apt install python3.6
 ```
 
 `SOL_NETLINK` socket option is supported in the 16.04 kernel, but it is not
@@ -193,8 +193,8 @@ Link the compiled API server binary to `$AVA_ROOT/worker` and start manager.
 
 ```
 ## In $AVA_ROOT/worker
-$ ln -s $AVA_ROOT/cava/cl_nw/worker worker
-$ sudo -E ./manager
+ln -s $AVA_ROOT/cava/cl_nw/worker worker
+sudo -E ./manager
 ```
 
 ### Setup virtual machine
@@ -227,7 +227,7 @@ to setup guestdrv and guestlib in guest automatically:
 ## Copy necessary files (e.g., $AVA_ROOT/cava/cl_nw) to
 ## VM ($GUEST_AVA_ROOT defined in the script), compile
 ## and install guestdrv
-$ ./setup.sh cl_nw
+./setup.sh cl_nw
 ```
 
 Then export `AVA_ROOT` and `DATA_DIR` in guest. Make sure `AVA_CHANNEL` and
@@ -249,7 +249,7 @@ Example for running a single benchmark:
 
 ```
 ## In (guest) $AVA_ROOT/benchmark/rodinia/opencl/backprop
-$ make && ./run
+make && ./run
 ```
 
 To run the same benchmark in host, comment \lstinline|make.mk:7-8| before compiling
