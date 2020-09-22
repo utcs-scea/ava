@@ -20,12 +20,30 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(AVA_ENABLE_DEBUG OFF CACHE BOOL "Enable debug messages")
 set(AVA_GEN_TF_SPEC OFF CACHE BOOL "Enable CUDA specification for TensorFlow")
 set(AVA_GEN_ONNXRT_SPEC OFF CACHE BOOL "Enable CUDA specification for ONNXruntime")
+set(AVA_GEN_AMORPHOS_SPEC OFF CACHE BOOL "Enable AmorphOS specification for FPGA applications")
+set(AVA_GEN_GTI_SPEC OFF CACHE BOOL "Enable Gyrfalcon Plai specification")
+set(AVA_GEN_NCSDK_SPEC OFF CACHE BOOL "Enable NCSDK v1 specification")
+set(AVA_GEN_QAT_SPEC OFF CACHE BOOL "Enable QuickAssist specification")
+set(AVA_GEN_OPENCL_SPEC OFF CACHE BOOL "Enable OpenCL specification")
+set(AVA_GEN_CUDA_SPEC OFF CACHE BOOL "Enable CUDA specification")
+set(AVA_GEN_TF_C_SPEC OFF CACHE BOOL "Enable TensorFlow (C) specification")
+set(AVA_GEN_HIP_SPEC OFF CACHE BOOL "Enable HIP specification")
+set(AVA_GEN_TEST_SPEC OFF CACHE BOOL "Enable test (libtrivial) specification")
 set(AVA_MANAGER_GALVANIC ON CACHE BOOL "Build Galvanic manager")
 set(AVA_MANAGER_KATANA OFF CACHE BOOL  "Build Katana manager")
-message(STATUS "Build TensorFlow CUDA specification: ${AVA_GEN_TF_SPEC}")
-message(STATUS "Build ONNXruntime specification: ${AVA_GEN_ONNXRT_SPEC}")
-message(STATUS "Build Galvanic manager: ${AVA_MANAGER_GALVANIC}")
-message(STATUS "Build Katana manager: ${AVA_MANAGER_KATANA}")
+message(STATUS "Build TensorFlow CUDA specification:   ${AVA_GEN_TF_SPEC}")
+message(STATUS "Build ONNXruntime specification:       ${AVA_GEN_ONNXRT_SPEC}")
+message(STATUS "Build AmorphOS specification:          ${AVA_GEN_AMORPHOS_SPEC}")
+message(STATUS "Build GTI specification:               ${AVA_GEN_GTI_SPEC}")
+message(STATUS "Build NCSDK specification:             ${AVA_GEN_NCSDK_SPEC}")
+message(STATUS "Build QuickAssist specification:       ${AVA_GEN_QAT_SPEC}")
+message(STATUS "Build OpenCL specification:            ${AVA_GEN_OPENCL_SPEC}")
+message(STATUS "Build CUDA specification:              ${AVA_GEN_CUDA_SPEC}")
+message(STATUS "Build TensorFlow C specification:      ${AVA_GEN_TF_C_SPEC}")
+message(STATUS "Build HIP specification:               ${AVA_GEN_HIP_SPEC}")
+message(STATUS "Build test (libtrivial) specification: ${AVA_GEN_TEST_SPEC}")
+message(STATUS "Build Galvanic manager:                ${AVA_MANAGER_GALVANIC}")
+message(STATUS "Build Katana manager:                  ${AVA_MANAGER_KATANA}")
 
 set(AVA_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE PATH "Installation path of AvA")
 set(AVA_DEP_INSTALL_DIR "${AVA_INSTALL_DIR}/third_party" CACHE PATH "Installation path of AvA dependencies")
@@ -244,6 +262,15 @@ ExternalProject_Add(ava-spec
         -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
         -DAVA_GEN_TF_SPEC:BOOL=${AVA_GEN_TF_SPEC}
         -DAVA_GEN_ONNXRT_SPEC:BOOL=${AVA_GEN_ONNXRT_SPEC}
+        -DAVA_GEN_AMORPHOS_SPEC:BOOL=${AVA_GEN_AMORPHOS_SPEC}
+        -DAVA_GEN_GTI_SPEC:BOOL=${AVA_GEN_GTI_SPEC}
+        -DAVA_GEN_NCSDK_SPEC:BOOL=${AVA_GEN_NCSDK_SPEC}
+        -DAVA_GEN_QAT_SPEC:BOOL=${AVA_GEN_QAT_SPEC}
+        -DAVA_GEN_OPENCL_SPEC:BOOL=${AVA_GEN_OPENCL_SPEC}
+        -DAVA_GEN_CUDA_SPEC:BOOL=${AVA_GEN_CUDA_SPEC}
+        -DAVA_GEN_TF_C_SPEC:BOOL=${AVA_GEN_TF_C_SPEC}
+        -DAVA_GEN_HIP_SPEC:BOOL=${AVA_GEN_HIP_SPEC}
+        -DAVA_GEN_TEST_SPEC:BOOL=${AVA_GEN_TEST_SPEC}
         -DAVA_ENABLE_DEBUG:BOOL=${AVA_ENABLE_DEBUG}
         -DAVA_INSTALL_DIR:PATH=${AVA_INSTALL_DIR}
   BUILD_ALWAYS ON
