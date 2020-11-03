@@ -27,6 +27,7 @@ extern int nw_global_vm_id;
 
 __sighandler_t original_sigint_handler = SIG_DFL;
 __sighandler_t original_sigsegv_handler = SIG_DFL;
+__sighandler_t original_sigchld_handler = SIG_DFL;
 
 void sigint_handler(int signo)
 {
@@ -103,6 +104,9 @@ int main(int argc, char *argv[])
     if ((original_sigsegv_handler = signal(SIGSEGV, sigsegv_handler)) == SIG_ERR)
         printf("failed to catch SIGSEGV\n");
 
+    if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR)
+        printf("failed to ignore SIGCHLD\n");
+    
     /* define arguments */
     nw_worker_id = 0;
     int listen_port;
