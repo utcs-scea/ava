@@ -35,6 +35,7 @@
 int listen_fd;
 
 __sighandler_t original_sigint_handler = SIG_DFL;
+__sighandler_t original_sigchld_handler = SIG_DFL;
 
 void sigint_handler(int signo) {
   if (listen_fd > 0)
@@ -396,10 +397,19 @@ void runManagerService(std::shared_ptr<ManagerConfig> config) {
   server->Wait();
 }
 
+void setupSignalHandler() {
+    if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR)
+        printf("failed to catch SIGINT\n");
+
+    if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR)
+        printf("failed to ignore SIGCHLD\n");
+}
+
 int main(int argc, char* argv[]) {
   config = parseArguments(argc, argv);
   config->Print();
 
+  setupSignalHandler();
   std::thread server_thread(runManagerService, config);
   server_thread.join();
 

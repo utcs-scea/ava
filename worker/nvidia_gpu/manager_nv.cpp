@@ -37,6 +37,7 @@ std::atomic<int> worker_id(1);
 GHashTable *worker_info;
 
 __sighandler_t original_sigint_handler = SIG_DFL;
+__sighandler_t original_sigchld_handler = SIG_DFL;
 
 void sigint_handler(int signo)
 {
@@ -329,6 +330,9 @@ int main(int argc, char *argv[])
     /* setup signal handler */
     if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR)
         printf("failed to catch SIGINT\n");
+
+    if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR)
+        printf("failed to ignore SIGCHLD\n");
 
     /* setup worker info hash table */
     worker_info = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free);
