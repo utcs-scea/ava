@@ -25,67 +25,8 @@ ExternalProject_Add(cava
   UPDATE_DISCONNECTED ON
 )
 
-###### Example: compile cuda.nw.c ######
+###### Compile specifications ######
 
-ExternalProject_Add_Step(cava cuda-nwcc
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/samples/cuda.nw.c
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${CMAKE_CURRENT_SOURCE_DIR}/samples/cuda.nw.c -I /usr/local/cuda-10.1/include
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  DEPENDEES download
-)
-
-ExternalProject_Add_Step(cava cuda-link
-  COMMAND mkdir -p generated && ln -f -s ${CMAKE_CURRENT_BINARY_DIR}/cu_nw/libguestlib.so ${CMAKE_CURRENT_BINARY_DIR}/cu_nw/libcuda.so.1
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
-  DEPENDEES cuda-nwcc
-)
-
-ExternalProject_Add(cu_nw
-  PREFIX cu_nw
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cu_nw
-  BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/cu_nw
-  DOWNLOAD_COMMAND ""
-  INSTALL_COMMAND ""
-  CMAKE_ARGS ${CL_ARGS}
-             -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-             -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
-  BUILD_ALWAYS ON
-  DEPENDS cava
-)
-
-###### Example: compile cudart.nw.c ######
-
-# find_package(PkgConfig REQUIRED)
-# pkg_search_module(GLIB2 REQUIRED glib-2.0)
-# ExternalProject_Add_Step(cava cudart-nwcc
-#   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/samples/cudart.nw.c
-#   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${CMAKE_CURRENT_SOURCE_DIR}/samples/cudart.nw.c -I /usr/local/cuda-10.1/include -I ${CMAKE_CURRENT_SOURCE_DIR}/headers ${GLIB2_CFLAGS}
-#   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#   DEPENDEES download
-# )
-#
-# ExternalProject_Add_Step(cava cudart-link
-#   COMMAND mkdir -p generated &&
-#           ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers &&
-#           ln -f -s ${CMAKE_CURRENT_BINARY_DIR}/cudart_nw/libguestlib.so ${CMAKE_CURRENT_BINARY_DIR}/cudart_nw/libcudart.so.10.1
-#   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
-#   DEPENDEES cudart-nwcc
-# )
-#
-#ExternalProject_Add(cudart_nw
-#  PREFIX cudart_nw
-#  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cudart_nw
-#  BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/cudart_nw
-#  DOWNLOAD_COMMAND ""
-#  INSTALL_COMMAND ""
-#  CMAKE_ARGS ${CL_ARGS}
-#             -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-#             -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
-#  BUILD_ALWAYS ON
-#  DEPENDS cava
-#)
-
-###### Define your compilation below ######
 message(STATUS "Compile TensorFlow specification: ${AVA_GEN_TF_SPEC}")
 if(AVA_GEN_TF_SPEC)
   include(samples/tensorflow/CMakeLists.txt)
@@ -95,3 +36,50 @@ message(STATUS "Compile ONNXruntime specification: ${AVA_GEN_ONNXRT_SPEC}")
 if(AVA_GEN_ONNXRT_SPEC)
   include(samples/onnxruntime/CMakeLists.txt)
 endif()
+
+message(STATUS "Compile AmorphOS specification: ${AVA_GEN_AMORPHOS_SPEC}")
+if(AVA_GEN_AMORPHOS_SPEC)
+  include(samples/amorphos/CMakeLists.txt)
+endif()
+
+message(STATUS "Compile GTI specification: ${AVA_GEN_GTI_SPEC}")
+if(AVA_GEN_GTI_SPEC)
+  include(samples/gti/CMakeLists.txt)
+endif()
+
+message(STATUS "Compile NCSDK specification: ${AVA_GEN_NCSDK_SPEC}")
+if(AVA_GEN_NCSDK_SPEC)
+  include(samples/ncsdk/CMakeLists.txt)
+endif()
+
+message(STATUS "Compile QuickAssist specification: ${AVA_GEN_QAT_SPEC}")
+if(AVA_GEN_QAT_SPEC)
+  include(samples/quickassist/CMakeLists.txt)
+endif()
+
+message(STATUS "Compile OpenCL specification: ${AVA_GEN_OPENCL_SPEC}")
+if(AVA_GEN_OPENCL_SPEC)
+  include(samples/opencl/CMakeLists.txt)
+endif()
+
+message(STATUS "Compile CUDA specification: ${AVA_GEN_CUDA_SPEC}")
+if(AVA_GEN_CUDA_SPEC)
+  include(samples/cuda/CMakeLists.txt)
+endif()
+
+message(STATUS "Compile TensorFlow (C) specification: ${AVA_GEN_TF_C_SPEC}")
+if(AVA_GEN_TF_C_SPEC)
+  include(samples/tensorflow_c/CMakeLists.txt)
+endif()
+
+message(STATUS "Compile HIP specification: ${AVA_GEN_HIP_SPEC}")
+if(AVA_GEN_HIP_SPEC)
+  include(samples/hip/CMakeLists.txt)
+endif()
+
+message(STATUS "Compile test specification: ${AVA_GEN_TEST_SPEC}")
+if(AVA_GEN_TEST_SPEC)
+  include(samples/test/CMakeLists.txt)
+endif()
+
+###### Include your compilation below ######
