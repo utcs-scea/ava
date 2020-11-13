@@ -123,7 +123,7 @@ struct command_channel* command_channel_socket_tcp_worker_new(int worker_port)
 
     struct sockaddr_in address;
     int addrlen = sizeof(address);
-    int opt = 1;
+    int opt;
     memset(&address, 0, sizeof(address));
 
     chan->listen_port = worker_port;
@@ -133,8 +133,13 @@ struct command_channel* command_channel_socket_tcp_worker_new(int worker_port)
         perror("socket");
     }
     // Forcefully attaching socket to the worker port
-    if (setsockopt(chan->listen_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
-        perror("setsockopt");
+    opt = 1;
+    if (setsockopt(chan->listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
+        perror("setsockopt reuseaddr");
+    }
+    opt = 1;
+    if (setsockopt(chan->listen_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))) {
+        perror("setsockopt reuseport");
     }
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
@@ -193,7 +198,7 @@ struct command_channel* command_channel_socket_tcp_migration_new(int worker_port
 
     struct sockaddr_in address;
     int addrlen = sizeof(address);
-    int opt = 1;
+    int opt;
     memset(&address, 0, sizeof(address));
 
     if (is_source) {
@@ -212,8 +217,13 @@ struct command_channel* command_channel_socket_tcp_migration_new(int worker_port
             perror("socket");
         }
         // Forcefully attaching socket to the worker port
-        if (setsockopt(chan->listen_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
-            perror("setsockopt");
+        opt = 1;
+        if (setsockopt(chan->listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
+            perror("setsockopt reuseaddr");
+        }
+        opt = 1;
+        if (setsockopt(chan->listen_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))) {
+            perror("setsockopt reuseport");
         }
         address.sin_family = AF_INET;
         address.sin_addr.s_addr = INADDR_ANY;

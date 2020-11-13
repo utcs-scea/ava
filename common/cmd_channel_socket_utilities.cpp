@@ -43,6 +43,8 @@ void command_channel_socket_print_command(const struct command_channel *chan, co
  */
 void command_channel_socket_free(struct command_channel* c) {
     struct command_channel_socket* chan = (struct command_channel_socket*)c;
+    if (chan->listen_fd)
+        close(chan->listen_fd);
     close(chan->sock_fd);
     pthread_mutex_destroy(&chan->send_mutex);
     pthread_mutex_destroy(&chan->recv_mutex);
