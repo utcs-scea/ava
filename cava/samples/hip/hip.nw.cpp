@@ -1,17 +1,15 @@
 ava_name("HIP");
-ava_version("1.9.0");
+ava_version("3.7.0");
 ava_identifier(HIP);
 ava_number(3);
-ava_cflags();
-ava_libs(-lcuda);
+ava_cxxflags(-D__HIP_PLATFORM_HCC__ -isystem /opt/rocm/include);
+ava_libs(-llibamdhip64.so.3.7.30700);
 ava_export_qualifier();
 
 struct hipFuncAttributes;
 typedef struct hipFuncAttributes hipFuncAttributes;
-#include "hip_cpp_bridge.h"
 #include <hip/hip_runtime.h>
 #include <hip/hcc_detail/hip_runtime_api.h>
-#include <hsa_limited.h>
 
 hipError_t
 hipDeviceSynchronize(void)
