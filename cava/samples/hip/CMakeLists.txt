@@ -18,7 +18,7 @@ pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
 ExternalProject_Add_Step(cava hip-nwcc
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/samples/hip/hip.cpp
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${CMAKE_CURRENT_SOURCE_DIR}/samples/hip/hip.cpp -I/opt/rocm/include ${GLIB2_CFLAGS}
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${CMAKE_CURRENT_SOURCE_DIR}/samples/hip/hip.cpp -Iheaders -I/opt/rocm/include -D__HIP_PLATFORM_HCC__ ${GLIB2_CFLAGS}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDEES download
 )
@@ -27,6 +27,7 @@ set(hip_install ${CMAKE_CURRENT_BINARY_DIR}/hip_nw)
 ExternalProject_Add_Step(cava hip-link
   COMMAND mkdir -p generated &&
           mkdir -p ${hip_install}/lib &&
+          ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers        &&
           ln -f -s ${hip_install}/lib/libguestlib.so ${hip_install}/lib/libamdhip64.so.3.7.30700
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES hip-nwcc
