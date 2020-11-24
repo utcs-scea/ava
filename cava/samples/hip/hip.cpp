@@ -1,17 +1,18 @@
 ava_name("HIP");
-ava_version("1.9.0");
+ava_version("3.7.0");
 ava_identifier(HIP);
 ava_number(3);
-ava_cflags();
-ava_libs(-lcuda);
+ava_cxxflags(-D__HIP_PLATFORM_HCC__ -isystem /opt/rocm/include -I../headers -fpermissive);
+ava_libs(-lamdhip64);
 ava_export_qualifier();
 
+ava_begin_utility;
 struct hipFuncAttributes;
 typedef struct hipFuncAttributes hipFuncAttributes;
 #include "hip_cpp_bridge.h"
 #include <hip/hip_runtime.h>
 #include <hip/hcc_detail/hip_runtime_api.h>
-#include <hsa_limited.h>
+ava_end_utility;
 
 hipError_t
 hipDeviceSynchronize(void)
@@ -188,8 +189,6 @@ nw_hipGetDevice(int* deviceId)
 hipError_t
 hipInit(unsigned int flags)
 {
-   ava_argument(flags) {
-   }
 }
 
 hipError_t
@@ -216,8 +215,6 @@ __do_c_hipGetDeviceProperties(char* prop, int deviceId)
 {
    ava_argument(prop) {
       ava_out; ava_buffer(sizeof(hipDeviceProp_t));
-   }
-   ava_argument(deviceId) {
    }
 }
 

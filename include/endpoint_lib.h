@@ -91,22 +91,6 @@ typedef void (*ava_deallocator)(void *ptr);
 
 //// Library functions/macros expected by metadata expressions
 
-#ifndef max
-#define max(a,b)   ({                  \
-            __typeof__ (a) _a = (a);   \
-            __typeof__ (b) _b = (b);   \
-            _a > _b ? _a : _b;         \
-        })
-#endif
-
-#ifndef min
-#define min(a,b)   ({                  \
-            __typeof__ (a) _a = (a);   \
-            __typeof__ (b) _b = (b);   \
-            _a < _b ? _a : _b;         \
-        })
-#endif
-
 enum ava_sync_mode_t {
     NW_ASYNC = 0,
     NW_SYNC,

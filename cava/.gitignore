@@ -16,6 +16,7 @@ cpa_nw/
 tf_nw/
 vk_nw/
 fpga_nw/
+hip_nw/
 trivial_nw/
 mvnc_nw/
 gti_nw/

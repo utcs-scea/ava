@@ -1,0 +1,6 @@
+FROM rocm/dev-ubuntu-20.04
+# update apt sources to use rocm version 3.7
+RUN echo "deb [arch=amd64] http://repo.radeon.com/rocm/apt/3.7/ xenial main" > /etc/apt/sources.list.d/rocm.list
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y cmake git cgdb libboost-dev libssl-dev libglib2.0-dev libpixman-1-dev opencl-headers curl bc build-essential libclang-7-dev clang-7 ctags pssh python3 python3-pip virtualenv indent rsync vim cgdb g++ libconfig++-dev libprotobuf-dev cmake
+RUN python3 -m pip install Jinja2 toposort blessings astor
+CMD ["bash"]
