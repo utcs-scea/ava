@@ -1,0 +1,22 @@
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, wiki_page]
+    paths:
+      - 'docs/**'
+
+name: Auto Sync Wiki
+jobs:
+  ava-readme:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Upload README Notes to Wiki
+      uses: Andrew-Chen-Wang/github-wiki-action@v2
+      env:
+        WIKI_DIR: docs/
+        GH_TOKEN: ${{ secrets.GH_REPO_PAT }}
+        GH_MAIL:  ${{ secrets.GH_AVA_EMAIL }}
+        GH_NAME:  ${{ github.repository_owner }}
