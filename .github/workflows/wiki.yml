@@ -1,8 +1,9 @@
 on:
   pull_request:
     branches: [main]
+    types: [closed]
   push:
-    branches: [main, wiki_page]
+    branches: [main]
     paths:
       - 'docs/**'
 
