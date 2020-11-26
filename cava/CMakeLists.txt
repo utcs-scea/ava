@@ -82,4 +82,9 @@ if(AVA_GEN_TEST_SPEC)
   include(samples/test/CMakeLists.txt)
 endif()
 
+message(STATUS "Compile demo specification: ${AVA_GEN_DEMO_SPEC}")
+if(AVA_GEN_DEMO_SPEC)
+  include(samples/demo/CMakeLists.txt)
+endif()
+
 ###### Include your compilation below ######

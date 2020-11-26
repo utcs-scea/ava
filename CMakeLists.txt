@@ -31,9 +31,11 @@ set(AVA_GEN_CUDA_SPEC OFF CACHE BOOL "Enable CUDA specification")
 set(AVA_GEN_TF_C_SPEC OFF CACHE BOOL "Enable TensorFlow (C) specification")
 set(AVA_GEN_HIP_SPEC OFF CACHE BOOL "Enable HIP specification")
 set(AVA_GEN_TEST_SPEC OFF CACHE BOOL "Enable test (libtrivial) specification")
+set(AVA_GEN_DEMO_SPEC OFF CACHE BOOL "Enable demo specification")
 
-set(AVA_MANAGER_GALVANIC ON CACHE BOOL "Build Galvanic manager")
+set(AVA_MANAGER_GALVANIC OFF CACHE BOOL "Build Galvanic manager")
 set(AVA_MANAGER_KATANA OFF CACHE BOOL  "Build Katana manager")
+set(AVA_MANAGER_DEMO OFF CACHE BOOL  "Build demo manager")
 
 message(STATUS "Build TensorFlow CUDA specification:   ${AVA_GEN_TF_SPEC}")
 message(STATUS "Build ONNXruntime specification:       ${AVA_GEN_ONNXRT_SPEC}")
@@ -46,8 +48,10 @@ message(STATUS "Build CUDA specification:              ${AVA_GEN_CUDA_SPEC}")
 message(STATUS "Build TensorFlow C specification:      ${AVA_GEN_TF_C_SPEC}")
 message(STATUS "Build HIP specification:               ${AVA_GEN_HIP_SPEC}")
 message(STATUS "Build test (libtrivial) specification: ${AVA_GEN_TEST_SPEC}")
+message(STATUS "Build demo specification:              ${AVA_GEN_DEMO_SPEC}")
 message(STATUS "Build Galvanic manager:                ${AVA_MANAGER_GALVANIC}")
 message(STATUS "Build Katana manager:                  ${AVA_MANAGER_KATANA}")
+message(STATUS "Build demo manager:                    ${AVA_MANAGER_DEMO}")
 
 set(AVA_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE PATH "Installation path of AvA")
 set(AVA_DEP_INSTALL_DIR "${AVA_INSTALL_DIR}/third_party" CACHE PATH "Installation path of AvA dependencies")
@@ -252,6 +256,7 @@ ExternalProject_Add(ava-manager
         -DFlatbuffers_DIR:PATH=${AVA_DEP_INSTALL_DIR}/lib/cmake/flatbuffers
         -DAVA_MANAGER_GALVANIC:BOOL=${AVA_MANAGER_GALVANIC}
         -DAVA_MANAGER_KATANA:BOOL=${AVA_MANAGER_KATANA}
+        -DAVA_MANAGER_DEMO:BOOL=${AVA_MANAGER_DEMO}
         -DCMAKE_INSTALL_PREFIX:PATH=${AVA_INSTALL_DIR}
   DEPENDS flatbuffers
   INSTALL_DIR ${AVA_INSTALL_DIR}
@@ -287,6 +292,7 @@ ExternalProject_Add(ava-spec
         -DAVA_GEN_TF_C_SPEC:BOOL=${AVA_GEN_TF_C_SPEC}
         -DAVA_GEN_HIP_SPEC:BOOL=${AVA_GEN_HIP_SPEC}
         -DAVA_GEN_TEST_SPEC:BOOL=${AVA_GEN_TEST_SPEC}
+        -DAVA_GEN_DEMO_SPEC:BOOL=${AVA_GEN_DEMO_SPEC}
         -DAVA_ENABLE_DEBUG:BOOL=${AVA_ENABLE_DEBUG}
         -DAVA_INSTALL_DIR:PATH=${AVA_INSTALL_DIR}
   BUILD_ALWAYS ON
