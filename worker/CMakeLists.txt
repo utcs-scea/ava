@@ -10,3 +10,7 @@ endif()
 if(AVA_MANAGER_KATANA)
   add_subdirectory(katana)
 endif()
+
+if(AVA_MANAGER_DEMO)
+  add_subdirectory(demo)
+endif()
