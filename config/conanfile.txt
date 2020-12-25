@@ -1,0 +1,14 @@
+[requires]
+flatbuffers/1.12.0
+flatc/1.12.0
+
+[options]
+flatbuffers:fPIC=True
+flatbuffers:shared=True
+
+[generators]
+cmake_find_package
+cmake_paths
+
+[imports]
+lib, *.dylib* -> /usr/local/lib/

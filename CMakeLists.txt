@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.13)
 
 project(ava)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}")
+
 ###### Options ######
 
 set(AVA_ENABLE_DEBUG OFF CACHE BOOL "Enable debug messages")
@@ -76,6 +78,9 @@ find_package(Python3 COMPONENTS Interpreter)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
+find_package(Flatbuffers 1.12.0 REQUIRED QUIET)
+message(STATUS "Using Flatbuffers ${Flatbuffers_VERSION}")
+
 # Check ClangLib
 
 find_package(LLVM 7.0 CONFIG REQUIRED)
@@ -95,7 +100,6 @@ include(ExternalProject)
 # Build RPC libraries
 
 set(_GRPC_DEPEND_LIST c-ares zlib absl)
-set(_FLATBUFFERS_DEPEND_LIST "")
 
 # Builds absl project from the git submodule.
 ExternalProject_Add(absl
@@ -136,7 +140,6 @@ if (NOT ${Protobuf_FOUND})
   )
   set(_Protobuf_DIR "${AVA_DEP_INSTALL_DIR}/lib/cmake/protobuf")
   list(APPEND _GRPC_DEPEND_LIST protobuf)
-  list(APPEND _FLATBUFFERS_DEPEND_LIST protobuf)
 else()
   set(_Protobuf_DIR ${Protobuf_DIR})
 endif()
@@ -186,22 +189,9 @@ if (NOT ${gRPC_FOUND})
     INSTALL_DIR "${AVA_DEP_INSTALL_DIR}"
   )
   set(_gRPC_DIR ${AVA_DEP_INSTALL_DIR}/lib/cmake/grpc)
-  list(APPEND _FLATBUFFERS_DEPEND_LIST grpc)
 else()
   set(_gRPC_DIR ${gRPC_DIR})
 endif()
-
-ExternalProject_Add(flatbuffers
-  PREFIX flatbuffers
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/flatbuffers"
-  CMAKE_CACHE_ARGS
-        -DGRPC_INSTALL_PATH:PATH=${_gRPC_DIR}/../../..
-        -DPROTOBUF_DOWNLOAD_PATH:PATH=${CMAKE_CURRENT_SOURCE_DIR}/third_party/protobuf
-        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${AVA_DEP_INSTALL_DIR}
-  DEPENDS ${_FLATBUFFERS_DEPEND_LIST}
-  INSTALL_DIR "${AVA_DEP_INSTALL_DIR}"
-)
 
 # Build config parser library
 
@@ -222,15 +212,6 @@ ExternalProject_Add(ava-proto
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/proto"
   INSTALL_COMMAND ""
   BUILD_ALWAYS ON
-  CMAKE_CACHE_ARGS
-        -DProtobuf_DIR:PATH=${_Protobuf_DIR}
-        -Dc-ares_DIR:PATH=${AVA_DEP_INSTALL_DIR}/lib/cmake/c-ares
-        -DZLIB_DIR:STRING=${AVA_DEP_INSTALL_DIR}
-        -Dabsl_DIR:STRING=${AVA_DEP_INSTALL_DIR}/lib/cmake/absl
-        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-        -DgRPC_DIR:PATH=${_gRPC_DIR}
-        -DFlatbuffers_DIR:PATH=${AVA_DEP_INSTALL_DIR}/lib/cmake/flatbuffers
-  DEPENDS flatbuffers
 )
 
 ###### Build AvA manager ######
@@ -253,13 +234,12 @@ ExternalProject_Add(ava-manager
         -Dabsl_DIR:STRING=${AVA_DEP_INSTALL_DIR}/lib/cmake/absl
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${_gRPC_DIR}
-        -DFlatbuffers_DIR:PATH=${AVA_DEP_INSTALL_DIR}/lib/cmake/flatbuffers
         -DAVA_MANAGER_GALVANIC:BOOL=${AVA_MANAGER_GALVANIC}
         -DAVA_MANAGER_KATANA:BOOL=${AVA_MANAGER_KATANA}
         -DAVA_MANAGER_DEMO:BOOL=${AVA_MANAGER_DEMO}
         -DCMAKE_INSTALL_PREFIX:PATH=${AVA_INSTALL_DIR}
-  DEPENDS flatbuffers
   INSTALL_DIR ${AVA_INSTALL_DIR}
+  DEPENDS ava-proto
 )
 
 ###### Generate and build remoting stubs ######
@@ -276,7 +256,6 @@ ExternalProject_Add(ava-spec
         -Dabsl_DIR:STRING=${AVA_DEP_INSTALL_DIR}/lib/cmake/absl
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${_gRPC_DIR}
-        -DFlatbuffers_DIR:PATH=${AVA_DEP_INSTALL_DIR}/lib/cmake/flatbuffers
         -Dlibconfig++_DIR:PATH=${AVA_DEP_INSTALL_DIR}/lib/cmake/libconfig
         -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
         -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
@@ -296,7 +275,7 @@ ExternalProject_Add(ava-spec
         -DAVA_ENABLE_DEBUG:BOOL=${AVA_ENABLE_DEBUG}
         -DAVA_INSTALL_DIR:PATH=${AVA_INSTALL_DIR}
   BUILD_ALWAYS ON
-  DEPENDS flatbuffers libconfig
+  DEPENDS libconfig ava-proto
 )
 
 ###### tools ######

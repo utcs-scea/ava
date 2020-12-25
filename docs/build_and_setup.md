@@ -15,7 +15,7 @@ sudo apt purge --auto-remove cmake
 sudo apt install cmake cmake-curses-gui
 sudo apt install git build-essential python3 python3-pip libglib2.0-dev clang-7 libclang-7-dev indent libssl-dev
 python3 -m pip install pip
-python3 -m pip install toposort astor 'numpy==1.15.0'
+python3 -m pip install conan toposort astor 'numpy==1.15.0'
 ```
 
 The following instructions are tested on Ubuntu 18.04 (Linux 4.15) with
@@ -32,6 +32,7 @@ git submodule update --init --recursive
 cd ..
 mkdir build
 cd build
+conan install -if . ../ava/config --build=missing
 cmake ../ava
 ```
 

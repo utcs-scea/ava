@@ -2,13 +2,12 @@ cmake_minimum_required(VERSION 3.13)
 
 project(ava-proto)
 
-find_package(Flatbuffers CONFIG REQUIRED)
-message(STATUS "Using Flatbuffers ${Flatbuffers_VERSION}")
-if(CMAKE_CROSSCOMPILING)
-  find_program(_FLATBUFFERS_FLATC flatc)
-else()
-  set(_FLATBUFFERS_FLATC $<TARGET_FILE:flatbuffers::flatc>)
-endif()
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}/..")
+
+find_package(Flatbuffers 1.12.0 REQUIRED QUIET)
+find_package(flatc 1.12.0 REQUIRED QUIET)
+message(STATUS "Using flatc ${flatc_VERSION}")
+find_program(_FLATBUFFERS_FLATC flatc)
 
 # Proto file
 get_filename_component(manager_service_proto "manager_service.fbs" ABSOLUTE)

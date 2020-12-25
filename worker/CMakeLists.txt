@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 project(ava-manager)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}/..")
 install(DIRECTORY DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 if(AVA_MANAGER_GALVANIC)
