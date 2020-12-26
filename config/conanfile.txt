@@ -1,10 +1,12 @@
 [requires]
-flatbuffers/1.12.0
 flatc/1.12.0
+#flatbuffers/1.12.0
+#protobuf/3.6.1@yuhc/stable
+#grpc/1.15.1@yuhc/testing
 
 [options]
-flatbuffers:fPIC=True
-flatbuffers:shared=True
+#flatbuffers:fPIC=True
+#flatbuffers:shared=True
 
 [generators]
 cmake_find_package

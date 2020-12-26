@@ -1,5 +1,5 @@
 ava_name("CUDA");
-ava_version("10.1.1");
+ava_version("10.1.0");
 ava_identifier(CUDADRV);
 ava_number(3);
 ava_cflags(-I/usr/local/cuda-10.1/include);

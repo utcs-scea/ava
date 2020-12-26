@@ -78,8 +78,13 @@ find_package(Python3 COMPONENTS Interpreter)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
-find_package(Flatbuffers 1.12.0 REQUIRED QUIET)
-message(STATUS "Using Flatbuffers ${Flatbuffers_VERSION}")
+# Socket library
+find_package(Boost 1.65 EXACT REQUIRED COMPONENTS system)
+message(STATUS "Using Boost.asio ${Boost_LIB_VERSION}")
+
+# Config parser library
+find_library(Config++ NAMES libconfig++ config++ REQUIRED)
+message(STATUS "Using libconfig++ ${Config++}")
 
 # Check ClangLib
 
@@ -96,113 +101,6 @@ endif()
 ###### Build dependent libraries ######
 
 include(ExternalProject)
-
-# Build RPC libraries
-
-set(_GRPC_DEPEND_LIST c-ares zlib absl)
-
-# Builds absl project from the git submodule.
-ExternalProject_Add(absl
-  PREFIX absl
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/abseil-cpp"
-  CMAKE_CACHE_ARGS
-        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${AVA_DEP_INSTALL_DIR}
-  INSTALL_DIR "${AVA_DEP_INSTALL_DIR}"
-)
-
-# Builds c-ares project from the git submodule.
-ExternalProject_Add(c-ares
-  PREFIX c-ares
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/cares/cares"
-  CMAKE_CACHE_ARGS
-        -DCARES_SHARED:BOOL=OFF
-        -DCARES_STATIC:BOOL=ON
-        -DCARES_STATIC_PIC:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${AVA_DEP_INSTALL_DIR}
-  INSTALL_DIR "${AVA_DEP_INSTALL_DIR}"
-)
-
-find_package(Protobuf 3.6.1 CONFIG QUIET)
-if (NOT ${Protobuf_FOUND})
-  # Builds protobuf project from the git submodule.
-  ExternalProject_Add(protobuf
-    PREFIX protobuf
-    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/protobuf"
-    SOURCE_SUBDIR "cmake"
-    CMAKE_CACHE_ARGS
-          -Dprotobuf_BUILD_TESTS:BOOL=OFF
-          -Dprotobuf_WITH_ZLIB:BOOL=OFF
-          -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF
-          -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-          -DCMAKE_INSTALL_PREFIX:PATH=${AVA_DEP_INSTALL_DIR}
-    INSTALL_DIR "${AVA_DEP_INSTALL_DIR}"
-  )
-  set(_Protobuf_DIR "${AVA_DEP_INSTALL_DIR}/lib/cmake/protobuf")
-  list(APPEND _GRPC_DEPEND_LIST protobuf)
-else()
-  set(_Protobuf_DIR ${Protobuf_DIR})
-endif()
-
-# Builds zlib project from the git submodule.
-ExternalProject_Add(zlib
-  PREFIX zlib
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib"
-  CMAKE_CACHE_ARGS
-        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${AVA_DEP_INSTALL_DIR}
-  INSTALL_DIR "${AVA_DEP_INSTALL_DIR}"
-)
-
-# if OPENSSL_ROOT_DIR is set, propagate that hint path to the external projects with OpenSSL dependency.
-set(_CMAKE_ARGS_OPENSSL_ROOT_DIR "")
-if (OPENSSL_ROOT_DIR)
-  set(_CMAKE_ARGS_OPENSSL_ROOT_DIR "-DOPENSSL_ROOT_DIR:PATH=${OPENSSL_ROOT_DIR}")
-endif()
-
-find_package(gRPC 1.15.1 CONFIG QUIET)
-if (NOT ${gRPC_FOUND})
-  # Builds gRPC based on locally checked-out sources and set arguments so that all the dependencies
-  # are correctly located.
-  ExternalProject_Add(grpc
-    PREFIX grpc
-    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/grpc"
-    PATCH_COMMAND patch -p1 -N < ${CMAKE_CURRENT_SOURCE_DIR}/third_party/grpc-gettid.patch || true
-    CMAKE_CACHE_ARGS
-          -DgRPC_INSTALL:BOOL=ON
-          -DgRPC_BUILD_TESTS:BOOL=OFF
-          -DgRPC_PROTOBUF_PROVIDER:STRING=package
-          -DgRPC_PROTOBUF_PACKAGE_TYPE:STRING=CONFIG
-          -DProtobuf_DIR:PATH=${_Protobuf_DIR}
-          -DgRPC_ZLIB_PROVIDER:STRING=package
-          -DZLIB_DIR:STRING=${AVA_DEP_INSTALL_DIR}
-          -DgRPC_ABSL_PROVIDER:STRING=package
-          -Dabsl_DIR:STRING=${AVA_DEP_INSTALL_DIR}/lib/cmake/absl
-          -DgRPC_CARES_PROVIDER:STRING=package
-          -Dc-ares_DIR:PATH=${AVA_DEP_INSTALL_DIR}/lib/cmake/c-ares
-          -DgRPC_SSL_PROVIDER:STRING=package
-          ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-          -DBUILD_SHARED_LIBS:BOOL=ON
-          -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-          -DCMAKE_INSTALL_PREFIX:PATH=${AVA_DEP_INSTALL_DIR}
-    DEPENDS ${_GRPC_DEPEND_LIST}
-    INSTALL_DIR "${AVA_DEP_INSTALL_DIR}"
-  )
-  set(_gRPC_DIR ${AVA_DEP_INSTALL_DIR}/lib/cmake/grpc)
-else()
-  set(_gRPC_DIR ${gRPC_DIR})
-endif()
-
-# Build config parser library
-
-ExternalProject_Add(libconfig
-  PREFIX libconfig
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/libconfig"
-  CMAKE_CACHE_ARGS
-        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${AVA_DEP_INSTALL_DIR}
-  INSTALL_DIR "${AVA_DEP_INSTALL_DIR}"
-)
 
 ###### Compile proto files ######
 
@@ -228,12 +126,6 @@ ExternalProject_Add(ava-manager
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/worker"
   BUILD_ALWAYS ON
   CMAKE_CACHE_ARGS
-        -DProtobuf_DIR:PATH=${_Protobuf_DIR}
-        -Dc-ares_DIR:PATH=${AVA_DEP_INSTALL_DIR}/lib/cmake/c-ares
-        -DZLIB_DIR:STRING=${AVA_DEP_INSTALL_DIR}
-        -Dabsl_DIR:STRING=${AVA_DEP_INSTALL_DIR}/lib/cmake/absl
-        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-        -DgRPC_DIR:PATH=${_gRPC_DIR}
         -DAVA_MANAGER_GALVANIC:BOOL=${AVA_MANAGER_GALVANIC}
         -DAVA_MANAGER_KATANA:BOOL=${AVA_MANAGER_KATANA}
         -DAVA_MANAGER_DEMO:BOOL=${AVA_MANAGER_DEMO}
@@ -250,13 +142,6 @@ ExternalProject_Add(ava-spec
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated"
   INSTALL_COMMAND ""
   CMAKE_CACHE_ARGS
-        -DProtobuf_DIR:PATH=${_Protobuf_DIR}
-        -Dc-ares_DIR:PATH=${AVA_DEP_INSTALL_DIR}/lib/cmake/c-ares
-        -DZLIB_ROOT:STRING=${AVA_DEP_INSTALL_DIR}
-        -Dabsl_DIR:STRING=${AVA_DEP_INSTALL_DIR}/lib/cmake/absl
-        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-        -DgRPC_DIR:PATH=${_gRPC_DIR}
-        -Dlibconfig++_DIR:PATH=${AVA_DEP_INSTALL_DIR}/lib/cmake/libconfig
         -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
         -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
         -DAVA_BENCHMARK_DIR:PATH=${AVA_BENCHMARK_DIR}
@@ -275,7 +160,7 @@ ExternalProject_Add(ava-spec
         -DAVA_ENABLE_DEBUG:BOOL=${AVA_ENABLE_DEBUG}
         -DAVA_INSTALL_DIR:PATH=${AVA_INSTALL_DIR}
   BUILD_ALWAYS ON
-  DEPENDS libconfig ava-proto
+  DEPENDS ava-proto
 )
 
 ###### tools ######

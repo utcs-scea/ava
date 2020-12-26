@@ -14,6 +14,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <boost/algorithm/string.hpp>
+#include <boost/asio.hpp>
 
 #include "common/cmd_channel_impl.h"
 #include "common/devconf.h"
@@ -22,7 +24,8 @@
 #include "common/cmd_handler.h"
 #include "cmd_channel_socket_utilities.h"
 #include "guest_config.h"
-#include "manager_service.h"
+
+using boost::asio::ip::tcp;
 
 extern int nw_global_vm_id;
 
@@ -34,17 +37,37 @@ namespace {
  * TCP channel guestlib endpoint.
  *
  * The `manager_tcp` is required to use the TCP channel.
- * */
+ */
 std::vector<struct command_channel*> command_channel_socket_tcp_guest_new()
 {
-    auto channel = grpc::CreateChannel(guestconfig::config->manager_address_, grpc::InsecureChannelCredentials());
-    auto client  = std::make_unique<ManagerServiceClient>(channel);
+    // Connect API server manager
+    boost::asio::io_service io_service;
+
+    tcp::socket manager_sock(io_service);
+    tcp::resolver resolver(io_service);
+    std::vector<std::string> manager_addr;
+    boost::split(manager_addr, guestconfig::config->manager_address_, boost::is_any_of(":-/ "));
+    BOOST_ASSERT_MSG(manager_addr.size() == 2, "Invalid API server manager address");
+    boost::asio::connect(manager_sock, resolver.resolve({manager_addr[0], manager_addr[1]}));
+
+    // Serialize configurations
     std::vector<uint64_t> gpu_mem_in_bytes;
+    gpu_mem_in_bytes.push_back(0);
     for (auto m : guestconfig::config->gpu_memory_)
       gpu_mem_in_bytes.push_back(m << 20);
-    std::vector<std::string> worker_address =
-        client->AssignWorker(0, guestconfig::config->gpu_memory_.size(), gpu_mem_in_bytes);
-    assert(!worker_address.empty() && "No API server is assigned");
+    gpu_mem_in_bytes[0] = gpu_mem_in_bytes.size() - 1;
+    boost::asio::write(manager_sock,
+            boost::asio::buffer(&gpu_mem_in_bytes[0], sizeof(uint64_t) * gpu_mem_in_bytes.size()));
+
+    // De-serialize API server addresses
+    std::vector<std::string> worker_address;
+    char worker_addr_str[256];
+    memset(worker_addr_str, 0, sizeof(worker_addr_str));
+    size_t reply_length = boost::asio::read(manager_sock,
+            boost::asio::buffer(worker_addr_str, 256));
+    BOOST_ASSERT_MSG(reply_length > 0 && reply_length == strlen(worker_addr_str) + 1,
+            "No API server is assigned");
+    worker_address.push_back(worker_addr_str);
 
     /* Connect API servers. */
     std::vector<struct command_channel*> channels;
