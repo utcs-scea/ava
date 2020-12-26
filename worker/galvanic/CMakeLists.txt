@@ -6,24 +6,29 @@ find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 set(protobuf_MODULE_COMPATIBLE TRUE)
-find_package(Protobuf CONFIG REQUIRED)
+find_package(Protobuf REQUIRED QUIET)
 message(STATUS "Using protobuf ${Protobuf_VERSION}")
 set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
 
 find_package(Flatbuffers 1.12.0 REQUIRED QUIET)
+message(STATUS "Using Flatbuffers ${Flatbuffers_VERSION}")
 find_package(flatc 1.12.0 REQUIRED QUIET)
 find_program(_FLATBUFFERS_FLATC flatc)
 set(_FLATBUFFERS flatbuffers::flatbuffers)
 
-find_package(gRPC CONFIG REQUIRED)
-message(STATUS "Using gRPC ${gRPC_VERSION}")
+find_package(grpc 1.15.1 REQUIRED QUIET)
+message(STATUS "Using gRPC ${grpc_VERSION}")
 if(CMAKE_CROSSCOMPILING)
   find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
 else()
-  set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
+  set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc::grpc_cpp_plugin>)
 endif()
 set(_REFLECTION gRPC::grpc++_reflection)
-set(_GRPC_GRPCPP gRPC::grpc++)
+message(STATUS "Using gRPC ${grpc_VERSION} ${grpc_LIBRARIES_TARGETS}")
+set(_GRPC_GRPCPP grpc::grpc++)
+set(_GRPC_GRPCPP CONAN_LIB::grpc_grpc++)
+set(_GRPC_GRPCPP ${grpc_LIBS})
+message(STATUS "Using gRPC ${grpc_VERSION} ${grpc_LIBS}")
 
 # Proto file
 # ${AVA_ROOT}/proto/manager_service.proto is used as the protocol between guestlib and manager.
@@ -49,6 +54,7 @@ add_custom_command(
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+include_directories("${grpc_INCLUDE_DIRS}")
 
 find_library(NVML_LIB nvidia-ml ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
 add_compile_options(-Wall -Wextra -pedantic -Wno-write-strings)
@@ -65,7 +71,7 @@ add_executable(galvanic-manager
   ${daemon_service_grpc_srcs}
 )
 target_link_libraries(galvanic-manager
-  ${_REFLECTION}
+    #${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF}
   ${_FLATBUFFERS}
@@ -82,7 +88,7 @@ add_executable(galvanic-spawn_daemon
   ${daemon_service_grpc_srcs}
 )
 target_link_libraries(galvanic-spawn_daemon
-  ${_REFLECTION}
+    #${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF}
   ${_FLATBUFFERS}

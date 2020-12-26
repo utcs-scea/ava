@@ -4,7 +4,6 @@ project(ava-proto)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}/..")
 
-find_package(Flatbuffers 1.12.0 REQUIRED QUIET)
 find_package(flatc 1.12.0 REQUIRED QUIET)
 message(STATUS "Using flatc ${flatc_VERSION}")
 find_program(_FLATBUFFERS_FLATC flatc)

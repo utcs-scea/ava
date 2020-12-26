@@ -19,7 +19,7 @@ python3 -m pip install conan toposort astor 'numpy==1.15.0'
 ```
 
 The following instructions are tested on Ubuntu 18.04 (Linux 4.15) with
-GCC 7.5.0, Python 3.6.9 and cmake 3.19.1.
+GCC 7.5.0, Python 3.6.9, Boost 1.65.x, and cmake 3.19.1.
 
 ## Configuration
 

@@ -6,24 +6,25 @@ find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 set(protobuf_MODULE_COMPATIBLE TRUE)
-find_package(Protobuf CONFIG REQUIRED)
+find_package(Protobuf REQUIRED QUIET)
 message(STATUS "Using protobuf ${Protobuf_VERSION}")
 set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
 
 find_package(Flatbuffers 1.12.0 REQUIRED QUIET)
+message(STATUS "Using Flatbuffers ${Flatbuffers_VERSION}")
 find_package(flatc 1.12.0 REQUIRED QUIET)
 find_program(_FLATBUFFERS_FLATC flatc)
 set(_FLATBUFFERS flatbuffers::flatbuffers)
 
-find_package(gRPC CONFIG REQUIRED)
-message(STATUS "Using gRPC ${gRPC_VERSION}")
+find_package(grpc 1.15.1 REQUIRED QUIET)
+message(STATUS "Using gRPC ${grpc_VERSION}")
 if(CMAKE_CROSSCOMPILING)
   find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
 else()
-  set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
+  set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc::grpc_cpp_plugin>)
 endif()
-set(_REFLECTION gRPC::grpc++_reflection)
-set(_GRPC_GRPCPP gRPC::grpc++)
+set(_REFLECTION grpc::grpc++_reflection)
+set(_GRPC_GRPCPP grpc::grpc++)
 
 # Proto file
 # ${AVA_ROOT}/proto/manager_service.proto is used as the protocol between guestlib and manager.
