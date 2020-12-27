@@ -3,34 +3,3 @@
 	url = https://github.com/utcs-scea/ava-llvm.git
 	branch = v7.1.0
   ignore = dirty
-[submodule "third_party/abseil-cpp"]
-	path = third_party/abseil-cpp
-	url = https://github.com/abseil/abseil-cpp.git
-	branch = lts_2020_02_25
-[submodule "third_party/cares/cares"]
-	path = third_party/cares/cares
-	url = https://github.com/c-ares/c-ares.git
-	branch = cares-1_13_0
-[submodule "third_party/zlib"]
-	path = third_party/zlib
-	url = https://github.com/madler/zlib.git
-	# When using CMake to build, the zlib submodule ends up with a
-	# generated file that makes Git consider the submodule dirty. This
-	# state can be ignored for day-to-day development on gRPC.
-	ignore = dirty
-[submodule "third_party/flatbuffers"]
-	path = third_party/flatbuffers
-	url = https://github.com/google/flatbuffers.git
-	branch = v1.12.0
-[submodule "third_party/grpc"]
-	path = third_party/grpc
-	url = https://github.com/grpc/grpc.git
-	branch = v1.15.1
-  ignore = dirty
-[submodule "third_party/protobuf"]
-	path = third_party/protobuf
-	url = https://github.com/google/protobuf.git
-	branch = v3.6.1
-[submodule "third_party/libconfig"]
-	path = third_party/libconfig
-	url = https://github.com/hyperrealm/libconfig.git
