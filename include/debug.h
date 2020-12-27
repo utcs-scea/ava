@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <execinfo.h>
 #include <unistd.h>
+
+#include <boost/assert.hpp>
 #endif
 
 #ifndef AVA_RELEASE

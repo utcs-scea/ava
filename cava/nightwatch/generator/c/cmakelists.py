@@ -12,6 +12,8 @@ cmake_minimum_required(VERSION 3.13)
 
 project({api.identifier.lower()}_nw C CXX)
 
+list(APPEND CMAKE_MODULE_PATH "${{CMAKE_CURRENT_BINARY_DIR}}/../..")
+
 set(CMAKE_CXX_STANDARD 17)
 
 set(c_flags {api.cflags})
@@ -32,33 +34,12 @@ find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLIB2 REQUIRED IMPORTED_TARGET glib-2.0)
 
-set(protobuf_MODULE_COMPATIBLE TRUE)
-find_package(Protobuf CONFIG REQUIRED)
-message(STATUS "Using protobuf ${{Protobuf_VERSION}}")
-set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
-
-find_package(Flatbuffers CONFIG REQUIRED)
-message(STATUS "Using Flatbuffers ${{Flatbuffers_VERSION}}")
-if(CMAKE_CROSSCOMPILING)
-  find_program(_FLATBUFFERS_FLATC flatc)
-else()
-  set(_FLATBUFFERS_FLATC $<TARGET_FILE:flatbuffers::flatc>)
-endif()
-set(_FLATBUFFERS flatbuffers::flatbuffers)
-
-find_package(gRPC CONFIG REQUIRED)
-message(STATUS "Using gRPC ${{gRPC_VERSION}}")
-set(_REFLECTION gRPC::grpc++_reflection)
-set(_GRPC_GRPCPP gRPC::grpc++)
-
-find_package(libconfig++ CONFIG REQUIRED)
-message(STATUS "Using libconfig++ ${{libconfig++_VERSION}}")
-include_directories(${{libconfig++_DIR}}/../../../include)
-set(_LIBCONFIG_CONFIG++ libconfig::config++)
+find_package(Boost REQUIRED COMPONENTS system)
+find_library(Config++ NAMES libconfig++ config++ REQUIRED)
 
 ###### Set generated files ######
 
-set(manager_service_grpc_srcs  "${{CMAKE_BINARY_DIR}}/../../proto/manager_service.grpc.fb.cc")
+set(manager_service_grpc_srcs  "${{CMAKE_BINARY_DIR}}/../../proto/manager_service.pb.cc")
 
 ###### Compile ######
 
@@ -90,15 +71,10 @@ add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../proto/manager_service.cpp
-  ${{manager_service_grpc_srcs}}
 )
 target_link_libraries(worker
-  ${{_REFLECTION}}
-  ${{_GRPC_GRPCPP}}
-  ${{_PROTOBUF_LIBPROTOBUF}}
-  ${{_FLATBUFFERS}}
   ${{GLIB2_LIBRARIES}}
+  ${{Boost_LIBRARIES}}
   Threads::Threads
   {api.libs}
 )
@@ -121,17 +97,13 @@ add_library(guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../proto/manager_service.cpp
   ${{manager_service_grpc_srcs}}
 )
 target_link_libraries(guestlib
-  ${{_REFLECTION}}
-  ${{_GRPC_GRPCPP}}
-  ${{_PROTOBUF_LIBPROTOBUF}}
-  ${{_FLATBUFFERS}}
   ${{GLIB2_LIBRARIES}}
+  ${{Boost_LIBRARIES}}
   Threads::Threads
-  ${{_LIBCONFIG_CONFIG++}}
+  ${{Config++}}
 )
 target_compile_options(guestlib
   PUBLIC -fvisibility=hidden

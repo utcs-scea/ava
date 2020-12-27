@@ -10,19 +10,4 @@ worker.c
 *.guesses
 *.log
 
-cl_nw/
-cu_nw/
-cpa_nw/
-tf_nw/
-vk_nw/
-fpga_nw/
-hip_nw/
-trivial_nw/
-mvnc_nw/
-gti_nw/
-cudart_nw/
-onnx_dump_nw/
-onnx_opt_nw/
-tf_dump_nw
-tf_opt_nw
-demo_nw
+*_nw

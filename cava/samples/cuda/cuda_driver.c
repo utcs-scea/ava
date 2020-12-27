@@ -1,9 +1,7 @@
 ava_name("CUDA");
 ava_version("10.1.0");
-ava_identifier(CU);
+ava_identifier(CUDADRV);
 ava_number(3);
-//ava_cflags(-DAVA_PRINT_TIMESTAMP);
-//ava_cflags(-DAVA_RECORD_REPLAY -DAVA_BENCHMARKING_MIGRATE);
 ava_cflags(-I/usr/local/cuda-10.1/include);
 ava_libs(-lcuda);
 ava_export_qualifier();

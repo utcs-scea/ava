@@ -13,13 +13,14 @@ sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
 sudo apt update
 sudo apt purge --auto-remove cmake
 sudo apt install cmake cmake-curses-gui
-sudo apt install git build-essential python3 python3-pip libglib2.0-dev clang-7 libclang-7-dev indent libssl-dev
+sudo apt install git build-essential python3 python3-pip libglib2.0-dev clang-7 libclang-7-dev libboost-all-dev libconfig++-dev indent libssl-dev
 python3 -m pip install pip
-python3 -m pip install toposort astor 'numpy==1.15.0'
+python3 -m pip install conan toposort astor 'numpy==1.15.0'
+conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 ```
 
 The following instructions are tested on Ubuntu 18.04 (Linux 4.15) with
-GCC 7.5.0, Python 3.6.9 and cmake 3.19.1.
+GCC 7.5.0, Python 3.6.9, Boost 1.65.x, and cmake 3.19.1.
 
 ## Configuration
 
@@ -32,6 +33,7 @@ git submodule update --init --recursive
 cd ..
 mkdir build
 cd build
+conan install -if . ../ava/config --build=missing
 cmake ../ava
 ```
 
