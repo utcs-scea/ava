@@ -16,6 +16,7 @@ sudo apt install cmake cmake-curses-gui
 sudo apt install git build-essential python3 python3-pip libglib2.0-dev clang-7 libclang-7-dev libboost-all-dev libconfig++-dev indent libssl-dev
 python3 -m pip install pip
 python3 -m pip install conan toposort astor 'numpy==1.15.0'
+conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 ```
 
 The following instructions are tested on Ubuntu 18.04 (Linux 4.15) with

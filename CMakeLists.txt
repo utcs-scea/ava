@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 project(ava)
 
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}")
 
 ###### Options ######
@@ -104,6 +105,7 @@ include(ExternalProject)
 
 ###### Compile proto files ######
 
+# Pre-defined protobuf protocol for guestlib-manager communication
 ExternalProject_Add(ava-proto
   PREFIX ava-proto
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/proto"
@@ -129,6 +131,7 @@ ExternalProject_Add(ava-manager
         -DAVA_MANAGER_GALVANIC:BOOL=${AVA_MANAGER_GALVANIC}
         -DAVA_MANAGER_KATANA:BOOL=${AVA_MANAGER_KATANA}
         -DAVA_MANAGER_DEMO:BOOL=${AVA_MANAGER_DEMO}
+        -DCMAKE_TOOLCHAIN_FILE:STRING=${CMAKE_TOOLCHAIN_FILE}
         -DCMAKE_INSTALL_PREFIX:PATH=${AVA_INSTALL_DIR}
   INSTALL_DIR ${AVA_INSTALL_DIR}
   DEPENDS ava-proto

@@ -24,6 +24,7 @@
 #include "common/cmd_handler.h"
 #include "cmd_channel_socket_utilities.h"
 #include "guest_config.h"
+#include "manager_service.pb.h"
 
 using boost::asio::ip::tcp;
 
@@ -51,23 +52,28 @@ std::vector<struct command_channel*> command_channel_socket_tcp_guest_new()
     boost::asio::connect(manager_sock, resolver.resolve({manager_addr[0], manager_addr[1]}));
 
     // Serialize configurations
-    std::vector<uint64_t> gpu_mem_in_bytes;
-    gpu_mem_in_bytes.push_back(0);
-    for (auto m : guestconfig::config->gpu_memory_)
-      gpu_mem_in_bytes.push_back(m << 20);
-    gpu_mem_in_bytes[0] = gpu_mem_in_bytes.size() - 1;
-    boost::asio::write(manager_sock,
-            boost::asio::buffer(&gpu_mem_in_bytes[0], sizeof(uint64_t) * gpu_mem_in_bytes.size()));
+    ava_proto::WorkerAssignRequest request;
+    request.set_gpu_count(guestconfig::config->gpu_memory_.size());
+    for (auto m : guestconfig::config->gpu_memory_) {
+      request.add_gpu_mem(m << 20);
+    }
+    std::string request_buf(request.SerializeAsString());
+    boost::asio::write(manager_sock, boost::asio::buffer(request_buf, request_buf.length()));
 
     // De-serialize API server addresses
-    std::vector<std::string> worker_address;
     char worker_addr_str[256];
     memset(worker_addr_str, 0, sizeof(worker_addr_str));
     size_t reply_length = boost::asio::read(manager_sock,
             boost::asio::buffer(worker_addr_str, 256));
-    BOOST_ASSERT_MSG(reply_length > 0 && reply_length == strlen(worker_addr_str) + 1,
-            "No API server is assigned");
-    worker_address.push_back(worker_addr_str);
+    ava_proto::WorkerAssignReply reply;
+    reply.ParseFromString(worker_addr_str);
+    std::vector<std::string> worker_address;
+    for (auto& wa : reply.worker_address()) {
+        worker_address.push_back(wa);
+    }
+    if (worker_address.empty()) {
+        fprintf(stderr, "No API server is assigned");
+    }
 
     /* Connect API servers. */
     std::vector<struct command_channel*> channels;
