@@ -4,9 +4,6 @@ project(ava-manager)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}/..")
 install(DIRECTORY DESTINATION ${CMAKE_INSTALL_PREFIX})
 
-# Socket library
-find_package(Boost 1.65 EXACT REQUIRED COMPONENTS system)
-
 if(AVA_MANAGER_GALVANIC)
   add_subdirectory(galvanic)
 endif()
