@@ -6,7 +6,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}/..")
 
 set(protobuf_MODULE_COMPATIBLE TRUE)
 find_package(Protobuf REQUIRED QUIET)
-message(STATUS "Using protobuf ${Protobuf_VERSION}")
 if(TARGET protobuf::protoc)
   set(_PROTOBUFFERS_PROTOC $<TARGET_FILE:protobuf::protoc>)
 else()

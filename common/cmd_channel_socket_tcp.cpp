@@ -58,15 +58,17 @@ std::vector<struct command_channel*> command_channel_socket_tcp_guest_new()
       request.add_gpu_mem(m << 20);
     }
     std::string request_buf(request.SerializeAsString());
-    boost::asio::write(manager_sock, boost::asio::buffer(request_buf, request_buf.length()));
+    uint32_t request_length = static_cast<uint32_t>(request_buf.length() + 1);
+    boost::asio::write(manager_sock, boost::asio::buffer(&request_length, sizeof(uint32_t)));
+    boost::asio::write(manager_sock, boost::asio::buffer(request_buf.c_str(), request_length));
 
     // De-serialize API server addresses
-    char worker_addr_str[256];
-    memset(worker_addr_str, 0, sizeof(worker_addr_str));
-    size_t reply_length = boost::asio::read(manager_sock,
-            boost::asio::buffer(worker_addr_str, 256));
+    uint32_t reply_length;
+    boost::asio::read(manager_sock, boost::asio::buffer(&reply_length, sizeof(uint32_t)));
+    char reply_str[reply_length];
+    boost::asio::read(manager_sock, boost::asio::buffer(reply_str, reply_length));
     ava_proto::WorkerAssignReply reply;
-    reply.ParseFromString(worker_addr_str);
+    reply.ParseFromString(reply_str);
     std::vector<std::string> worker_address;
     for (auto& wa : reply.worker_address()) {
         worker_address.push_back(wa);

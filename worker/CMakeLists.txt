@@ -4,8 +4,25 @@ project(ava-manager)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}/..")
 install(DIRECTORY DESTINATION ${CMAKE_INSTALL_PREFIX})
 
-# Socket library
+# Common libraries
+find_package(Threads REQUIRED)
 find_package(Boost 1.65 EXACT REQUIRED COMPONENTS system)
+set(protobuf_MODULE_COMPATIBLE TRUE)
+find_package(Protobuf REQUIRED QUIET)
+
+set(manager_service_libraries Threads::Threads
+                              "${Boost_LIBRARIES}"
+                              "${Protobuf_LIBRARIES}")
+
+# Common files
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}/../include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_BINARY_DIR}/../proto
+)
+set(manager_service_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/../proto/manager_service.pb.cc")
+set(manager_service_ava_srcs  "${CMAKE_CURRENT_SOURCE_DIR}/manager_service.cpp"
+                              "${CMAKE_CURRENT_SOURCE_DIR}/signal_handler.cpp")
 
 if(AVA_MANAGER_GALVANIC)
   add_subdirectory(galvanic)

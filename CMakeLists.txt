@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.13)
 
 project(ava)
 
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+if(EXISTS ${CMAKE_BINARY_DIR}/conan_paths.cmake)
+  include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}")
 
 ###### Options ######
@@ -81,7 +83,9 @@ pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
 # Socket library
 find_package(Boost 1.65 EXACT REQUIRED COMPONENTS system)
+find_package(Protobuf REQUIRED QUIET)
 message(STATUS "Using Boost.asio ${Boost_LIB_VERSION}")
+message(STATUS "Using protobuf ${Protobuf_VERSION}")
 
 # Config parser library
 find_library(Config++ NAMES libconfig++ config++ REQUIRED)

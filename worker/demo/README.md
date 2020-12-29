@@ -8,17 +8,20 @@ spawns an API server every time and returns the API server's address back to the
 Start Manager
 =============
 
-Assume we are at `${AVA_BUILD_DIR}`.
+Assume we are at `${AVA_BUILD_DIR}` and use CUDA API remoting as an example.
 
 ```Shell
-./worker/demo/manager generated/cudadrv_nw/worker
+cmake ../ava -DAVA_GEN_CUDA_SPEC=ON -DAVA_MANAGER_DEMO=ON
+make
+./install/bin/demo_manager generated/cudadrv_nw/worker
 ```
 
 The manager will start and listen at `0.0.0.0:3333`. It will spawn API servers
 from the provided API server binary.
 
-Then the application can be started by loading AvA's generated CUDA library.
+Then link the application to `libguestlib.so` and `libprotobuf`.
+The application will start with AvA's generated CUDA library loaded.
 
 ```Shell
-LD_LIBRARY_PATH=generated/cudadrv_nw ./cuda_program
+LD_LIBRARY_PATH=${AVA_BUILD_DIR}/generated/cudadrv_nw ./cuda_program
 ```
