@@ -3,28 +3,16 @@ Build and Setup
 
 ## Dependencies
 
-The following packages are required to build a minimal AvA development and
+A number of packages are required to build a minimal AvA development and
 test environment. To use full components and benchmarks, one should follow
 the instructions per specification or benchmark to setup the machine.
 
-```shell
-wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
-sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
-sudo apt update
-sudo apt purge --auto-remove cmake
-sudo apt install cmake cmake-curses-gui
-sudo apt install git build-essential python3 python3-pip libglib2.0-dev clang-7 libclang-7-dev libboost-all-dev libconfig++-dev indent libprotobuf-dev protobuf-compiler
-python3 -m pip install pip
-python3 -m pip install toposort astor 'numpy==1.15.0'
-```
+The following script will check whether Ubuntu 18.04 is running and install
+the necessary dependencies.
 
-> For building AvA (without benchmarks), one can do:
->
-> ```
-> python3 -m pip install conan
-> conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-> conan install -if . ../ava/config --build=missing
-> ```
+```shell
+sudo ./tools/install_dependencies.sh
+```
 
 The following instructions are tested on Ubuntu 18.04 (Linux 4.15) with
 GCC 7.5.0, Python 3.6.9, Boost 1.65.x, cmake 3.19.1 and Protobuf 3.0-3.9.
