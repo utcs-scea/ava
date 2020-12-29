@@ -3,30 +3,16 @@ Build and Setup
 
 ## Dependencies
 
-The following packages are required to build a minimal AvA development and
+A number of packages are required to build a minimal AvA development and
 test environment. To use full components and benchmarks, one should follow
 the instructions per specification or benchmark to setup the machine.
 
+The following script will check whether Ubuntu 18.04 is running and install
+the necessary dependencies.
+
 ```shell
-wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
-sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
-sudo apt update
-sudo apt purge --auto-remove cmake
-sudo apt install cmake cmake-curses-gui
-sudo apt install git build-essential python3 python3-pip libglib2.0-dev clang-7 libclang-7-dev libboost-all-dev libconfig++-dev indent libprotobuf-dev protobuf-compiler
-python3 -m pip install pip
-python3 -m pip install toposort astor 'numpy==1.15.0'
+sudo ./tools/install_dependencies.sh
 ```
-
-if(FALSE)
-For building AvA (without benchmarks), one can do:
-
-```
-python3 -m pip install conan
-conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-conan install -if . ../ava/config --build=missing
-```
-endif()
 
 The following instructions are tested on Ubuntu 18.04 (Linux 4.15) with
 GCC 7.5.0, Python 3.6.9, Boost 1.65.x, cmake 3.19.1 and Protobuf 3.0-3.9.
@@ -54,7 +40,7 @@ old codes into the new build system (v2.0) is still ongoing.
 | AmorphOS FPGA    | UNTESTED |
 | CUDA driver 10   | UNTESTED |
 | CUDA runtime 10  | UNTESTED |
-| Demo             | NO |
+| Demo             | TESTED |
 | GTI              | NO |
 | HIP              | NO |
 | NCSDK v2         | UNTESTED |
@@ -67,7 +53,7 @@ old codes into the new build system (v2.0) is still ongoing.
 
 | AvA manager | Status |
 | ----------- | ------ |
-| Demo        | NO |
+| Demo        | TESTED |
 | Galvanic    | UNTESTED |
 | Katana      | UNTESTED |
 | Nvidia GPU  | NO |
@@ -85,6 +71,12 @@ ccmake .
 
 Then turn on `AVA_GEN_DEMO_SPEC` and `AVA_MANAGER_DEMO` and press `c` to
 reconfigure the build.
+
+> One can run this without using ccmake to configure the build again:
+>
+> ```shell
+> cmake ../ava -DAVA_GEN_DEMO_SPEC=ON -DAVA_MANAGER_DEMO=ON
+> ```
 
 ## Build and Run
 
@@ -107,11 +99,32 @@ ls install/bin
 AvA's base repository includes a tiny standalone demo program.
 
 ```shell
-TODO: steps to build the test program.
+pushd .
+cd ../ava/cava/samples/demo/test_program/
+make
+popd
 ```
 
+Start the demo manager by
+
 ```shell
-TODO: steps to run worker (demo manager) and run test program.
+./install/bin/demo_manager install/demo_nw/bin/worker
+```
+
+Add AvA configuration file:
+```
+sudo mkdir -p /etc/ava
+sudo tee /etc/ava/guest.conf <<EOF
+channel = "TCP";
+manager_address = "0.0.0.0:3333";
+gpu_memory = [1024L];
+EOF
+```
+
+Run the test program by
+
+```shell
+LD_LIBRARY_PATH=install/demo_nw/lib ../ava/cava/samples/demo/test_program/test
 ```
 
 The demo spec implements and annotates an `int ava_test_api(int x)` API which

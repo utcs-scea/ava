@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.13)
 get_cmake_property(vars CACHE_VARIABLES)
 foreach(var ${vars})
   if (var MATCHES ".*_DIR$" OR var MATCHES ".*_ROOT$")
-    #message(STATUS "${var} = [${${var}}]")
     list(APPEND CL_ARGS "-D${var}=${${var}}")
   endif()
 endforeach()
@@ -28,7 +27,7 @@ set(demo_install ${AVA_INSTALL_DIR}/demo_nw)
 ExternalProject_Add_Step(cava demo-link
   COMMAND mkdir -p generated &&
           mkdir -p ${demo_install}/lib &&
-          ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers            &&
+          ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers &&
           ln -f -s ${demo_install}/lib/libguestlib.so ${demo_install}/lib/libdemo.so
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES demo-nwcc
