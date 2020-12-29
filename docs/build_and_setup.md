@@ -123,6 +123,16 @@ Start the demo manager by
 ./install/bin/demo_manager install/demo_nw/bin/worker
 ```
 
+Add AvA configuration file:
+```
+sudo mkdir -p /etc/ava
+sudo tee /etc/ava/guest.conf <<EOF
+channel = "TCP";
+manager_address = "0.0.0.0:3333";
+gpu_memory = [1024L];
+EOF
+```
+
 Run the test program by
 
 ```shell
