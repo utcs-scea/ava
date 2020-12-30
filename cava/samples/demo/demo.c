@@ -2,7 +2,7 @@ ava_name("DEMO");
 ava_version("0.0.1");
 ava_identifier(DEMO);
 ava_number(1);
-ava_cflags(-I/usr/local/cuda-10.1/include -I../headers);
+ava_cflags(-I../headers);
 
 #include <demo.h>
 

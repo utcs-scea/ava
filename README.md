@@ -78,10 +78,11 @@ Yu, Hangchen, Arthur M. Peters, Amogh Akshintala, and Christopher J. Rossbach. "
 Developers and contributors
 ===========================
 
-| Name                    | Affiliation                 | Role           | Contact                |
-|-------------------------|-----------------------------|----------------|------------------------|
-| Hangchen Yu             | UT Austin                   | Main developer | hyu@cs.utexas.edu      |
-| Arthur M. Peters        | UT Austin                   | Main developer | amp@cs.utexas.edu      |
-| Amogh Akshintala        | UNC                         |                |                        |
-| Tyler Hunt              | UT Austin                   |                |                        |
-| Christopher J. Rossbach | UT Austin & VMware Research | Advisor        | rossbach@cs.utexas.edu |
+| Name                    | Affiliation                                | Role           | Contact                |
+|-------------------------|--------------------------------------------|----------------|------------------------|
+| Hangchen Yu             | Facebook & UT Austin                       | Main developer | hyu@cs.utexas.edu      |
+| Arthur M. Peters        | Katana Graph & UT Austin                   | Main developer | amp@cs.utexas.edu      |
+| Amogh Akshintala        | Facebook & UNC                             |                |                        |
+| Zhiting Zhu             | UT Austin                                  |                |                        |
+| Tyler Hunt              | Katana Graph & UT Austin                   |                |                        |
+| Christopher J. Rossbach | UT Austin & Katana Graph & VMware Research | Advisor        | rossbach@cs.utexas.edu |
