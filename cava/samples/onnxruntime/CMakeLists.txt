@@ -26,7 +26,7 @@ ExternalProject_Add_Step(cava onnx_dump-nwcc
   DEPENDEES download
 )
 
-set(onnx_dump_install ${AVA_INSTALL_DIR}/onnx_dump_nw)
+set(onnx_dump_install ${AVA_INSTALL_DIR}/onnx_dump)
 ExternalProject_Add_Step(cava onnx_dump-link
   COMMAND mkdir -p generated &&
           mkdir -p ${onnx_dump_install}/lib &&
@@ -69,7 +69,7 @@ ExternalProject_Add_Step(cava onnx_opt-nwcc
   DEPENDEES download
 )
 
-set(onnx_opt_install ${AVA_INSTALL_DIR}/onnx_opt_nw)
+set(onnx_opt_install ${AVA_INSTALL_DIR}/onnx_opt)
 ExternalProject_Add_Step(cava onnx_opt-link
   COMMAND mkdir -p generated &&
           mkdir -p ${onnx_opt_install}/lib &&

@@ -25,7 +25,7 @@ ExternalProject_Add_Step(cava cudart-nwcc
   DEPENDEES download
 )
 
-set(cudart_install ${AVA_INSTALL_DIR}/cudart_nw)
+set(cudart_install ${AVA_INSTALL_DIR}/cudart)
 ExternalProject_Add_Step(cava cudart-link
   COMMAND mkdir -p generated &&
           mkdir -p ${cudart_install}/lib &&
@@ -61,7 +61,7 @@ ExternalProject_Add_Step(cava cudart_dump-nwcc
   DEPENDEES download
 )
 
-set(cudart_dump_install ${AVA_INSTALL_DIR}/cudart_dump_nw)
+set(cudart_dump_install ${AVA_INSTALL_DIR}/cudart_dump)
 ExternalProject_Add_Step(cava cudart_dump-link
   COMMAND mkdir -p generated &&
           mkdir -p ${cudart_dump_install}/lib &&
@@ -97,7 +97,7 @@ ExternalProject_Add_Step(cava cudart_opt-nwcc
   DEPENDEES download
 )
 
-set(cudart_opt_install ${CMAKE_CURRENT_BINARY_DIR}/cudart_opt_nw)
+set(cudart_opt_install ${CMAKE_CURRENT_BINARY_DIR}/cudart_opt)
 ExternalProject_Add_Step(cava cudart_opt-link
   COMMAND mkdir -p generated &&
           mkdir -p ${cudart_opt_install}/lib &&

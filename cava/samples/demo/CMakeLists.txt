@@ -22,7 +22,7 @@ ExternalProject_Add_Step(cava demo-nwcc
   DEPENDEES download
 )
 
-set(demo_install ${AVA_INSTALL_DIR}/demo_nw)
+set(demo_install ${AVA_INSTALL_DIR}/demo)
 ExternalProject_Add_Step(cava demo-link
   COMMAND mkdir -p generated &&
           mkdir -p ${demo_install}/lib &&

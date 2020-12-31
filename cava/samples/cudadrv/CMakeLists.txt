@@ -22,7 +22,7 @@ ExternalProject_Add_Step(cava cudadrv-nwcc
   DEPENDEES download
 )
 
-set(cudadrv_install ${AVA_INSTALL_DIR}/cudadrv_nw)
+set(cudadrv_install ${AVA_INSTALL_DIR}/cudadrv)
 ExternalProject_Add_Step(cava cudadrv-link
   COMMAND mkdir -p generated &&
           mkdir -p ${cudadrv_install}/lib &&

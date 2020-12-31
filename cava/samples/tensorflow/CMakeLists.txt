@@ -26,7 +26,7 @@ ExternalProject_Add_Step(cava tf_dump-nwcc
   DEPENDEES download
 )
 
-set(tf_dump_install ${AVA_INSTALL_DIR}/tf_dump_nw)
+set(tf_dump_install ${AVA_INSTALL_DIR}/tf_dump)
 ExternalProject_Add_Step(cava tf_dump-link
   COMMAND mkdir -p generated &&
           mkdir -p ${tf_dump_install}/lib &&
@@ -69,7 +69,7 @@ ExternalProject_Add_Step(cava tf_opt-nwcc
   DEPENDEES download
 )
 
-set(tf_opt_install ${AVA_INSTALL_DIR}/tf_opt_nw)
+set(tf_opt_install ${AVA_INSTALL_DIR}/tf_opt)
 ExternalProject_Add_Step(cava tf_opt-link
   COMMAND mkdir -p generated &&
           mkdir -p ${tf_opt_install}/lib &&
