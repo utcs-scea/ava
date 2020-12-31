@@ -12,19 +12,21 @@ project(ava-spec-onnxruntime)
 
 include(ExternalProject)
 
-###### Compile onnxruntime/onnx_dump.c ######
-
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
+###### Compile onnxruntime/onnx_dump.c ######
+
+set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/onnxruntime/onnx_dump.c")
+
 ExternalProject_Add_Step(cava onnx_dump-nwcc
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/samples/onnxruntime/onnx_dump.c
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${CMAKE_CURRENT_SOURCE_DIR}/samples/onnxruntime/onnx_dump.c -I /usr/local/cuda-10.1/include -I ${CMAKE_CURRENT_SOURCE_DIR}/headers ${GLIB2_CFLAGS}
+  DEPENDS ${spec_name}
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name} -I /usr/local/cuda-10.1/include -I ${CMAKE_CURRENT_SOURCE_DIR}/headers ${GLIB2_CFLAGS}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDEES download
 )
 
-set(onnx_dump_install ${AVA_INSTALL_DIR}/onnx_dump_nw)
+set(onnx_dump_install ${AVA_INSTALL_DIR}/onnx_dump)
 ExternalProject_Add_Step(cava onnx_dump-link
   COMMAND mkdir -p generated &&
           mkdir -p ${onnx_dump_install}/lib &&
@@ -58,14 +60,16 @@ ExternalProject_Add(onnx_dump_nw
 
 ###### Compile onnxruntime/onnx_opt.c ######
 
+set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/onnxruntime/onnx_opt.c")
+
 ExternalProject_Add_Step(cava onnx_opt-nwcc
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/samples/onnxruntime/onnx_opt.c
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${CMAKE_CURRENT_SOURCE_DIR}/samples/onnxruntime/onnx_opt.c -I /usr/local/cuda-10.1/include -I ${CMAKE_CURRENT_SOURCE_DIR}/headers ${GLIB2_CFLAGS}
+  DEPENDS ${spec_name}
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name} -I /usr/local/cuda-10.1/include -I ${CMAKE_CURRENT_SOURCE_DIR}/headers ${GLIB2_CFLAGS}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDEES download
 )
 
-set(onnx_opt_install ${AVA_INSTALL_DIR}/onnx_opt_nw)
+set(onnx_opt_install ${AVA_INSTALL_DIR}/onnx_opt)
 ExternalProject_Add_Step(cava onnx_opt-link
   COMMAND mkdir -p generated &&
           mkdir -p ${onnx_opt_install}/lib &&

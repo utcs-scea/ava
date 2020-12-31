@@ -35,27 +35,29 @@ The above commands initialize a cmake build directory with all flags turned
 `OFF`. AvA supports a handful of accelerators and APIs, and the merge of the
 old codes into the new build system (v2.0) is still ongoing.
 
-| API framework    | Status |
-| ---------------- | ------ |
-| AmorphOS FPGA    | UNTESTED |
-| CUDA driver 10   | UNTESTED |
-| CUDA runtime 10  | UNTESTED |
-| Demo             | TESTED |
-| GTI              | NO |
-| HIP              | NO |
-| NCSDK v2         | UNTESTED |
-| ONNXruntime CUDA | UNTESTED |
-| OpenCL           | NO |
-| QuickAssist      | NO |
-| TensorFlow CUDA  | UNTESTED |
-| TensorFlow C     | NO |
-| Test             | NO |
+| API framework    | Version | Status   |
+| ---------------- | ------- | -------- |
+| AmorphOS FPGA    |         | UNTESTED |
+| CUDA driver      | 10.1    | TESTED   |
+| CUDA runtime     | 10.1    | TESTED   |
+| Demo             | 0.0.1   | TESTED   |
+| GTI              |         | NO       |
+| HIP              |         | NO       |
+| NCSDK v2         |         | UNTESTED |
+| ONNXruntime CUDA | 10.1    | TESTED\* |
+| OpenCL           |         | NO       |
+| QuickAssist      |         | NO       |
+| TensorFlow CUDA  | 10.1    | TESTED   |
+| TensorFlow C     | 2.3.1   | TESTED   |
+| Test             |         | NO       |
+
+> \* Upstream changes ([ava-serverless](https://github.com/photoszzt/ava-serverless)) have not been merged.
 
 | AvA manager | Status |
 | ----------- | ------ |
 | Demo        | TESTED |
-| Galvanic    | UNTESTED |
-| Katana      | UNTESTED |
+| Galvanic    | NO |
+| Katana      | NO |
 | Nvidia GPU  | NO |
 
 This tutorial shows how to configure and build the minimal AvA demo API

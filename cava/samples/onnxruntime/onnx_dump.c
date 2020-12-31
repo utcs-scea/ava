@@ -7289,7 +7289,17 @@ cudnnFindConvolutionForwardAlgorithm(cudnnHandle_t handle,
     abort();
 }
 
-#define cu_in_out_buffer(x, y) ({ if(ava_is_in) ava_buffer(x); else ava_buffer(min(x, y == NULL ? x : *y)); })
+#ifndef ava_max
+#define ava_max
+#define ava_max(a,b)   (a > b ? a : b)
+#endif
+
+#ifndef ava_min
+#define ava_min
+#define ava_min(a,b)   (a < b ? a : b)
+#endif
+
+#define cu_in_out_buffer(x, y) ({ if(ava_is_in) ava_buffer(x); else ava_buffer(ava_min(x, y == NULL ? x : *y)); })
 
 cudnnStatus_t CUDNNWINAPI
 cudnnFindConvolutionForwardAlgorithmEx(cudnnHandle_t handle,

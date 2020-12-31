@@ -1,8 +1,8 @@
 ava_name("CUDA");
-ava_version("10.0.0");
-ava_identifier(CU);
+ava_version("10.1.0");
+ava_identifier(CUDADRV);
 ava_number(3);
-//ava_cflags(-DAVA_PRINT_TIMESTAMP);
+ava_cflags(-I/usr/local/cuda-10.1/include);
 ava_libs(-lcuda);
 ava_export_qualifier();
 
@@ -15,18 +15,12 @@ ava_functions {
 }
 
 #include <cuda.h>
-
 ava_begin_utility;
+#include <time.h>
 #include <stdio.h>
+#include <sys/time.h>
+#include <errno.h>
 ava_end_utility;
-
-//ava_type(CUdeviceptr) {
-//    ava_handle;
-//}
-
-ava_type(CUresult) {
-    ava_success(CUDA_SUCCESS);
-}
 
 typedef struct {
     /* argument types */
@@ -35,6 +29,9 @@ typedef struct {
 } Metadata;
 
 ava_register_metadata(Metadata);
+
+// ava_throughput_resource command_rate;
+// ava_throughput_resource device_time;
 
 CUresult CUDAAPI
 cuInit(unsigned int Flags);
@@ -64,7 +61,7 @@ ava_utility size_t __helper_load_cubin_size(const char *fname) {
 
     fp = fopen(fname, "rb");
     if (!fp) {
-        return NULL;
+        return 0;
     }
     fseek(fp, 0, SEEK_END);
     cubin_size = ftell(fp);
@@ -82,7 +79,16 @@ ava_utility void *__helper_load_cubin(const char *fname, size_t size) {
         return NULL;
     }
     cubin = malloc(size);
-    fread(cubin, 1, size, fp);
+    size_t ret = fread(cubin, 1, size, fp);
+    if (ret != size) {
+        if (feof(fp)) {
+            fprintf(stderr, "eof");
+        } else if (ferror(fp)) {
+            fprintf(stderr, "fread [errno=%d, errstr=%s] at %s:%d",
+                    errno, strerror(errno), __FILE__, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+    }
     fclose(fp);
 
     return cubin;
@@ -120,7 +126,8 @@ cuModuleLoad(CUmodule *module,
 }
 
 CUresult CUDAAPI
-cuModuleUnload(CUmodule hmod) {
+cuModuleUnload(CUmodule hmod)
+{
     ava_async;
 }
 
@@ -181,13 +188,6 @@ ava_utility void ava_parse_function_args(const char *name, int *func_argc,
     for (i = 0; i < *func_argc; i++) {
         DEBUG_PRINT("function arg#%d it is %sa handle\n", i, func_arg_is_handle[i]?"":"not ");
     }
-
-    /*
-    char *demangled_name;
-    demangled_name = abi::__cxa_demangle(mangled_name, NULL, NULL, &status);
-    printf("name = %s\n", demangled_name);
-    free(demangled_name);
-    */
 }
 
 CUresult CUDAAPI
@@ -227,7 +227,6 @@ cuLaunchKernel(CUfunction f,
                void **kernelParams,
                void **extra)
 {
-    ava_async;
     ava_argument(kernelParams) {
         ava_in; ava_buffer(ava_metadata(f)->func_argc);
         ava_element {
@@ -244,8 +243,29 @@ cuLaunchKernel(CUfunction f,
     }
     ava_argument(extra) {
         ava_in; ava_buffer(cuLaunchKernel_extra_size(extra));
+#warning The buffer size below states that every kernelParams[i] is 1 byte long.
         ava_element ava_buffer(1);
     }
+
+    /*
+    struct timeval start, end;
+    uint64_t used_time = 0;
+    if (ava_is_worker) {
+        gettimeofday(&start, NULL);
+    }
+    */
+    ava_execute();
+    /*
+    if (ava_is_worker) {
+        // Set sync: export CUDA_LAUNCH_BLOCKING=1
+        // cuCtxSynchronize();
+        gettimeofday(&end, NULL);
+        used_time = (end.tv_sec - start.tv_sec) * 1000000 +
+            (end.tv_usec - start.tv_usec);
+    }
+    ava_consumes_resource(device_time, used_time);
+    ava_consumes_resource(command_rate, 1);
+    */
 }
 
 CUresult CUDAAPI
@@ -270,7 +290,6 @@ cuMemcpyHtoD(CUdeviceptr dstDevice,
              const void *srcHost,
              size_t ByteCount)
 {
-    ava_async;
     ava_argument(srcHost) {
         ava_in; ava_buffer(ByteCount);
     }
@@ -318,15 +337,18 @@ cuModuleGetGlobal(CUdeviceptr *dptr, size_t *bytes, CUmodule hmod, const char *n
     }
 }
 
+CUresult CUDAAPI
+cuDeviceGetCount(int *count)
+{
+    ava_argument(count) {
+        ava_out; ava_buffer(1);
+    }
+}
+
 CUresult CUDAAPI cuGetExportTable(const void **ppExportTable,
                                   const CUuuid *pExportTableId)
 {
+    // https://devtalk.nvidia.com/default/topic/482869/cudagetexporttable-a-total-hack/
     ava_unsupported;
-    ava_argument(ppExportTable) {
-        ava_out; ava_buffer(3);
-        // https://devtalk.nvidia.com/default/topic/482869/cudagetexporttable-a-total-hack/
-    }
-    ava_argument(pExportTableId) {
-        ava_in; ava_buffer(1);
-    }
 }
+

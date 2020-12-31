@@ -1,13 +1,14 @@
 ava_name("FPGA applications on AmorphOS");
 ava_version("1.0");
-ava_identifier(FPGA);
+ava_identifier(amorphos);
 ava_number(7);
 ava_cflags();
+ava_cxxflags(-I.);
 ava_libs(-L. -lava_aos_wrapper);
 ava_export_qualifier();
 
 #include <stdint.h>
-#include <ava_aos_wrapper.h>
+#include "ava_aos_wrapper.h"
 #warning the header is at `benchmark/amorphos/f1_host/ava_aos_wrapper.h`
 
 struct aos_client_wrapper *ava_client_new(uint64_t app_id) {

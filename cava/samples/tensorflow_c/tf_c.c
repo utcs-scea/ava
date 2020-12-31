@@ -1,8 +1,7 @@
 ava_name("Tensorflow C API");
-ava_version("1.12.0");
-ava_identifier(TF);
+ava_version("2.3.1");
+ava_identifier(TF_C);
 ava_number(4);
-//ava_cflags(-DAVA_PRINT_TIMESTAMP);
 ava_libs(-ltensorflow);
 ava_export_qualifier(TF_CAPI_EXPORT);
 

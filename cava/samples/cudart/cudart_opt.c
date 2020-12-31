@@ -1,14 +1,16 @@
 ava_name("CUDA Runtime");
-ava_version("10.0.0");
-ava_identifier(CUDART);
+ava_version("10.1.0");
+ava_identifier(CUDART_OPT);
 ava_number(9);
-ava_cflags(-I/usr/local/cuda-10.0/include -I../headers);
-ava_libs(-L/usr/local/cuda-10.0/lib64 -lcudart -lcuda -lcublas -lcudnn);
+ava_cflags(-I/usr/local/cuda-10.1/include -I../headers);
+ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn);
 ava_export_qualifier();
 
 /**
+ * This spec reads the dumped fat binaries and CUDA functions to
+ * suppress the forwarding of __cudaRegister* APIs.
  * Compile by
- * ./nwcc samples/cudart.nw.c -I /usr/local/cuda-10.0/include -I headers `pkg-config --cflags glib-2.0`
+ * ./nwcc samples/cudart.opt.c -I /usr/local/cuda-10.1/include -I headers `pkg-config --cflags glib-2.0`
  */
 
 ava_non_transferable_types {
@@ -18,17 +20,19 @@ ava_non_transferable_types {
 size_t __args_index_0;
 size_t __kernelParams_index_0;
 
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+#include <cublas_v2.h>
+#include <cudnn.h>
+
 ava_begin_utility;
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 
-#include <cuda.h>
-#include <cuda_runtime_api.h>
 #include <driver_types.h>
 #include <fatbinary.h>
-#include <cublas_v2.h>
-#include <cudnn.h>
 #include <glib.h>
 #include "cudart_nw_internal.h"
 
@@ -56,7 +60,7 @@ struct fatbin_function {
 
     CUfunction cufunc;
     void *hostfunc;
-    CUmodule module;
+    CUmodule module; // unneeded
 };
 ava_end_utility;
 
@@ -64,25 +68,43 @@ ava_type(cudaError_t) {
     ava_success(CUDA_SUCCESS);
 }
 
+ava_type(cublasStatus_t) {
+    ava_success(CUBLAS_STATUS_SUCCESS);
+}
+
+ava_type(cudnnStatus_t ) {
+    ava_success(CUDNN_STATUS_SUCCESS);
+}
+
 ava_type(CUresult) {
+    ava_success(CUDA_SUCCESS);
+}
+
+ava_type(unsigned) {
     ava_success(CUDA_SUCCESS);
 }
 
 /* Async buffer address list */
 struct async_buffer_list {
     int num_buffers;
-    void *buffers[MAX_ASYNC_BUFFER_NUM]; /* array of buffer addresses */
     size_t buffer_sizes[MAX_ASYNC_BUFFER_NUM];
+    void *buffers[MAX_ASYNC_BUFFER_NUM]; /* array of buffer addresses */
 };
 
 typedef struct {
+    /* read dumps */
+    int num_fatbins;
+    void *func_id;
+    int fatfunction_fd;
+    GHashTable *ht_name2idx;
+
     /* argument types */
-    GHashTable *fatbin_funcs;     /* for NULL, the hash table */
+    GPtrArray *fatbin_funcs;     /* for NULL, the hash table */
     int num_funcs;
     struct fatbin_function *func; /* for functions */
 
     /* global states */
-    CUmodule cur_module;
+    int cuinit_called;
 
     /* memory flags */
     int is_pinned;
@@ -99,12 +121,26 @@ ava_type(struct fatbin_wrapper) {
     ava_field(magic);
     ava_field(seq);
     ava_field(ptr) {
-        ava_type_cast(void *);
-        ava_in; ava_buffer(((struct fatBinaryHeader *)ava_self->ptr)->headerSize + ((struct fatBinaryHeader *)ava_self->ptr)->fatSize);
-        ava_lifetime_static;
+        /* worker loads the fat binary from dump file */
+        ava_self->ptr = 0;
     }
     ava_field(data_ptr) {
         ava_self->data_ptr = 0;
+    }
+}
+
+ava_type(struct async_buffer_list) {
+    struct async_buffer_list *ava_self;
+
+    ava_field(num_buffers);
+    ava_field(buffers) {
+#warning Fix annotating an array of pointer
+        ava_in; ava_buffer(ava_self->num_buffers);
+        ava_element {
+            ava_out;
+            ava_buffer(ava_self->buffer_sizes[ava_index]);
+            ava_lifetime_manual;
+        }
     }
 }
 
@@ -126,168 +162,271 @@ __cudaInitModule(void **fatCubinHandle)
     }
 }
 
-ava_utility int __helper_cubin_num(void **cubin_handle) {
-    int num = 0;
-    while (cubin_handle[num] != NULL)
-        num++;
-    return num;
-}
-
-ava_utility void __helper_dump_fatbin(void *fatCubin,
-                                    GHashTable **fatbin_funcs,
-                                    int *num_funcs) {
-    struct fatbin_wrapper *wp = fatCubin;
-    struct fatBinaryHeader *fbh = (struct fatBinaryHeader *)wp->ptr;
-
-    /* Dump fat binary to a file */
-    int fd;
-    fd = open("/tmp/fatbin.cubin", O_WRONLY | O_TRUNC | O_CREAT, 0666);
-    write(fd, (const void *)wp->ptr, fbh->headerSize + fbh->fatSize);
-    close(fd);
-
-    /* Execute cuobjdump and construct function information table */
-    FILE *fp_pipe;
-    char line[2048];
-    int i, ordinal;
-    size_t size;
-    char name[MAX_KERNEL_NAME_LEN]; /* mangled name */
-    struct fatbin_function *func;
-
-    /* Create the hash table */
-    if (*fatbin_funcs == NULL) {
-        *fatbin_funcs = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-        *num_funcs = 0;
-    }
-
-    /*  Open the command pipe for reading */
-    fp_pipe = popen("/usr/local/cuda-10.0/bin/cuobjdump -elf /tmp/fatbin.cubin", "r");
-    assert(fp_pipe);
-
-    while (fgets(line, sizeof(line), fp_pipe) != NULL) {
-        /* Search functions */
-        if (strncmp(line, ".nv.info.", 9) == 0) {
-            sprintf(name, line + 9, strlen(line) - 10);
-            assert(strlen(line) - 10 < MAX_KERNEL_NAME_LEN);
-            name[strlen(line) - 10] = '\0';
-            DEBUG_PRINT("[%d] %s@\n", *num_funcs, name);
-
-            if (g_hash_table_lookup(*fatbin_funcs, name) != NULL)
-                continue;
-
-            /* Create a new hash table entry */
-            func = (struct fatbin_function *)g_malloc(sizeof(struct fatbin_function));
-            memset(func, 0, sizeof(struct fatbin_function));
-
-            // TODO: parse function name to determine whether the
-            // arguments are handles
-
-            /* Search parameters */
-            func->argc = 0;
-            while (fgets(line, sizeof(line), fp_pipe) != NULL) {
-                i = 0;
-                while (i < strlen(line) && isspace(line[i])) i++;
-                /* Empty line means reaching the end of the function info */
-                if (i == strlen(line)) break;
-
-                if (strncmp(&line[i], "Attribute:", 10) == 0) {
-                    i += 10;
-                    while (i < strlen(line) && isspace(line[i])) i++;
-                    if (strncmp(&line[i], "EIATTR_KPARAM_INFO", 18) == 0) {
-                        /* Skip the format line */
-                        fgets(line, sizeof(line), fp_pipe);
-                        fgets(line, sizeof(line), fp_pipe);
-
-                        /* Get ordinal and size */
-                        i = 0;
-                        while (i < strlen(line) && line[i] != 'O') i++;
-                        sscanf(&line[i], "Ordinal\t: 0x%x", &ordinal);
-                        while (i < strlen(line) && line[i] != 'S') i++;
-                        sscanf(&line[i], "Size\t: 0x%lx", &size);
-
-                        i = func->argc;
-                        //DEBUG_PRINT("ordinal=%d, size=%lx\n", ordinal, size);
-                        assert(ordinal < MAX_KERNEL_ARG);
-                        func->args[ordinal].size = size;
-                        ++(func->argc);
-                    }
-                }
-            }
-
-            ++(*num_funcs);
-
-            /* Insert the function into hash table */
-            g_hash_table_insert((*fatbin_funcs), g_strdup(name), (gpointer)func);
-            //func = (struct fatbin_function *)g_hash_table_lookup(*fatbin_funcs, name);
-        }
-    }
-
-    pclose(fp_pipe);
-}
-
 ava_utility void __helper_print_fatcubin_info(void *fatCubin, void **ret) {
     struct fatbin_wrapper *wp = fatCubin;
-    printf("fatCubin_wrapper=%p, []={.magic=0x%X, .seq=%d, ptr=0x%lx, data_ptr=0x%lx}\n",
+    DEBUG_PRINT("fatCubin_wrapper=%p, []={.magic=0x%X, .seq=%d, ptr=0x%lx, data_ptr=0x%lx}\n",
             fatCubin,
             wp->magic, wp->seq, wp->ptr, wp->data_ptr);
     struct fatBinaryHeader *fbh = (struct fatBinaryHeader *)wp->ptr;
-    printf("fatBinaryHeader={.magic=0x%X, version=%d, headerSize=0x%x, fatSize=0x%llx}\n",
+    DEBUG_PRINT("fatBinaryHeader={.magic=0x%X, version=%d, headerSize=0x%x, fatSize=0x%llx}\n",
             fbh->magic, fbh->version, fbh->headerSize, fbh->fatSize);
     char *fatBinaryEnd = (char *)(wp->ptr + fbh->headerSize + fbh->fatSize);
-    printf("fatBin=0x%lx--0x%lx\n", wp->ptr, (int64_t)fatBinaryEnd);
+    DEBUG_PRINT("fatBin=0x%lx--0x%lx\n", wp->ptr, (int64_t)fatBinaryEnd);
 
     fatBinaryEnd = (char *)(wp->ptr);
     int i, j;
     for (i = 0; i < 100; i++)
         if (fatBinaryEnd[i] == 0x7F && fatBinaryEnd[i+1] == 'E' && fatBinaryEnd[i+2] == 'L') {
-            printf("ELF header appears at 0x%d (%p): \n", i, (void *)wp->ptr + i);
+            DEBUG_PRINT("ELF header appears at 0x%d (%p): \n", i, (void *)wp->ptr + i);
             break;
         }
     for (j = i; j < i + 32; j++)
-        printf("%.2X ", fatBinaryEnd[j] & 0xFF);
-    printf("\n");
+        DEBUG_PRINT("%.2X ", fatBinaryEnd[j] & 0xFF);
+    DEBUG_PRINT("\n");
 
-    printf("ret=%p\n", ret);
-    printf("fatCubin=%p, *ret=%p\n", (void *)fatCubin, *ret);
+    DEBUG_PRINT("ret=%p\n", ret);
+    DEBUG_PRINT("fatCubin=%p, *ret=%p\n", (void *)fatCubin, *ret);
 }
 
-ava_utility void __helper_init_module(struct fatbin_wrapper *fatCubin, void **handle) {
+ava_utility CUmodule __helper_init_module(struct fatbin_wrapper *fatCubin, void **handle) {
+    CUmodule mod;
     int ret;
-    if (ava_metadata(NULL)->cur_module == 0) {
+    if (ava_metadata(NULL)->cuinit_called == 0) {
         ret = cuInit(0);
-        DEBUG_PRINT("ret=%d\n", ret);
+        ava_metadata(NULL)->cuinit_called = 1;
         assert(ret == CUDA_SUCCESS && "CUDA driver init failed");
+        (void)ret;
     }
     __cudaInitModule(handle);
-    ret = cuModuleLoadData(&ava_metadata(NULL)->cur_module, (void *)fatCubin->ptr);
-    DEBUG_PRINT("ret=%d, module=%lx\n", ret, (uintptr_t)ava_metadata(NULL)->cur_module);
+    ret = cuModuleLoadData(&mod, (void *)fatCubin->ptr);
     assert(ret == CUDA_SUCCESS && "Module load failed");
+    (void)ret;
+
+    return mod;
+}
+
+/**
+ * Look up the CUDA kernel function and save it in the list.
+ */
+ava_utility void __helper_register_function(struct fatbin_function *func,
+                                            const char *hostFun,
+                                            CUmodule module,
+                                            const char *deviceName) {
+    assert(func != NULL);
+    /* Only register the first host function */
+    if (func->hostfunc != NULL) return;
+
+    DEBUG_PRINT("hostFun = 0x%lx, deviceName is %s\n", (intptr_t)hostFun, deviceName);
+    CUresult ret = cuModuleGetFunction(&func->cufunc, module, deviceName);
+    assert(ret == CUDA_SUCCESS);
+    (void)ret;
+    DEBUG_PRINT("register host func 0x%lx -> device func 0x%lx\n", (uintptr_t)hostFun, (uintptr_t)func->cufunc);
+    func->hostfunc = (void *)hostFun;
+    func->module = module;
+}
+
+/**
+ * Loads the function argument information from dump.
+ */
+ava_utility GHashTable *__helper_load_function_arg_info(void) {
+    GPtrArray *fatbin_funcs;
+    if (ava_metadata(NULL)->fatbin_funcs == NULL) {
+        ava_metadata(NULL)->fatbin_funcs = g_ptr_array_new_with_free_func(g_free);
+        g_ptr_array_add(ava_metadata(NULL)->fatbin_funcs, (gpointer)NULL); // func_id starts from 1
+    }
+    fatbin_funcs = ava_metadata(NULL)->fatbin_funcs;
+
+    GHashTable *ht = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+    int fd;
+    char filename[32];
+    sprintf(filename, "/tmp/function_arg-%d.cubin", ava_metadata(NULL)->num_fatbins);
+    fd = open(filename, O_RDONLY, 0666);
+
+    struct fatbin_function *func;
+    size_t name_size;
+    char func_name[MAX_KERNEL_NAME_LEN];
+
+    while (1) {
+        if (read(fd, (void *)&name_size, sizeof(size_t)) == 0)
+            break;
+        assert(name_size < MAX_KERNEL_NAME_LEN);
+        read(fd, (void *)func_name, name_size);
+
+        func = g_new(struct fatbin_function, 1);
+        read(fd, (void *)func, sizeof(struct fatbin_function));
+        DEBUG_PRINT("function %d (%s) has argc = %d\n",
+                    fatbin_funcs->len - 1, func_name, func->argc);
+        /* Insert into the function table */
+        g_ptr_array_add(fatbin_funcs, (gpointer)func);
+
+        /* Add name->index mapping */
+        if (g_hash_table_lookup(ht, func_name) == NULL) {
+            assert(fatbin_funcs->len > 1);
+            g_hash_table_insert(ht, g_strdup(func_name), (gpointer)((uintptr_t)fatbin_funcs->len - 1));
+        }
+    }
+    close(fd);
+
+    ++(ava_metadata(NULL)->num_fatbins);
+    return ht;
+}
+
+/**
+ * This utility function should only be called by the worker.
+ */
+ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
+    /* Read fatbin dump */
+    int fd;
+    int read_ret;
+    struct stat file_stat;
+    char filename[32];
+    sprintf(filename, "/tmp/fatbin-%d.cubin", ava_metadata(NULL)->num_fatbins);
+    fd = open(filename, O_RDONLY, 0666);
+
+    /* Create and read fatbin buffer */
+    fstat(fd, &file_stat);
+    size_t fatbin_size = (size_t)file_stat.st_size;
+    void *fatbin = malloc(fatbin_size);
+    read(fd, fatbin, fatbin_size);
+    close(fd);
+
+    struct fatBinaryHeader *fbh = (struct fatBinaryHeader *)fatbin;
+    DEBUG_PRINT("Read fatbin-%d.cubin size = %lu, should be %llu\n",
+            ava_metadata(NULL)->num_fatbins,
+            fatbin_size,
+            fbh->headerSize + fbh->fatSize);
+    assert(fatbin_size == fbh->headerSize + fbh->fatSize);
+    (void)fbh;
+
+    /* Call native API to register the fatbin */
+    struct fatbin_wrapper *wrapper = (struct fatbin_wrapper *)fatCubin;
+    wrapper->ptr = (uint64_t)fatbin;
+
+    void **fatbin_handle = __cudaRegisterFatBinary(wrapper);
+    //__helper_print_fatcubin_info(fatCubin, fatbin_handle);
+    CUmodule mod = __helper_init_module(wrapper, fatbin_handle);
+
+    /* Load function argument information */
+    GHashTable *ht = __helper_load_function_arg_info();
+
+    /* Register CUDA functions */
+    GPtrArray *fatbin_funcs = ava_metadata(NULL)->fatbin_funcs;
+    struct fatbin_function *func;
+
+    if (ava_metadata(NULL)->fatfunction_fd == 0) {
+        ava_metadata(NULL)->fatfunction_fd = open("/tmp/fatfunction.cufunc", O_RDONLY, 0666);
+    }
+    fd = ava_metadata(NULL)->fatfunction_fd;
+
+    void *func_id;
+    size_t size;
+    int exists;
+    char *deviceFun;
+    char *deviceName;
+    int thread_limit;
+    uint3 *tid;
+    uint3 *bid;
+    dim3 *bDim;
+    dim3 *gDim;
+    int *wSize;
+    while (1) {
+        read_ret = read(fd, (void *)&size, sizeof(size_t));
+        if (size == 0) break; // Meet separator
+        if (read_ret == 0) {  // EOF
+            close(fd);
+            break;
+        }
+        deviceFun = (char *)malloc(size);
+        read(fd, (void *)deviceFun, size);
+
+        read(fd, (void *)&size, sizeof(size_t));
+        deviceName = (char *)malloc(size);
+        read(fd, (void *)deviceName, size);
+
+        read(fd, (void *)&thread_limit, sizeof(int));
+
+        read(fd, (void *)&exists, sizeof(int));
+        if (exists) {
+            tid = (uint3 *)malloc(sizeof(uint3));
+            read(fd, (void *)tid, sizeof(uint3));
+        }
+        else
+            tid = NULL;
+
+        read(fd, (void *)&exists, sizeof(int));
+        if (exists) {
+            bid = (uint3 *)malloc(sizeof(uint3));
+            read(fd, (void *)bid, sizeof(uint3));
+        }
+        else
+            bid = NULL;
+
+        read(fd, (void *)&exists, sizeof(int));
+        if (exists) {
+            bDim = (dim3 *)malloc(sizeof(dim3));
+            read(fd, (void *)bDim, sizeof(dim3));
+        }
+        else
+            bDim = NULL;
+
+        read(fd, (void *)&exists, sizeof(int));
+        if (exists) {
+            gDim = (dim3 *)malloc(sizeof(dim3));
+            read(fd, (void *)gDim, sizeof(dim3));
+        }
+        else
+            gDim = NULL;
+
+        read(fd, (void *)&exists, sizeof(int));
+        if (exists) {
+            wSize = (int *)malloc(sizeof(int));
+            read(fd, (void *)wSize, sizeof(int));
+        }
+        else
+            wSize = NULL;
+
+        func_id = (void *)g_hash_table_lookup(ht, deviceName);
+        assert(func_id != NULL);
+        func = g_ptr_array_index(fatbin_funcs, (intptr_t)func_id);
+        __helper_register_function(func, (const char *)func_id, mod, deviceName);
+
+        free(deviceFun);
+        free(deviceName);
+        if (tid) free(tid);
+        if (bid) free(bid);
+        if (bDim) free(bDim);
+        if (gDim) free(gDim);
+        if (wSize) free(wSize);
+    }
+
+    g_hash_table_destroy(ht);
+    return fatbin_handle;
 }
 
 void** CUDARTAPI
 __cudaRegisterFatBinary(void *fatCubin)
 {
+    ava_disable_native_call;
+
     ava_argument(fatCubin) {
         ava_type_cast(struct fatbin_wrapper *);
         ava_in; ava_buffer(1);
-        ava_lifetime_static;
+        //ava_lifetime_static;
     }
 
-    void **ret = (void **)ava_execute();
-    ava_return_value {
-        ava_out; ava_buffer(__helper_cubin_num(ret) + 1);
-        ava_element {
-            if (ret[ava_index] != NULL) ava_handle;
-        }
-        ava_allocates;
-        ava_lifetime_manual;
+    if (ava_is_guest) {
+        ava_metadata(NULL)->ht_name2idx = __helper_load_function_arg_info();
     }
-
-    __helper_dump_fatbin(fatCubin, &ava_metadata(NULL)->fatbin_funcs,
-                        &ava_metadata(NULL)->num_funcs);
 
     if (ava_is_worker) {
-        //__helper_print_fatcubin_info(fatCubin, ret);
-        __helper_init_module(fatCubin, ret);
+        return __helper_load_and_register_fatbin((void *)fatCubin);
+    }
+    void **ret;
+    ava_return_value {
+        ava_out; ava_buffer(1);
+        ava_element ava_handle;
+        ava_lifetime_manual;
     }
 }
 
@@ -303,15 +442,7 @@ __cudaUnregisterFatBinary(void **fatCubinHandle)
 
     ava_argument(fatCubinHandle) {
         ava_in;
-        /*
-        ava_buffer(__helper_cubin_num(fatCubinHandle) + 1);
-        ava_element {
-            if (fatCubinHandle[ava_index] != NULL) ava_handle;
-        }
-        */
-        ava_buffer(1);
-        ava_element ava_handle;
-        ava_deallocates;
+        ava_buffer(1); ava_element ava_handle;
     }
 
     if (ava_is_worker) {
@@ -319,33 +450,22 @@ __cudaUnregisterFatBinary(void **fatCubinHandle)
     }
 }
 
-ava_utility void __helper_assosiate_function(GHashTable *funcs,
-                                            struct fatbin_function **func,
-                                            void *local,
+/**
+ * Associate the local function pointer with the imported function ID.
+ * This utility function should only be called in the guestlib.
+ */
+ava_utility void __helper_assosiate_function(void *local,
                                             const char *deviceName) {
-    if (*func != NULL) {
-        DEBUG_PRINT("Function (%s) metadata (%p) already exists\n",
-                deviceName, local);
+    if (ava_metadata(local)->func != NULL) {
+        DEBUG_PRINT("Function (%s) metadata (%p) already exists, func_id = %p\n",
+                deviceName, local, ava_metadata(local)->func_id);
         return;
     }
 
-    *func = (struct fatbin_function *)g_hash_table_lookup(funcs, deviceName);
-    assert(*func && "device function not found!");
-}
-
-ava_utility void __helper_register_function(struct fatbin_function *func,
-                                            const char *hostFun,
-                                            CUmodule module,
-                                            const char *deviceName) {
-    assert(func != NULL);
-    /* Only register the first host function */
-    if (func->hostfunc != NULL) return;
-
-    CUresult ret = cuModuleGetFunction(&func->cufunc, module, deviceName);
-    assert(ret == CUDA_SUCCESS);
-    DEBUG_PRINT("register host func %lx -> device func %lx\n", (uintptr_t)hostFun, (uintptr_t)func->cufunc);
-    func->hostfunc = (void *)hostFun;
-    func->module = module;
+    void *func_id = (void *)g_hash_table_lookup(ava_metadata(NULL)->ht_name2idx, deviceName);
+    assert(func_id != NULL);
+    ava_metadata(local)->func_id = func_id;
+    ava_metadata(local)->func = g_ptr_array_index(ava_metadata(NULL)->fatbin_funcs, (intptr_t)func_id);
 }
 
 ava_utility void __helper_parse_function_args(const char *name, struct kernel_arg *args)
@@ -418,6 +538,7 @@ ava_utility void __helper_parse_function_args(const char *name, struct kernel_ar
     }
 }
 
+ava_begin_replacement;
 void CUDARTAPI
 __cudaRegisterFunction(
         void   **fatCubinHandle,
@@ -431,59 +552,9 @@ __cudaRegisterFunction(
         dim3    *gDim,
         int     *wSize)
 {
-    ava_disable_native_call;
-
-    DEBUG_PRINT("register hostFun=%p, deviceFun=%s, deviceName=%s, thread_limit=%d, tid={%d,%d,%d}, bid={%d,%d,%d}, bDim={%d,%d,%d}, gDim={%d,%d,%d}\n",
-            (void *)hostFun, deviceFun, deviceName, thread_limit,
-            tid?tid->x:0, tid?tid->y:0, tid?tid->z:0,
-            bid?bid->x:0, bid?bid->y:0, bid?bid->z:0,
-            bDim?bDim->x:0, bDim?bDim->y:0, bDim?bDim->z:0,
-            gDim?gDim->x:0, gDim?gDim->y:0, gDim?gDim->z:0);
-
-    ava_argument(fatCubinHandle) {
-        ava_in; ava_buffer(__helper_cubin_num(fatCubinHandle) + 1);
-        ava_element {
-            if (fatCubinHandle[ava_index] != NULL) ava_handle;
-        }
-    }
-
-    ava_argument(hostFun) {
-        ava_opaque;
-    }
-
-    ava_argument(deviceFun) {
-        ava_in; ava_buffer(strlen(deviceFun) + 1);
-    }
-
-    ava_argument(deviceName) {
-        ava_in; ava_buffer(strlen(deviceName) + 1);
-    }
-
-    __helper_assosiate_function(ava_metadata(NULL)->fatbin_funcs,
-                &ava_metadata(hostFun)->func, (void *)hostFun,
-                deviceName);
-
-    ava_argument(tid) {
-        ava_in; ava_buffer(1);
-    }
-    ava_argument(bid) {
-        ava_in; ava_buffer(1);
-    }
-    ava_argument(bDim) {
-        ava_in; ava_buffer(1);
-    }
-    ava_argument(gDim) {
-        ava_in; ava_buffer(1);
-    }
-    ava_argument(wSize) {
-        ava_in; ava_buffer(1);
-    }
-
-    if (ava_is_worker) {
-        __helper_register_function(ava_metadata(hostFun)->func, hostFun,
-                ava_metadata(NULL)->cur_module, deviceName);
-    }
+    __helper_assosiate_function((void *)hostFun, deviceName);
 }
+ava_end_replacement;
 
 ava_begin_replacement;
 void CUDARTAPI
@@ -512,6 +583,7 @@ __cudaPushCallConfiguration(dim3   gridDim,
                             size_t sharedMem, // CHECKME: default argument in header
                             void   *stream)
 {
+    ava_async;
     ava_argument(stream) {
         ava_handle;
     }
@@ -581,26 +653,28 @@ __host__ cudaError_t CUDARTAPI
 cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args,
         size_t sharedMem, cudaStream_t stream)
 {
+    ava_async;
     ava_disable_native_call;
+
+    ava_implicit_argument
+    void *func_id = ava_metadata(func)->func_id;
+    ava_argument(func_id) {
+        ava_opaque;
+    }
 
     ava_argument(func) {
         ava_opaque;
     }
 
     ava_argument(args) {
-        ava_in; ava_buffer(ava_metadata(func)->func->argc);
+#warning implicit arguments' dependency detection is broken.
+        ava_depends_on(func_id);
+        ava_in;
+        ava_buffer(((struct fatbin_function *)g_ptr_array_index(ava_metadata(NULL)->fatbin_funcs, (intptr_t)func_id))->argc);
         ava_element {
-            // FIXME: use the generated index name in the spec to
-            // reference the outer loop's loop index at this moment.
-            if (ava_metadata(func)->func->args[__args_index_0].is_handle) {
-                ava_type_cast(void *);
-                ava_buffer(ava_metadata(func)->func->args[__args_index_0].size);
-                //ava_element ava_handle;
-            }
-            else {
-                ava_type_cast(void *);
-                ava_buffer(ava_metadata(func)->func->args[__args_index_0].size);
-            }
+            ava_type_cast(void *);
+            ava_buffer(((struct fatbin_function *)g_ptr_array_index(ava_metadata(NULL)->fatbin_funcs, (intptr_t)func_id))->args[__args_index_0].size);
+            //ava_element ava_handle;
         }
     }
 
@@ -610,7 +684,7 @@ cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args,
 
     cudaError_t ret;
     if (ava_is_worker) {
-        ret = __helper_launch_kernel(ava_metadata(func)->func, func,
+        ret = __helper_launch_kernel(((struct fatbin_function *)g_ptr_array_index(ava_metadata(NULL)->fatbin_funcs, (intptr_t)func_id)), func_id,
                                     gridDim, blockDim, args, sharedMem, stream);
 #warning This will bypass the resource reporting routine.
         return ret;
@@ -815,18 +889,39 @@ cudaEventDestroy(cudaEvent_t event)
     ava_argument(event) ava_handle;
 }
 
+ava_callback_decl void __callback_cuda_stream_add_callback(
+        cudaStream_t stream,  cudaError_t status, void*  userData) {
+    ava_argument(stream) ava_handle;
+    ava_argument(userData) {
+        ava_userdata;
+    }
+}
+
 __host__ cudaError_t CUDARTAPI
 cudaEventSynchronize(cudaEvent_t event)
 {
     ava_argument(event) ava_handle;
 }
 
+/*
 __host__ cudaError_t CUDARTAPI
 cudaStreamAddCallback(cudaStream_t stream,
         cudaStreamCallback_t callback, void *userData, unsigned int flags)
 {
-    ava_unsupported;
+    ava_argument(stream) ava_handle;
+    ava_argument(callback) ava_callback(__callback_cuda_stream_add_callback);
 }
+*/
+
+ava_begin_replacement;
+__host__ cudaError_t CUDARTAPI
+cudaStreamAddCallback(cudaStream_t stream,
+        cudaStreamCallback_t callback, void *userData, unsigned int flags)
+{
+#warning TODO: Fix callback.
+    return CUDA_SUCCESS;
+}
+ava_end_replacement;
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
 cudaGetLastError(void);
@@ -896,6 +991,7 @@ cuModuleLoadFatBinary(CUmodule *module, const void *fatCubin)
 }
 
 ava_utility size_t __helper_launch_extra_size(void **extra) {
+    if (extra == NULL) return 0;
     size_t size = 1;
     while (extra[size - 1] != CU_LAUNCH_PARAM_END)
         size++;
@@ -954,6 +1050,14 @@ cuDeviceGet(CUdevice *device,
             int ordinal)
 {
     ava_argument(device) {
+        ava_out; ava_buffer(1);
+    }
+}
+
+CUresult CUDAAPI
+cuDeviceCanAccessPeer(int* canAccessPeer, CUdevice dev, CUdevice peerDev)
+{
+    ava_argument(canAccessPeer) {
         ava_out; ava_buffer(1);
     }
 }
@@ -1231,10 +1335,14 @@ CUresult CUDAAPI
 cuMemcpyDtoHAsync(void *dstHost, CUdeviceptr srcDevice,
         size_t ByteCount, CUstream hStream)
 {
+    /*
     __helper_register_async_buffer(&ava_metadata(hStream)->async_buffers,
                                 dstHost, ByteCount);
+    */
 
     ava_argument(dstHost) {
+#warning async buffers need to be no_copy
+        // ava_no_copy;
         ava_out; ava_buffer(ByteCount);
         if (ava_metadata(dstHost)->is_pinned) {
             ava_lifetime_manual;
@@ -1385,37 +1493,18 @@ ava_utility struct async_buffer_list *__helper_load_async_buffer_list(
 CUresult CUDAAPI
 cuStreamWaitEvent(CUstream hStream, CUevent hEvent, unsigned int Flags)
 {
-    ava_argument(hStream) ava_handle;
-    ava_argument(hEvent) ava_handle;
-
 #warning Fix the update of the buffers that are copied asynchronously.
-    struct async_buffer_list *async_buffers;
-    async_buffers = __helper_load_async_buffer_list(
-            &ava_metadata(hStream)->async_buffers);
-
     /*
     ava_implicit_argument
-    int num_buffers = async_buffers == NULL ? 0 : async_buffers->num_buffers;
-
-    ava_implicit_argument
-    size_t *buffer_sizes = async_buffers == NULL ? NULL : async_buffers->buffer_sizes;
-    ava_argument(buffer_sizes) {
-        ava_in; ava_buffer(num_buffers);
-    }
-
-    ava_implicit_argument
-    void **buffers = async_buffers == NULL ? NULL : async_buffers->buffers;
-    ava_argument(buffers) {
-        ava_in; ava_buffer(num_buffers);
-        ava_element {
-            ava_out;
-            ava_buffer(buffer_sizes[ava_index]);
-        }
+    struct async_buffer_list *async_buffers = __helper_load_async_buffer_list(
+            &ava_metadata(hStream)->async_buffers);
+    ava_argument(async_buffers) {
+        ava_out; ava_buffer(1);
     }
     */
 
-    if (async_buffers != NULL)
-        free(async_buffers);
+    ava_argument(hStream) ava_handle;
+    ava_argument(hEvent) ava_handle;
 }
 
 CUresult
@@ -1503,7 +1592,7 @@ cublasSgemm_v2 (cublasHandle_t handle, cublasOperation_t transa,
 {
     ava_async;
     ava_argument(handle) ava_handle;
-    ava_argument(transa) ava_opaque;
+	ava_argument(transa) ava_opaque;
 	ava_argument(transb) ava_opaque;
     ava_argument(A) ava_handle;
     ava_argument(B) ava_handle;
@@ -1765,7 +1854,6 @@ cudnnGetConvolutionForwardAlgorithm_v7(cudnnHandle_t                       handl
     }
     ava_argument(perfResults) {
         ava_out; ava_buffer(1);
-        ava_lifetime_manual;
     }
 }
 

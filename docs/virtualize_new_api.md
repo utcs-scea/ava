@@ -62,10 +62,11 @@ The identifier is the prefix of the generated files and directory (`demo_nw`).
 The API number is the ID used to differentiate the virtualized APIs in the system, which is optional.
 
 Then we need to provide C (`ava_cflags`) or C++ flags (`ava_cxxflags`) for compiling the generated code.
-It usually tells the compiler where to find the included headers (e.g., `-I/usr/local/cuda-10.1/include`),
-linked libraries (e.g., `-lcuda`) and other compilation options.
-The workspace is in `ava/cava/samples/demo_nw`.
+It usually tells the compiler where to find the included headers (e.g., `-I/usr/local/cuda-10.1/include`)
+as well as other compilation options.
+We can specify which libraries should be linked via `ava_libs` (e.g., `-lcuda`).
 
+The workspace is in `ava/cava/samples/demo_nw`.
 In this example, we defined the libdemo header in `ava/cava/headers/demo.h`, so we use that header
 search path in the cflags and include the header file:
 

@@ -1,16 +1,16 @@
 ava_name("CUDA Runtime");
-ava_version("10.0.0");
-ava_identifier(CUDART);
+ava_version("10.1.0");
+ava_identifier(CUDART_DUMP);
 ava_number(9);
-ava_cflags(-I/usr/local/cuda-10.0/include -I../headers);
-ava_libs(-L/usr/local/cuda-10.0/lib64 -lcudart -lcuda -lcublas -lcudnn);
+ava_cflags(-I/usr/local/cuda-10.1/include -I../headers);
+ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn);
 ava_export_qualifier();
 
 /**
  * The spec is used to dump the fat binaries and CUDA functions from
  * TensorFlow library.
  * Compile by
- * ./nwcc samples/cudart.dump.c -I /usr/local/cuda-10.0/include -I headers `pkg-config --cflags glib-2.0`
+ * ./nwcc samples/cudart.dump.c -I /usr/local/cuda-10.1/include -I headers `pkg-config --cflags glib-2.0`
  */
 
 ava_non_transferable_types {
@@ -183,7 +183,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
 
     /*  Open the command pipe for reading */
     char pip_command[80];
-    sprintf(pip_command, "/usr/local/cuda-10.0/bin/cuobjdump -elf /tmp/fatbin-%d.cubin",
+    sprintf(pip_command, "/usr/local/cuda-10.1/bin/cuobjdump -elf /tmp/fatbin-%d.cubin",
             ava_metadata(NULL)->num_fatbins);
     fp_pipe = popen(pip_command, "r");
     assert(fp_pipe);
