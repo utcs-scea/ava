@@ -62,9 +62,14 @@ if(AVA_GEN_OPENCL_SPEC)
   include(samples/opencl/CMakeLists.txt)
 endif()
 
-message(STATUS "Compile CUDA specification: ${AVA_GEN_CUDA_SPEC}")
-if(AVA_GEN_CUDA_SPEC)
-  include(samples/cuda/CMakeLists.txt)
+message(STATUS "Compile CUDA driver specification: ${AVA_GEN_CUDADRV_SPEC}")
+if(AVA_GEN_CUDADRV_SPEC)
+  include(samples/cudadrv/CMakeLists.txt)
+endif()
+
+message(STATUS "Compile CUDA runtime specification: ${AVA_GEN_CUDART_SPEC}")
+if(AVA_GEN_CUDART_SPEC)
+  include(samples/cudart/CMakeLists.txt)
 endif()
 
 message(STATUS "Compile TensorFlow (C) specification: ${AVA_GEN_TF_C_SPEC}")

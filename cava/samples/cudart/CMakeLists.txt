@@ -13,6 +13,10 @@ include(ExternalProject)
 
 ###### Compile cuda_driver.c ######
 
+find_package(PkgConfig REQUIRED)
+pkg_search_module(GLIB2 REQUIRED glib-2.0)
+
+
 ExternalProject_Add_Step(cava cudadrv-nwcc
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/samples/cuda/cuda_driver.c
   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${CMAKE_CURRENT_SOURCE_DIR}/samples/cuda/cuda_driver.c -I /usr/local/cuda-10.1/include

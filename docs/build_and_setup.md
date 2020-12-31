@@ -38,7 +38,7 @@ old codes into the new build system (v2.0) is still ongoing.
 | API framework    | Status |
 | ---------------- | ------ |
 | AmorphOS FPGA    | UNTESTED |
-| CUDA driver 10   | UNTESTED |
+| CUDA driver 10   | TESTED |
 | CUDA runtime 10  | UNTESTED |
 | Demo             | TESTED |
 | GTI              | NO |

@@ -13,12 +13,11 @@ include(ExternalProject)
 
 ###### Compile demo/demo.c ######
 
-find_package(PkgConfig REQUIRED)
-pkg_search_module(GLIB2 REQUIRED glib-2.0)
+set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/demo/demo.c")
 
 ExternalProject_Add_Step(cava demo-nwcc
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/samples/demo/demo.c
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${CMAKE_CURRENT_SOURCE_DIR}/samples/demo/demo.c -I ${CMAKE_CURRENT_SOURCE_DIR}/headers
+  DEPENDS ${spec_name}
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name} -I ${CMAKE_CURRENT_SOURCE_DIR}/headers
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDEES download
 )
@@ -37,7 +36,7 @@ ExternalProject_Add(demo_nw
   PREFIX demo_nw
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/demo_nw
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/demo_nw
-  INSTALL_DIR ${demo_nw}
+  INSTALL_DIR ${demo_install}
   DOWNLOAD_COMMAND ""
   CMAKE_ARGS ${CL_ARGS}
              -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
