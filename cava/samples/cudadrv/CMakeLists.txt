@@ -26,7 +26,6 @@ set(cudadrv_install ${AVA_INSTALL_DIR}/cudadrv_nw)
 ExternalProject_Add_Step(cava cudadrv-link
   COMMAND mkdir -p generated &&
           mkdir -p ${cudadrv_install}/lib &&
-          ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers    &&
           ln -f -s ${cudadrv_install}/lib/libguestlib.so ${cudadrv_install}/lib/libcuda.so.1
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES cudadrv-nwcc
