@@ -37,11 +37,11 @@ old codes into the new build system (v2.0) is still ongoing.
 
 | API framework    | Version | Status   |
 | ---------------- | ------- | -------- |
-| AmorphOS FPGA    |         | UNTESTED |
+| AmorphOS FPGA    | 1.0     | TESTED   |
 | CUDA driver      | 10.1    | TESTED   |
 | CUDA runtime     | 10.1    | TESTED   |
 | Demo             | 0.0.1   | TESTED   |
-| GTI              | 4.5.0.3 | UNTESTED |
+| GTI              | 4.5.0.3 | TESTED   |
 | HIP              |         | NO       |
 | NCSDK v2         | 2.10.01 | TESTED   |
 | ONNXruntime CUDA | 10.1    | TESTED\* |

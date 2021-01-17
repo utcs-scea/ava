@@ -2,9 +2,8 @@ ava_name("FPGA applications on AmorphOS");
 ava_version("1.0");
 ava_identifier(amorphos);
 ava_number(7);
-ava_cflags();
-ava_cxxflags(-I.);
-ava_libs(-L. -lava_aos_wrapper);
+ava_cflags(-I. -I../amorphos_files);
+ava_libs(-L. -L../amorphos_files -lava_aos_wrapper);
 ava_export_qualifier();
 
 #include <stdint.h>
