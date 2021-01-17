@@ -49,7 +49,7 @@ old codes into the new build system (v2.0) is still ongoing.
 | QuickAssist      |         | NO       |
 | TensorFlow CUDA  | 10.1    | TESTED   |
 | TensorFlow C     | 2.3.1   | TESTED   |
-| Test             |         | NO       |
+| Test             | 0.1     | TESTED   |
 
 > \* Upstream changes ([ava-serverless](https://github.com/photoszzt/ava-serverless)) have not been merged.
 
