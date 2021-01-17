@@ -45,7 +45,7 @@ old codes into the new build system (v2.0) is still ongoing.
 | HIP              |         | NO       |
 | NCSDK v2         |         | UNTESTED |
 | ONNXruntime CUDA | 10.1    | TESTED\* |
-| OpenCL           |         | NO       |
+| OpenCL           | 1.2     | TESTED   |
 | QuickAssist      |         | NO       |
 | TensorFlow CUDA  | 10.1    | TESTED   |
 | TensorFlow C     | 2.3.1   | TESTED   |

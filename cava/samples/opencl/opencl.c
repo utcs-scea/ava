@@ -3,6 +3,7 @@ ava_version("1.2");
 ava_identifier(CL);
 ava_number(2);
 //ava_cflags(-DAVA_PRINT_TIMESTAMP);
+//ava_cflags(-DAVA_RECORD_REPLAY);
 //ava_cflags(-DAVA_RECORD_REPLAY -DAVA_BENCHMARKING_MIGRATE);
 //ava_cflags(-DAVA_API_FUNCTION_CALL_RESOURCE -DAVA_DISABLE_HANDLE_TRANSLATION);
 ava_libs(-lOpenCL);
@@ -46,8 +47,6 @@ ava_register_metadata(Metadata);
 ava_throughput_resource command_rate;
 ava_storage_resource device_memory;
 
-#define ava_in_out_buffer(x, y) ({ if(ava_is_in) ava_buffer(x); else ava_buffer(min(x, y == NULL ? x : *y)); })
-
 ava_callback_decl void cl_pfn_notify(const char *errinfo, const void *private_info, size_t cb, void *user_data) {
     ava_argument(errinfo) {
         ava_buffer(strlen(errinfo) + 1);
@@ -62,6 +61,12 @@ ava_callback_decl void cl_pfn_notify(const char *errinfo, const void *private_in
     }
 }
 
+#ifndef ava_min
+#define ava_min
+#define ava_min(a,b)   (a < b ? a : b)
+#endif
+#define cl_in_out_buffer(x, y) ({ if(ava_is_in) ava_buffer(x); else ava_buffer(ava_min(x, y == NULL ? x : *y)); })
+
 cl_int
 clGetPlatformIDs(cl_uint          num_entries,
                  cl_platform_id * platforms,
@@ -69,7 +74,7 @@ clGetPlatformIDs(cl_uint          num_entries,
 {
     ava_argument(platforms) {
         ava_out;
-        ava_in_out_buffer(num_entries, num_platforms);
+        cl_in_out_buffer(num_entries, num_platforms);
         ava_element ava_object_record;
     }
     ava_argument(num_platforms) {
@@ -87,7 +92,7 @@ clGetPlatformInfo(cl_platform_id   platform,
 {
     ava_argument(param_value) {
         ava_out;
-        ava_in_out_buffer(param_value_size, param_value_size_ret);
+        cl_in_out_buffer(param_value_size, param_value_size_ret);
     }
     ava_argument(param_value_size_ret) {
         ava_out;
@@ -177,7 +182,7 @@ clGetDeviceIDs(cl_platform_id platform,
                cl_uint *      num_devices)
 {
     ava_argument(devices) {
-        ava_out; ava_in_out_buffer(num_entries, num_devices);
+        ava_out; cl_in_out_buffer(num_entries, num_devices);
         ava_element {
             ava_object_depends_on(platform);
             ava_object_record;
@@ -196,7 +201,7 @@ clGetDeviceInfo(cl_device_id   device,
                 size_t *       param_value_size_ret)
 {
     ava_argument(param_value) {
-        ava_out; ava_in_out_buffer(param_value_size, param_value_size_ret);
+        ava_out; cl_in_out_buffer(param_value_size, param_value_size_ret);
     }
     ava_argument(param_value_size_ret) {
         ava_out; ava_buffer(1);
@@ -281,10 +286,14 @@ clGetContextInfo(cl_context      context,
 {
     ava_argument(param_value) {
         ava_out;
-        ava_in_out_buffer(param_value_size, param_value_size_ret);
+        cl_in_out_buffer(param_value_size, param_value_size_ret);
         if (ava_is_worker && param_name == CL_CONTEXT_DEVICES) {
             ava_type_cast(void**);
-            ava_element ava_handle;
+            ava_element {
+                ava_handle;
+                ava_object_depends_on(context);
+                ava_object_record;
+            }
         }
         else {
             ava_element ava_opaque;
@@ -387,7 +396,6 @@ clBuildProgram(cl_program           program,
                void (* pfn_notify)(cl_program, void *),
                void *               user_data)
 {
-    ava_async;
     ava_argument(program) ava_object_record;
     ava_argument(device_list) {
         ava_in; ava_buffer(num_devices);
@@ -428,7 +436,7 @@ clGetProgramBuildInfo(cl_program            program,
                       size_t *              param_value_size_ret)
 {
     ava_argument(param_value) {
-        ava_out; ava_in_out_buffer(param_value_size, param_value_size_ret);
+        ava_out; cl_in_out_buffer(param_value_size, param_value_size_ret);
     }
     ava_argument(param_value_size_ret) {
         ava_out; ava_buffer(1);
@@ -676,7 +684,7 @@ clGetEventInfo(cl_event      event,
     }
 
     ava_argument(param_value) {
-        ava_out; ava_in_out_buffer(param_value_size, param_value_size_ret);
+        ava_out; cl_in_out_buffer(param_value_size, param_value_size_ret);
     }
     ava_argument(param_value_size_ret) {
         ava_out; ava_buffer(1);
@@ -688,7 +696,6 @@ clGetEventInfo(cl_event      event,
 cl_int
 clReleaseEvent(cl_event event)
 {
-    ava_async;
     ava_argument(event) ava_deallocates;
 }
 
@@ -700,7 +707,7 @@ clGetEventProfilingInfo(cl_event          event,
                         size_t *          param_value_size_ret)
 {
     ava_argument(param_value) {
-        ava_out; ava_in_out_buffer(param_value_size, param_value_size_ret);
+        ava_out; cl_in_out_buffer(param_value_size, param_value_size_ret);
     }
     ava_argument(param_value_size_ret) {
         ava_out; ava_buffer(1);
@@ -709,7 +716,6 @@ clGetEventProfilingInfo(cl_event          event,
 
 ava_callback_decl
 void clSetEventCallback_callback(cl_event event, cl_int status, void* user_data) {
-    ava_async;
     ava_implicit_argument void * output_buffer = ava_metadata(event)->related_buffer;
 
     ava_argument(output_buffer) {
@@ -732,7 +738,6 @@ clSetEventCallback(cl_event            event,
                    void (* pfn_notify)(cl_event, cl_int, void *),
                    void *              user_data)
 {
-    ava_async;
     ava_argument(pfn_notify) {
         ava_callback(clSetEventCallback_callback);
     }
@@ -855,7 +860,7 @@ clEnqueueUnmapMemObject(cl_command_queue command_queue,
 
     ava_argument(mapped_ptr) {
         ava_deallocates;
-        #warning This use of ava_metadata is illegal because it changes the interpretation of the value being accessed.
+        #warning This use of ava_metadata is unsafe because it changes the interpretation of the value being being looked up in the metadata map. This may mean that the first metadata lookup will use the wrong pointer.
         if(ava_metadata(mapped_ptr)->flags != CL_MAP_READ) {
             ava_in;
             ava_buffer(ava_metadata(mapped_ptr)->size);
@@ -886,10 +891,6 @@ clEnqueueCopyBuffer(cl_command_queue command_queue,
                     const cl_event * event_wait_list,
                     cl_event *       event)
 {
-    if (event == NULL)
-        ava_async;
-    else
-        ava_sync;
     ava_argument(event_wait_list) {
         ava_in; ava_buffer(num_events_in_wait_list);
     }
@@ -960,10 +961,8 @@ clSetKernelArg(cl_kernel    kernel,
                size_t       arg_size,
                const void * arg_value)
 {
-    ava_async;
     ava_argument(kernel) ava_object_record;
     ava_argument(arg_value) {
-        #warning TODO: This type check is incorrect. This code needs to lookup the real type information for the kernel.
         if (ava_is_worker && ava_metadata(kernel)->kernel_arg_is_handle[arg_index]) {
             ava_type_cast(void**);
             ava_element {
@@ -985,10 +984,6 @@ clEnqueueTask(cl_command_queue command_queue,
               const cl_event * event_wait_list,
               cl_event *       event)
 {
-    if (event == NULL)
-        ava_async;
-    else
-        ava_sync;
     ava_consumes_resource(command_rate, 1);
 
     ava_argument(event_wait_list) {
@@ -1011,10 +1006,7 @@ clEnqueueNDRangeKernel(cl_command_queue command_queue,
                        const cl_event * event_wait_list,
                        cl_event *       event)
 {
-    if (event == NULL)
-        ava_async;
-    else
-        ava_sync;
+    ava_sync;
 
     ava_consumes_resource(command_rate, 1);
 
@@ -1055,7 +1047,7 @@ clGetKernelWorkGroupInfo(cl_kernel                 kernel,
                          size_t *                  param_value_size_ret)
 {
     ava_argument(param_value) {
-        ava_out; ava_in_out_buffer(param_value_size, param_value_size_ret);
+        ava_out; cl_in_out_buffer(param_value_size, param_value_size_ret);
     }
     ava_argument(param_value_size_ret) {
         ava_out; ava_buffer(1);
