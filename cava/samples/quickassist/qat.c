@@ -1,8 +1,8 @@
 ava_name("Intel® QuickAssist Technology");
-ava_version("2.1");
-ava_identifier(CPA);
+ava_version("1.7");
+ava_identifier(QAT);
 ava_number(6);
-//ava_cflags(-DAVA_PRINT_TIMESTAMP);
+ava_cflags(-I$ENV{ICP_ROOT}/quickassist/include -I$ENV{ICP_ROOT}/quickassist/lookaside/access_layer/include);
 ava_libs(-lqat_s -lusdm_drv_s);
 ava_export_qualifier();
 

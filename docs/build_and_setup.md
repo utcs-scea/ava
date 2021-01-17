@@ -46,7 +46,7 @@ old codes into the new build system (v2.0) is still ongoing.
 | NCSDK v2         | 2.10.01 | TESTED   |
 | ONNXruntime CUDA | 10.1    | TESTED\* |
 | OpenCL           | 1.2     | TESTED   |
-| QuickAssist      |         | NO       |
+| QuickAssist      | 1.7     | TESTED   |
 | TensorFlow CUDA  | 10.1    | TESTED   |
 | TensorFlow C     | 2.3.1   | TESTED   |
 | Test             | 0.1     | TESTED   |
