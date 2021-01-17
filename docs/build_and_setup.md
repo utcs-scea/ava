@@ -41,7 +41,7 @@ old codes into the new build system (v2.0) is still ongoing.
 | CUDA driver      | 10.1    | TESTED   |
 | CUDA runtime     | 10.1    | TESTED   |
 | Demo             | 0.0.1   | TESTED   |
-| GTI              |         | NO       |
+| GTI              | 4.5.0.3 | UNTESTED |
 | HIP              |         | NO       |
 | NCSDK v2         | 2.10.01 | TESTED   |
 | ONNXruntime CUDA | 10.1    | TESTED\* |
