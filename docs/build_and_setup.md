@@ -43,7 +43,7 @@ old codes into the new build system (v2.0) is still ongoing.
 | Demo             | 0.0.1   | TESTED   |
 | GTI              |         | NO       |
 | HIP              |         | NO       |
-| NCSDK v2         |         | UNTESTED |
+| NCSDK v2         | 2.10.01 | TESTED   |
 | ONNXruntime CUDA | 10.1    | TESTED\* |
 | OpenCL           | 1.2     | TESTED   |
 | QuickAssist      |         | NO       |

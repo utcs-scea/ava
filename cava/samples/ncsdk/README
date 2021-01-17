@@ -1,0 +1,28 @@
+# Install movidius SDK on Ubuntu 16.04
+
+```
+git clone -b ncsdk2 http://github.com/Movidius/ncsdk && cd ncsdk && make install
+```
+
+Commit ID: `3ca1171b4237cc64e0388cb8633c2626baced59a`
+
+# Install on Ubuntu 18.04
+
+At the time of writing, only Ubuntu 16.04 LTS is supported for NCSDK v2, and
+Ubuntu 18.04 is being evaluated. Follow the following steps to install NCSDK v2 on
+Ubuntu 18.04.
+
+* Hack OS check at line 32 of install.sh; change the `1604` number to `1804`.
+```
+if [ "${OS_DISTRO,,}" = "ubuntu" ] && [ ${OS_VERSION} = 1604 ]; then
+```
+
+* Disable Caffe installation in ncsdk.conf.
+```
+NSTALL_CAFFE=no
+```
+
+* Install Caffe
+```
+sudo apt install caffe-cpu
+```
