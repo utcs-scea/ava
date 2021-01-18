@@ -15,6 +15,13 @@ include(ExternalProject)
 
 set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/amorphos/fpga.c")
 
+ExternalProject_Add_Step(cava amorphos-f1host
+  DEPENDS ${AVA_BENCHMARK_DIR}/amorphos/f1_host/Makefile
+  COMMAND make
+  WORKING_DIRECTORY ${AVA_BENCHMARK_DIR}/amorphos/f1_host
+  DEPENDEES download
+)
+
 ExternalProject_Add_Step(cava amorphos-nwcc
   DEPENDS ${spec_name}
           ${AVA_BENCHMARK_DIR}/amorphos/f1_host/ava_aos_wrapper.h
@@ -22,21 +29,19 @@ ExternalProject_Add_Step(cava amorphos-nwcc
   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name}
           -I ${AVA_BENCHMARK_DIR}/amorphos/f1_host ${GLIB2_CFLAGS}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  DEPENDEES download
+  DEPENDEES amorphos-f1host
 )
 
 set(amorphos_install ${AVA_INSTALL_DIR}/amorphos_nw)
 ExternalProject_Add_Step(cava amorphos-link
   COMMAND mkdir -p generated &&
           mkdir -p ${amorphos_install}/lib &&
-          ln -f -s ${AVA_BENCHMARK_DIR}/amorphos/f1_host/ava_aos_wrapper.h ${amorphos_install}/ava_aos_wrapper.h &&
-          ln -f -s ${AVA_BENCHMARK_DIR}/amorphos/f1_host/libava_aos_wrapper.so ${amorphos_install}/libava_aos_wrapper.so &&
+          ln -f -s ${AVA_BENCHMARK_DIR}/amorphos/f1_host ${CMAKE_CURRENT_BINARY_DIR}/amorphos_files     &&
           ln -f -s ${amorphos_install}/lib/libguestlib.so ${amorphos_install}/lib/libava_aos_wrapper.so
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
   DEPENDEES amorphos-nwcc
 )
 
-set(compile_flags "-I${AVA_BENCHMARK_DIR}/amorphos/f1_host -L${AVA_BENCHMARK_DIR}/amorphos/f1_host")
 ExternalProject_Add(amorphos_nw
   PREFIX amorphos_nw
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/amorphos_nw
@@ -44,7 +49,6 @@ ExternalProject_Add(amorphos_nw
   INSTALL_DIR ${amorphos_install}
   DOWNLOAD_COMMAND ""
   CMAKE_ARGS ${CL_ARGS}
-             -DCMAKE_CXX_FLAGS=${compile_flags}
              -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
              -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
              -DCMAKE_INSTALL_PREFIX:PATH=${amorphos_install}

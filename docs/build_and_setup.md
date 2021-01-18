@@ -37,19 +37,19 @@ old codes into the new build system (v2.0) is still ongoing.
 
 | API framework    | Version | Status   |
 | ---------------- | ------- | -------- |
-| AmorphOS FPGA    |         | UNTESTED |
+| AmorphOS FPGA    | 1.0     | TESTED   |
 | CUDA driver      | 10.1    | TESTED   |
 | CUDA runtime     | 10.1    | TESTED   |
 | Demo             | 0.0.1   | TESTED   |
-| GTI              |         | NO       |
+| GTI              | 4.5.0.3 | TESTED   |
 | HIP              |         | NO       |
-| NCSDK v2         |         | UNTESTED |
+| NCSDK v2         | 2.10.01 | TESTED   |
 | ONNXruntime CUDA | 10.1    | TESTED\* |
-| OpenCL           |         | NO       |
-| QuickAssist      |         | NO       |
+| OpenCL           | 1.2     | TESTED   |
+| QuickAssist      | 1.7     | TESTED   |
 | TensorFlow CUDA  | 10.1    | TESTED   |
 | TensorFlow C     | 2.3.1   | TESTED   |
-| Test             |         | NO       |
+| Test             | 0.1     | TESTED   |
 
 > \* Upstream changes ([ava-serverless](https://github.com/photoszzt/ava-serverless)) have not been merged.
 

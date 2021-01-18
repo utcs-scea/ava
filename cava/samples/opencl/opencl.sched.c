@@ -35,10 +35,11 @@ ava_register_metadata(Metadata);
 
 ava_throughput_resource device_time;
 
-#define cl_in_out_buffer(x, y) \
-    ({ if(ava_is_in) ava_buffer(x); \
-       else ava_buffer(min(x, y == NULL ? x : *y)); \
-     })
+#ifndef ava_min
+#define ava_min
+#define ava_min(a,b)   (a < b ? a : b)
+#endif
+#define cl_in_out_buffer(x, y) ({ if(ava_is_in) ava_buffer(x); else ava_buffer(ava_min(x, y == NULL ? x : *y)); })
 
 ava_callback_decl void cl_pfn_notify(const char *errinfo, const void *private_info, size_t cb, void *user_data) {
     ava_argument(errinfo) {

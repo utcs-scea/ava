@@ -1,0 +1,9 @@
+Install
+=======
+
+Install GTI SDK from
+https://dev.gyrfalcontech.ai/software-downloads/
+
+We tested GTI SDK (2803) 4.4.0.3. The newer 4.x version (e.g., 4.5.0.3) also works.
+
+Before generating the code, please edit the path to GTI SDK in `ava_libs` in the specification.

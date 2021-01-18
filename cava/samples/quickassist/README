@@ -1,0 +1,16 @@
+Install drivers
+===============
+
+[Download](https://01.org/intel-quickassist-technology) drivers and follow installation guides:
+
+```
+wget https://01.org/sites/default/files/downloads//qat1.7.l.4.12.0-00011.tar.gz
+```
+
+Guides:
+
+```
+https://01.org/sites/default/files/downloads//336212007qatswgsg.pdf
+```
+
+Make sure `$ICP_ROOT` (path to QAT build path).

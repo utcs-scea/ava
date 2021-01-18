@@ -1,17 +1,13 @@
 ava_name("Intel(R) Movidius(TM) Neural Compute SDK");
-ava_version("2.08.01");
+ava_version("2.10.01");
 ava_identifier(MVNC);
 ava_number(1);
-//ava_cflags(-DAVA_RECORD_REPLAY);
 ava_libs(-lmvnc);
 ava_export_qualifier(dllexport);
 
 ava_non_transferable_types {
     ava_handle;
 }
-
-ava_storage_resource memory;
-ava_throughput_resource calls;
 
 struct metadata {
     unsigned long int size;
@@ -30,6 +26,7 @@ ncGlobalSetOption(
     const void *data,
     unsigned int dataLength)
 {
+    ava_async;
     ava_object_record;
     ava_argument(data) {
         ava_buffer(dataLength);
@@ -61,6 +58,7 @@ ncDeviceSetOption(
     const void *data,
     unsigned int dataLength)
 {
+    ava_async;
     ava_argument(deviceHandle) {
         ava_object_record;
     }
@@ -198,6 +196,7 @@ ncGraphSetOption(
     const void *data,
     unsigned int dataLength)
 {
+    ava_async;
     ava_argument(graphHandle) {
         ava_object_record;
     }
@@ -233,7 +232,6 @@ ncGraphQueueInference(
     struct ncFifoHandle_t **fifoOut,
     unsigned int outFifoCount)
 {
-    ava_consumes_resource(calls, 1);
     ava_argument(fifoIn) {
         ava_buffer(inFifoCount);
         ava_input;
@@ -381,6 +379,7 @@ ncFifoSetOption(
     const void *data,
     unsigned int dataLength)
 {
+    ava_async;
     ava_argument(data) {
         ava_buffer(dataLength);
         ava_input;

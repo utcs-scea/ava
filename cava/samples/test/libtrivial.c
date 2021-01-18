@@ -1,9 +1,9 @@
 ava_name("Trivial Library");
-ava_version("0");
+ava_version("0.1");
 ava_identifier(trivial);
 ava_number(255);
-ava_cflags(-I../../test);
-ava_libs(../../test/libtrivial.c);
+ava_cflags(-I../../test -I../libtrivial_files);
+ava_libs(-L../../test -L../libtrivial_files -ltrivial);
 ava_export_qualifier();
 
 #include "libtrivial.h"
