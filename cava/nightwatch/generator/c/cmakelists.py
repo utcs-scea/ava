@@ -39,8 +39,6 @@ find_library(Config++ NAMES libconfig++ config++ REQUIRED)
 
 ###### Set generated files ######
 
-set(manager_service_grpc_srcs  "${{CMAKE_BINARY_DIR}}/../../proto/manager_service.pb.cc")
-
 ###### Compile ######
 
 include_directories(
@@ -97,7 +95,6 @@ add_library(guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
-  ${{manager_service_grpc_srcs}}
 )
 target_link_libraries(guestlib
   ${{GLIB2_LIBRARIES}}
