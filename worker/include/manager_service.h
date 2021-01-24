@@ -27,7 +27,14 @@ private:
   void HandleAccept(std::unique_ptr<boost::asio::ip::tcp::socket> socket,
       std::unique_ptr<boost::asio::ip::tcp::endpoint> endpoint);
 
+  boost::asio::io_service io_service_;
+  std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor_;
+  std::unique_ptr<boost::asio::ip::tcp::socket> socket_;
+  std::unique_ptr<boost::asio::ip::tcp::endpoint> endpoint_;
+
   virtual ava_proto::WorkerAssignReply HandleRequest(const ava_proto::WorkerAssignRequest& request);
+
+protected:
   virtual pid_t SpawnWorker(const std::vector<std::string>& environments,
       const std::vector<std::string>& parameters);
 
@@ -37,11 +44,6 @@ private:
 
   std::atomic<uint32_t> worker_id_;
   std::map<pid_t, std::shared_ptr<std::thread>> worker_monitor_map_;
-
-  boost::asio::io_service io_service_;
-  std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor_;
-  std::unique_ptr<boost::asio::ip::tcp::socket> socket_;
-  std::unique_ptr<boost::asio::ip::tcp::endpoint> endpoint_;
 };
 
 }  // namespace ava_manager
