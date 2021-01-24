@@ -41,6 +41,7 @@ set(AVA_GEN_DEMO_SPEC OFF CACHE BOOL "Enable demo specification")
 
 set(AVA_MANAGER_GALVANIC OFF CACHE BOOL "Build Galvanic manager")
 set(AVA_MANAGER_KATANA OFF CACHE BOOL  "Build Katana manager")
+set(AVA_MANAGER_LEGACY OFF CACHE BOOL  "Build legacy (r1.0) manager")
 set(AVA_MANAGER_DEMO OFF CACHE BOOL  "Build demo manager")
 
 message(STATUS "Build TensorFlow CUDA specification:   ${AVA_GEN_TF_SPEC}")
@@ -58,6 +59,7 @@ message(STATUS "Build test (libtrivial) specification: ${AVA_GEN_TEST_SPEC}")
 message(STATUS "Build demo specification:              ${AVA_GEN_DEMO_SPEC}")
 message(STATUS "Build Galvanic manager:                ${AVA_MANAGER_GALVANIC}")
 message(STATUS "Build Katana manager:                  ${AVA_MANAGER_KATANA}")
+message(STATUS "Build legacy (r1.0) manager:           ${AVA_MANAGER_LEGACY}")
 message(STATUS "Build demo manager:                    ${AVA_MANAGER_DEMO}")
 
 set(AVA_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE PATH "Installation path of AvA")
@@ -136,6 +138,7 @@ ExternalProject_Add(ava-manager
   CMAKE_CACHE_ARGS
         -DAVA_MANAGER_GALVANIC:BOOL=${AVA_MANAGER_GALVANIC}
         -DAVA_MANAGER_KATANA:BOOL=${AVA_MANAGER_KATANA}
+        -DAVA_MANAGER_LEGACY:BOOL=${AVA_MANAGER_LEGACY}
         -DAVA_MANAGER_DEMO:BOOL=${AVA_MANAGER_DEMO}
         -DCMAKE_TOOLCHAIN_FILE:STRING=${CMAKE_TOOLCHAIN_FILE}
         -DCMAKE_INSTALL_PREFIX:PATH=${AVA_INSTALL_DIR}
