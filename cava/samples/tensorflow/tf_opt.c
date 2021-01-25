@@ -8158,8 +8158,13 @@ cudnnGetConvolutionBackwardDataWorkspaceSize(cudnnHandle_t handle,
                                              cudnnConvolutionBwdDataAlgo_t algo,
                                              size_t *sizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+   ava_argument(wDesc) ava_handle;
+   ava_argument(dyDesc) ava_handle;
+   ava_argument(convDesc) ava_handle;
+   ava_argument(dxDesc) ava_handle;
+   ava_argument(sizeInBytes) {
+     ava_out; ava_buffer(1);
+   }
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8177,8 +8182,26 @@ cudnnConvolutionBackwardData(cudnnHandle_t handle,
                              const cudnnTensorDescriptor_t dxDesc,
                              void *dx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+   ava_async;
+   ava_argument(handle) ava_handle;
+   ava_argument(alpha) {
+      ava_type_cast(const double *);
+      ava_in; ava_buffer(1);
+   }
+   ava_argument(beta) {
+      ava_type_cast(const double *);
+      ava_in; ava_buffer(1);
+   }
+   ava_argument(dx) ava_opaque;
+   ava_argument(dxDesc) ava_handle;
+   ava_argument(wDesc) ava_handle;
+   ava_argument(w) ava_opaque;
+   ava_argument(dyDesc) ava_handle;
+   ava_argument(dy) ava_opaque;
+   ava_argument(convDesc) ava_handle;
+   ava_argument(workSpace) {
+     ava_in; ava_buffer(workSpaceSizeInBytes);
+   }
 }
 
 cudnnStatus_t CUDNNWINAPI
