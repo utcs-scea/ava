@@ -58,7 +58,7 @@ std::vector<struct command_channel*> command_channel_socket_tcp_guest_new()
       request.gpu_mem().push_back(m << 20);
     }
     std::vector<unsigned char> request_buf;
-    zpp::serializer::memory_input_archive out(request_buf);
+    zpp::serializer::memory_output_archive out(request_buf);
     out(request);
     uint32_t request_length = static_cast<uint32_t>(request_buf.size());
     boost::asio::write(manager_sock, boost::asio::buffer(&request_length, sizeof(uint32_t)));
