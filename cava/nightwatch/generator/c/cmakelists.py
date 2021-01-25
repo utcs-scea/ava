@@ -14,7 +14,7 @@ project({api.identifier.lower()}_nw C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${{CMAKE_CURRENT_BINARY_DIR}}/../..")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 set(c_flags {api.cflags})
 set(cxx_flags {api.cxxflags})
@@ -37,7 +37,8 @@ pkg_check_modules(GLIB2 REQUIRED IMPORTED_TARGET glib-2.0)
 find_package(Boost REQUIRED COMPONENTS system)
 find_library(Config++ NAMES libconfig++ config++ REQUIRED)
 
-###### Set generated files ######
+set(protobuf_MODULE_COMPATIBLE TRUE)
+find_package(Protobuf REQUIRED QUIET)
 
 ###### Compile ######
 
@@ -95,12 +96,14 @@ add_library(guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../proto/manager_service.proto.cpp
 )
 target_link_libraries(guestlib
   ${{GLIB2_LIBRARIES}}
   ${{Boost_LIBRARIES}}
   Threads::Threads
   ${{Config++}}
+  ${{Protobuf_LIBRARIES}}
 )
 target_compile_options(guestlib
   PUBLIC -fvisibility=hidden

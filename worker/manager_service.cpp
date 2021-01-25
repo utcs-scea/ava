@@ -60,22 +60,24 @@ void ManagerServiceServerBase::HandleAccept(
   // De-serialize request from guestlib
   uint32_t request_length;
   asio::read(*socket, asio::buffer(&request_length, sizeof(uint32_t)));
-  auto request_str = new char[request_length];
-  asio::read(*socket, asio::buffer(request_str, request_length));
+  std::vector<unsigned char> request_buf(request_length);
+  asio::read(*socket, asio::buffer(request_buf.data(), request_length));
 
   ava_proto::WorkerAssignRequest request;
-  request.ParseFromString(request_str);
-  delete request_str;
+  zpp::serializer::memory_input_archive in(request_buf);
+  in(request);
   std::cout << "[from " << endpoint->address() << ":" << endpoint->port()
             << "] Request " << request.gpu_count() << " GPUs" << std::endl;
 
   auto reply = HandleRequest(request);
 
   // Serialize reply to guestlib
-  std::string reply_buf(reply.SerializeAsString());
-  uint32_t reply_length = static_cast<uint32_t>(reply_buf.length() + 1);
+  std::vector<unsigned char> reply_buf;
+  zpp::serializer::memory_output_archive out(reply_buf);
+  out(reply);
+  uint32_t reply_length = static_cast<uint32_t>(reply_buf.size());
   asio::write(*socket, asio::buffer(&reply_length, sizeof(uint32_t)));
-  asio::write(*socket, asio::buffer(reply_buf.c_str(), reply_length));
+  asio::write(*socket, asio::buffer(reply_buf.data(), reply_length));
 }
 
 ava_proto::WorkerAssignReply ManagerServiceServerBase::HandleRequest(
@@ -86,7 +88,7 @@ ava_proto::WorkerAssignReply ManagerServiceServerBase::HandleRequest(
   std::vector<std::string> environments;
   if (request.gpu_count() > 0) {
     std::string visible_devices = "CUDA_VISIBLE_DEVICES=";
-    for (int i = 0; i < request.gpu_count() - 1; ++i) {
+    for (uint32_t i = 0; i < request.gpu_count() - 1; ++i) {
       visible_devices += std::to_string(i) + ",";
     }
     visible_devices += std::to_string(request.gpu_count() - 1);
@@ -120,7 +122,7 @@ ava_proto::WorkerAssignReply ManagerServiceServerBase::HandleRequest(
   child_monitor->detach();
   worker_monitor_map_.insert({port, child_monitor});
 
-  reply.add_worker_address("0.0.0.0:" + std::to_string(port));
+  reply.worker_address().push_back("0.0.0.0:" + std::to_string(port));
 
   return reply;
 }

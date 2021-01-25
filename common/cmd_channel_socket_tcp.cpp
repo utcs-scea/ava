@@ -24,7 +24,7 @@
 #include "common/cmd_handler.h"
 #include "cmd_channel_socket_utilities.h"
 #include "guest_config.h"
-#include "manager_service.pb.h"
+#include "manager_service.proto.h"
 
 using boost::asio::ip::tcp;
 
@@ -53,22 +53,25 @@ std::vector<struct command_channel*> command_channel_socket_tcp_guest_new()
 
     // Serialize configurations
     ava_proto::WorkerAssignRequest request;
-    request.set_gpu_count(guestconfig::config->gpu_memory_.size());
+    request.gpu_count() = guestconfig::config->gpu_memory_.size();
     for (auto m : guestconfig::config->gpu_memory_) {
-      request.add_gpu_mem(m << 20);
+      request.gpu_mem().push_back(m << 20);
     }
-    std::string request_buf(request.SerializeAsString());
-    uint32_t request_length = static_cast<uint32_t>(request_buf.length() + 1);
+    std::vector<unsigned char> request_buf;
+    zpp::serializer::memory_output_archive out(request_buf);
+    out(request);
+    uint32_t request_length = static_cast<uint32_t>(request_buf.size());
     boost::asio::write(manager_sock, boost::asio::buffer(&request_length, sizeof(uint32_t)));
-    boost::asio::write(manager_sock, boost::asio::buffer(request_buf.c_str(), request_length));
+    boost::asio::write(manager_sock, boost::asio::buffer(request_buf.data(), request_length));
 
     // De-serialize API server addresses
     uint32_t reply_length;
     boost::asio::read(manager_sock, boost::asio::buffer(&reply_length, sizeof(uint32_t)));
-    char reply_str[reply_length];
-    boost::asio::read(manager_sock, boost::asio::buffer(reply_str, reply_length));
+    std::vector<unsigned char> reply_buf(reply_length);
+    zpp::serializer::memory_input_archive in(reply_buf);
+    boost::asio::read(manager_sock, boost::asio::buffer(reply_buf.data(), reply_length));
     ava_proto::WorkerAssignReply reply;
-    reply.ParseFromString(reply_str);
+    in(reply);
     std::vector<std::string> worker_address;
     for (auto& wa : reply.worker_address()) {
         worker_address.push_back(wa);
