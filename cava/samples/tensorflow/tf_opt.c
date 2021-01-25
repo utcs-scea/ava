@@ -1168,7 +1168,7 @@ cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args,
         size_t sharedMem, cudaStream_t stream)
 {
     /* Cannot be ava_async, may lead to TensorFlow internal race condition */
-    ava_async;
+    // ava_async;
     ava_disable_native_call;
 
     ava_implicit_argument
