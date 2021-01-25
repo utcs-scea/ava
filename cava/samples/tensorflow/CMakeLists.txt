@@ -32,8 +32,12 @@ ExternalProject_Add_Step(cava tf_dump-link
           mkdir -p ${tf_dump_install}/lib &&
           ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers        &&
           ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcuda.so.1      &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcuda.so        &&
           ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcublas.so.10   &&
           ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcublasLt.so.10 &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcudart.so.10.0 &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcudart.so.10.1 &&
+          ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcudart.so.10.2 &&
           ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcudart.so.10   &&
           ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcudnn.so.7     &&
           ln -f -s ${tf_dump_install}/lib/libguestlib.so ${tf_dump_install}/lib/libcufft.so.10    &&
@@ -75,10 +79,16 @@ ExternalProject_Add_Step(cava tf_opt-link
           mkdir -p ${tf_opt_install}/lib &&
           ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers      &&
           ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcuda.so.1      &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcuda.so        &&
           ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcublas.so.10   &&
           ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcublasLt.so.10 &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcudart.so.10.0 &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcudart.so.10.1 &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcudart.so.10.2 &&
           ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcudart.so.10   &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcudart.so      &&
           ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcudnn.so.7     &&
+          ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcufft.so.10    &&
           ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcufft.so.10    &&
           ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcurand.so.10   &&
           ln -f -s ${tf_opt_install}/lib/libguestlib.so ${tf_opt_install}/lib/libcusolver.so.10 &&
