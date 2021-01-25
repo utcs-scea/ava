@@ -87,9 +87,7 @@ pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
 # Socket library
 find_package(Boost 1.65 EXACT REQUIRED COMPONENTS system)
-find_package(Protobuf REQUIRED QUIET)
 message(STATUS "Using Boost.asio ${Boost_LIB_VERSION}")
-message(STATUS "Using protobuf ${Protobuf_VERSION}")
 
 # Config parser library
 find_library(Config++ NAMES libconfig++ config++ REQUIRED)
@@ -111,25 +109,8 @@ endif()
 
 include(ExternalProject)
 
-###### Compile proto files ######
-
-# Pre-defined protobuf protocol for guestlib-manager communication
-ExternalProject_Add(ava-proto
-  PREFIX ava-proto
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/proto"
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/proto"
-  INSTALL_COMMAND ""
-  BUILD_ALWAYS ON
-)
-
 ###### Build AvA manager ######
 
-# Build manager sing a CMakeLists.txt that assumes all the dependencies have already been installed.
-# Even though it is not really an "external project" from perspective of this build,
-# we are still importing it using ExternalProject_Add because that allows us to use find_package()
-# to locate all the dependencies (if we were building it directly in this build,
-# we would have needed to manually import the libraries as opposed to reusing targets exported by
-# gRPC and protobuf).
 ExternalProject_Add(ava-manager
   PREFIX ava-manager
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker"
@@ -143,7 +124,6 @@ ExternalProject_Add(ava-manager
         -DCMAKE_TOOLCHAIN_FILE:STRING=${CMAKE_TOOLCHAIN_FILE}
         -DCMAKE_INSTALL_PREFIX:PATH=${AVA_INSTALL_DIR}
   INSTALL_DIR ${AVA_INSTALL_DIR}
-  DEPENDS ava-proto
 )
 
 ###### Generate and build remoting stubs ######
@@ -173,7 +153,6 @@ ExternalProject_Add(ava-spec
         -DAVA_ENABLE_DEBUG:BOOL=${AVA_ENABLE_DEBUG}
         -DAVA_INSTALL_DIR:PATH=${AVA_INSTALL_DIR}
   BUILD_ALWAYS ON
-  DEPENDS ava-proto
 )
 
 ###### tools ######

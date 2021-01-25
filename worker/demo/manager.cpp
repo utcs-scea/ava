@@ -4,7 +4,7 @@
 #include <thread>
 
 #include "manager_service.h"
-#include "manager_service.pb.h"
+#include "manager_service.proto.h"
 
 using ava_manager::ManagerServiceServerBase;
 
