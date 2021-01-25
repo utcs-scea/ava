@@ -14,7 +14,7 @@ project({api.identifier.lower()}_nw C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${{CMAKE_CURRENT_BINARY_DIR}}/../..")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 set(c_flags {api.cflags})
 set(cxx_flags {api.cxxflags})
@@ -96,7 +96,7 @@ add_library(guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
-  ${{CMAKE_BINARY_DIR}}/../../proto/manager_service.pb.cc
+  ${{CMAKE_SOURCE_DIR}}/../../proto/manager_service.proto.cpp
 )
 target_link_libraries(guestlib
   ${{GLIB2_LIBRARIES}}
