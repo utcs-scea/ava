@@ -19,7 +19,7 @@ make
 The manager will start and listen at `0.0.0.0:3333`. It will spawn API servers
 from the provided API server binary.
 
-Then link the application to `libguestlib.so` and `libprotobuf`.
+Then link the application to `libguestlib.so`.
 The application will start with AvA's generated CUDA library loaded.
 
 ```Shell
