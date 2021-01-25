@@ -53,12 +53,13 @@ old codes into the new build system (v2.0) is still ongoing.
 
 > \* Upstream changes ([ava-serverless](https://github.com/photoszzt/ava-serverless)) have not been merged.
 
-| AvA manager | Status |
-| ----------- | ------ |
-| Demo        | TESTED |
-| Galvanic    | NO |
-| Katana      | NO |
-| Nvidia GPU  | NO |
+| AvA manager   | Status |
+| ------------- | ------ |
+| Demo          | NO |
+| Galvanic      | NO |
+| Katana        | NO |
+| Legacy (r1.0) | TESTED |
+| Nvidia GPU    | NO |
 
 This tutorial shows how to configure and build the minimal AvA demo API
 remoting system. To build and use other supported virtualized APIs, please

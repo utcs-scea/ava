@@ -7,7 +7,7 @@
 #include <sys/wait.h>
 
 #include "manager_service.h"
-#include "manager_service.pb.h"
+#include "manager_service.proto.h"
 
 using ava_manager::ManagerServiceServerBase;
 
@@ -74,7 +74,7 @@ private:
     else {
       worker_port = SpawnWorkerWrapper();
     }
-    reply.add_worker_address("0.0.0.0:" + std::to_string(worker_port));
+    reply.worker_address().push_back("0.0.0.0:" + std::to_string(worker_port));
 
     return reply;
   }

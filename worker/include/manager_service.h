@@ -7,7 +7,7 @@
 #include <thread>
 #include <vector>
 
-#include "manager_service.pb.h"
+#include "manager_service.proto.h"
 #include "signal_handler.h"
 
 namespace ava_manager {

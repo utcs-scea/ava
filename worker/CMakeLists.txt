@@ -18,11 +18,13 @@ set(manager_service_libraries Threads::Threads
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../include
   ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/../proto
   ${CMAKE_CURRENT_BINARY_DIR}/../proto
 )
-set(manager_service_pb_srcs  "${CMAKE_CURRENT_BINARY_DIR}/../proto/manager_service.pb.cc")
-set(manager_service_ava_srcs "${CMAKE_CURRENT_SOURCE_DIR}/manager_service.cpp"
-                             "${CMAKE_CURRENT_SOURCE_DIR}/signal_handler.cpp")
+set(manager_service_pb_srcs    "${CMAKE_CURRENT_BINARY_DIR}/../proto/manager_service.pb.cc")
+set(manager_service_proto_srcs "${CMAKE_CURRENT_SOURCE_DIR}/../proto/manager_service.proto.cpp")
+set(manager_service_ava_srcs   "${CMAKE_CURRENT_SOURCE_DIR}/manager_service.cpp"
+                               "${CMAKE_CURRENT_SOURCE_DIR}/signal_handler.cpp")
 
 if(AVA_MANAGER_GALVANIC)
   add_subdirectory(galvanic)
