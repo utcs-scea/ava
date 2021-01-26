@@ -7464,8 +7464,14 @@ cudnnGetConvolutionBackwardFilterWorkspaceSize(cudnnHandle_t handle,
                                                cudnnConvolutionBwdFilterAlgo_t algo,
                                                size_t *sizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+  ava_argument(handle) ava_handle;
+  ava_argument(xDesc) ava_handle;
+  ava_argument(dyDesc) ava_handle;
+  ava_argument(convDesc) ava_handle;
+  ava_argument(gradDesc) ava_handle;
+  ava_argument(sizeInBytes) {
+    ava_out; ava_buffer(1);
+  }
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7483,8 +7489,26 @@ cudnnConvolutionBackwardFilter(cudnnHandle_t handle,
                                const cudnnFilterDescriptor_t dwDesc,
                                void *dw)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+  ava_argument(handle) ava_handle;
+  ava_argument(alpha) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+
+  ava_argument(xDesc) ava_handle;
+  ava_argument(x) ava_opaque;
+  ava_argument(dyDesc) ava_handle;
+  ava_argument(dy) ava_opaque;
+
+  ava_argument(convDesc) ava_handle;
+  ava_argument(workSpace) ava_opaque;
+
+  ava_argument(beta) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+  ava_argument(dwDesc) ava_handle;
+  ava_argument(dw) ava_opaque;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7606,9 +7630,7 @@ cudnnConvolutionBackwardData(cudnnHandle_t handle,
    ava_argument(dyDesc) ava_handle;
    ava_argument(dy) ava_opaque;
    ava_argument(convDesc) ava_handle;
-   ava_argument(workSpace) {
-     ava_in; ava_buffer(workSpaceSizeInBytes);
-   }
+   ava_argument(workSpace) ava_opaque;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8008,8 +8030,26 @@ cudnnBatchNormalizationForwardTraining(
     void *resultSaveMean,
     void *resultSaveInvVariance)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+  ava_argument(handle) ava_handle;
+  ava_argument(alpha) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+  ava_argument(beta) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+  ava_argument(xDesc) ava_handle;
+  ava_argument(x) ava_opaque;
+  ava_argument(yDesc) ava_handle;
+  ava_argument(y) ava_opaque;
+  ava_argument(bnScaleBiasMeanVarDesc) ava_handle;
+  ava_argument(bnScale) ava_opaque;
+  ava_argument(bnBias) ava_opaque;
+  ava_argument(resultRunningMean) ava_opaque;
+  ava_argument(resultRunningVariance) ava_opaque;
+  ava_argument(resultSaveMean) ava_opaque;
+  ava_argument(resultSaveInvVariance) ava_opaque;
 }
 
 /* Computes y = relu(BN(x) + z). Also accumulates moving averages of mean and inverse variances */
@@ -8051,8 +8091,35 @@ cudnnBatchNormalizationForwardTrainingEx(
     void *reserveSpace,
     size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+  ava_argument(handle) ava_handle;
+  ava_argument(alpha) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+  ava_argument(beta) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+
+  ava_argument(xDesc) ava_handle;
+  ava_argument(xData) ava_opaque;
+  ava_argument(yDesc) ava_handle;
+  ava_argument(yData) ava_opaque;
+  ava_argument(zDesc) ava_handle;
+  ava_argument(zData) ava_opaque;
+
+  ava_argument(bnScaleBiasMeanVarDesc) ava_handle;
+  ava_argument(bnScale) ava_opaque;
+  ava_argument(bnBias) ava_opaque;
+
+  ava_argument(resultRunningMean) ava_opaque;
+  ava_argument(resultRunningVariance) ava_opaque;
+  ava_argument(resultSaveMean) ava_opaque;
+  ava_argument(resultSaveInvVariance) ava_opaque;
+
+  ava_argument(activationDesc) ava_handle;
+  ava_argument(workspace) ava_opaque;
+  ava_argument(reserveSpace) ava_opaque;
 }
 
 /* Performs backward pass of Batch Normalization layer. Returns x gradient,
@@ -8084,8 +8151,36 @@ cudnnBatchNormalizationBackward(cudnnHandle_t handle,
                                 const void *savedMean,
                                 const void *savedInvVariance)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+  ava_argument(handle) ava_handle;
+  ava_argument(alphaDataDiff) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+  ava_argument(betaDataDiff) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+  ava_argument(alphaParamDiff) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+  ava_argument(betaParamDiff) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+
+  ava_argument(xDesc) ava_handle;
+  ava_argument(x) ava_opaque;
+  ava_argument(dyDesc) ava_handle;
+  ava_argument(dy) ava_opaque;
+  ava_argument(dxDesc) ava_handle;
+  ava_argument(dx) ava_opaque;
+  ava_argument(dBnScaleBiasDesc) ava_handle;
+  ava_argument(bnScale) ava_opaque;
+  ava_argument(dBnScaleResult) ava_opaque;
+  ava_argument(dBnBiasResult) ava_opaque;
+  ava_argument(savedMean) ava_opaque;
+  ava_argument(savedInvVariance) ava_opaque;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8126,8 +8221,47 @@ cudnnBatchNormalizationBackwardEx(cudnnHandle_t handle,
                                   void *reserveSpace,
                                   size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+  ava_argument(handle) ava_handle;
+  ava_argument(alphaDataDiff) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+  ava_argument(betaDataDiff) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+  ava_argument(alphaParamDiff) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+  ava_argument(betaParamDiff) {
+    ava_type_cast(const double *);
+    ava_in; ava_buffer(1);
+  }
+
+  ava_argument(xDesc) ava_handle;
+  ava_argument(xData) ava_opaque;
+  ava_argument(yDesc) ava_handle;
+  ava_argument(yData) ava_opaque;
+  ava_argument(dxDesc) ava_handle;
+  ava_argument(dxData) ava_opaque;
+  ava_argument(dyDesc) ava_handle;
+  ava_argument(dyData) ava_opaque;
+  ava_argument(dzDesc) ava_handle;
+  ava_argument(dzData) ava_opaque;
+
+  ava_argument(dBnScaleBiasDesc) ava_handle;
+  ava_argument(bnScaleData) ava_opaque;
+  ava_argument(bnBiasData) ava_opaque;
+  ava_argument(dBnScaleData) ava_opaque;
+  ava_argument(dBnBiasData) ava_opaque;
+
+  ava_argument(savedMean) ava_opaque;
+  ava_argument(savedInvVariance) ava_opaque;
+
+  ava_argument(activationDesc) ava_handle;
+  ava_argument(workSpace) ava_opaque;
+  ava_argument(reserveSpace) ava_opaque;
 }
 
 cudnnStatus_t CUDNNWINAPI
