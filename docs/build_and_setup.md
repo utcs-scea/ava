@@ -55,7 +55,7 @@ old codes into the new build system (v2.0) is still ongoing.
 
 | AvA manager   | Status |
 | ------------- | ------ |
-| Demo          | NO |
+| Demo          | TESTED |
 | Galvanic      | NO |
 | Katana        | NO |
 | Legacy (r1.0) | TESTED |

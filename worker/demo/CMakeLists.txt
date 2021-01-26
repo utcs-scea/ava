@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.13)
 
 project(demo-manager C CXX CUDA)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 add_compile_options(-Wall -Wextra -pedantic -Wno-write-strings -g)
 
 add_executable(demo-manager
   manager.cpp
-  ${manager_service_pb_srcs}
+  ${manager_service_proto_srcs}
   ${manager_service_ava_srcs}
 )
 target_link_libraries(demo-manager

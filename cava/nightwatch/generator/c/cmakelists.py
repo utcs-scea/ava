@@ -37,9 +37,6 @@ pkg_check_modules(GLIB2 REQUIRED IMPORTED_TARGET glib-2.0)
 find_package(Boost REQUIRED COMPONENTS system)
 find_library(Config++ NAMES libconfig++ config++ REQUIRED)
 
-set(protobuf_MODULE_COMPATIBLE TRUE)
-find_package(Protobuf REQUIRED QUIET)
-
 ###### Compile ######
 
 include_directories(
@@ -47,7 +44,6 @@ include_directories(
   ${{CMAKE_SOURCE_DIR}}/../../worker/include
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/include
   ${{CMAKE_SOURCE_DIR}}/../../proto
-  ${{CMAKE_BINARY_DIR}}/../../proto
   ${{GLIB2_INCLUDE_DIRS}}
 )
 add_definitions(-D_GNU_SOURCE)
@@ -103,7 +99,6 @@ target_link_libraries(guestlib
   ${{Boost_LIBRARIES}}
   Threads::Threads
   ${{Config++}}
-  ${{Protobuf_LIBRARIES}}
 )
 target_compile_options(guestlib
   PUBLIC -fvisibility=hidden
