@@ -86,7 +86,7 @@ find_package(PkgConfig REQUIRED)
 pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
 # Socket library
-find_package(Boost 1.65 EXACT REQUIRED COMPONENTS system)
+find_package(Boost 1.65 REQUIRED COMPONENTS system)
 message(STATUS "Using Boost.asio ${Boost_LIB_VERSION}")
 
 # Config parser library
