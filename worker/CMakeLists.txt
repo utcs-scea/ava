@@ -6,7 +6,7 @@ install(DIRECTORY DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 # Common libraries
 find_package(Threads REQUIRED)
-find_package(Boost 1.65 EXACT REQUIRED COMPONENTS system)
+find_package(Boost 1.65 REQUIRED COMPONENTS system)
 
 set(manager_service_libraries Threads::Threads
                               "${Boost_LIBRARIES}")
