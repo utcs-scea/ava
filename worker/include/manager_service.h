@@ -22,6 +22,11 @@ public:
     io_service_.run();
   }
 
+  void StopServer() {
+    std::cerr << "Stopping Manager service" << std::endl;
+    io_service_.stop();
+  }
+
 private:
   void AcceptConnection();
   void HandleAccept(std::unique_ptr<boost::asio::ip::tcp::socket> socket,

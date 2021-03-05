@@ -82,6 +82,10 @@ private:
   boost::lockfree::queue<uint32_t, boost::lockfree::capacity<128>> worker_pool_;
 };
 
+namespace {
+std::unique_ptr<DemoManager> manager;
+}
+
 int main(int argc, char* argv[]) {
   if (argc <= 1) {
     fprintf(stderr, "Usage: %s <worker_path>\n"
@@ -89,8 +93,16 @@ int main(int argc, char* argv[]) {
            argv[0], argv[0]);
     exit(0);
   }
-  ava_manager::setupSignalHandlers();
-  DemoManager manager(kDefaultManagerPort, kDefaultWorkerPortBase, argv[1]);
-  manager.RunServer();
+  std::at_quick_exit([] {
+    if (manager) {
+      manager->StopServer();
+    }
+  });
+  signal(SIGINT, [](int) -> void {
+    signal(SIGINT, SIG_DFL);
+    std::quick_exit(EXIT_SUCCESS);
+  });
+  manager = std::make_unique<DemoManager>(kDefaultManagerPort, kDefaultWorkerPortBase, argv[1]);
+  manager->RunServer();
   return 0;
 }
