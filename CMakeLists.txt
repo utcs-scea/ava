@@ -2,11 +2,6 @@ cmake_minimum_required(VERSION 3.13)
 
 project(ava)
 
-if(EXISTS ${CMAKE_BINARY_DIR}/conan_paths.cmake)
-  include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-endif()
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}")
-
 ###### Options ######
 
 set(AVA_ENABLE_DEBUG OFF CACHE BOOL "Enable debug messages")
