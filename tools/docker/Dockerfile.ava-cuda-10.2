@@ -1,0 +1,15 @@
+FROM nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
+#install ava deps
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update
+RUN apt install -y apt-transport-https ca-certificates gnupg software-properties-common wget
+# install cmake
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
+RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
+RUN apt update
+RUN apt purge --auto-remove cmake
+# install other ava dependencies from "install_dependencies.sh" script
+RUN apt install -y cmake git build-essential python3 python3-pip libglib2.0-dev clang-7 libclang-7-dev libboost-all-dev libconfig++-dev indent
+RUN python3 -m pip install toposort astor 'numpy==1.15.0'
+RUN python3 -m pip install blessings
+CMD ["bash"]
