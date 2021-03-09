@@ -359,6 +359,7 @@ typedef void (*ava_replace_function)(void* obj, void* data, size_t length);
 #define ava_cflags(n) const char* __AVA_NAME(cflags) = __STRINGIFY(n)
 #define ava_cxxflags(n) const char* __AVA_NAME(cxxflags) = __STRINGIFY(n)
 #define ava_libs(n) const char* __AVA_NAME(libs) = __STRINGIFY(n)
+#define ava_soname(n) const char* __AVA_NAME(soname) = __STRINGIFY(n)
 
 #define ava_guestlib_srcs(n) const char* __AVA_NAME(guestlib_srcs) = __STRINGIFY(n)
 #define ava_worker_srcs(n) const char* __AVA_NAME(worker_srcs) = __STRINGIFY(n)

@@ -523,6 +523,7 @@ class API(object):
         self.metadata_type = metadata_type
         self.libs = ""
         self.cflags = ""
+        self.soname = "guestlib"
         self.cxxflags = ""
         self.guestlib_srcs = ""
         self.worker_srcs = ""

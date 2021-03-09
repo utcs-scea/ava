@@ -74,7 +74,7 @@ target_link_libraries(worker
   {api.libs}
 )
 
-add_library(guestlib SHARED
+add_library({api.soname} SHARED
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/init.cpp
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/guest_config.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm.c
@@ -94,19 +94,19 @@ add_library(guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
   ${{CMAKE_SOURCE_DIR}}/../../proto/manager_service.proto.cpp
 )
-target_link_libraries(guestlib
+target_link_libraries({api.soname}
   ${{GLIB2_LIBRARIES}}
   ${{Boost_LIBRARIES}}
   Threads::Threads
   ${{Config++}}
 )
-target_compile_options(guestlib
+target_compile_options({api.soname}
   PUBLIC -fvisibility=hidden
 )
 include(GNUInstallDirs)
 install(TARGETS worker
         RUNTIME DESTINATION ${{CMAKE_INSTALL_BINDIR}})
-install(TARGETS guestlib
+install(TARGETS {api.soname}
         LIBRARY DESTINATION ${{CMAKE_INSTALL_LIBDIR}})
     """.strip()
     return "CMakeLists.txt", cmakelists
