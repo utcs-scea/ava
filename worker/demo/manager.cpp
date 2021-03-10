@@ -13,8 +13,8 @@ const uint32_t kDefaultWorkerPortBase = 4000;
 
 class DemoManager : public ManagerServiceServerBase {
 public:
-  DemoManager(uint32_t port, uint32_t worker_port_base, std::string worker_path) :
-    ManagerServiceServerBase(port, worker_port_base, worker_path) {}
+  DemoManager(uint32_t port, uint32_t worker_port_base, const char** worker_argv, int worker_argc) :
+    ManagerServiceServerBase(port, worker_port_base, worker_argc, worker_argv) {}
 private:
 };
 

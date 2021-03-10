@@ -18,8 +18,8 @@ const uint32_t kDefaultWorkerPoolSize = 3;
 
 class DemoManager : public ManagerServiceServerBase {
 public:
-  DemoManager(uint32_t port, uint32_t worker_port_base, std::string worker_path) :
-    ManagerServiceServerBase(port, worker_port_base, worker_path) {
+  DemoManager(uint32_t port, uint32_t worker_port_base, const char** worker_argv, int worker_argc) :
+    ManagerServiceServerBase(port, worker_port_base, worker_argv, worker_argc) {
     // Spawn worker pool with default environment variables
     if (kDefaultWorkerPoolEnabled) {
       for (uint32_t i = 0; i < kDefaultWorkerPoolSize; i++) {
@@ -39,11 +39,14 @@ private:
     auto port = worker_port_base_ +
       worker_id_.fetch_add(1, std::memory_order_relaxed);
     std::vector<std::string> parameters;
+    for (int i = 0; i < worker_argc_; i++) {
+      parameters.push_back(worker_argv_[i]);
+    }
     parameters.push_back(std::to_string(port));
 
-    std::cerr << "Spawn API server at 0.0.0.0:" << port << "(cmdline=\\\\"
-              << boost::algorithm::join(environments, " ") << " " << worker_path_ << " "
-              << boost::algorithm::join(parameters, " ") << "\\\\)" << std::endl;
+    std::cerr << "Spawn API server at 0.0.0.0:" << port << " (cmdline=\""
+              << boost::algorithm::join(environments, " ") << " " << " "
+              << boost::algorithm::join(parameters, " ") << "\")" << std::endl;
 
     auto child_pid = SpawnWorker(environments, parameters);
 
@@ -82,7 +85,7 @@ private:
   boost::lockfree::queue<uint32_t, boost::lockfree::capacity<128>> worker_pool_;
 };
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char* argv[]) {
   if (argc <= 1) {
     fprintf(stderr, "Usage: %s <worker_path>\n"
            "Example: %s generated/cudadrv_nw/worker\n",
@@ -90,7 +93,7 @@ int main(int argc, char* argv[]) {
     exit(0);
   }
   ava_manager::setupSignalHandlers();
-  DemoManager manager(kDefaultManagerPort, kDefaultWorkerPortBase, argv[1]);
+  DemoManager manager(kDefaultManagerPort, kDefaultWorkerPortBase, &argv[1], argc - 1);
   manager.RunServer();
   return 0;
 }
