@@ -1,11 +1,11 @@
-FROM nvcr.io/nvidia/cuda:11.2.1-devel-ubuntu20.04
+FROM nvidia/cuda:10.1-cudnn8-devel-ubuntu18.04
 #install ava deps
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update
 RUN apt install -y apt-transport-https ca-certificates gnupg software-properties-common wget
 # install cmake
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
-RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ focal main'
+RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
 RUN apt update
 RUN apt purge --auto-remove cmake
 # install other ava dependencies from "install_dependencies.sh" script
