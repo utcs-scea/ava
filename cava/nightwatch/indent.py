@@ -17,8 +17,12 @@ def indent_c(code):
 
 
 def write_file_c(filename, data, indent=True, filename_prefix=""):
-    with open(filename_prefix + filename, "w" if hasattr(data, "encode") else "wb") as fi:
-        fi.write(indent_c(data) if indent else data)
+    try:
+        with open(filename_prefix + filename, "w" if hasattr(data, "encode") else "wb") as fi:
+            fi.write(indent_c(data) if indent else data)
+    except UnicodeEncodeError:
+        with open(filename_prefix + filename, "wb") as fi:
+            fi.write(indent_c(data).encode('utf-8') if indent else data.encode('utf-8'))
 
 
 def write_file_py(filename, data, filename_prefix=""):
