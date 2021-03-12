@@ -39,11 +39,13 @@ ava_name("name");
 ava_version("version");
 ava_identifier(id);
 ava_number(id_number);
+ava_soname(so_name);
 ```
 Specify the name, version, and identifiers of the API as a whole.
 The `id` is a short C identifier used to differential API related symbol names in Lapis compilers.
 The `id_number` is an integer which used by the Lapis compiler to identify the API when a number is needed.
-The `id_number` should be unique within a configuration so as distinguish all APIs used. 
+The `id_number` should be unique within a configuration so as distinguish all APIs used.
+The `ava_soname` is the name for the generated library file (e.g. libguestlib.so). Default is "guestlib".
 
 ```c
 ava_cflags(flags);
