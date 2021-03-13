@@ -77,6 +77,7 @@ target_link_libraries(worker
 add_library({api.soname} SHARED
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/init.cpp
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/guest_config.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/migration.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm.c
   {' '.join(guestlib_srcs)}
   {api.c_library_spelling}

@@ -3,15 +3,15 @@
 
 #include <stdint.h>
 
+#include "migration.h"
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 void nw_init_guestlib(intptr_t api_id);
 void nw_destroy_guestlib(void);
-void start_migration(void);
-void start_self_migration(void);
-void start_live_migration(void);
 
 #ifdef __cplusplus
 }
