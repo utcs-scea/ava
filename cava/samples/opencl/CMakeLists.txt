@@ -27,8 +27,7 @@ ExternalProject_Add_Step(cava opencl-link
   COMMAND mkdir -p generated &&
           mkdir -p ${opencl_install}/lib &&
           ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers       &&
-          ln -f -s ${opencl_install}/lib/libguestlib.so ${opencl_install}/lib/libOpenCL.so       &&
-          ln -f -s ${opencl_install}/lib/libguestlib.so ${opencl_install}/lib/libOpenCL.so.1
+          ln -f -s ${opencl_install}/lib/libOpenCL.so ${opencl_install}/lib/libOpenCL.so.1
    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
    DEPENDEES opencl-nwcc
  )

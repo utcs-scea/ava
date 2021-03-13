@@ -1,0 +1,66 @@
+Build
+=====
+
+In build directory:
+
+```
+cmake ../ava -DAVA_GEN_OPENCL_SPEC=ON -DAVA_MANAGER_LEGACY=ON
+make
+```
+
+Install OpenCL dependencies such as `opencl-headers`, `clinfo`, OpenCL library (e.g. coming with CUDA).
+
+OpenCL Benchmarking
+===================
+
+Clone ava-benchmarks, configure `rodinia/opencl/util/make.mk`:
+
+```
+OPENCL_INC = /usr/include
+OPENCL_LIB = $(AVA_BUILD_DIR)/install/opencl/lib
+LIB_NAME = OpenCL
+OCL_LIB = -l$(LIB_NAME)
+```
+
+Start AvA manager:
+
+```
+./install/bin/legacy_manager install/opencl/bin/worker
+```
+
+Build and run any OpenCL benchmark, e.g. in `ava-benchmarks/rodinia/opencl/backprop`:
+
+```
+make
+LD_LIBRARY_PATH=$(AVA_BUILD_DIR)/install/opencl/lib ./run
+```
+
+Migration Experiments
+=====================
+
+Enable cflags `-DAVA_RECORD_REPLAY -DAVA_BENCHMARKING_MIGRATE` in the OpenCL
+specification (opencl.c) and rebuild the stack.
+
+Set environment variable `AVA_MIGRATION_CALL_ID=r53` at where the application will run.
+
+> How to know what number should come after `r`?
+> This is the total number of the APIs called by a benchmark. It will be printed by
+> the guestlib when `AVA_BENCHMARKING_MIGRATE` is enabled. For backprop benchmark,
+> the number is 53.
+
+Start AvA manager:
+
+```
+./install/bin/legacy_manager install/opencl/bin/worker
+```
+
+Start a target API server:
+
+```
+./install/opencl/bin/worker migrate 4000
+```
+
+`4000` is the port number of the original API server that will serve the application.
+
+Similarly, configure `ava-benchmarks/migration/backprop/util/make.mk`.
+Then build and run any migration benchmark under `ava-benchmarks/migration`.
