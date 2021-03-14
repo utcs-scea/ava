@@ -56,7 +56,7 @@ add_executable(worker
   {api.c_worker_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.c
   ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.c
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.c
   ${{CMAKE_SOURCE_DIR}}/../../common/socket.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.c
@@ -83,7 +83,7 @@ add_library({api.soname} SHARED
   {api.c_library_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.c
   ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.c
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.c
   ${{CMAKE_SOURCE_DIR}}/../../common/socket.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.c

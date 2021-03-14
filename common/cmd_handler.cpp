@@ -171,14 +171,17 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
 
     switch (cmd->command_id) {
         case COMMAND_HANDLER_SHUTDOWN_API:
+        {
             exit(0);
             break;
+        }
 
         /**
          * For testing, guestlib initiates the migration and worker
          * replays the logs that recorded by itself.
          */
         case COMMAND_START_MIGRATION:
+        {
             //! Complete steps
             // Create a log channel for sending;
             // (Spawn a new worker which) Creates a log channel for receiving;
@@ -249,17 +252,23 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
             }
             command_channel_free(transfer_chan);
             break;
+        }
 
         case COMMAND_END_MIGRATION:
+        {
             // TODO: Move this command into a handler guestlib/src/init.c
             nw_end_migration_flag = 1;
             break;
+        }
 
         case COMMAND_HANDLER_REPLACE_EXPLICIT_STATE:
+        {
             ava_handle_replace_explicit_state(chan, handle_pool, (struct ava_replay_command_t *) cmd);
             break;
+        }
 
         case COMMAND_START_LIVE_MIGRATION:
+        {
             transfer_chan = (struct command_channel *)command_channel_socket_tcp_migration_new(nw_worker_id, 1);
             struct timeval start, end;
 
@@ -304,23 +313,30 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
             fclose(fd);
 
             break;
+        }
 
         case COMMAND_END_LIVE_MIGRATION:
+        {
             printf("\n//! finishes live migration\n\n");
             // TODO: target worker connects to guestlib
             usleep(1000000); // enough time for source worker to print out migration time
             exit(0);
             break;
+        }
 
         case COMMAND_ACCEPT_LIVE_MIGRATION:
+        {
             printf("\n//! starts to accept incoming commands\n\n");
             break;
+        }
 
         case COMMAND_HANDLER_RECORDED_PAIR:
-            {
+        {
                 struct ava_replay_command_pair_t *combine = (struct ava_replay_command_pair_t *)cmd;
-                struct command_base *call_cmd = command_channel_get_buffer(chan, (struct command_base *)combine, combine->call_cmd);
-                struct command_base *ret_cmd = command_channel_get_buffer(chan, (struct command_base *)combine, combine->ret_cmd);
+                struct command_base *call_cmd = (struct command_base *)command_channel_get_buffer(
+                        chan, (struct command_base *)combine, combine->call_cmd);
+                struct command_base *ret_cmd = (struct command_base *)command_channel_get_buffer(
+                        chan, (struct command_base *)combine, combine->ret_cmd);
                 command_channel_print_command(chan, call_cmd);
                 command_channel_print_command(chan, ret_cmd);
 
@@ -328,8 +344,8 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
 
                 // Replay the commands.
                 replay_command(chan, nw_global_handle_pool, (struct command_channel *)nw_record_command_channel, call_cmd, ret_cmd);
-            }
             break;
+        }
 
         default:
             DEBUG_PRINT("Unknown internal command: %lu", cmd->command_id);
