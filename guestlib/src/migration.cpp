@@ -83,6 +83,22 @@ EXPORTED_WEAKLY void start_self_migration(struct command_channel *chan)
     shadow_thread_handle_command_until(nw_shadow_thread_pool, nw_end_migration_flag);
 }
 
+// TODO(migration): instead of letting guestlib initiates the migration, we should have
+// AvA manager start the process:
+// 1. The AvA manager starts a target API server.
+// 2. The AvA manager tells the source API server to start live migration with the target
+//    API server's address provided.
+// 3. The source API server suspends the API execution for the guestlib.
+// 4. The source API server sends the API log to the target server to replay and asks the
+//    guestlib to connect the target API server (it also closes the connection to the
+//    guestlib).
+// 5. The target API server replays the log and accepts the guestlib.
+// 6. The target API server tells the guestlib to continue the API remoting.
+//
+// The close of connection between the source API server and guestlib in (4) is a bit tricy
+// at this moment, as any channel connecton means a fault at an end and shuts down the other.
+// The best approach is to close the channel by the guestlib, so that the source API server
+// will shut down by itself.
 EXPORTED_WEAKLY void start_live_migration(struct command_channel *chan)
 {
     nw_end_migration_flag = 0;
@@ -95,9 +111,11 @@ EXPORTED_WEAKLY void start_live_migration(struct command_channel *chan)
     /* wait until the migration finishes */
     shadow_thread_handle_command_until(nw_shadow_thread_pool, nw_end_migration_flag);
 
-    // TODO: reconnect to new worker
+    // TODO(migration): reconnect to new worker to execute the left APIs.
+    // Currently, the APIs after the migration point are still executed by
+    // the original API server.
 
-    // TODO: the target API server notifies guestlib to continue
+    // TODO(migration): the target API server notifies guestlib to continue.
     // FIXME: let target have enough time to replay the log
     usleep(5000000);
 }

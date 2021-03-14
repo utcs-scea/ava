@@ -170,6 +170,8 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
 
     struct command_channel *transfer_chan;
 
+	// TODO(migration,refactor): define handlers in separate files, and register them
+    // when guestlib and API server start.
     switch (cmd->command_id) {
         case COMMAND_HANDLER_SHUTDOWN_API:
         {
@@ -268,6 +270,7 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
             break;
         }
 
+		// TODO(migration): Move to a separate file.
         case COMMAND_START_LIVE_MIGRATION:
         {
             auto& setting = ApiServerSetting::instance();

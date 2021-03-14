@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     nw_worker_id = 0;
     unsigned int listen_port;
 
-    /* live migration */
+    /* This is a target API server. Starts live migration */
     if (!strcmp(argv[1], "migrate")) {
         listen_port = (unsigned int)atoi(argv[2]);
         setting.set_listen_port(listen_port);
@@ -127,7 +127,8 @@ int main(int argc, char *argv[])
         DEBUG_PRINT("[worker#%d] start polling tasks\n", listen_port);
         wait_for_command_handler();
 
-        // TODO: connect the guestlib
+        // TODO(migration): connect the guestlib
+
         return 0;
     }
 
