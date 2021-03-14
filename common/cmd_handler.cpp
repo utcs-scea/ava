@@ -3,6 +3,7 @@
 #include "common/cmd_handler.h"
 #include "common/endpoint_lib.h"
 #include "common/shadow_thread_pool.h"
+#include "common/singleton.hpp"
 
 #ifdef __cplusplus
 #include <atomic>
@@ -269,7 +270,9 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
 
         case COMMAND_START_LIVE_MIGRATION:
         {
-            transfer_chan = (struct command_channel *)command_channel_socket_tcp_migration_new(nw_worker_id, 1);
+            auto& setting = ApiServerSetting::instance();
+            transfer_chan = (struct command_channel *)command_channel_socket_tcp_migration_new(
+                    setting.get_listen_port(), 1);
             struct timeval start, end;
 
             FILE *fd;
