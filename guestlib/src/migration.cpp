@@ -5,7 +5,6 @@
 #include <netinet/in.h>
 
 #include "migration.h"
-#include "common/cmd_channel.h"
 #include "common/cmd_channel_impl.h"
 #include "common/cmd_handler.h"
 #include "common/endpoint_lib.h"
@@ -84,9 +83,6 @@ EXPORTED_WEAKLY void start_self_migration(struct command_channel *chan)
     shadow_thread_handle_command_until(nw_shadow_thread_pool, nw_end_migration_flag);
 }
 
-/**
- * Starts live migration process for test. The target worker is on a remote machine and connected via TCP.
- */
 EXPORTED_WEAKLY void start_live_migration(struct command_channel *chan)
 {
     nw_end_migration_flag = 0;
@@ -99,8 +95,9 @@ EXPORTED_WEAKLY void start_live_migration(struct command_channel *chan)
     /* wait until the migration finishes */
     shadow_thread_handle_command_until(nw_shadow_thread_pool, nw_end_migration_flag);
 
+    // TODO: reconnect to new worker
+
+    // TODO: the target API server notifies guestlib to continue
     // FIXME: let target have enough time to replay the log
     usleep(5000000);
-
-    // TODO: reconnect to new worker
 }

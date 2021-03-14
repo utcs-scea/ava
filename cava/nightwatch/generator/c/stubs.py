@@ -73,7 +73,7 @@ def function_implementation(f: Function) -> Union[str, Expr]:
             __ava_endpoint.migration_call_id) {{
                 printf("start live migration at call_id %d\\n", __call_id);
                 __ava_endpoint.migration_call_id = -2;
-                start_live_migration();
+                start_live_migration(__chan);
             }}
             #endif
 
