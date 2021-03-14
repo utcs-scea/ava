@@ -20,6 +20,8 @@
 #include "common/ioctl.h"
 #include "common/register.h"
 #include "common/socket.h"
+#include "common/singleton.hpp"
+
 
 struct command_channel *chan;
 struct command_channel *chan_hv = NULL;
@@ -106,14 +108,17 @@ int main(int argc, char *argv[])
 
     if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR)
         printf("failed to ignore SIGCHLD\n");
-    
-    /* define arguments */
-    nw_worker_id = 0;
-    int listen_port;
 
-    /* live migration */
+    /* define arguments */
+    auto& setting = ApiServerSetting::instance();
+    nw_worker_id = 0;
+    unsigned int listen_port;
+
+    /* This is a target API server. Starts live migration */
     if (!strcmp(argv[1], "migrate")) {
-        listen_port = atoi(argv[2]);
+        listen_port = (unsigned int)atoi(argv[2]);
+        setting.set_listen_port(listen_port);
+
         chan = (struct command_channel *)command_channel_socket_tcp_migration_new(listen_port, 0);
         nw_record_command_channel = command_channel_log_new(listen_port);
 
@@ -122,12 +127,14 @@ int main(int argc, char *argv[])
         DEBUG_PRINT("[worker#%d] start polling tasks\n", listen_port);
         wait_for_command_handler();
 
-        // TODO: connect the guestlib
+        // TODO(migration): connect the guestlib
+
         return 0;
     }
 
     /* parse arguments */
-    listen_port = atoi(argv[1]);
+    listen_port = (unsigned int)atoi(argv[1]);
+    setting.set_listen_port(listen_port);
 
     if (!getenv("AVA_CHANNEL") || !strcmp(getenv("AVA_CHANNEL"), "TCP")) {
         chan_hv = NULL;

@@ -38,6 +38,8 @@ LD_LIBRARY_PATH=$(AVA_BUILD_DIR)/install/opencl/lib ./run
 Migration Experiments
 =====================
 
+Change `DEST_SERVER_IP` in `include/devconf.h` to the migration target server's IP.
+
 Enable cflags `-DAVA_RECORD_REPLAY -DAVA_BENCHMARKING_MIGRATE` in the OpenCL
 specification (opencl.c) and rebuild the stack.
 
@@ -64,3 +66,49 @@ Start a target API server:
 
 Similarly, configure `ava-benchmarks/migration/backprop/util/make.mk`.
 Then build and run any migration benchmark under `ava-benchmarks/migration`.
+If everything goes well, you will see:
+
+```
+Guestlib:
+Connect target API server (0.0.0.0:4000) at 0.0.0.0:4000
+Random number generator seed: 7
+Input layer size : 262144
+Starting training kernel
+num_devices = 1
+start live migration at call_id 8
+
+Memory buffer size: 36.000263 MB
+Performing GPU computation
+Init: 5134.304199
+MemAlloc: 0.660000
+HtoD: 66.197998
+HtoD_Phy: 0.000000
+Exec: 1627.167114
+DtoH: 30.994001
+DtoH_Phy: 0.000000
+Close: 1.163000
+API: 6860.486328
+Total: 6885.871094
+
+Finish the training for one iteration
+INFO: Final call count = 53
+(Set AVA_MIGRATION_CALL_ID=r53 to choose a random call from this count. Note the 'r' before the number. Omit the 'r' to always migrate at exactly the specified call id.)
+
+
+Source API server:
+Manager Service listening on ::3333
+[4000] Waiting for guestlib connection
+Receive connection from 127.0.0.1:34134
+[from 127.0.0.1:34134] Request 1 GPUs
+[4000] Accept guestlib with API_ID=2
+connect target worker@127.0.0.1:6000
+migration takes 0.024000
+[pid=11436] API server at ::4000 has exit (waitpid=-1)
+
+
+Target API server:
+[target worker@6000] waiting for source worker connection
+//! starts to accept incoming commands
+//! finishes live migration
+```
+
