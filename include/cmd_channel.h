@@ -318,10 +318,6 @@ struct command_channel* command_channel_socket_new(void);
 struct command_channel* command_channel_shm_worker_new(int listen_port);
 struct command_channel* command_channel_socket_worker_new(int listen_port);
 struct command_channel* command_channel_socket_tcp_migration_new(int worker_port, int is_source);
-#ifdef __cplusplus
-std::vector<struct command_channel*> command_channel_socket_tcp_guest_new();
-#endif
-struct command_channel* command_channel_socket_tcp_worker_new(int worker_port);
 struct command_channel_log *command_channel_log_new(int worker_port);
 
 //! Hypervisor

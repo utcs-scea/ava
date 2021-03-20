@@ -9,6 +9,7 @@
 #include "common/cmd_channel_socket_utilities.hpp"
 #include "common/cmd_handler.h"
 #include "common/debug.h"
+#include "guestlib.h"
 #include "guest_config.h"
 #include "manager_service.proto.h"
 
@@ -128,6 +129,7 @@ error:
     channels.clear();
     return channels;
 }
+
 
 namespace {
   struct command_channel_vtable command_channel_socket_tcp_vtable = {
