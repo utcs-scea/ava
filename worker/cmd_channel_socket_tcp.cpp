@@ -1,9 +1,11 @@
-#include <chrono>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <boost/algorithm/string.hpp>
-#include <boost/asio.hpp>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include "common/cmd_channel_impl.h"
 #include "common/cmd_channel_socket_utilities.hpp"
@@ -11,8 +13,6 @@
 #include "common/debug.h"
 #include "worker.h"
 #include "manager_service.proto.h"
-
-using boost::asio::ip::tcp;
 
 namespace {
   extern struct command_channel_vtable command_channel_socket_tcp_vtable;
