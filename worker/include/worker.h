@@ -5,7 +5,11 @@
 #include <stdint.h>
 #include <unistd.h>
 
+#include "common/cmd_channel.h"
+
 #ifdef __cplusplus
+#include <vector>
+
 extern "C" {
 #endif
 
@@ -25,6 +29,8 @@ void close_client(int client_fd);
 
 #ifdef __cplusplus
 }
+
+struct command_channel* command_channel_socket_tcp_worker_new(int worker_port);
 #endif
 
 #endif

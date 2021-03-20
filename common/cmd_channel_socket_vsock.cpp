@@ -15,7 +15,7 @@
 #include "common/debug.h"
 #include "common/guest_mem.h"
 #include "common/cmd_handler.h"
-#include "cmd_channel_socket_utilities.h"
+#include "common/cmd_channel_socket_utilities.hpp"
 
 extern int nw_global_vm_id;
 

@@ -50,6 +50,7 @@ add_definitions(-D_GNU_SOURCE)
 
 add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../worker/worker.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../worker/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm_worker.c
   ${{CMAKE_SOURCE_DIR}}/../../worker/provision_gpu.cpp
   {' '.join(worker_srcs)}
@@ -78,6 +79,7 @@ add_library({api.soname} SHARED
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/init.cpp
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/guest_config.cpp
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/migration.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm.c
   {' '.join(guestlib_srcs)}
   {api.c_library_spelling}
