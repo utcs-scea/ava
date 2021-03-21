@@ -3,9 +3,9 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
+#include <boost/algorithm/string/join.hpp>
 #include <exception>
 #include <iostream>
-#include <boost/algorithm/string/join.hpp>
 
 #include "manager_service.h"
 
@@ -15,13 +15,14 @@ using boost::asio::ip::tcp;
 namespace ava_manager {
 
 ManagerServiceServerBase::ManagerServiceServerBase(uint32_t manager_port,
-    uint32_t worker_port_base, std::string worker_path) {
+                                                   uint32_t worker_port_base,
+                                                   std::string worker_path) {
   manager_port_ = manager_port;
   worker_port_base_ = worker_port_base;
   worker_id_.store(0);
 
   // Validate API server path pointing to a regular file
-  char *worker_path_abs = realpath(worker_path.c_str(), NULL);
+  char* worker_path_abs = realpath(worker_path.c_str(), NULL);
   bool file_exist = false;
   if (worker_path_abs != NULL) {
     struct stat stat_buf;
@@ -30,7 +31,8 @@ ManagerServiceServerBase::ManagerServiceServerBase(uint32_t manager_port,
     }
   }
   if (!file_exist) {
-    std::cerr << "API server binary (\\\\" << worker_path << "\\\\) not found" << std::endl;
+    std::cerr << "API server binary (\\\\" << worker_path << "\\\\) not found"
+              << std::endl;
     throw std::invalid_argument("File not exists");
   }
   worker_path_ = std::string(worker_path_abs);
@@ -43,20 +45,22 @@ ManagerServiceServerBase::ManagerServiceServerBase(uint32_t manager_port,
 
 void ManagerServiceServerBase::AcceptConnection() {
   socket_ = std::make_unique<tcp::socket>(io_service_);
-  endpoint_ = std::make_unique<tcp::endpoint>();;
-  acceptor_->async_accept(*socket_, *endpoint_,
-    [&,this](boost::system::error_code ec) {
-      if (!ec) {
-        std::cout << "Receive connection from " << endpoint_->address() << ":"
-                  << endpoint_->port() << std::endl;
-        HandleAccept(std::move(socket_), std::move(endpoint_));
-      }
-      AcceptConnection();
-    });
+  endpoint_ = std::make_unique<tcp::endpoint>();
+  ;
+  acceptor_->async_accept(
+      *socket_, *endpoint_, [&, this](boost::system::error_code ec) {
+        if (!ec) {
+          std::cout << "Receive connection from " << endpoint_->address() << ":"
+                    << endpoint_->port() << std::endl;
+          HandleAccept(std::move(socket_), std::move(endpoint_));
+        }
+        AcceptConnection();
+      });
 }
 
 void ManagerServiceServerBase::HandleAccept(
-    std::unique_ptr<tcp::socket> socket, std::unique_ptr<tcp::endpoint> endpoint) {
+    std::unique_ptr<tcp::socket> socket,
+    std::unique_ptr<tcp::endpoint> endpoint) {
   // De-serialize request from guestlib
   uint32_t request_length;
   asio::read(*socket, asio::buffer(&request_length, sizeof(uint32_t)));
@@ -98,21 +102,21 @@ ava_proto::WorkerAssignReply ManagerServiceServerBase::HandleRequest(
   environments.push_back("AVA_CHANNEL=TCP");
 
   // Pass only port to API server
-  auto port = worker_port_base_ +
-    worker_id_.fetch_add(1, std::memory_order_relaxed);
+  auto port =
+      worker_port_base_ + worker_id_.fetch_add(1, std::memory_order_relaxed);
   std::vector<std::string> parameters;
   parameters.push_back(std::to_string(port));
 
   std::cerr << "Spawn API server at 0.0.0.0:" << port << "(cmdline=\\\\"
-            << boost::algorithm::join(environments, " ") << " " << worker_path_ << " "
-            << boost::algorithm::join(parameters, " ") << "\\\\)" << std::endl;
+            << boost::algorithm::join(environments, " ") << " " << worker_path_
+            << " " << boost::algorithm::join(parameters, " ") << "\\\\)"
+            << std::endl;
 
   auto child_pid = SpawnWorker(environments, parameters);
 
   auto child_monitor = std::make_shared<std::thread>(
-      [](pid_t child_pid,
-         uint32_t port,
-         std::map<pid_t, std::shared_ptr<std::thread>> *worker_monitor_map) {
+      [](pid_t child_pid, uint32_t port,
+         std::map<pid_t, std::shared_ptr<std::thread>>* worker_monitor_map) {
         pid_t ret = waitpid(child_pid, NULL, 0);
         std::cerr << "[pid=" << child_pid << "] API server at ::" << port
                   << " has exit (waitpid=" << ret << ")" << std::endl;
@@ -135,13 +139,13 @@ pid_t ManagerServiceServerBase::SpawnWorker(
     return child_pid;
   }
 
-  std::vector<const char *> envp_list;
+  std::vector<const char*> envp_list;
   for (auto& item : environments) {
     envp_list.push_back(item.c_str());
   }
   envp_list.push_back(NULL);
 
-  std::vector<const char *> argv_list;
+  std::vector<const char*> argv_list;
   argv_list.push_back("worker");
   for (auto& item : parameters) {
     argv_list.push_back(item.c_str());
@@ -149,7 +153,7 @@ pid_t ManagerServiceServerBase::SpawnWorker(
   argv_list.push_back(NULL);
 
   if (execvpe(worker_path_.c_str(), (char* const*)argv_list.data(),
-        (char* const*)envp_list.data()) < 0)
+              (char* const*)envp_list.data()) < 0)
     perror("execv worker");
 
   // Never reach here
@@ -157,4 +161,3 @@ pid_t ManagerServiceServerBase::SpawnWorker(
 }
 
 }  // namespace ava_manager
-

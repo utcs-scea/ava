@@ -24,4 +24,3 @@ void setupSignalHandlers() {
 }
 
 }  // namespace ava_manager
-
