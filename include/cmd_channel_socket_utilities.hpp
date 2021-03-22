@@ -1,8 +1,8 @@
 #ifndef AVA_COMMON_CMD_CHANNEL_SOCKET_UTILITIES_HPP_
 #define AVA_COMMON_CMD_CHANNEL_SOCKET_UTILITIES_HPP_
 
+#include "cmd_channel_impl.h"
 #include <vector>
-
 #include <poll.h>
 
 namespace chansocketutil {
