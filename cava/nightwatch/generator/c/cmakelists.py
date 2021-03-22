@@ -20,12 +20,10 @@ set(c_flags {api.cflags})
 set(cxx_flags {api.cxxflags})
 add_compile_options("$<$<COMPILE_LANGUAGE:C>:${{c_flags}}>")
 add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:${{cxx_flags}}>")
-add_compile_options(-Wall -D_FILE_OFFSET_BITS=64 -fPIC)
+add_compile_options(-Wall -D_FILE_OFFSET_BITS=64 -fPIC -rdynamic)
 
-if (AVA_ENABLE_DEBUG)
-  add_compile_options(-O0 -g -ggdb -rdynamic)
-else()
-  add_compile_options(-DAVA_RELEASE -DNDEBUG -O2 -flto -ggdb -rdynamic)
+if (CMAKE_BUILD_TYPE MATCHES RELEASE)
+  add_compile_options(-DAVA_RELEASE -DNDEBUG -flto)
 endif()
 
 ###### Required dependencies ######
