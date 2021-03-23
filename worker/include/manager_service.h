@@ -14,8 +14,13 @@ namespace ava_manager {
 
 class ManagerServiceServerBase {
 public:
+  /**
+   * @brief Start a manager service that will exec a worker when a connection is accepted
+   * @param worker_argv arguments to forward to exec
+   * @param worker_argc number of arguments in worker_argv
+   */
   ManagerServiceServerBase(uint32_t manager_port, uint32_t worker_port_base,
-      std::string worker_path);
+                           const char **worker_argv, int worker_argc);
 
   void RunServer() {
     std::cerr << "Manager Service listening on ::" << manager_port_ << std::endl;
@@ -40,10 +45,12 @@ protected:
 
   uint32_t manager_port_;
   uint32_t worker_port_base_;
-  std::string worker_path_;
-
   std::atomic<uint32_t> worker_id_;
   std::map<pid_t, std::shared_ptr<std::thread>> worker_monitor_map_;
+
+  const char** const worker_argv_{NULL};
+  const int worker_argc_{0};
+
 };
 
 }  // namespace ava_manager
