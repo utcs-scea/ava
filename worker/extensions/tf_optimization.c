@@ -13,6 +13,12 @@ GTree *gpu_address_set; /* Not used but referenced in utility function */
 GQueue *cudnn_handles;
 GQueue *cublas_handles;
 
+
+// TODO: Better way to avoid linking issue (referenced in spec utilities).
+void guestlib_tf_opt_init(void) {}
+void guestlib_tf_opt_fini(void) {}
+
+
 void worker_tf_opt_init(void)
 {
     cudnnHandle_t cudnn_handle;
