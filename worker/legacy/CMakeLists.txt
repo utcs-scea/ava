@@ -17,6 +17,9 @@ target_link_libraries(legacy-manager
 set_target_properties(legacy-manager
   PROPERTIES OUTPUT_NAME manager
 )
+if(AVA_MANAGER_ENABLE_WORKER_POOL)
+  target_compile_definitions(legacy-manager PRIVATE -DAVA_MANAGER_ENABLE_WORKER_POOL=false)
+endif()
 
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/manager
   TYPE BIN

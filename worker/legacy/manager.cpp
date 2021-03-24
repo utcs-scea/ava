@@ -13,7 +13,11 @@ using ava_manager::ManagerServiceServerBase;
 
 const uint32_t kDefaultManagerPort    = 3333;
 const uint32_t kDefaultWorkerPortBase = 4000;
+#ifdef AVA_MANAGER_ENABLE_WORKER_POOL
 const bool kDefaultWorkerPoolEnabled  = true;
+#else
+const bool kDefaultWorkerPoolEnabled  = false;
+#endif
 const uint32_t kDefaultWorkerPoolSize = 3;
 
 class DemoManager : public ManagerServiceServerBase {

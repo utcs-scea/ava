@@ -38,6 +38,7 @@ option(AVA_MANAGER_GALVANIC OFF "Build Galvanic manager")
 option(AVA_MANAGER_KATANA OFF "Build Katana manager")
 option(AVA_MANAGER_LEGACY OFF "Build legacy (r1.0) manager")
 option(AVA_MANAGER_DEMO OFF "Build demo manager")
+option(AVA_MANAGER_ENABLE_WORKER_POOL ON "Pre-start workers before they are needed by guest applications")
 
 message(STATUS "Build TensorFlow CUDA specification:   ${AVA_GEN_TF_SPEC}")
 message(STATUS "Build ONNXruntime specification:       ${AVA_GEN_ONNXRT_SPEC}")
@@ -116,6 +117,7 @@ ExternalProject_Add(ava-manager
         -DAVA_MANAGER_KATANA:BOOL=${AVA_MANAGER_KATANA}
         -DAVA_MANAGER_LEGACY:BOOL=${AVA_MANAGER_LEGACY}
         -DAVA_MANAGER_DEMO:BOOL=${AVA_MANAGER_DEMO}
+        -DAVA_MANAGER_ENABLE_WORKER_POOL:BOOL=${AVA_MANAGER_ENABLE_WORKER_POOL}
         -DCMAKE_TOOLCHAIN_FILE:STRING=${CMAKE_TOOLCHAIN_FILE}
         -DCMAKE_INSTALL_PREFIX:PATH=${AVA_INSTALL_DIR}
   INSTALL_DIR ${AVA_INSTALL_DIR}
