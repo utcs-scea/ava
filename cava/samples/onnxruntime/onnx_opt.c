@@ -7,7 +7,6 @@ ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -
 ava_guestlib_srcs(extensions/tf_optimization.c extensions/cmd_batching.c);
 ava_worker_srcs(extensions/tf_optimization.c extensions/cmd_batching.c);
 ava_export_qualifier();
-ava_soname(cudart);
 
 /**
  * This spec reads the dumped fat binaries and CUDA functions to

@@ -5,7 +5,6 @@ ava_number(10);
 ava_cflags(-I/usr/local/cuda-10.1/include -I../headers);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
 ava_export_qualifier();
-ava_soname(cudart);
 
 /**
  * The spec is used to dump the fat binaries and CUDA functions from
