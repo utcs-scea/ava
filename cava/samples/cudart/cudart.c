@@ -19,6 +19,7 @@ size_t __args_index_0;
 size_t __kernelParams_index_0;
 
 ava_begin_utility;
+#include "common/linkage.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -499,7 +500,7 @@ __cudaRegisterVar(
 {
 }
 
-void CUDARTAPI
+EXPORTED void CUDARTAPI
 __cudaRegisterFatBinaryEnd(void **fatCubinHandle)
 {
 #warning This API is called for CUDA 10.1 and 10.2, but it seems to be able to be ignored.
@@ -833,6 +834,16 @@ cudaGetLastError(void);
 
 __host__ __cudart_builtin__ const char* CUDARTAPI
 cudaGetErrorString(cudaError_t error)
+{
+    const char *ret = ava_execute();
+    ava_return_value {
+        ava_out; ava_buffer(strlen(ret) + 1);
+        ava_lifetime_static;
+    }
+}
+
+__host__ __cudart_builtin__ const char* CUDARTAPI
+cudaGetErrorName(cudaError_t error)
 {
     const char *ret = ava_execute();
     ava_return_value {
