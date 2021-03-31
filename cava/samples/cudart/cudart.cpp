@@ -2,7 +2,7 @@ ava_name("CUDA Runtime");
 ava_version("10.1.0");
 ava_identifier(CUDART);
 ava_number(9);
-ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers);
+ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -DAVA_RECORD_REPLAY -DAVA_BENCHMARKING_MIGRATE);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn);
 ava_common_utility_srcs(extensions/cudart_10.1_utilities.cpp);
 ava_soname(libcuda.so libcuda.so.1 libcudart.so.10.1);

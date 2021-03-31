@@ -78,7 +78,7 @@
 
 /* Worker manager */
 #define WORKER_MANAGER_SOCKET_PATH "/tmp/worker_manager"
-#define DEST_SERVER_IP "10.0.0.2"
+#define DEST_SERVER_IP      "0.0.0.0"
 
 /* Hardware */
 #define KB(x) (x << 10)
