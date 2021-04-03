@@ -4,9 +4,14 @@ project(ava)
 
 ###### Options ######
 
-set(AVA_ENABLE_DEBUG OFF CACHE BOOL "Enable debug messages")
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Build configuration (Relase/Debug)")
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
 set(AVA_BENCHMARK_DIR "" CACHE PATH "Path to AvA benchmarks")
 
+message(STATUS "Build configuration: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Benchmark directory: ${AVA_BENCHMARK_DIR}")
 
 ###### Configure compiler ######
@@ -131,6 +136,7 @@ ExternalProject_Add(ava-spec
   CMAKE_CACHE_ARGS
         -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
         -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
         -DAVA_BENCHMARK_DIR:PATH=${AVA_BENCHMARK_DIR}
         -DAVA_GEN_TF_SPEC:BOOL=${AVA_GEN_TF_SPEC}
         -DAVA_GEN_ONNXRT_SPEC:BOOL=${AVA_GEN_ONNXRT_SPEC}
@@ -145,7 +151,6 @@ ExternalProject_Add(ava-spec
         -DAVA_GEN_HIP_SPEC:BOOL=${AVA_GEN_HIP_SPEC}
         -DAVA_GEN_TEST_SPEC:BOOL=${AVA_GEN_TEST_SPEC}
         -DAVA_GEN_DEMO_SPEC:BOOL=${AVA_GEN_DEMO_SPEC}
-        -DAVA_ENABLE_DEBUG:BOOL=${AVA_ENABLE_DEBUG}
         -DAVA_INSTALL_DIR:PATH=${AVA_INSTALL_DIR}
   BUILD_ALWAYS ON
 )
