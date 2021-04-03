@@ -25,6 +25,7 @@ cudaError_t cuda_last_error;
 #ifdef AVA_PRELOAD_CUBIN
 GPtrArray *fatbin_handle_list;
 #endif
+void worker_tf_opt_init(void) {}
 
 
 gint gpu_address_range_cmp(gconstpointer r1, gconstpointer r2, gpointer user_data)
