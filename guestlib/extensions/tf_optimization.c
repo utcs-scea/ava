@@ -21,6 +21,13 @@ GQueue *idle_cu_event_pool;
 
 cudaError_t cuda_last_error;
 
+// TODO(#86): Better way to avoid linking issue (referenced in spec utilities).
+#ifdef AVA_PRELOAD_CUBIN
+GPtrArray *fatbin_handle_list;
+#endif
+void worker_tf_opt_init(void) {}
+
+
 gint gpu_address_range_cmp(gconstpointer r1, gconstpointer r2, gpointer user_data)
 {
     long diff = ((uintptr_t)r1 - (uintptr_t)r2);

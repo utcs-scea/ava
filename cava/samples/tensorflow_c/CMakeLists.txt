@@ -1,12 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
 
-get_cmake_property(vars CACHE_VARIABLES)
-foreach(var ${vars})
-  if (var MATCHES ".*_DIR$" OR var MATCHES ".*_ROOT$")
-    list(APPEND CL_ARGS "-D${var}=${${var}}")
-  endif()
-endforeach()
-
 project(ava-spec-tf_c)
 
 include(ExternalProject)
