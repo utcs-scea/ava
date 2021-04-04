@@ -1,17 +1,17 @@
 #include <errno.h>
 #include <fcntl.h>
+#include <grpc++/grpc++.h>
 #include <netinet/in.h>
+#include <nvml.h>
 #include <poll.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include <unistd.h>
 #include <sys/ipc.h>
 #include <sys/mman.h>
-#include <nvml.h>
-#include <grpc++/grpc++.h>
+#include <time.h>
+#include <unistd.h>
 
 #include <algorithm>
 #include <fstream>
@@ -23,12 +23,12 @@
 #include <thread>
 #include <vector>
 
-#include "manager.h"
 #include "common/cmd_channel_impl.h"
 #include "common/cmd_handler.h"
 #include "common/socket.h"
 #include "daemon_service.grpc.fb.h"
 #include "daemon_service_generated.h"
+#include "manager.h"
 #include "manager_service.grpc.fb.h"
 #include "manager_service_generated.h"
 
@@ -38,26 +38,23 @@ __sighandler_t original_sigint_handler = SIG_DFL;
 __sighandler_t original_sigchld_handler = SIG_DFL;
 
 void sigint_handler(int signo) {
-  if (listen_fd > 0)
-    close(listen_fd);
+  if (listen_fd > 0) close(listen_fd);
   signal(signo, original_sigint_handler);
   raise(signo);
 }
 
 class ManagerConfig {
-public:
+ public:
   static std::string const kDefaultManagerAddress;
 
   ManagerConfig(std::string ma = kDefaultManagerAddress)
       : manager_address_(ma) {}
 
-  ManagerConfig(ServerAddress& address)
-      : manager_address_(address) {}
+  ManagerConfig(ServerAddress& address) : manager_address_(address) {}
 
   DaemonInfo* FindDaemonByIp(std::string ip) {
     for (auto& d : daemons_) {
-      if (d->GetIp() == ip)
-        return d.get();
+      if (d->GetIp() == ip) return d.get();
     }
     return nullptr;
   }
@@ -76,20 +73,20 @@ std::shared_ptr<ManagerConfig> config;
 
 std::shared_ptr<ManagerConfig> parseArguments(int argc, char* argv[]) {
   int c;
-  opterr                      = 0;
+  opterr = 0;
   std::string manager_address = ManagerConfig::kDefaultManagerAddress;
 
   while ((c = getopt(argc, argv, "m:n:")) != -1) {
     switch (c) {
-    case 'm':
-      manager_address = optarg;
-      break;
-    default:
-      fprintf(stderr,
-              "Usage: %s "
-              "[-m manager_address {%s}]\n",
-              argv[0], ManagerConfig::kDefaultManagerAddress.c_str());
-      exit(EXIT_FAILURE);
+      case 'm':
+        manager_address = optarg;
+        break;
+      default:
+        fprintf(stderr,
+                "Usage: %s "
+                "[-m manager_address {%s}]\n",
+                argv[0], ManagerConfig::kDefaultManagerAddress.c_str());
+        exit(EXIT_FAILURE);
     }
   }
 
@@ -97,7 +94,7 @@ std::shared_ptr<ManagerConfig> parseArguments(int argc, char* argv[]) {
 }
 
 class DaemonServiceClient {
-public:
+ public:
   DaemonServiceClient(std::shared_ptr<grpc::Channel> channel)
       : channel_(channel), stub_(DaemonService::NewStub(channel)) {}
 
@@ -107,8 +104,7 @@ public:
     /* Build message. */
     flatbuffers::grpc::MessageBuilder mb;
     std::vector<flatbuffers::Offset<flatbuffers::String>> _uuid;
-    for (auto const& uu : uuid)
-      _uuid.push_back(mb.CreateString(uu));
+    for (auto const& uu : uuid) _uuid.push_back(mb.CreateString(uu));
     auto uu_offset = mb.CreateVector(_uuid.data(), _uuid.size());
     auto gm_offset = mb.CreateVector(gpu_mem.data(), gpu_mem.size());
     auto request_offset =
@@ -125,7 +121,7 @@ public:
     std::vector<ServerAddress> worker_address;
     if (status.ok()) {
       const WorkerSpawnReply* response = response_msg.GetRoot();
-      auto wa                          = response->worker_address();
+      auto wa = response->worker_address();
       for (auto const& addr_offset : *wa) {
         ServerAddress _wa(addr_offset->str());
         std::cerr << "Register API server at " << _wa << std::endl;
@@ -144,7 +140,7 @@ public:
     return is_dead_;
   }
 
-private:
+ private:
   std::shared_ptr<grpc::Channel> channel_;
   std::unique_ptr<DaemonService::Stub> stub_;
   bool is_dead_ = false;
@@ -191,7 +187,7 @@ class ManagerServiceImpl final : public ManagerService::Service {
     daemon_info->gpu_list_.AddEntries(gpu_entries);
     daemon_info->PrintGpuInfo();
 
-    auto channel         = grpc::CreateChannel(daemon_address.GetAddress(),
+    auto channel = grpc::CreateChannel(daemon_address.GetAddress(),
                                        grpc::InsecureChannelCredentials());
     daemon_info->client_ = std::make_unique<DaemonServiceClient>(channel);
     config->daemons_.push_back(std::move(daemon_info));
@@ -203,8 +199,8 @@ class ManagerServiceImpl final : public ManagerService::Service {
       const flatbuffers::grpc::Message<WorkerAssignRequest>* request_msg,
       flatbuffers::grpc::Message<WorkerAssignReply>* response_msg) override {
     const WorkerAssignRequest* request = request_msg->GetRoot();
-    int worker_count                   = request->worker_count();
-    int gpu_count                      = request->gpu_count();
+    int worker_count = request->worker_count();
+    int gpu_count = request->gpu_count();
     std::vector<uint64_t> gpu_mem;
     if (request->gpu_mem()) {
       for (auto const& gm : *(request->gpu_mem())) {
@@ -246,8 +242,7 @@ class ManagerServiceImpl final : public ManagerService::Service {
     const WorkerExitNotifyRequest* request = request_msg->GetRoot();
     const ServerAddress worker_address(request->worker_address()->str());
     std::vector<std::string> gpu_uuid;
-    for (auto const& uuid : *(request->uuid()))
-      gpu_uuid.push_back(uuid->str());
+    for (auto const& uuid : *(request->uuid())) gpu_uuid.push_back(uuid->str());
     std::cerr << "API server (" << gpu_uuid[0] << "...) at " << worker_address
               << " has exit" << std::endl;
 
@@ -268,15 +263,14 @@ class ManagerServiceImpl final : public ManagerService::Service {
     return grpc::Status::OK;
   }
 
-private:
+ private:
   std::vector<ServerAddress> DoAssignWorker(int worker_count,
                                             std::vector<uint64_t>& gpu_mem) {
     std::vector<ServerAddress> assigned_workers;
     size_t gpu_count = gpu_mem.size();
 
     /* Validate request. */
-    if (gpu_mem.empty())
-      return assigned_workers;
+    if (gpu_mem.empty()) return assigned_workers;
 
     /**
      * Rule 1:
@@ -340,8 +334,7 @@ private:
       assigned_daemon = config->daemons_[daemon_idx].get();
 
       /* Check daemon connection state. */
-      if (assigned_daemon->client_->IsDead())
-        continue;
+      if (assigned_daemon->client_->IsDead()) continue;
 
       for (unsigned i = 0; i < gpu_count; ++i) {
         entry = assigned_daemon->gpu_list_.FindEntryAndReserveMemory(gm[i]);
@@ -359,13 +352,11 @@ private:
         }
       }
 
-      if (!assigned_entries.empty())
-        break;
+      if (!assigned_entries.empty()) break;
     }
 
     /* If the resource is insufficient, return an empty vector. */
-    if (assigned_entries.empty())
-      return assigned_workers;
+    if (assigned_entries.empty()) return assigned_workers;
 
     /* Spawn an API server which can see all assigned GPUs. */
     std::vector<std::string> uuid;
@@ -425,11 +416,11 @@ void runManagerService(std::shared_ptr<ManagerConfig> config) {
 }
 
 void setupSignalHandler() {
-    if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR)
-        printf("failed to catch SIGINT\n");
+  if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR)
+    printf("failed to catch SIGINT\n");
 
-    if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR)
-        printf("failed to ignore SIGCHLD\n");
+  if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR)
+    printf("failed to ignore SIGCHLD\n");
 }
 
 int main(int argc, char* argv[]) {
