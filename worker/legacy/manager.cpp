@@ -6,15 +6,16 @@
 #include <iostream>
 #include <thread>
 
+#include "argument_parser.hpp"
 #include "manager_service.h"
 #include "manager_service.proto.h"
 
 using ava_manager::ManagerServiceServerBase;
 
-const uint32_t kDefaultManagerPort = 3333;
-const uint32_t kDefaultWorkerPortBase = 4000;
-const bool kDefaultWorkerPoolEnabled = true;
-const uint32_t kDefaultWorkerPoolSize = 3;
+uint32_t cfgManagerPort = 3333;
+uint32_t cfgWorkerPortBase = 4000;
+bool cfgWorkerPoolEnabled = true;
+uint32_t cfgWorkerPoolSize = 3;
 
 class DemoManager : public ManagerServiceServerBase {
  public:
@@ -23,8 +24,8 @@ class DemoManager : public ManagerServiceServerBase {
       : ManagerServiceServerBase(port, worker_port_base, worker_argv,
                                  worker_argc) {
     // Spawn worker pool with default environment variables
-    if (kDefaultWorkerPoolEnabled) {
-      for (uint32_t i = 0; i < kDefaultWorkerPoolSize; i++) {
+    if (cfgWorkerPoolEnabled) {
+      for (uint32_t i = 0; i < cfgWorkerPoolSize; i++) {
         auto worker_address = SpawnWorkerWrapper();
         worker_pool_.push(worker_address);
       }
@@ -91,13 +92,13 @@ std::unique_ptr<DemoManager> manager;
 }
 
 int main(int argc, const char* argv[]) {
-  if (argc <= 1) {
-    fprintf(stderr,
-            "Usage: %s <worker_path>\n"
-            "Example: %s generated/cudadrv_nw/worker\n",
-            argv[0], argv[0]);
-    exit(0);
-  }
+  auto arg_parser = ArgumentParser(argc, argv);
+  arg_parser.init_and_parse_options();
+  cfgWorkerPoolEnabled = arg_parser.enable_worker_pool;
+  cfgManagerPort = arg_parser.manager_port;
+  cfgWorkerPortBase = arg_parser.worker_port_base;
+  cfgWorkerPoolSize = arg_parser.worker_pool_size;
+
   std::at_quick_exit([] {
     if (manager) {
       manager->StopServer();
@@ -108,7 +109,7 @@ int main(int argc, const char* argv[]) {
     std::quick_exit(EXIT_SUCCESS);
   });
   manager = std::make_unique<DemoManager>(
-      kDefaultManagerPort, kDefaultWorkerPortBase, &argv[1], argc - 1);
+      cfgManagerPort, cfgWorkerPortBase, &argv[1], argc - 1);
   manager->RunServer();
   return 0;
 }
