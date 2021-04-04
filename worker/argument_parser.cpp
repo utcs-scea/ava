@@ -22,6 +22,13 @@ void ArgumentParser::init_essential_options() {
     ("worker_port_base,b",
      po::value<uint32_t>(&worker_port_base)->default_value(4000),
      "(OPTIONAL) Specify base port number of API servers")
+    ;
+  // clang-format on
+}
+
+void ArgumentParser::add_options() {
+  // clang-format off
+  desc->add_options()
     ("disable_worker_pool,d",
      po::bool_switch(&enable_worker_pool),
      "(OPTIONAL) Disable API server pool")

@@ -20,9 +20,8 @@ class ArgumentParser {
  private:
   virtual void init_essential_options() final;
 
-  virtual void add_options() {
-    // Override this to add more manager-specific options.
-  }
+  // Override this to remove or add manager-specific options.
+  virtual void add_options();
 
   // Inherit this to parse manager-specific options.
   virtual void parse_options();
