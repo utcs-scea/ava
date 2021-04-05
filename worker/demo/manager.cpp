@@ -4,7 +4,7 @@
 #include <thread>
 
 #include "argument_parser.hpp"
-#include "manager_service.h"
+#include "manager_service.hpp"
 #include "manager_service.proto.h"
 
 using ava_manager::ManagerServiceServerBase;
