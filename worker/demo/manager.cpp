@@ -3,30 +3,36 @@
 #include <iostream>
 #include <thread>
 
-#include "manager_service.h"
+#include "argument_parser.hpp"
+#include "manager_service.hpp"
 #include "manager_service.proto.h"
 
 using ava_manager::ManagerServiceServerBase;
 
-const uint32_t kDefaultManagerPort    = 3333;
-const uint32_t kDefaultWorkerPortBase = 4000;
+class DemoArgumentParser : public ArgumentParser {
+ public:
+  DemoArgumentParser(int argc, const char* argv[])
+      : ArgumentParser(argc, argv) {}
 
-class DemoManager : public ManagerServiceServerBase {
-public:
-  DemoManager(uint32_t port, uint32_t worker_port_base, const char** worker_argv, int worker_argc) :
-    ManagerServiceServerBase(port, worker_port_base, worker_argc, worker_argv) {}
-private:
+ private:
+  void add_options() {}
 };
 
-int main(int argc, char* argv[]) {
-  if (argc <= 1) {
-    fprintf(stderr, "Usage: %s <worker_path>\n"
-           "Example: %s generated/cudadrv_nw/worker\n",
-           argv[0], argv[0]);
-    exit(0);
-  }
+class DemoManager : public ManagerServiceServerBase {
+ public:
+  DemoManager(uint32_t port, uint32_t worker_port_base, std::string worker_path,
+              std::vector<std::string>& worker_argv)
+      : ManagerServiceServerBase(port, worker_port_base, worker_path,
+                                 worker_argv) {}
+};
+
+int main(int argc, const char* argv[]) {
+  auto arg_parser = DemoArgumentParser(argc, argv);
+  arg_parser.init_and_parse_options();
+
   ava_manager::setupSignalHandlers();
-  DemoManager manager(kDefaultManagerPort, kDefaultWorkerPortBase, argv[1]);
+  DemoManager manager(arg_parser.manager_port, arg_parser.worker_port_base,
+                      arg_parser.worker_path, arg_parser.worker_argv);
   manager.RunServer();
   return 0;
 }

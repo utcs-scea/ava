@@ -1,17 +1,17 @@
 #include <errno.h>
 #include <fcntl.h>
+#include <grpc++/grpc++.h>
 #include <netinet/in.h>
+#include <nvml.h>
 #include <poll.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include <unistd.h>
 #include <sys/ipc.h>
 #include <sys/mman.h>
-#include <nvml.h>
-#include <grpc++/grpc++.h>
+#include <time.h>
+#include <unistd.h>
 
 #include <algorithm>
 #include <fstream>
@@ -23,12 +23,12 @@
 #include <thread>
 #include <vector>
 
-#include "manager.h"
 #include "common/cmd_channel_impl.h"
 #include "common/cmd_handler.h"
 #include "common/socket.h"
 #include "daemon_service.grpc.fb.h"
 #include "daemon_service_generated.h"
+#include "manager.h"
 #include "manager_service.grpc.fb.h"
 #include "manager_service_generated.h"
 
@@ -38,19 +38,18 @@ __sighandler_t original_sigint_handler = SIG_DFL;
 __sighandler_t original_sigchld_handler = SIG_DFL;
 
 void sigint_handler(int signo) {
-  if (listen_fd > 0)
-    close(listen_fd);
+  if (listen_fd > 0) close(listen_fd);
   signal(signo, original_sigint_handler);
   raise(signo);
 }
 
 class ManagerConfig {
-public:
+ public:
   static std::string const kDefaultManagerAddress;
   static int const kDefaultWorkerPoolSize;
 
   ManagerConfig(std::string ma = kDefaultManagerAddress,
-                int wps        = kDefaultWorkerPoolSize)
+                int wps = kDefaultWorkerPoolSize)
       : manager_address_(ma), worker_pool_size_(wps) {}
 
   ManagerConfig(ServerAddress& address, int wps = kDefaultWorkerPoolSize)
@@ -58,8 +57,7 @@ public:
 
   DaemonInfo* FindDaemonByIp(std::string ip) {
     for (auto& d : daemons_) {
-      if (d->GetIp() == ip)
-        return d.get();
+      if (d->GetIp() == ip) return d.get();
     }
     return nullptr;
   }
@@ -75,32 +73,32 @@ public:
 };
 
 std::string const ManagerConfig::kDefaultManagerAddress = "0.0.0.0:3334";
-int const ManagerConfig::kDefaultWorkerPoolSize         = 3;
+int const ManagerConfig::kDefaultWorkerPoolSize = 3;
 
 std::shared_ptr<ManagerConfig> config;
 
 std::shared_ptr<ManagerConfig> parseArguments(int argc, char* argv[]) {
   int c;
-  opterr                      = 0;
+  opterr = 0;
   std::string manager_address = ManagerConfig::kDefaultManagerAddress;
-  int worker_pool_size        = ManagerConfig::kDefaultWorkerPoolSize;
+  int worker_pool_size = ManagerConfig::kDefaultWorkerPoolSize;
 
   while ((c = getopt(argc, argv, "m:n:")) != -1) {
     switch (c) {
-    case 'm':
-      manager_address = optarg;
-      break;
-    case 'n':
-      worker_pool_size = (uint32_t)atoi(optarg);
-      break;
-    default:
-      fprintf(stderr,
-              "Usage: %s "
-              "[-m manager_address {%s}] "
-              "[-n worker_pool_size {%d}]\n",
-              argv[0], ManagerConfig::kDefaultManagerAddress.c_str(),
-              ManagerConfig::kDefaultWorkerPoolSize);
-      exit(EXIT_FAILURE);
+      case 'm':
+        manager_address = optarg;
+        break;
+      case 'n':
+        worker_pool_size = (uint32_t)atoi(optarg);
+        break;
+      default:
+        fprintf(stderr,
+                "Usage: %s "
+                "[-m manager_address {%s}] "
+                "[-n worker_pool_size {%d}]\n",
+                argv[0], ManagerConfig::kDefaultManagerAddress.c_str(),
+                ManagerConfig::kDefaultWorkerPoolSize);
+        exit(EXIT_FAILURE);
     }
   }
 
@@ -108,7 +106,7 @@ std::shared_ptr<ManagerConfig> parseArguments(int argc, char* argv[]) {
 }
 
 class DaemonServiceClient {
-public:
+ public:
   DaemonServiceClient(std::shared_ptr<grpc::Channel> channel)
       : channel_(channel), stub_(DaemonService::NewStub(channel)) {}
 
@@ -117,8 +115,7 @@ public:
     /* Build message. */
     flatbuffers::grpc::MessageBuilder mb;
     auto uuid_offset = mb.CreateString(uuid);
-    auto request_offset =
-        CreateWorkerSpawnRequest(mb, count, uuid_offset);
+    auto request_offset = CreateWorkerSpawnRequest(mb, count, uuid_offset);
     mb.Finish(request_offset);
     auto request_msg = mb.ReleaseMessage<WorkerSpawnRequest>();
 
@@ -131,7 +128,7 @@ public:
     std::vector<ServerAddress> worker_address;
     if (status.ok()) {
       const WorkerSpawnReply* response = response_msg.GetRoot();
-      auto wa                          = response->worker_address();
+      auto wa = response->worker_address();
       for (auto const& addr_offset : *wa) {
         ServerAddress _wa(addr_offset->str());
         std::cerr << "Register API server at " << _wa << std::endl;
@@ -150,7 +147,7 @@ public:
     return is_dead_;
   }
 
-private:
+ private:
   std::shared_ptr<grpc::Channel> channel_;
   std::unique_ptr<DaemonService::Stub> stub_;
   bool is_dead_ = false;
@@ -200,7 +197,7 @@ class ManagerServiceImpl final : public ManagerService::Service {
     /* Request daemon to spawn an API server pool.
      * Currently each API server can see only one GPU, and every GPU has
      * `config->worker_pool_size_` API servers running on it. */
-    auto channel         = grpc::CreateChannel(daemon_address.GetAddress(),
+    auto channel = grpc::CreateChannel(daemon_address.GetAddress(),
                                        grpc::InsecureChannelCredentials());
     daemon_info->client_ = std::make_unique<DaemonServiceClient>(channel);
 
@@ -233,8 +230,8 @@ class ManagerServiceImpl final : public ManagerService::Service {
                           "GPU memory list cannot be empty");
     uint64_t gpu_mem = (uint64_t)(*request->gpu_mem())[0];
 
-    // TODO(galvanic): The requested memory can be inferred from the applications'
-    // resource annotations.
+    // TODO(galvanic): The requested memory can be inferred from the
+    // applications' resource annotations.
 
     std::vector<ServerAddress> assigned_workers = DoAssignWorker(gpu_mem);
     if (assigned_workers.empty())
@@ -264,8 +261,7 @@ class ManagerServiceImpl final : public ManagerService::Service {
     const WorkerExitNotifyRequest* request = request_msg->GetRoot();
     const ServerAddress worker_address(request->worker_address()->str());
     std::vector<std::string> gpu_uuid;
-    for (auto const& uuid : *(request->uuid()))
-      gpu_uuid.push_back(uuid->str());
+    for (auto const& uuid : *(request->uuid())) gpu_uuid.push_back(uuid->str());
     std::cerr << "API server (" << gpu_uuid[0] << "...) at " << worker_address
               << " has exit" << std::endl;
 
@@ -286,7 +282,7 @@ class ManagerServiceImpl final : public ManagerService::Service {
     return grpc::Status::OK;
   }
 
-private:
+ private:
   std::vector<ServerAddress> DoAssignWorker(uint64_t gpu_mem) {
     std::vector<ServerAddress> assigned_workers;
 
@@ -347,8 +343,7 @@ private:
       assigned_daemon = config->daemons_[daemon_idx].get();
 
       /* Check daemon connection state. */
-      if (assigned_daemon->client_->IsDead())
-        continue;
+      if (assigned_daemon->client_->IsDead()) continue;
 
       entry = assigned_daemon->gpu_list_.FindEntryAndReserveMemory(gpu_mem);
       if (entry) {
@@ -359,8 +354,7 @@ private:
     }
 
     /* If the resource is insufficient, return an empty vector. */
-    if (assigned_entry == nullptr)
-      return assigned_workers;
+    if (assigned_entry == nullptr) return assigned_workers;
 
     /* Request to spawn the API server. */
     assigned_workers =
@@ -373,7 +367,8 @@ private:
                 << assigned_daemon->GetIp() << std::endl;
 
       /* Revoke assigned entries. */
-      assigned_entry->GetGpuList()->RevokeEntryWithMemory(assigned_entry, gpu_mem);
+      assigned_entry->GetGpuList()->RevokeEntryWithMemory(assigned_entry,
+                                                          gpu_mem);
     } else {
       /* Save busy API server entry. */
       assigned_entry->AddBusyWorker(assigned_workers[0], gpu_mem);
@@ -398,11 +393,11 @@ void runManagerService(std::shared_ptr<ManagerConfig> config) {
 }
 
 void setupSignalHandler() {
-    if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR)
-        printf("failed to catch SIGINT\n");
+  if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR)
+    printf("failed to catch SIGINT\n");
 
-    if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR)
-        printf("failed to ignore SIGCHLD\n");
+  if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR)
+    printf("failed to ignore SIGCHLD\n");
 }
 
 int main(int argc, char* argv[]) {

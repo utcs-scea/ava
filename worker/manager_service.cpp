@@ -7,20 +7,38 @@
 #include <exception>
 #include <iostream>
 
-#include "manager_service.h"
+#include "manager_service.hpp"
 
 using namespace boost;
 using boost::asio::ip::tcp;
 
 namespace ava_manager {
 
-ManagerServiceServerBase::ManagerServiceServerBase(uint32_t manager_port,
-        uint32_t worker_port_base, const char** worker_argv, int worker_argc) :
-    manager_port_(manager_port), worker_port_base_(worker_port_base),
-    worker_id_(0), worker_argv_(worker_argv), worker_argc_(worker_argc) {
-  if (worker_argc <= 0) {
-      throw std::invalid_argument("API server binary not provided");
+ManagerServiceServerBase::ManagerServiceServerBase(
+    uint32_t manager_port, uint32_t worker_port_base, std::string worker_path,
+    std::vector<std::string>& worker_argv)
+    : manager_port_(manager_port),
+      worker_port_base_(worker_port_base),
+      worker_id_(0),
+      worker_argv_(worker_argv) {
+  // Validate API server path pointing to a regular file
+  char* worker_path_abs = realpath(worker_path.c_str(), NULL);
+  bool file_exist = false;
+  if (worker_path_abs != NULL) {
+    struct stat stat_buf;
+    if (stat(worker_path_abs, &stat_buf) == 0) {
+      file_exist = S_ISREG(stat_buf.st_mode);
+    }
   }
+  if (!file_exist) {
+    std::cerr << "API server binary (" << worker_path << ") not found"
+              << std::endl;
+    throw std::invalid_argument("File not exists");
+  }
+  worker_path_ = std::string(worker_path_abs);
+  free(worker_path_abs);
+
+  // Accept connection
   acceptor_ = std::make_unique<tcp::acceptor>(
       io_service_, tcp::endpoint(tcp::v4(), manager_port));
   AcceptConnection();
@@ -84,11 +102,16 @@ ava_proto::WorkerAssignReply ManagerServiceServerBase::HandleRequest(
   // Let API server use TCP channel
   environments.push_back("AVA_CHANNEL=TCP");
 
-  // Pass only port to API server
+  // Pass port to API server
   auto port =
       worker_port_base_ + worker_id_.fetch_add(1, std::memory_order_relaxed);
   std::vector<std::string> parameters;
   parameters.push_back(std::to_string(port));
+
+  // Append custom API server arguments
+  for (const auto& argv : worker_argv_) {
+    parameters.push_back(argv);
+  }
 
   std::cerr << "Spawn API server at 0.0.0.0:" << port << " (cmdline=\""
             << boost::algorithm::join(environments, " ") << " "
@@ -127,14 +150,15 @@ pid_t ManagerServiceServerBase::SpawnWorker(
   }
   envp_list.push_back(NULL);
 
-  std::vector<const char *> argv_list;
+  std::vector<const char*> argv_list;
+  argv_list.push_back(worker_path_.c_str());
   for (auto& item : parameters) {
     argv_list.push_back(item.c_str());
   }
   argv_list.push_back(NULL);
 
-  if (execvpe(argv_list[0], (char* const*) argv_list.data(),
-        (char* const*)envp_list.data()) < 0)
+  if (execvpe(argv_list[0], (char* const*)argv_list.data(),
+              (char* const*)envp_list.data()) < 0)
     perror("execvpe worker failed");
 
   // Never reach here

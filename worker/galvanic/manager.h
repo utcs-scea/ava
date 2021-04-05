@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include <iostream>
 #include <exception>
+#include <iostream>
 #include <memory>
 #include <mutex>
 #include <queue>
@@ -16,13 +16,13 @@ class DaemonInfo;
 class GpuList;
 
 class ServerAddress {
-public:
+ public:
   ServerAddress() {}
 
   ServerAddress(std::string address) {
     size_t find_position = address.find(':');
     if (find_position != std::string::npos) {
-      ip_   = address.substr(0, find_position);
+      ip_ = address.substr(0, find_position);
       port_ = (uint32_t)std::stoi(address.substr(find_position + 1));
     }
 
@@ -41,13 +41,13 @@ public:
     return out << sa.GetAddress();
   }
 
-private:
+ private:
   std::string ip_;
   int port_;
 };
 
 class GpuInfo {
-public:
+ public:
   GpuInfo() : free_memory_(0) {}
 
   GpuInfo(std::string uuid, uint64_t free_memory)
@@ -58,7 +58,7 @@ public:
 };
 
 class WorkerInfo {
-public:
+ public:
   WorkerInfo(const ServerAddress& address, uint64_t used_memory = 0)
       : address_(address), used_memory_(used_memory) {}
 
@@ -70,11 +70,11 @@ public:
 };
 
 class WorkerQueue {
-private:
+ private:
   std::queue<std::unique_ptr<WorkerInfo>> worker_queue_;
   std::mutex mtx_;
 
-public:
+ public:
   void Enqueue(const ServerAddress& worker_address, uint64_t mem_size = 0) {
     const std::lock_guard<std::mutex> guard(mtx_);
     auto worker_info = std::make_unique<WorkerInfo>(worker_address, mem_size);
@@ -105,11 +105,11 @@ public:
 };
 
 class WorkerSet {
-private:
+ private:
   std::set<std::unique_ptr<WorkerInfo>> worker_set_;
   std::mutex mtx_;
 
-public:
+ public:
   void Insert(const ServerAddress& worker_address, uint64_t mem_size = 0) {
     const std::lock_guard<std::mutex> guard(mtx_);
     auto worker_info = std::make_unique<WorkerInfo>(worker_address, mem_size);
@@ -143,8 +143,8 @@ public:
 };
 
 class GpuListEntry {
-private:
-  GpuInfo gpu_info_; // TODO: need lock to protect
+ private:
+  GpuInfo gpu_info_;  // TODO: need lock to protect
   WorkerQueue idle_workers_;
   WorkerSet busy_workers_;
   int worker_counter_ = 0; /* For sorting. */
@@ -155,7 +155,7 @@ private:
 
   friend class GpuList;
 
-public:
+ public:
   GpuListEntry(DaemonInfo* daemon, GpuList* gpu_list)
       : daemon_(daemon), gpu_list_(gpu_list) {}
 
@@ -179,8 +179,7 @@ public:
 
   void AddBusyWorker(std::unique_ptr<WorkerInfo>& worker_info,
                      uint64_t used_memory = 0) {
-    if (used_memory)
-      worker_info->used_memory_ = used_memory;
+    if (used_memory) worker_info->used_memory_ = used_memory;
     busy_workers_.Insert(worker_info);
   }
 
@@ -218,7 +217,7 @@ public:
 };
 
 class GpuList {
-private:
+ private:
   std::vector<std::shared_ptr<GpuListEntry>> gpu_list_;
   std::mutex mtx_;
 
@@ -232,7 +231,7 @@ private:
               });
   }
 
-public:
+ public:
   void AddEntries(std::vector<std::shared_ptr<GpuListEntry>> entries) {
     const std::lock_guard<std::mutex> guard(mtx_);
     gpu_list_.reserve(gpu_list_.size() +
@@ -244,8 +243,7 @@ public:
   void AddEntry(std::shared_ptr<GpuListEntry> entry) { AddEntries({entry}); }
 
   std::shared_ptr<GpuListEntry> GetEntryAtIndex(unsigned idx) {
-    if (idx > gpu_list_.size())
-      return nullptr;
+    if (idx > gpu_list_.size()) return nullptr;
     return gpu_list_[idx];
   }
 
@@ -297,15 +295,14 @@ public:
 
   void PrintGpuInfo() {
     const std::lock_guard<std::mutex> guard(mtx_);
-    for (const auto& entry : gpu_list_)
-      entry->PrintGpuInfo();
+    for (const auto& entry : gpu_list_) entry->PrintGpuInfo();
   }
 };
 
 class DaemonServiceClient;
 
 class DaemonInfo {
-public:
+ public:
   void PrintGpuInfo() { gpu_list_.PrintGpuInfo(); }
   std::string GetIp() const { return address_.GetIp(); }
 
@@ -314,4 +311,4 @@ public:
   GpuList gpu_list_;
 };
 
-#endif // LIBAVA_MANAGER_MANAGER_H_
+#endif  // LIBAVA_MANAGER_MANAGER_H_

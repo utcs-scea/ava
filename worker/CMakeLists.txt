@@ -6,7 +6,7 @@ install(DIRECTORY DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 # Common libraries
 find_package(Threads REQUIRED)
-find_package(Boost 1.65 REQUIRED COMPONENTS system)
+find_package(Boost 1.65 REQUIRED COMPONENTS system program_options)
 
 set(manager_service_libraries Threads::Threads
                               "${Boost_LIBRARIES}")
@@ -19,6 +19,7 @@ include_directories(
 )
 set(manager_service_proto_srcs "${CMAKE_CURRENT_SOURCE_DIR}/../proto/manager_service.proto.cpp")
 set(manager_service_ava_srcs   "${CMAKE_CURRENT_SOURCE_DIR}/manager_service.cpp"
+                               "${CMAKE_CURRENT_SOURCE_DIR}/argument_parser.cpp"
                                "${CMAKE_CURRENT_SOURCE_DIR}/signal_handler.cpp")
 
 if(AVA_MANAGER_GALVANIC)

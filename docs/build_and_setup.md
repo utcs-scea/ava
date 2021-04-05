@@ -111,7 +111,7 @@ popd
 Start the demo manager by
 
 ```shell
-./install/bin/demo_manager install/demo_nw/bin/worker
+./install/bin/demo_manager --worker_path install/demo_nw/bin/worker
 ```
 
 Add AvA configuration file:
