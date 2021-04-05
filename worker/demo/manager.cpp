@@ -9,9 +9,6 @@
 
 using ava_manager::ManagerServiceServerBase;
 
-uint32_t cfgManagerPort = 3333;
-uint32_t cfgWorkerPortBase = 4000;
-
 class DemoArgumentParser : public ArgumentParser {
  public:
   DemoArgumentParser(int argc, const char* argv[])
@@ -23,20 +20,19 @@ class DemoArgumentParser : public ArgumentParser {
 
 class DemoManager : public ManagerServiceServerBase {
  public:
-  DemoManager(uint32_t port, uint32_t worker_port_base,
-              const char** worker_argv, int worker_argc)
-      : ManagerServiceServerBase(port, worker_port_base, worker_argv,
-                                 worker_argc) {}
+  DemoManager(uint32_t port, uint32_t worker_port_base, std::string worker_path,
+              std::vector<std::string>& worker_argv)
+      : ManagerServiceServerBase(port, worker_port_base, worker_path,
+                                 worker_argv) {}
 };
 
 int main(int argc, const char* argv[]) {
   auto arg_parser = DemoArgumentParser(argc, argv);
   arg_parser.init_and_parse_options();
-  cfgManagerPort = arg_parser.manager_port;
-  cfgWorkerPortBase = arg_parser.worker_port_base;
 
   ava_manager::setupSignalHandlers();
-  DemoManager manager(cfgManagerPort, cfgWorkerPortBase, &argv[1], argc - 1);
+  DemoManager manager(arg_parser.manager_port, arg_parser.worker_port_base,
+                      arg_parser.worker_path, arg_parser.worker_argv);
   manager.RunServer();
   return 0;
 }

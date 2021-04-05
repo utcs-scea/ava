@@ -12,19 +12,17 @@
 
 using ava_manager::ManagerServiceServerBase;
 
-uint32_t cfgManagerPort = 3333;
-uint32_t cfgWorkerPortBase = 4000;
-bool cfgWorkerPoolEnabled = true;
+bool cfgWorkerPoolDisabled = true;
 uint32_t cfgWorkerPoolSize = 3;
 
-class DemoManager : public ManagerServiceServerBase {
+class LegacyManager : public ManagerServiceServerBase {
  public:
-  DemoManager(uint32_t port, uint32_t worker_port_base,
-              const char** worker_argv, int worker_argc)
-      : ManagerServiceServerBase(port, worker_port_base, worker_argv,
-                                 worker_argc) {
+  LegacyManager(uint32_t port, uint32_t worker_port_base,
+                std::string worker_path, std::vector<std::string>& worker_argv)
+      : ManagerServiceServerBase(port, worker_port_base, worker_path,
+                                 worker_argv) {
     // Spawn worker pool with default environment variables
-    if (cfgWorkerPoolEnabled) {
+    if (!cfgWorkerPoolDisabled) {
       for (uint32_t i = 0; i < cfgWorkerPoolSize; i++) {
         auto worker_address = SpawnWorkerWrapper();
         worker_pool_.push(worker_address);
@@ -38,14 +36,16 @@ class DemoManager : public ManagerServiceServerBase {
     std::vector<std::string> environments;
     environments.push_back("AVA_CHANNEL=TCP");
 
-    // Pass only port to API server
+    // Pass port to API server
     auto port =
         worker_port_base_ + worker_id_.fetch_add(1, std::memory_order_relaxed);
     std::vector<std::string> parameters;
-    for (int i = 0; i < worker_argc_; i++) {
-      parameters.push_back(worker_argv_[i]);
-    }
     parameters.push_back(std::to_string(port));
+
+    // Append custom API server arguments
+    for (const auto& argv : worker_argv_) {
+      parameters.push_back(argv);
+    }
 
     std::cerr << "Spawn API server at 0.0.0.0:" << port << " (cmdline=\""
               << boost::algorithm::join(environments, " ") << " "
@@ -88,15 +88,13 @@ class DemoManager : public ManagerServiceServerBase {
 };
 
 namespace {
-std::unique_ptr<DemoManager> manager;
+std::unique_ptr<LegacyManager> manager;
 }
 
 int main(int argc, const char* argv[]) {
   auto arg_parser = ArgumentParser(argc, argv);
   arg_parser.init_and_parse_options();
-  cfgWorkerPoolEnabled = arg_parser.enable_worker_pool;
-  cfgManagerPort = arg_parser.manager_port;
-  cfgWorkerPortBase = arg_parser.worker_port_base;
+  cfgWorkerPoolDisabled = arg_parser.disable_worker_pool;
   cfgWorkerPoolSize = arg_parser.worker_pool_size;
 
   std::at_quick_exit([] {
@@ -108,8 +106,9 @@ int main(int argc, const char* argv[]) {
     signal(SIGINT, SIG_DFL);
     std::quick_exit(EXIT_SUCCESS);
   });
-  manager = std::make_unique<DemoManager>(
-      cfgManagerPort, cfgWorkerPortBase, &argv[1], argc - 1);
+  manager = std::make_unique<LegacyManager>(
+      arg_parser.manager_port, arg_parser.worker_port_base,
+      arg_parser.worker_path, arg_parser.worker_argv);
   manager->RunServer();
   return 0;
 }
