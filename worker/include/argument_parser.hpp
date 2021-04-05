@@ -1,8 +1,10 @@
 #ifndef AVA_WORKER_ARG_PARSER_HPP_
 #define AVA_WORKER_ARG_PARSER_HPP_
 
-#include <memory.h>
 #include <boost/program_options.hpp>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace po = boost::program_options;
 
@@ -17,7 +19,7 @@ class ArgumentParser {
 
   void init_and_parse_options();
 
- private:
+ protected:
   virtual void init_essential_options() final;
 
   // Override this to remove or add manager-specific options.
@@ -38,6 +40,7 @@ class ArgumentParser {
   uint32_t worker_port_base;
   bool enable_worker_pool = true;
   uint32_t worker_pool_size;
+  std::vector<std::string> worker_argv;
 };
 
 #endif  // AVA_WORKER_ARG_PARSER_HPP_
