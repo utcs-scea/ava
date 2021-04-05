@@ -20,8 +20,25 @@ ManagerServiceServerBase::ManagerServiceServerBase(
     : manager_port_(manager_port),
       worker_port_base_(worker_port_base),
       worker_id_(0),
-      worker_path_(worker_path),
       worker_argv_(worker_argv) {
+  // Validate API server path pointing to a regular file
+  char* worker_path_abs = realpath(worker_path.c_str(), NULL);
+  bool file_exist = false;
+  if (worker_path_abs != NULL) {
+    struct stat stat_buf;
+    if (stat(worker_path_abs, &stat_buf) == 0) {
+      file_exist = S_ISREG(stat_buf.st_mode);
+    }
+  }
+  if (!file_exist) {
+    std::cerr << "API server binary (" << worker_path << ") not found"
+              << std::endl;
+    throw std::invalid_argument("File not exists");
+  }
+  worker_path_ = std::string(worker_path_abs);
+  free(worker_path_abs);
+
+  // Accept connection
   acceptor_ = std::make_unique<tcp::acceptor>(
       io_service_, tcp::endpoint(tcp::v4(), manager_port));
   AcceptConnection();
