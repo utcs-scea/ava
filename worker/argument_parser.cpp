@@ -22,7 +22,7 @@ void ArgumentParser::init_essential_options() {
     ("worker_port_base,b",
      po::value<uint32_t>(&worker_port_base)->default_value(4000),
      "(OPTIONAL) Specify base port number of API servers")
-    ("worker_port_base,b",
+    ("worker_argv,v",
      po::value<std::vector<std::string>>(&worker_argv),
      "(OPTIONAL) Specify process arguments passed to API servers")
     ;
