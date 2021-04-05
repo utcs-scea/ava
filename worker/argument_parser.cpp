@@ -23,8 +23,8 @@ void ArgumentParser::init_essential_options() {
      po::value<uint32_t>(&worker_port_base)->default_value(4000),
      "(OPTIONAL) Specify base port number of API servers")
     ("worker_argv,v",
-     po::value<std::vector<std::string>>(&worker_argv),
-     "(OPTIONAL) Specify process arguments passed to API servers")
+     po::value<std::vector<std::string>>(&worker_argv)->multitoken(),
+     "(OPTIONAL) Specify process arguments passed to API servers (e.g. `-v x y -v=-h` represents three arguments `x`, `y` and `-h`")
     ;
   // clang-format on
 }
@@ -33,7 +33,7 @@ void ArgumentParser::add_options() {
   // clang-format off
   desc->add_options()
     ("disable_worker_pool,d",
-     po::bool_switch(&enable_worker_pool),
+     po::bool_switch(&disable_worker_pool),
      "(OPTIONAL) Disable API server pool")
     ("worker_pool_size,n",
      po::value<uint32_t>(&worker_pool_size)->default_value(3),

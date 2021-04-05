@@ -38,7 +38,7 @@ class ArgumentParser {
   std::string worker_path;
   uint32_t manager_port;
   uint32_t worker_port_base;
-  bool enable_worker_pool = true;
+  bool disable_worker_pool;
   uint32_t worker_pool_size;
   std::vector<std::string> worker_argv;
 };
