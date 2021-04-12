@@ -39,6 +39,7 @@ option(AVA_GEN_HIP_SPEC OFF "Enable HIP specification")
 option(AVA_GEN_TEST_SPEC OFF "Enable test (libtrivial) specification")
 option(AVA_GEN_DEMO_SPEC OFF "Enable demo specification")
 option(AVA_GEN_CUDNN_SPEC OFF "Enable cuDNN specification")
+option(AVA_GEN_PYTORCH_SPEC OFF "Enable CUDA specification for PyTorch")
 
 option(AVA_MANAGER_GALVANIC OFF "Build Galvanic manager")
 option(AVA_MANAGER_KATANA OFF "Build Katana manager")
@@ -59,6 +60,7 @@ message(STATUS "Build HIP specification:               ${AVA_GEN_HIP_SPEC}")
 message(STATUS "Build test (libtrivial) specification: ${AVA_GEN_TEST_SPEC}")
 message(STATUS "Build demo specification:              ${AVA_GEN_DEMO_SPEC}")
 message(STATUS "Build cuDNN specification:             ${AVA_GEN_CUDNN_SPEC}")
+message(STATUS "Build PyTorch CUDA specification:      ${AVA_GEN_PYTORCH_SPEC}")
 message(STATUS "Build Galvanic manager:                ${AVA_MANAGER_GALVANIC}")
 message(STATUS "Build Katana manager:                  ${AVA_MANAGER_KATANA}")
 message(STATUS "Build legacy (r1.0) manager:           ${AVA_MANAGER_LEGACY}")
@@ -154,6 +156,7 @@ ExternalProject_Add(ava-spec
         -DAVA_GEN_TEST_SPEC:BOOL=${AVA_GEN_TEST_SPEC}
         -DAVA_GEN_DEMO_SPEC:BOOL=${AVA_GEN_DEMO_SPEC}
         -DAVA_GEN_CUDNN_SPEC:BOOL=${AVA_GEN_CUDNN_SPEC}
+        -DAVA_GEN_PYTORCH_SPEC:BOOL=${AVA_GEN_PYTORCH_SPEC}
         -DAVA_INSTALL_DIR:PATH=${AVA_INSTALL_DIR}
   BUILD_ALWAYS ON
 )
