@@ -93,4 +93,9 @@ if(AVA_GEN_DEMO_SPEC)
   include(samples/demo/CMakeLists.txt)
 endif()
 
+message(STATUS "Compile cuDNN specification: ${AVA_GEN_CUDNN_SPEC}")
+if(AVA_GEN_CUDNN_SPEC)
+  include(samples/cudnn/CMakeLists.txt)
+endif()
+
 ###### Include your compilation below ######

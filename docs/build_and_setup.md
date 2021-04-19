@@ -40,6 +40,7 @@ old codes into the new build system (v2.0) is still ongoing.
 | AmorphOS FPGA    | 1.0     | TESTED   |
 | CUDA driver      | 10.1    | TESTED   |
 | CUDA runtime     | 10.1    | TESTED   |
+| cuDNN            | 7.6.5   | NO       |
 | Demo             | 0.0.1   | TESTED   |
 | GTI              | 4.5.0.3 | TESTED   |
 | HIP              |         | NO       |
