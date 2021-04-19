@@ -1,11 +1,12 @@
 ava_name("cuDNN for CUDA 10.1");
 ava_version("7.6.5");
 ava_identifier(CUDNN_V7);
-ava_number(11);
+ava_number(12);
 ava_cflags(-I/usr/local/cuda-10.1/include -I../headers);
-ava_libs(-L/usr/local/cuda-10.1/lib64 -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
-ava_guestlib_srcs(extensions/tf_optimization.c);
-ava_worker_srcs(extensions/tf_optimization.c);
+ava_cxxflags(-I/usr/local/cuda-10.1/include -I../headers);
+ava_libs(-L/usr/local/cuda-10.1/lib64 -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
+ava_guestlib_srcs(extensions/cudnn_optimization.cpp);
+ava_worker_srcs(extensions/cudnn_optimization.cpp);
 ava_export_qualifier();
 
 /**
@@ -41,7 +42,7 @@ ava_begin_utility;
 #include <driver_types.h>
 #include <glib.h>
 #include "cublas_cpp.h"
-#include "common/extensions/tf_optimization.h"
+#include "common/extensions/cudnn_optimization.h"
 #include "common/extensions/cmd_batching.h"
 #include "common/linkage.h"
 
@@ -248,8 +249,6 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetLoggerCallback(cublasLogCallback*
     abort();
 }
 
-
-
 cublasStatus_t CUBLASWINAPI cublasSetVector (int n, int elemSize, const void *x,
                                              int incx, void *devicePtr, int incy)
 {
@@ -263,7 +262,6 @@ cublasStatus_t CUBLASWINAPI cublasGetVector (int n, int elemSize, const void *x,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
 
 CUBLASAPI cublasStatus_t  CUBLASWINAPI
 cublasGetMathMode(cublasHandle_t handle, cublasMath_t *mode)
@@ -21486,8 +21484,19 @@ cudnnGetErrorString(cudnnStatus_t status)
 /**
  * Initialization code in the generated code.
  */
+ava_utility void __helper_guestlib_init_epilogue() {
+    guestlib_cudnn_opt_init();
+}
+
+ava_utility void __helper_guestlib_fini_prologue() {
+    guestlib_cudnn_opt_fini();
+}
+
+ava_guestlib_init_epilogue(__helper_guestlib_init_epilogue());
+ava_guestlib_fini_prologue(__helper_guestlib_fini_prologue());
+
 ava_utility void __helper_worker_init_epilogue() {
-    worker_tf_opt_init();
+    worker_cudnn_opt_init();
 }
 
 ava_worker_init_epilogue(__helper_worker_init_epilogue());

@@ -25,10 +25,6 @@ ExternalProject_Add_Step(cava cudnn_v7-link
           ln -f -s ${CMAKE_CURRENT_SOURCE_DIR}/headers ${CMAKE_CURRENT_BINARY_DIR}/headers        &&
           ln -f -s ${cudnn_v7_install}/lib/libguestlib.so ${cudnn_v7_install}/lib/libcublas.so.10   &&
           ln -f -s ${cudnn_v7_install}/lib/libguestlib.so ${cudnn_v7_install}/lib/libcublasLt.so.10 &&
-          ln -f -s ${cudnn_v7_install}/lib/libguestlib.so ${cudnn_v7_install}/lib/libcudart.so.10.0 &&
-          ln -f -s ${cudnn_v7_install}/lib/libguestlib.so ${cudnn_v7_install}/lib/libcudart.so.10.1 &&
-          ln -f -s ${cudnn_v7_install}/lib/libguestlib.so ${cudnn_v7_install}/lib/libcudart.so.10.2 &&
-          ln -f -s ${cudnn_v7_install}/lib/libguestlib.so ${cudnn_v7_install}/lib/libcudart.so.10   &&
           ln -f -s ${cudnn_v7_install}/lib/libguestlib.so ${cudnn_v7_install}/lib/libcudnn.so.7     &&
           ln -f -s ${cudnn_v7_install}/lib/libguestlib.so ${cudnn_v7_install}/lib/libcufft.so.10    &&
           ln -f -s ${cudnn_v7_install}/lib/libguestlib.so ${cudnn_v7_install}/lib/libcurand.so.10   &&
