@@ -30,6 +30,8 @@ def main():
                              "suit.")
     parser.add_argument("--dump", action="store_true",
                         help="Output the API model in roughly the input format. This will loose information.")
+    parser.add_argument("--combine", "-C", type=str, action="append", dest="combine_files",
+                        help="Combine specifications with the current one.")
 
     args = parser.parse_args()
 
@@ -47,8 +49,13 @@ def main():
             errors = []
 
             from .parser import c
-            api = c.parse(args.inputfile, include_path=args.include_path or [], definitions=args.definitions or [],
-                          extra_args=(["-v"] if args.verbose else []) + (args.extra_args or []))
+            api = c.parse(
+                    args.inputfile,
+                    include_path=args.include_path or [],
+                    definitions=args.definitions or [],
+                    extra_args=(["-v"] if args.verbose else []) + (args.extra_args or []),
+                    combine_files=args.combine_files or [],
+            )
 
             if args.dump:
                 print(api)
