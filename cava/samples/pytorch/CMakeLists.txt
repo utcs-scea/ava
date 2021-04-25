@@ -7,9 +7,9 @@ include(ExternalProject)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
-###### Compile tensorflow/pt_dump.c ######
+###### Compile pytorch/pt_dump.c ######
 
-set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/tensorflow/pt_dump.c")
+set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/pytorch/pt_dump.c")
 
 ExternalProject_Add_Step(cava pt_dump-nwcc
   DEPENDS ${spec_name}
@@ -54,9 +54,9 @@ ExternalProject_Add(pt_dump_nw
   DEPENDS cava
 )
 
-###### Compile tensorflow/pt_opt.c ######
+###### Compile pytorch/pt_opt.c ######
 
-set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/tensorflow/pt_opt.c")
+set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/pytorch/pt_opt.c")
 
 ExternalProject_Add_Step(cava pt_opt-nwcc
   DEPENDS ${spec_name}
