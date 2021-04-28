@@ -24017,3 +24017,12 @@ __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph)
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
+
+//=========================================
+//  New for PyTorch
+//==========================================
+
+__host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr)
+{
+  ava_argument(devPtr) ava_opaque;
+}
