@@ -98,4 +98,9 @@ if(AVA_GEN_CUDNN_SPEC)
   include(samples/cudnn/CMakeLists.txt)
 endif()
 
+message(STATUS "Compile PyTorch specification: ${AVA_GEN_PYTORCH_SPEC}")
+if(AVA_GEN_PYTORCH_SPEC)
+  include(samples/pytorch/CMakeLists.txt)
+endif()
+
 ###### Include your compilation below ######
