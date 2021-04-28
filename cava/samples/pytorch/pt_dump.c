@@ -165,6 +165,14 @@ ava_type(struct fatbin_wrapper) {
     }
 }
 
+ava_type(struct cudaIpcMemHandle_st) {
+    ava_field(reserved) {
+        ava_type_cast(void *);
+        ava_in;
+	ava_buffer(CUDA_IPC_HANDLE_SIZE);
+    }
+}
+
 ava_type(struct cudaDeviceProp);
 
 ava_type(struct cudaPointerAttributes) {
@@ -22984,17 +22992,12 @@ __host__ cudaError_t CUDARTAPI cudaDeviceGetPCIBusId(char *pciBusId, int len, in
 //     abort();
 // }
 
-// __host__ cudaError_t CUDARTAPI cudaIpcOpenMemHandle(void **devPtr, cudaIpcMemHandle_t handle, unsigned int flags)
-// {
-//     fprintf(stderr, "%s is not implemented\n", __func__);
-//     abort();
-// }
-//
-// __host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr)
-// {
-//     fprintf(stderr, "%s is not implemented\n", __func__);
-//     abort();
-// }
+__host__ cudaError_t CUDARTAPI cudaIpcOpenMemHandle(void **devPtr, cudaIpcMemHandle_t handle, unsigned int flags)
+{
+    ava_argument(devPtr) {
+        ava_out; ava_buffer(1); ava_element ava_opaque;
+    }
+}
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaPeekAtLastError(void);
 
@@ -23490,11 +23493,15 @@ __host__ cudaError_t CUDARTAPI cudaMemcpy3DPeerAsync(const struct cudaMemcpy3DPe
     abort();
 }
 
-// __host__ cudaError_t CUDARTAPI cudaMemGetInfo(size_t *free, size_t *total)
-// {
-//     fprintf(stderr, "%s is not implemented\n", __func__);
-//     abort();
-// }
+__host__ cudaError_t CUDARTAPI cudaMemGetInfo(size_t *freemem, size_t *total)
+{
+    ava_argument(freemem) {
+        ava_out; ava_buffer(1);
+    }
+    ava_argument(total) {
+        ava_out; ava_buffer(1);
+    }
+}
 
 __host__ cudaError_t CUDARTAPI cudaArrayGetInfo(struct cudaChannelFormatDesc *desc, struct cudaExtent *extent, unsigned int *flags, cudaArray_t array)
 {
