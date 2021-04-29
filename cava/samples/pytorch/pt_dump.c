@@ -165,11 +165,11 @@ ava_type(struct fatbin_wrapper) {
     }
 }
 
-ava_type(struct cudaIpcMemHandle_st) {
+ava_type(cudaIpcMemHandle_t) {
     ava_field(reserved) {
         ava_type_cast(void *);
         ava_in;
-	ava_buffer(CUDA_IPC_HANDLE_SIZE);
+        ava_buffer(CUDA_IPC_HANDLE_SIZE);
     }
 }
 
@@ -24033,3 +24033,4 @@ __host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr)
 {
   ava_argument(devPtr) ava_opaque;
 }
+
