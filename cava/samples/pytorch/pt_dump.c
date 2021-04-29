@@ -3929,7 +3929,13 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemm3m  (cublasHandle_t handle,
     abort();
 }
 
-#if defined(__cplusplus)
+#warning FIXME: must generate C++ code to support this API.
+#ifndef __cplusplus
+typedef struct __CUDA_ALIGN__(2) __half {
+    unsigned short __x;
+} __half;
+#endif
+
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemm    (cublasHandle_t handle,
                                                       cublasOperation_t transa,
                                                       cublasOperation_t transb,
@@ -3948,7 +3954,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemm    (cublasHandle_t handle,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-#endif
+
 /* IO in FP16/FP32, computation in float */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgemmEx  (cublasHandle_t handle,
                                                       cublasOperation_t transa,
@@ -4674,7 +4680,8 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrmm_v2(cublasHandle_t handle, cubl
     abort();
 }
 /* BATCH GEMM */
-#if defined(__cplusplus)
+
+#warning FIXME: must generate C++ code to support this API.
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmBatched (cublasHandle_t handle,
                                                           cublasOperation_t transa,
                                                           cublasOperation_t transb,
@@ -4694,7 +4701,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmBatched (cublasHandle_t handle,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-#endif
+
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgemmBatched (cublasHandle_t handle,
                                                           cublasOperation_t transa,
                                                           cublasOperation_t transb,
@@ -24032,5 +24039,43 @@ __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph)
 __host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr)
 {
   ava_argument(devPtr) ava_opaque;
+}
+
+size_t CUDNNWINAPI
+cudnnGetVersion(void);
+
+size_t CUDNNWINAPI
+cudnnGetCudartVersion(void);
+
+cusparseStatus_t CUSPARSEAPI
+cusparseDcsrmm2(cusparseHandle_t         handle,
+                cusparseOperation_t      transA,
+                cusparseOperation_t      transB,
+                int                      m,
+                int                      n,
+                int                      k,
+                int                      nnz,
+                const double*            alpha,
+                const cusparseMatDescr_t descrA,
+                const double* csrSortedValA,
+                const int*    csrSortedRowPtrA,
+                const int*    csrSortedColIndA,
+                const double* B,
+                int           ldb,
+                const double* beta,
+                double*       C,
+                int           ldc)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
+}
+
+cufftResult CUFFTAPI cufftXtExec(cufftHandle plan,
+                                 void *input,
+                                 void *output,
+                                 int direction)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 
