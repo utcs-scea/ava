@@ -7,6 +7,7 @@
 #include <future>
 #include <iostream>
 #include <thread>
+#include <unistd.h>
 
 #include "flags.h"
 #include "manager_service.hpp"
@@ -16,6 +17,7 @@ using ava_manager::ManagerServiceServerBase;
 
 bool cfgWorkerPoolDisabled = true;
 uint32_t cfgWorkerPoolSize = 3;
+extern char** environ;
 
 class LegacyManager : public ManagerServiceServerBase {
  public:
@@ -38,6 +40,9 @@ class LegacyManager : public ManagerServiceServerBase {
 
     // Let API server use TCP channel
     environments.push_back("AVA_CHANNEL=TCP");
+    for (char **env = environ; *env != 0; env++) {
+        environments.push_back(*env);
+    }
 
     // Pass port to API server
     auto port = worker_port_base_ + worker_id_.fetch_add(1, std::memory_order_relaxed);
