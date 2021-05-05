@@ -97,6 +97,7 @@ target_link_libraries({api.soname}
   ${{GLIB2_LIBRARIES}}
   ${{Boost_LIBRARIES}}
   Threads::Threads
+  rt
   ${{Config++}}
 )
 target_compile_options({api.soname}

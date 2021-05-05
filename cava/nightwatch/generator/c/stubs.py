@@ -71,6 +71,7 @@ def function_implementation(f: Function) -> Union[str, Expr]:
             intptr_t __call_id = ava_get_call_id(&__ava_endpoint);
 
             #ifdef AVA_BENCHMARKING_MIGRATE
+            migration_barrier_wait(__call_id);
             struct timespec tp;
             clock_gettime(CLOCK_MONOTONIC, &tp);
             printf("--- [%9ld] @ %lld.%.9ld executing {f.name}\\n", __call_id,
