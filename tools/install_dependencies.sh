@@ -2,7 +2,7 @@
 
 if [[ $(lsb_release -rs) != "18.04" ]]; then
   echo "The support of $(lsb_release -ds) is untested. Continue (y/n)?"
-  read yn_value
+  read -r yn_value
   if [[ ${yn_value} != "y" ]]; then
     echo "Dependency installation cancelled"
     exit 0

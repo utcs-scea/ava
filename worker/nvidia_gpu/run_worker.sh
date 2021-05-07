@@ -6,4 +6,4 @@ if ! [ -f "./worker" ]; then
   cd ../../cava/cudart_nw/ && make R=1 && cd -
   ln -s ../../cava/cudart_nw/worker .
 fi
-sudo -E ./build/manager -f $1
+sudo -E ./build/manager -f "$1"
