@@ -20,6 +20,16 @@ do
       FAILED=1
     fi
   fi
+
+  # Check Python lint and format
+  if [[ $file =~ \.(py)$ ]]; then
+    if ! "$GIT_ROOT"/scripts/check_python_format.sh "$GIT_ROOT"/"$file"; then
+      FAILED=1
+    fi
+    if ! "$GIT_ROOT"/scripts/check_python_lint.sh "$GIT_ROOT"/"$file"; then
+      FAILED=1
+    fi
+  fi
 done
 
 if [ -n "$FAILED" ]; then
