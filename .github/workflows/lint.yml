@@ -1,0 +1,46 @@
+name: Linter
+
+on:
+  push:
+    branches:
+      - master
+      - 'fix/**'
+      - 'feature/**'
+    paths:
+      - '!cava/samples/**'
+  pull_request:
+    paths:
+      - '!cava/samples/**'
+
+jobs:
+  lint:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os:
+        - ubuntu-18.04
+        build_type:
+        - Release
+    steps:
+    - uses: actions/checkout@v2
+
+    ###
+    # Install platform-level dependencies (OS-specific)
+    ###
+    - name: Install lint dependencies
+      if: startsWith(matrix.os, 'ubuntu-')
+      run: |
+        sudo scripts/setup_lint_dependencies.sh
+
+    ###
+    # Check formatting
+    ###
+    - name: Check C++ formatting
+      run: scripts/check_cpp_format.sh .
+
+    - name: Check shell script formatting
+      run: scripts/check_sh_format.sh .
+    
+    - name: Check Python formatting
+      run: scripts/check_python_format.sh .
+      run: scripts/check_python_lint.sh .
