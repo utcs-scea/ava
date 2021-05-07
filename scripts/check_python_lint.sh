@@ -1,9 +1,9 @@
 #!/bin/bash
 
-set -eu
+GIT_ROOT=$(git rev-parse --show-toplevel)
+PYFMT="${PYFMT:-black} --line-length 120"
 
-# shellcheck disable=SC2046
-GIT_ROOT=$(readlink -f $(dirname "$0")/..)
+set -eu
 
 if [ $# -eq 0 ]; then
   echo "$(basename "$0") <paths>" >&2
@@ -14,14 +14,16 @@ LINT=${PYLINT:-pylint}
 ARGS="-j 0 --rcfile=${GIT_ROOT}/.pylintrc --suggestion-mode=n"
 ROOTS=("$@")
 FAILED=
-PRUNE_LIST="external deploy docs build notebook-home .git"
-TEST_DIRS="${GIT_ROOT}/tests/ ${GIT_ROOT}/demosite/katanaclient/tests/"
+PRUNE_PATHS="cava/nightwatch llvm"
+PRUNE_NAMES=".git build* nightwatch* third_party*"
+TEST_DIRS="${GIT_ROOT}/tests/"
 # lint warnings that are useless for tests since tests are run for ci anyway
 # eliminate unused-argument since it is triggered by pytest harnesses whose value is not needed.
 TEST_NOLINT="import-error no-name-in-module unused-argument"
 
 emit_prunes() {
-  for p in ${PRUNE_LIST}; do echo "-name ${p} -prune -o"; done | xargs
+  { for p in ${PRUNE_PATHS}; do echo "-path ${p} -prune -o -path ./${p} -prune -o"; done; \
+    for p in ${PRUNE_NAMES}; do echo "-name ${p} -prune -o"; done; } | xargs
 }
 
 emit_test_nolint() {
@@ -40,6 +42,8 @@ is_test() {
 
 TEST_ARGS="${ARGS} $(emit_test_nolint)"
 
+pushd "$GIT_ROOT"
+
 # shellcheck disable=SC2046
 while read -r -d '' filename; do
   if is_test "${filename}"
@@ -55,6 +59,8 @@ while read -r -d '' filename; do
     FAILED=1
   fi
 done < <(find "${ROOTS[@]}" $(emit_prunes) -name '*.py' -print0)
+
+popd
 
 if [ -n "${FAILED}" ]; then
   exit 1

@@ -1,8 +1,9 @@
 #!/bin/bash
 
-set -e
-
+GIT_ROOT=$(git rev-parse --show-toplevel)
 SHELLCHECK=${SHELLCHECK:-shellcheck}
+
+set -e
 
 if [ $# -eq 0 ]; then
   SCRIPT=$(basename "$0")
@@ -17,13 +18,15 @@ if [ "$1" == "-fix" ]; then
 fi
 
 ROOTS="$*"
-PRUNE_PATHS=${PRUNE_PATHS:-}
+PRUNE_PATHS="llvm test"
 PRUNE_NAMES="build*"
 
 emit_prunes() {
-  { for p in $PRUNE_PATHS; do echo "-path $p -prune -o"; done; \
+  { for p in $PRUNE_PATHS; do echo "-path $p -prune -o -path ./$p -prune -o"; done; \
     for p in $PRUNE_NAMES; do echo "-name $p -prune -o"; done; } | xargs
 }
+
+pushd "$GIT_ROOT"
 
 while read -r -d '' filename; do
   if [ -n "$FIX" ]; then
@@ -38,3 +41,5 @@ done < <(
     # shellcheck disable=SC2046
     find "$ROOTS" $(emit_prunes) -name '*.sh' -print0
 )
+
+popd

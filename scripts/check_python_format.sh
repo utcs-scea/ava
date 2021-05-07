@@ -1,6 +1,8 @@
 #!/bin/bash
 
+GIT_ROOT=$(git rev-parse --show-toplevel)
 PYFMT="${PYFMT:-black} --line-length 120"
+
 set -eu
 
 if [ $# -eq 0 ]; then
@@ -15,11 +17,15 @@ if [ "$1" == "-fix" ]; then
 fi
 
 ROOTS=("$@")
-PRUNE_LIST="notebook-home .git build*"
+PRUNE_PATHS="cava/nightwatch llvm"
+PRUNE_NAMES=".git build*"
 
 emit_prunes() {
-  for p in $PRUNE_LIST; do echo "-name $p -prune -o"; done | xargs
+  { for p in ${PRUNE_PATHS}; do echo "-path ${p} -prune -o -path ./${p} -prune -o"; done; \
+    for p in ${PRUNE_NAMES}; do echo "-name ${p} -prune -o"; done; } | xargs
 }
+
+pushd "$GIT_ROOT"
 
 # shellcheck disable=SC2046,SC2207,SC2038
 FILES=($(find "${ROOTS[@]}" $(emit_prunes) -name '*.py' -print | xargs))
@@ -29,3 +35,5 @@ if [ -n "${FIX}" ]; then
 else
   ${PYFMT} --check "${FILES[@]}"
 fi
+
+popd

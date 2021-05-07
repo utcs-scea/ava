@@ -1,6 +1,8 @@
 #!/bin/bash
 
+GIT_ROOT=$(git rev-parse --show-toplevel)
 CLANG_FORMAT=${CLANG_FORMAT:-clang-format}
+
 set -e
 
 if [ $# -eq 0 ]; then
@@ -16,13 +18,15 @@ fi
 
 ROOTS=("$@")
 FAILED=
-PRUNE_PATHS=${PRUNE_PATHS:-}
+PRUNE_PATHS="cava/samples llvm cava/*_nw"
 PRUNE_NAMES="build*"
 
 emit_prunes() {
-  { for p in ${PRUNE_PATHS}; do echo "-path ${p} -prune -o"; done; \
+  { for p in ${PRUNE_PATHS}; do echo "-path ${p} -prune -o -path ./${p} -prune -o"; done; \
     for p in ${PRUNE_NAMES}; do echo "-name ${p} -prune -o"; done; } | xargs
 }
+
+pushd "$GIT_ROOT"
 
 # shellcheck disable=SC2162,SC2046
 while read -d '' filename; do
@@ -42,6 +46,8 @@ done < <(find "${ROOTS[@]}" $(emit_prunes) -name '*.cpp' -print0 \
                                         -o -name '*.cuh' -print0 \
                                         -o -name '*.h' -print0 \
                                         -o -name '*.c' -print0)
+
+popd
 
 if [ -n "${FAILED}" ]; then
   exit 1
