@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Format and lint the staged changes, not any un-staged changes
+
+GIT_ROOT=$(git rev-parse --show-toplevel)
+FAILED=
+
+for file in $(git diff --diff-filter=d --cached --name-only)
+do
+  # Check C++ format
+  if [[ $file =~ \.(c|cpp|h|hpp|cc|cu|cuh)$ ]]; then
+    if ! "$GIT_ROOT"/scripts/check_cpp_format.sh "$GIT_ROOT"/"$file"; then
+      FAILED=1
+    fi
+  fi
+
+  # Check shell script format
+  if [[ $file =~ \.(sh|bash)$ ]]; then
+    if ! "$GIT_ROOT"/scripts/check_sh_format.sh "$GIT_ROOT"/"$file"; then
+      FAILED=1
+    fi
+  fi
+
+  # Check Python lint and format
+  if [[ $file =~ \.(py)$ ]]; then
+    if ! "$GIT_ROOT"/scripts/check_python_format.sh "$GIT_ROOT"/"$file"; then
+      FAILED=1
+    fi
+    if ! "$GIT_ROOT"/scripts/check_python_lint.sh "$GIT_ROOT"/"$file"; then
+      FAILED=1
+    fi
+  fi
+done
+
+if [ -n "$FAILED" ]; then
+  echo "Lint failed. Please check your code and try again."
+  exit 1
+fi
+echo "Lint passed."

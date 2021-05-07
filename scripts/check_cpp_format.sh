@@ -1,0 +1,54 @@
+#!/bin/bash
+
+GIT_ROOT=$(git rev-parse --show-toplevel)
+CLANG_FORMAT=${CLANG_FORMAT:-clang-format}
+
+set -e
+
+if [ $# -eq 0 ]; then
+  echo "$(basename "$0") [-fix] <paths>" >&2
+  exit 1
+fi
+
+FIX=
+if [ "$1" == "-fix" ]; then
+  FIX=1
+  shift 1
+fi
+
+ROOTS=("$@")
+FAILED=
+PRUNE_PATHS="cava/samples llvm cava/*_nw"
+PRUNE_NAMES="build*"
+
+emit_prunes() {
+  { for p in ${PRUNE_PATHS}; do echo "-path ${p} -prune -o -path ./${p} -prune -o"; done; \
+    for p in ${PRUNE_NAMES}; do echo "-name ${p} -prune -o"; done; } | xargs
+}
+
+pushd "$GIT_ROOT"
+
+# shellcheck disable=SC2162,SC2046
+while read -d '' filename; do
+  if [ -n "${FIX}" ]; then
+    echo "fixing ${filename}"
+    ${CLANG_FORMAT} -style=file -i "${filename}"
+  else
+    if ${CLANG_FORMAT} -style=file -output-replacements-xml "${filename}" | grep '<replacement ' > /dev/null; then
+      echo "${filename} NOT OK"
+      FAILED=1
+    fi
+  fi
+done < <(find "${ROOTS[@]}" $(emit_prunes) -name '*.cpp' -print0 \
+                                        -o -name '*.hpp' -print0 \
+                                        -o -name '*.cc' -print0 \
+                                        -o -name '*.cu' -print0 \
+                                        -o -name '*.cuh' -print0 \
+                                        -o -name '*.h' -print0 \
+                                        -o -name '*.c' -print0)
+
+popd
+
+if [ -n "${FAILED}" ]; then
+  exit 1
+fi
