@@ -3,7 +3,7 @@
 #include <glib.h>
 #include <stdint.h>
 
-#include "common/endpoint_lib.h"
+#include "common/endpoint_lib.hpp"
 #include "common/extensions/cmd_batching.h"
 
 GQueue *call_configuration_stack;

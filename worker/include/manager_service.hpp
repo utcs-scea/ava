@@ -2,6 +2,7 @@
 #define AVA_WORKER_MANAGER_SERVICE_H_
 
 #include <boost/asio.hpp>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>

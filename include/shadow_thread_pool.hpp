@@ -2,8 +2,8 @@
 // Created by amp on 4/2/19.
 //
 
-#ifndef AVA_SHADOWN_THREAD_POOL_H
-#define AVA_SHADOWN_THREAD_POOL_H
+#ifndef AVA_SHADOWN_THREAD_POOL_HPP
+#define AVA_SHADOWN_THREAD_POOL_HPP
 
 #include <stdint.h>
 
@@ -76,4 +76,4 @@ void shadow_thread_pool_dispatch(struct shadow_thread_pool_t *pool, struct comma
 }
 #endif
 
-#endif  // AVA_SHADOWN_THREAD_POOL_H
+#endif  // AVA_SHADOWN_THREAD_POOL_HPP

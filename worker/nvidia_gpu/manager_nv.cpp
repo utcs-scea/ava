@@ -24,12 +24,12 @@
 #include <thread>
 #include <vector>
 
-#include "common/cmd_channel_impl.h"
-#include "common/cmd_handler.h"
+#include "common/cmd_channel_impl.hpp"
+#include "common/cmd_handler.hpp"
 #include "common/guest_mem.h"
 #include "common/ioctl.h"
 #include "common/register.h"
-#include "common/socket.h"
+#include "common/socket.hpp"
 
 int listen_fd;
 std::atomic<int> worker_id(1);

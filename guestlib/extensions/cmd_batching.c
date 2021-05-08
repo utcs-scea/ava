@@ -4,11 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "common/cmd_channel.h"
-#include "common/debug.h"
-#include "common/endpoint_lib.h"
+#include "common/cmd_channel.hpp"
+#include "common/debug.hpp"
+#include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
-#include "common/shadow_thread_pool.h"
+#include "common/shadow_thread_pool.hpp"
 
 #define batch_array_index(array, index_) ((struct command_base *)g_ptr_array_index(array, index_))
 

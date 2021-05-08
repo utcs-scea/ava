@@ -46,7 +46,7 @@ def handle_command_function(api: API, calls: Iterable[Function], returns: Iterab
 
 def handle_command_header(api: API):
     return f"""
-#include "common/endpoint_lib.h"
+#include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
 
 // Must be included before {api.c_header_spelling}, so that API

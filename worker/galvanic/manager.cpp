@@ -25,9 +25,9 @@
 #include <thread>
 #include <vector>
 
-#include "common/cmd_channel_impl.h"
-#include "common/cmd_handler.h"
-#include "common/socket.h"
+#include "common/cmd_channel_impl.hpp"
+#include "common/cmd_handler.hpp"
+#include "common/socket.hpp"
 #include "daemon_service.grpc.fb.h"
 #include "daemon_service_generated.h"
 #include "manager_service.grpc.fb.h"

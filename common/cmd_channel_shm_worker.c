@@ -9,12 +9,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "common/cmd_channel_impl.h"
-#include "common/cmd_handler.h"
+#include "common/cmd_channel_impl.hpp"
+#include "common/cmd_handler.hpp"
 #include "common/devconf.h"
 #include "common/guest_mem.h"
 #include "common/ioctl.h"
-#include "common/socket.h"
+#include "common/socket.hpp"
 #include "worker.h"
 
 // TODO: This file should be merged with cmd_channel_shm.c!!!

@@ -1,22 +1,20 @@
 #include <assert.h>
 #include <fcntl.h>
-#include <linux/vm_sockets.h>
 #include <poll.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
-#include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "common/cmd_channel_impl.h"
-#include "common/cmd_handler.h"
-#include "common/debug.h"
+#include "common/cmd_channel_impl.hpp"
+#include "common/cmd_handler.hpp"
+#include "common/debug.hpp"
 #include "common/devconf.h"
 #include "common/guest_mem.h"
 #include "common/ioctl.h"
-#include "common/socket.h"
+#include "common/socket.hpp"
 #include "memory.h"
 
 // TODO: This file should be merged with cmd_channel_shm_worker.c!!!

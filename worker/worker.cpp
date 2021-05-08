@@ -12,13 +12,12 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "common/cmd_channel.h"
-#include "common/cmd_channel_impl.h"
-#include "common/cmd_handler.h"
+#include "common/cmd_channel_impl.hpp"
+#include "common/cmd_handler.hpp"
 #include "common/ioctl.h"
 #include "common/register.h"
 #include "common/singleton.hpp"
-#include "common/socket.h"
+#include "common/socket.hpp"
 #include "provision_gpu.h"
 
 struct command_channel *chan;

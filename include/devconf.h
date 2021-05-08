@@ -2,7 +2,7 @@
 #define __VGPU_DEVCONF_H__
 
 #include "ctype_util.h"
-#include "debug.h"
+#include "debug.hpp"
 
 /******************************************************************************
  * Measurements

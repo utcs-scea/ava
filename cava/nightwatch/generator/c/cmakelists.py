@@ -54,15 +54,15 @@ add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../worker/provision_gpu.cpp
   {' '.join(worker_srcs)}
   {api.c_worker_spelling}
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.c
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/socket.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.c
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_record.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_record.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_hv.c
-  ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
@@ -82,15 +82,15 @@ add_library({api.soname} SHARED
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm.c
   {' '.join(guestlib_srcs)}
   {api.c_library_spelling}
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.c
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/socket.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.c
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_record.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_record.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_hv.c
-  ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp

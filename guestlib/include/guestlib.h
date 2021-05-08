@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "common/cmd_channel.h"
+#include "common/cmd_channel.hpp"
 #include "migration.h"
 
 #ifdef __cplusplus

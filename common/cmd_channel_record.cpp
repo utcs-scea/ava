@@ -6,9 +6,8 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "common/cmd_channel.h"
-#include "common/cmd_channel_impl.h"
-#include "common/debug.h"
+#include "common/cmd_channel_impl.hpp"
+#include "common/debug.hpp"
 
 #if _FILE_OFFSET_BITS != 64
 #warning "command_channel_log will fail for logs larger than 2GB. Set _FILE_OFFSET_BITS=64 at build time to fix this."
@@ -241,18 +240,19 @@ void command_channel_log_free(struct command_channel *c) {
 //! Constructor
 
 static struct command_channel_vtable command_channel_log_vtable = {
-    .command_channel_new_command = command_channel_log_new_command,
-    .command_channel_buffer_size = command_channel_log_buffer_size,
-    .command_channel_attach_buffer = command_channel_log_attach_buffer,
-    .command_channel_send_command = command_channel_log_send_command,
-    .command_channel_transfer_command = (void (*)(struct command_channel *, const struct command_channel *,
-                                                  const struct command_base *))command_channel_log_transfer_command,
-    .command_channel_free = command_channel_log_free,
-    .command_channel_free_command = command_channel_load_free_command,
-    .command_channel_get_buffer = command_channel_load_get_buffer,
-    .command_channel_print_command = command_channel_simple_print_command,
-    .command_channel_receive_command = command_channel_load_next_command,
-    .command_channel_get_data_region = command_channel_load_get_data_region};
+  command_channel_buffer_size : command_channel_log_buffer_size,
+  command_channel_new_command : command_channel_log_new_command,
+  command_channel_attach_buffer : command_channel_log_attach_buffer,
+  command_channel_send_command : command_channel_log_send_command,
+  command_channel_transfer_command : (void (*)(struct command_channel *, const struct command_channel *,
+                                               const struct command_base *))command_channel_log_transfer_command,
+  command_channel_receive_command : command_channel_load_next_command,
+  command_channel_get_buffer : command_channel_load_get_buffer,
+  command_channel_get_data_region : command_channel_load_get_data_region,
+  command_channel_free_command : command_channel_load_free_command,
+  command_channel_free : command_channel_log_free,
+  command_channel_print_command : command_channel_simple_print_command
+};
 
 struct command_channel_log *command_channel_log_new(int worker_port) {
   struct command_channel_log *chan = (struct command_channel_log *)malloc(sizeof(struct command_channel_log));

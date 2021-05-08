@@ -1,5 +1,5 @@
-#ifndef AVA_DEBUG_H_
-#define AVA_DEBUG_H_
+#ifndef AVA_COMMON_DEBUG_HPP_
+#define AVA_COMMON_DEBUG_HPP_
 
 #ifndef __KERNEL__
 #include <execinfo.h>
@@ -41,4 +41,4 @@ static inline void AVA_PRINT_STACK(void) {
 }
 #endif
 
-#endif  // AVA_DEBUG_H_
+#endif  // AVA_COMMON_DEBUG_HPP_

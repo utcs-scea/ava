@@ -1,6 +1,6 @@
 #include "common/extensions/cmd_batching.h"
 
-#include "common/debug.h"
+#include "common/debug.hpp"
 #include "common/linkage.h"
 
 struct command_batch *nw_global_cmd_batch = NULL;  // always NULL

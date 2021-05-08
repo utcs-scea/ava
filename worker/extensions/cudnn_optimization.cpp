@@ -3,7 +3,7 @@
 #include <glib.h>
 #include <stdint.h>
 
-#include "common/endpoint_lib.h"
+#include "common/endpoint_lib.hpp"
 
 GQueue *cudnn_handles;
 GQueue *cublas_handles;

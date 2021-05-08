@@ -5,9 +5,9 @@
 #include <iostream>
 #include <vector>
 
-#include "common/cmd_channel.h"
-#include "common/cmd_handler.h"
-#include "common/endpoint_lib.h"
+#include "common/cmd_channel.hpp"
+#include "common/cmd_handler.hpp"
+#include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
 #include "guest_config.h"
 #include "guestlib.h"

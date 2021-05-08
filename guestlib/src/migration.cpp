@@ -6,11 +6,11 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "common/cmd_channel_impl.h"
-#include "common/cmd_handler.h"
-#include "common/endpoint_lib.h"
+#include "common/cmd_channel_impl.hpp"
+#include "common/cmd_handler.hpp"
+#include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
-#include "common/shadow_thread_pool.h"
+#include "common/shadow_thread_pool.hpp"
 
 /**
  * Starts migration process for test.

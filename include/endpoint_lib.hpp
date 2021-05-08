@@ -1,5 +1,5 @@
-#ifndef __VGPU_ENDPOINT_LIB_H__
-#define __VGPU_ENDPOINT_LIB_H__
+#ifndef AVA_COMMON_ENDPOINT_LIB_HPP_
+#define AVA_COMMON_ENDPOINT_LIB_HPP_
 
 #include <assert.h>
 #include <stdint.h>
@@ -20,10 +20,10 @@ using namespace std;
 #include <string.h>
 #include <sys/time.h>
 
-#include "common/cmd_channel.h"
-#include "common/cmd_handler.h"
+#include "common/cmd_channel.hpp"
+#include "common/cmd_handler.hpp"
 #include "common/murmur3.h"
-#include "common/shadow_thread_pool.h"
+#include "common/shadow_thread_pool.hpp"
 #include "common/zcopy.h"
 
 #ifdef __cplusplus
@@ -473,4 +473,4 @@ void ava_shadow_buffer_free_coupled(struct ava_endpoint *endpoint, void *obj);
 }
 #endif
 
-#endif
+#endif  // AVA_COMMON_ENDPOINT_LIB_HPP_

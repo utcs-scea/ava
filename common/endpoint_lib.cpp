@@ -1,12 +1,13 @@
-#include "common/endpoint_lib.h"
+#include "common/endpoint_lib.hpp"
 
 #include <glib.h>
 #include <pthread.h>
-#include <stdatomic.h>
-#include <stdint.h>
 #include <stdlib.h>
 
-#include "common/shadow_thread_pool.h"
+#include <atomic>
+#include <cstdint>
+
+#include "common/shadow_thread_pool.hpp"
 
 struct ava_endpoint __ava_endpoint;
 
@@ -31,11 +32,11 @@ struct ava_replay_command_t {
 // TODO: These values should be inside the endpoint, but this makes the code for
 // handle_pool confused.
 static uintptr_t global_counter_tag = 0;
-static atomic_ulong global_counter = counter_count_min;
+static std::atomic<std::uint64_t> global_counter(counter_count_min);
 
 static inline void *next_id() {
   uintptr_t n;
-  while ((n = atomic_fetch_add(&global_counter, 1)) < counter_count_min)
+  while ((n = global_counter.fetch_add(1)) < counter_count_min)
     ;
   // Shift the id and add the tag.
   uintptr_t tmp = (n << counter_count_shift);
@@ -47,10 +48,10 @@ static inline void update_next_id(uintptr_t v) {
   v = (v >> counter_count_shift) + 1;
   // Remove the prefix to give the counter value
   v &= (~counter_count_prefix);
-  unsigned long old;
+  std::uint64_t old;
   do {
     old = global_counter;
-  } while (old < v && !atomic_compare_exchange_strong(&global_counter, &old, v));
+  } while (old < v && !global_counter.compare_exchange_strong(old, v));
 }
 
 // TODO: Perhaps expose this function to the spec as ava_is_handle, so
@@ -220,7 +221,7 @@ static void _ava_extract_traverse(gpointer root, struct ava_extraction_state_t *
   // Add the dependency to the overall set
   gboolean added = g_hash_table_add(state->dependencies, root);
   if (added) {
-    struct ava_metadata_base *metadata = g_hash_table_lookup(state->metadata_map, root);
+    struct ava_metadata_base *metadata = (struct ava_metadata_base *)g_hash_table_lookup(state->metadata_map, root);
     DEBUG_PRINT("root addr=%lx, id=%lx\n", (uintptr_t)root, (uintptr_t)g_hash_table_lookup(state->pool->to_id, root));
     if (metadata == NULL) return;
 
@@ -247,7 +248,7 @@ static void _ava_transfer_command(struct command_channel *output_chan, struct co
 }
 
 static void _ava_extract_explicit(gpointer obj, gpointer value, struct ava_extraction_state_t *state) {
-  struct ava_metadata_base *metadata = g_hash_table_lookup(state->metadata_map, obj);
+  struct ava_metadata_base *metadata = (struct ava_metadata_base *)g_hash_table_lookup(state->metadata_map, obj);
   if (metadata == NULL) return;
   if (!metadata->extract) return;
 
@@ -286,7 +287,7 @@ void ava_extract_objects(struct command_channel *output_chan, struct command_cha
   // Extract all unique commands from the array into destination
   size_t prev_call_offset = -1;
   for (size_t i = 0; i < offset_pairs->len; i++) {
-    const struct ava_offset_pair_t *pair = g_ptr_array_index(offset_pairs, i);
+    const struct ava_offset_pair_t *pair = (const struct ava_offset_pair_t *)g_ptr_array_index(offset_pairs, i);
     if (pair->a != prev_call_offset) {
       _ava_transfer_command(output_chan, log_chan, pair->a);
       _ava_transfer_command(output_chan, log_chan, pair->b);
@@ -347,7 +348,7 @@ void ava_extract_objects_in_pair(struct command_channel *output_chan, struct com
   // Extract all unique commands from the array into destination
   size_t prev_call_offset = -1;
   for (size_t i = 0; i < offset_pairs->len; i++) {
-    const struct ava_offset_pair_t *pair = g_ptr_array_index(offset_pairs, i);
+    const struct ava_offset_pair_t *pair = (const struct ava_offset_pair_t *)g_ptr_array_index(offset_pairs, i);
     if (pair->a != prev_call_offset) {
       DEBUG_PRINT("transfer log pair /offset=%lx/\n", pair->a);
       _ava_transfer_command_in_pair(output_chan, log_chan, pair->a, pair->b);
@@ -363,7 +364,7 @@ void ava_handle_replace_explicit_state(struct command_channel *chan, struct nw_h
                                        struct ava_replay_command_t *cmd) {
   assert(cmd->base.command_id == COMMAND_HANDLER_REPLACE_EXPLICIT_STATE);
   void *obj = nw_handle_pool_deref(handle_pool, cmd->id);
-  struct ava_metadata_base *metadata = g_hash_table_lookup(nw_global_metadata_map, obj);
+  struct ava_metadata_base *metadata = (struct ava_metadata_base *)g_hash_table_lookup(nw_global_metadata_map, obj);
   void *data = command_channel_get_buffer(chan, (struct command_base *)cmd, cmd->data);
   assert(metadata->replace);
   metadata->replace(obj, data, cmd->data_length);
@@ -386,7 +387,8 @@ struct ava_buffer_with_deallocator {
 };
 
 struct ava_buffer_with_deallocator *ava_buffer_with_deallocator_new(void (*deallocator)(void *), void *buffer) {
-  struct ava_buffer_with_deallocator *ret = malloc(sizeof(struct ava_buffer_with_deallocator));
+  struct ava_buffer_with_deallocator *ret =
+      (struct ava_buffer_with_deallocator *)malloc(sizeof(struct ava_buffer_with_deallocator));
   ret->buffer = buffer;
   ret->deallocator = deallocator;
   return ret;
@@ -438,12 +440,12 @@ struct ava_metadata_base *ava_internal_metadata(struct ava_endpoint *endpoint, c
 
 struct ava_metadata_base *ava_internal_metadata_no_create(struct ava_endpoint *endpoint, const void *ptr) {
   pthread_mutex_lock(&metadata_map_mutex);
-  struct ava_metadata_base *ret = g_hash_table_lookup(metadata_map, ptr);
+  struct ava_metadata_base *ret = (struct ava_metadata_base *)g_hash_table_lookup(metadata_map, ptr);
   pthread_mutex_unlock(&metadata_map_mutex);
   return ret;
 }
 
-intptr_t ava_get_call_id(struct ava_endpoint *endpoint) { return atomic_fetch_add(&endpoint->call_counter, 1); }
+intptr_t ava_get_call_id(struct ava_endpoint *endpoint) { return endpoint->call_counter.fetch_add(1); }
 
 void ava_add_call(struct ava_endpoint *endpoint, intptr_t id, void *ptr) {
   pthread_mutex_lock(&endpoint->call_map_mutex);
@@ -463,7 +465,8 @@ void *ava_remove_call(struct ava_endpoint *endpoint, intptr_t id) {
 
 static struct ava_coupled_record_t *ava_get_coupled_record_unlocked(struct ava_endpoint *endpoint,
                                                                     const void *coupled) {
-  struct ava_coupled_record_t *rec = g_hash_table_lookup(endpoint->managed_by_coupled_map, coupled);
+  struct ava_coupled_record_t *rec =
+      (struct ava_coupled_record_t *)g_hash_table_lookup(endpoint->managed_by_coupled_map, coupled);
   if (rec == NULL) {
     rec = ava_coupled_record_new();
     g_hash_table_insert(endpoint->managed_by_coupled_map, (void *)coupled, rec);
@@ -525,7 +528,8 @@ void ava_expunge_recorded_calls(struct ava_endpoint *endpoint, struct command_ch
   struct ava_metadata_base *__internal_metadata = ava_internal_metadata_unlocked(endpoint, handle);
   if (__internal_metadata->recorded_calls != NULL) {
     for (size_t i = 0; i < __internal_metadata->recorded_calls->len; i++) {
-      struct ava_offset_pair_t *pair = g_ptr_array_index(__internal_metadata->recorded_calls, i);
+      struct ava_offset_pair_t *pair =
+          (struct ava_offset_pair_t *)g_ptr_array_index(__internal_metadata->recorded_calls, i);
       command_channel_log_update_flags(log, pair->a, 1);
       command_channel_log_update_flags(log, pair->b, 1);
     }
@@ -576,7 +580,7 @@ void ava_endpoint_init(struct ava_endpoint *endpoint, size_t metadata_size, uint
       g_hash_table_new_full(nw_hash_pointer, g_direct_equal, NULL, (GDestroyNotify)ava_coupled_record_free);
   // endpoint->metadata_map = metadata_map_new();
   endpoint->call_map = metadata_map_new();
-  atomic_init(&endpoint->call_counter, 0);
+  endpoint->call_counter.store(0);
   pthread_mutex_init(&endpoint->managed_buffer_map_mutex, NULL);
   pthread_mutex_init(&endpoint->call_map_mutex, NULL);
 
@@ -656,7 +660,8 @@ void *ava_shadow_buffer_get_unlocked(struct ava_endpoint *endpoint, void *id, si
                                      void *lifetime_coupled, ava_allocator alloc, ava_deallocator dealloc) {
   assert(lifetime != AVA_CALL);
   assert(id != NULL);
-  struct ava_shadow_record_t *record = g_hash_table_lookup(endpoint->shadow_buffers.buffers_by_id, id);
+  struct ava_shadow_record_t *record =
+      (struct ava_shadow_record_t *)g_hash_table_lookup(endpoint->shadow_buffers.buffers_by_id, id);
   assert(record != NULL &&
          "Only call ava_shadow_buffer_get directly when the buffer is known to "
          "already exist.");
@@ -677,7 +682,7 @@ void *ava_shadow_buffer_get_unlocked(struct ava_endpoint *endpoint, void *id, si
 struct ava_shadow_record_t *ava_shadow_buffer_new_record_unlocked(struct ava_endpoint *endpoint, void *id, size_t size,
                                                                   void *local, ava_deallocator dealloc,
                                                                   struct ava_metadata_base *metadata) {
-  struct ava_shadow_record_t *record = malloc(sizeof(struct ava_shadow_record_t));
+  struct ava_shadow_record_t *record = (struct ava_shadow_record_t *)malloc(sizeof(struct ava_shadow_record_t));
   record->deallocator = dealloc;
   record->id = id;
   record->local = local;
@@ -709,7 +714,8 @@ void *ava_shadow_buffer_new_shadow_unlocked(struct ava_endpoint *endpoint, void 
 
   {
     // Check if the buffer already exists.
-    struct ava_shadow_record_t *record = g_hash_table_lookup(endpoint->shadow_buffers.buffers_by_id, id);
+    struct ava_shadow_record_t *record =
+        (struct ava_shadow_record_t *)g_hash_table_lookup(endpoint->shadow_buffers.buffers_by_id, id);
     if (record != NULL) {
       // TODO: Avoid additional lookup in ava_shadow_buffer_get_unlocked
       DEBUG_PRINT(
@@ -792,7 +798,7 @@ void *ava_shadow_buffer_attach_buffer(struct ava_endpoint *endpoint, struct comm
   // some larger space which is available to the command receiver.
   void *header_offset = command_channel_attach_buffer(chan, cmd, header, sizeof(struct ava_buffer_header_t));
   void *buffer_offset = command_channel_attach_buffer(chan, cmd, data_buffer, size);
-  assert(buffer_offset - header_offset == sizeof(struct ava_buffer_header_t));
+  assert((std::int64_t)buffer_offset - (std::int64_t)header_offset == sizeof(struct ava_buffer_header_t));
   (void)header_offset;
   return buffer_offset;
 }
@@ -819,7 +825,7 @@ void *ava_shadow_buffer_get_buffer(struct ava_endpoint *endpoint, struct command
                                    ava_deallocator dealloc) {
   assert(lifetime != AVA_CALL);
   struct ava_buffer_header_t *header =
-      command_channel_get_buffer(chan, cmd, offset - sizeof(struct ava_buffer_header_t));
+      (struct ava_buffer_header_t *)command_channel_get_buffer(chan, cmd, offset - sizeof(struct ava_buffer_header_t));
   // void *data = ((void *) header) + sizeof(struct ava_buffer_header_t);
   if (size_out) *size_out = header->size;
   void *shadow =
