@@ -1,5 +1,5 @@
-#ifndef __VGPU_ENDPOINT_LIB_H__
-#define __VGPU_ENDPOINT_LIB_H__
+#ifndef AVA_COMMON_ENDPOINT_LIB_HPP_
+#define AVA_COMMON_ENDPOINT_LIB_HPP_
 
 #include <assert.h>
 #include <stdint.h>
@@ -473,4 +473,4 @@ void ava_shadow_buffer_free_coupled(struct ava_endpoint *endpoint, void *obj);
 }
 #endif
 
-#endif
+#endif  // AVA_COMMON_ENDPOINT_LIB_HPP_

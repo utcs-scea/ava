@@ -1,5 +1,5 @@
 #include "common/cmd_channel_impl.hpp"
-#include "common/endpoint_lib.h"
+#include "common/endpoint_lib.hpp"
 
 int nw_worker_id = 0;
 int nw_global_vm_id = 1;

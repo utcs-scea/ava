@@ -3,7 +3,7 @@
 #include <glib.h>
 #include <stdint.h>
 
-#include "common/endpoint_lib.h"
+#include "common/endpoint_lib.hpp"
 
 #ifdef AVA_PRELOAD_CUBIN
 GPtrArray *fatbin_handle_list;

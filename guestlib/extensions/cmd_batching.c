@@ -6,7 +6,7 @@
 
 #include "common/cmd_channel.hpp"
 #include "common/debug.hpp"
-#include "common/endpoint_lib.h"
+#include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
 #include "common/shadow_thread_pool.hpp"
 

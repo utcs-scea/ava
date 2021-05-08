@@ -3,7 +3,7 @@
 #include <glib.h>
 #include <stdint.h>
 
-#include "common/endpoint_lib.h"
+#include "common/endpoint_lib.hpp"
 
 GQueue *convolution_descriptor_pool;
 GQueue *idle_convolution_descriptor_pool;
