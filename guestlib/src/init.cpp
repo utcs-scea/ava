@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "common/cmd_channel.hpp"
-#include "common/cmd_handler.h"
+#include "common/cmd_handler.hpp"
 #include "common/endpoint_lib.h"
 #include "common/linkage.h"
 #include "guest_config.h"

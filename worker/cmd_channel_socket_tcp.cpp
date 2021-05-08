@@ -9,8 +9,8 @@
 
 #include "common/cmd_channel_impl.hpp"
 #include "common/cmd_channel_socket_utilities.hpp"
-#include "common/cmd_handler.h"
-#include "common/debug.h"
+#include "common/cmd_handler.hpp"
+#include "common/debug.hpp"
 #include "manager_service.proto.h"
 #include "worker.h"
 

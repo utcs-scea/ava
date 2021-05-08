@@ -1,5 +1,5 @@
-#ifndef __VGPU_CMD_HANDLER_H__
-#define __VGPU_CMD_HANDLER_H__
+#ifndef AVA_COMMON_CMD_HANDLER_HPP_
+#define AVA_COMMON_CMD_HANDLER_HPP_
 
 #ifndef __KERNEL__
 
@@ -128,4 +128,4 @@ struct ava_replay_command_pair_t {
 }
 #endif
 
-#endif  // ndef __VGPU_CMD_HANDLER_H__
+#endif  // AVA_COMMON_CMD_HANDLER_HPP_

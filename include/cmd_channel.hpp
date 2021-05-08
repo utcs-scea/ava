@@ -8,7 +8,7 @@
 #include <stdint.h>
 #endif
 
-#include "common/socket.h"
+#include "common/socket.hpp"
 
 #ifdef __cplusplus
 #include <vector>

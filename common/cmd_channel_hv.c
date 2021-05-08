@@ -2,9 +2,9 @@
 #include <string.h>
 
 #include "common/cmd_channel.hpp"
-#include "common/cmd_handler.h"
+#include "common/cmd_handler.hpp"
 #include "common/devconf.h"
-#include "common/socket.h"
+#include "common/socket.hpp"
 
 struct command_channel_hv {
   int netlink_fd;

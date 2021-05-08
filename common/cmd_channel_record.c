@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 #include "common/cmd_channel_impl.hpp"
-#include "common/debug.h"
+#include "common/debug.hpp"
 
 #if _FILE_OFFSET_BITS != 64
 #warning "command_channel_log will fail for logs larger than 2GB. Set _FILE_OFFSET_BITS=64 at build time to fix this."

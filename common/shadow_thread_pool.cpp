@@ -7,8 +7,8 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "common/cmd_handler.h"
-#include "common/debug.h"
+#include "common/cmd_handler.hpp"
+#include "common/debug.hpp"
 #include "common/endpoint_lib.h"
 #include "common/linkage.h"
 

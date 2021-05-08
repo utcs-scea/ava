@@ -21,7 +21,7 @@ using namespace std;
 #include <sys/time.h>
 
 #include "common/cmd_channel.hpp"
-#include "common/cmd_handler.h"
+#include "common/cmd_handler.hpp"
 #include "common/murmur3.h"
 #include "common/shadow_thread_pool.hpp"
 #include "common/zcopy.h"

@@ -4,7 +4,7 @@
 #include "common/apis.h"
 #include "common/devconf.h"
 #include "common/ioctl.h"
-#include "common/socket.h"
+#include "common/socket.hpp"
 #include "common/task_queue.h"
 #include "common/valconfig.h"
 #include "dispatcher.h"

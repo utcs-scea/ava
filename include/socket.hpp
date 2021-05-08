@@ -1,5 +1,5 @@
-#ifndef __VGPU_COMMON_SOCKET_H__
-#define __VGPU_COMMON_SOCKET_H__
+#ifndef AVA_COMMON_SOCKET_HPP_
+#define AVA_COMMON_SOCKET_HPP_
 
 #ifdef __KERNEL__
 
@@ -102,4 +102,4 @@ int setsockopt_lowlatency(int fd);
 }
 #endif
 
-#endif
+#endif  // AVA_COMMON_SOCKET_HPP_
