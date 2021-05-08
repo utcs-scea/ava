@@ -1,15 +1,19 @@
-#!/usr/bin/sudo /bin/bash
+#!/bin/bash
 
 # Uncomment the option below to debug
 # set -x
 
-. `dirname $0`/environment
+# shellcheck disable=SC2046
+dir_name=$(dirname $(realpath "$0"))
 
-${DIR_SCRIPTS}/connect_hd $@
+# shellcheck disable=SC1091
+. "$dir_name"/environment
 
-cd ${DIR_KERNEL}/kbuild-linux-4.8
-make INSTALL_PATH=${VM_DISK}/boot install
-make INSTALL_MOD_PATH=${VM_DISK} modules_install
-cd ${DIR_CURRENT}
+"${DIR_SCRIPTS}"/connect_hd "$@"
 
-${DIR_SCRIPTS}/disconnect_hd
+cd "${DIR_KERNEL}"/kbuild-linux-4.8 || exit
+make INSTALL_PATH="${VM_DISK}"/boot install
+make INSTALL_MOD_PATH="${VM_DISK}" modules_install
+cd "${DIR_CURRENT}" || exit
+
+"${DIR_SCRIPTS}"/disconnect_hd
