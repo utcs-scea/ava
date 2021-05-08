@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GIT_ROOT=$(git rev-parse --show-toplevel)
-PYFMT="${PYFMT:-black} --line-length 120"
+PYFMT="${PYFMT:-black}"
 
 set -eu
 
