@@ -26,7 +26,7 @@ emit_prunes() {
     for p in ${PRUNE_NAMES}; do echo "-name ${p} -prune -o"; done; } | xargs
 }
 
-pushd "$GIT_ROOT"
+pushd "$GIT_ROOT" > /dev/null
 
 # shellcheck disable=SC2162,SC2046
 while read -d '' filename; do
@@ -47,7 +47,7 @@ done < <(find "${ROOTS[@]}" $(emit_prunes) -name '*.cpp' -print0 \
                                         -o -name '*.h' -print0 \
                                         -o -name '*.c' -print0)
 
-popd
+popd > /dev/null
 
 if [ -n "${FAILED}" ]; then
   exit 1
