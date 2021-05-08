@@ -8,9 +8,7 @@
 #if 1
 typedef struct Suite Suite;
 
-static Suite* suite_create(const char *name) {
-    return NULL;
-}
+static Suite *suite_create(const char *name) { return NULL; }
 
 #define START_TEST(test) void test() {
 #define END_TEST }
@@ -28,9 +26,14 @@ static Suite* suite_create(const char *name) {
 
 #define ck_assert_str_eq(x, y) assert(strcmp(x, y) == 0)
 
-#define START_TCASE(name) { const char * tcase_name = #name;
+#define START_TCASE(name) \
+  {                       \
+    const char *tcase_name = #name;
 
-#define ADD_TEST(name) printf("         %s:%s\n", tcase_name, #name); name(); printf("++++++++ %s:%s\n", tcase_name, #name)
+#define ADD_TEST(name)                           \
+  printf("         %s:%s\n", tcase_name, #name); \
+  name();                                        \
+  printf("++++++++ %s:%s\n", tcase_name, #name)
 
 #define END_TCASE }
 
@@ -38,14 +41,17 @@ static Suite* suite_create(const char *name) {
 
 #include <check.h>
 
-#define START_TCASE(name) {          \
+#define START_TCASE(name)            \
+  {                                  \
     TCase *tc = tcase_create(#name); \
     tcase_set_timeout(tc, 10);
 
 #define ADD_TEST(name) tcase_add_test(tc, name)
 
-#define END_TCASE suite_add_tcase(s, tc); }
+#define END_TCASE         \
+  suite_add_tcase(s, tc); \
+  }
 
 #endif
 
-#endif //AVA_TESTING_HACK_H
+#endif  // AVA_TESTING_HACK_H

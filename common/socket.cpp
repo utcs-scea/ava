@@ -11,16 +11,14 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-int init_netlink_socket(struct sockaddr_nl *src_addr,
-                        struct sockaddr_nl *dst_addr) {
+int init_netlink_socket(struct sockaddr_nl *src_addr, struct sockaddr_nl *dst_addr) {
   int sock_fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_USERSOCK);
   int set = 1;
   if (sock_fd < 0) {
     perror("ERROR opening netlink socket");
     exit(0);
   }
-  if (setsockopt(sock_fd, SOL_NETLINK, NETLINK_NO_ENOBUFS, &set, sizeof(int)) !=
-      0) {
+  if (setsockopt(sock_fd, SOL_NETLINK, NETLINK_NO_ENOBUFS, &set, sizeof(int)) != 0) {
     perror("ERROR setsockopt SOL_NETLINK");
   }
 
@@ -28,8 +26,7 @@ int init_netlink_socket(struct sockaddr_nl *src_addr,
   src_addr->nl_family = AF_NETLINK;
   src_addr->nl_pid = getpid();
   src_addr->nl_groups = 0;
-  if (bind(sock_fd, (struct sockaddr *)src_addr, sizeof(struct sockaddr_nl)) !=
-      0) {
+  if (bind(sock_fd, (struct sockaddr *)src_addr, sizeof(struct sockaddr_nl)) != 0) {
     perror("ERROR bind netlink socket");
     close(sock_fd);
     exit(0);
@@ -43,8 +40,7 @@ int init_netlink_socket(struct sockaddr_nl *src_addr,
   return sock_fd;
 }
 
-struct nlmsghdr *init_netlink_msg(struct sockaddr_nl *dst_addr,
-                                  struct msghdr *msg, size_t size) {
+struct nlmsghdr *init_netlink_msg(struct sockaddr_nl *dst_addr, struct msghdr *msg, size_t size) {
   struct nlmsghdr *nlh;
   struct iovec *iov;
 
@@ -118,8 +114,7 @@ int accept_vm_socket(int listen_fd, int *client_cid) {
     close(listen_fd);
     exit(0);
   }
-  printf("connection from cid %u port %u\n", sa_client.svm_cid,
-         sa_client.svm_port);
+  printf("connection from cid %u port %u\n", sa_client.svm_cid, sa_client.svm_port);
   if (client_cid) *client_cid = (int)sa_client.svm_cid;
 
   return client_fd;
@@ -142,11 +137,9 @@ int conn_vm_socket(int sockfd, struct sockaddr_vm *sa) {
   }
   */
 
-  while (num_tries < 5 &&
-         (ret = connect(sockfd, (struct sockaddr *)sa, sizeof(*sa))) < 0) {
+  while (num_tries < 5 && (ret = connect(sockfd, (struct sockaddr *)sa, sizeof(*sa))) < 0) {
     num_tries++;
-    fprintf(stderr, "errcode=%s, retry connection x%d...\n", strerror(errno),
-            num_tries);
+    fprintf(stderr, "errcode=%s, retry connection x%d...\n", strerror(errno), num_tries);
     usleep(100000);
   }
   return ret;
@@ -231,8 +224,7 @@ size_t recv_socket(int sockfd, void *buf, size_t size) {
   return size;
 }
 
-void parseServerAddress(const char *full_address, struct hostent **info,
-                        char *ip, int *port) {
+void parseServerAddress(const char *full_address, struct hostent **info, char *ip, int *port) {
   char *port_s = strchr((char *)full_address, ':');
   if (!port_s) {
     if (ip) sprintf(ip, "localhost");

@@ -3,11 +3,9 @@
 
 #include "common/cmd_channel.h"
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 void start_migration(struct command_channel *chan);
 void start_self_migration(struct command_channel *chan);
@@ -22,7 +20,6 @@ void start_self_migration(struct command_channel *chan);
  * to the target worker and transfers the command replay log.
  */
 void start_live_migration(struct command_channel *chan);
-
 
 #ifdef __cplusplus
 }

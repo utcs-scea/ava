@@ -1,8 +1,9 @@
 #include "common/extensions/cudnn_optimization.h"
-#include "common/endpoint_lib.h"
 
 #include <glib.h>
 #include <stdint.h>
+
+#include "common/endpoint_lib.h"
 
 GQueue *convolution_descriptor_pool;
 GQueue *idle_convolution_descriptor_pool;
@@ -60,8 +61,7 @@ int free_convolution_descriptor_pool(GQueue *pool) {
 
   if (g_queue_is_empty(pool)) return CUDNN_STATUS_SUCCESS;
 
-  desc = (cudnnConvolutionDescriptor_t *)malloc(
-      sizeof(cudnnConvolutionDescriptor_t) * pool->length);
+  desc = (cudnnConvolutionDescriptor_t *)malloc(sizeof(cudnnConvolutionDescriptor_t) * pool->length);
 
   while ((element = g_queue_pop_head(pool))) {
     desc[i++] = (cudnnConvolutionDescriptor_t)element;
@@ -77,8 +77,7 @@ int free_pooling_descriptor_pool(GQueue *pool) {
 
   if (g_queue_is_empty(pool)) return CUDNN_STATUS_SUCCESS;
 
-  desc = (cudnnPoolingDescriptor_t *)malloc(sizeof(cudnnPoolingDescriptor_t) *
-                                            pool->length);
+  desc = (cudnnPoolingDescriptor_t *)malloc(sizeof(cudnnPoolingDescriptor_t) * pool->length);
 
   while ((element = g_queue_pop_head(pool))) {
     desc[i++] = (cudnnPoolingDescriptor_t)element;
@@ -94,8 +93,7 @@ int free_tensor_descriptor_pool(GQueue *pool) {
 
   if (g_queue_is_empty(pool)) return CUDNN_STATUS_SUCCESS;
 
-  desc = (cudnnTensorDescriptor_t *)malloc(sizeof(cudnnTensorDescriptor_t) *
-                                           pool->length);
+  desc = (cudnnTensorDescriptor_t *)malloc(sizeof(cudnnTensorDescriptor_t) * pool->length);
 
   while ((element = g_queue_pop_head(pool))) {
     desc[i++] = (cudnnTensorDescriptor_t)element;
@@ -111,8 +109,7 @@ int free_filter_descriptor_pool(GQueue *pool) {
 
   if (g_queue_is_empty(pool)) return CUDNN_STATUS_SUCCESS;
 
-  desc = (cudnnFilterDescriptor_t *)malloc(sizeof(cudnnFilterDescriptor_t) *
-                                           pool->length);
+  desc = (cudnnFilterDescriptor_t *)malloc(sizeof(cudnnFilterDescriptor_t) * pool->length);
 
   while ((element = g_queue_pop_head(pool))) {
     desc[i++] = (cudnnFilterDescriptor_t)element;

@@ -1,3 +1,5 @@
+#include "worker.h"
+
 #include <errno.h>
 #include <execinfo.h>
 #include <fcntl.h>
@@ -6,10 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
 #include <time.h>
 #include <unistd.h>
-
-#include <sys/mman.h>
 
 #include "common/cmd_channel.h"
 #include "common/cmd_channel_impl.h"
@@ -19,10 +20,9 @@
 #include "common/singleton.hpp"
 #include "common/socket.h"
 #include "provision_gpu.h"
-#include "worker.h"
 
-struct command_channel* chan;
-struct command_channel* chan_hv = NULL;
+struct command_channel *chan;
+struct command_channel *chan_hv = NULL;
 extern int nw_global_vm_id;
 
 __sighandler_t original_sigint_handler = SIG_DFL;
@@ -30,7 +30,7 @@ __sighandler_t original_sigsegv_handler = SIG_DFL;
 __sighandler_t original_sigchld_handler = SIG_DFL;
 
 void sigint_handler(int signo) {
-  void* array[10];
+  void *array[10];
   size_t size;
   size = backtrace(array, 10);
   fprintf(stderr, "===== backtrace =====\n");
@@ -46,7 +46,7 @@ void sigint_handler(int signo) {
 }
 
 void sigsegv_handler(int signo) {
-  void* array[10];
+  void *array[10];
   size_t size;
   size = backtrace(array, 10);
   fprintf(stderr, "===== backtrace =====\n");
@@ -61,23 +61,17 @@ void sigsegv_handler(int signo) {
   raise(signo);
 }
 
-void nw_report_storage_resource_allocation(const char* const name,
-                                           ssize_t amount) {
-  if (chan_hv)
-    command_channel_hv_report_storage_resource_allocation(chan_hv, name,
-                                                          amount);
+void nw_report_storage_resource_allocation(const char *const name, ssize_t amount) {
+  if (chan_hv) command_channel_hv_report_storage_resource_allocation(chan_hv, name, amount);
 }
 
-void nw_report_throughput_resource_consumption(const char* const name,
-                                               ssize_t amount) {
-  if (chan_hv)
-    command_channel_hv_report_throughput_resource_consumption(chan_hv, name,
-                                                              amount);
+void nw_report_throughput_resource_consumption(const char *const name, ssize_t amount) {
+  if (chan_hv) command_channel_hv_report_throughput_resource_consumption(chan_hv, name, amount);
 }
 
-static struct command_channel* channel_create() { return chan; }
+static struct command_channel *channel_create() { return chan; }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   if (!(argc == 3 && !strcmp(argv[1], "migrate")) && (argc != 2)) {
     printf(
         "Usage: %s <listen_port>\n"
@@ -87,26 +81,23 @@ int main(int argc, char* argv[]) {
   }
 
   /* Read GPU provision information. */
-  char const* cuda_uuid_str = getenv("CUDA_VISIBLE_DEVICES");
+  char const *cuda_uuid_str = getenv("CUDA_VISIBLE_DEVICES");
   std::string cuda_uuid = cuda_uuid_str ? std::string(cuda_uuid_str) : "";
-  char const* gpu_uuid_str = getenv("AVA_GPU_UUID");
+  char const *gpu_uuid_str = getenv("AVA_GPU_UUID");
   std::string gpu_uuid = gpu_uuid_str ? std::string(gpu_uuid_str) : "";
-  char const* gpu_mem_str = getenv("AVA_GPU_MEMORY");
+  char const *gpu_mem_str = getenv("AVA_GPU_MEMORY");
   std::string gpu_mem = gpu_mem_str ? std::string(gpu_mem_str) : "";
   provision_gpu = new ProvisionGpu(cuda_uuid, gpu_uuid, gpu_mem);
 
   /* setup signal handler */
-  if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR)
-    printf("failed to catch SIGINT\n");
+  if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR) printf("failed to catch SIGINT\n");
 
-  if ((original_sigsegv_handler = signal(SIGSEGV, sigsegv_handler)) == SIG_ERR)
-    printf("failed to catch SIGSEGV\n");
+  if ((original_sigsegv_handler = signal(SIGSEGV, sigsegv_handler)) == SIG_ERR) printf("failed to catch SIGSEGV\n");
 
-  if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR)
-    printf("failed to ignore SIGCHLD\n");
+  if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR) printf("failed to ignore SIGCHLD\n");
 
   /* define arguments */
-  auto& setting = ApiServerSetting::instance();
+  auto &setting = ApiServerSetting::instance();
   nw_worker_id = 0;
   unsigned int listen_port;
 
@@ -115,8 +106,7 @@ int main(int argc, char* argv[]) {
     listen_port = (unsigned int)atoi(argv[2]);
     setting.set_listen_port(listen_port);
 
-    chan = (struct command_channel*)command_channel_socket_tcp_migration_new(
-        listen_port, 0);
+    chan = (struct command_channel *)command_channel_socket_tcp_migration_new(listen_port, 0);
     nw_record_command_channel = command_channel_log_new(listen_port);
 
     init_internal_command_handler();
@@ -155,7 +145,7 @@ int main(int argc, char* argv[]) {
   DEBUG_PRINT("[worker#%d] start polling tasks\n", listen_port);
   wait_for_command_handler();
   command_channel_free(chan);
-  command_channel_free((struct command_channel*)nw_record_command_channel);
+  command_channel_free((struct command_channel *)nw_record_command_channel);
   if (chan_hv) command_channel_hv_free(chan_hv);
 
   return 0;

@@ -1,4 +1,5 @@
 #include "argument_parser.hpp"
+
 #include <iostream>
 
 void ArgumentParser::init_and_parse_options() {

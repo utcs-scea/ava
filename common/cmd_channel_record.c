@@ -11,8 +11,7 @@
 #include "common/debug.h"
 
 #if _FILE_OFFSET_BITS != 64
-#warning \
-    "command_channel_log will fail for logs larger than 2GB. Set _FILE_OFFSET_BITS=64 at build time to fix this."
+#warning "command_channel_log will fail for logs larger than 2GB. Set _FILE_OFFSET_BITS=64 at build time to fix this."
 #endif
 
 struct command_channel_log {
@@ -34,10 +33,7 @@ struct command_private {
 
 //!-- Record APIs
 
-size_t command_channel_log_buffer_size(const struct command_channel *chan,
-                                       size_t size) {
-  return size;
-}
+size_t command_channel_log_buffer_size(const struct command_channel *chan, size_t size) { return size; }
 
 // TODO: Currently this implementation can only write to files because it uses
 // seek a lot.
@@ -56,19 +52,15 @@ size_t command_channel_log_buffer_size(const struct command_channel *chan,
  * to this command.
  * @return The new command.
  */
-struct command_base *command_channel_log_new_command(struct command_channel *c,
-                                                     size_t command_struct_size,
+struct command_base *command_channel_log_new_command(struct command_channel *c, size_t command_struct_size,
                                                      size_t data_region_size) {
   struct command_channel_log *chan = (struct command_channel_log *)c;
   off_t pos = lseek(chan->fd, 0, SEEK_END);  // Seek to end.
 
-  struct record_command_metadata metadata = {
-      command_struct_size + data_region_size, 0};
-  ssize_t ret =
-      write(chan->fd, &metadata, sizeof(struct record_command_metadata));
+  struct record_command_metadata metadata = {command_struct_size + data_region_size, 0};
+  ssize_t ret = write(chan->fd, &metadata, sizeof(struct record_command_metadata));
   if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno,
-            strerror(errno), __FILE__, __LINE__);
+    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
     exit(EXIT_FAILURE);
   }
 
@@ -82,8 +74,7 @@ struct command_base *command_channel_log_new_command(struct command_channel *c,
   cmd->data_region = (void *)command_struct_size;
   cmd->region_size = data_region_size;
   priv->command_start_offset = pos + sizeof(struct record_command_metadata);
-  priv->current_buffer_offset =
-      priv->command_start_offset + command_struct_size;
+  priv->current_buffer_offset = priv->command_start_offset + command_struct_size;
 
   return cmd;
 }
@@ -97,8 +88,7 @@ struct command_base *command_channel_log_new_command(struct command_channel *c,
  * @param size The size of buffer.
  * @return The ID of the attached buffer w.r.t. this command.
  */
-void *command_channel_log_attach_buffer(struct command_channel *c,
-                                        struct command_base *cmd, void *buffer,
+void *command_channel_log_attach_buffer(struct command_channel *c, struct command_base *cmd, void *buffer,
                                         size_t size) {
   struct command_channel_log *chan = (struct command_channel_log *)c;
   struct command_private *priv = (struct command_private *)cmd->reserved_area;
@@ -106,8 +96,7 @@ void *command_channel_log_attach_buffer(struct command_channel *c,
   assert(pos == priv->current_buffer_offset);
   ssize_t ret = write(chan->fd, buffer, size);
   if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno,
-            strerror(errno), __FILE__, __LINE__);
+    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
     exit(EXIT_FAILURE);
   }
   return (void *)(pos - priv->command_start_offset);
@@ -120,8 +109,7 @@ void *command_channel_log_attach_buffer(struct command_channel *c,
  * @param c The command_channel_log
  * @param cmd The command to write.
  */
-void command_channel_log_send_command(struct command_channel *c,
-                                      struct command_base *cmd) {
+void command_channel_log_send_command(struct command_channel *c, struct command_base *cmd) {
   struct command_channel_log *chan = (struct command_channel_log *)c;
   struct command_private *priv = (struct command_private *)cmd->reserved_area;
   off_t pos = lseek(chan->fd, priv->command_start_offset, SEEK_SET);
@@ -129,8 +117,7 @@ void command_channel_log_send_command(struct command_channel *c,
   (void)pos;
   ssize_t ret = write(chan->fd, cmd, cmd->command_size);
   if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno,
-            strerror(errno), __FILE__, __LINE__);
+    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
     exit(EXIT_FAILURE);
   }
   // Free the local copy of the command.
@@ -142,9 +129,8 @@ void command_channel_log_send_command(struct command_channel *c,
  * command format into socket command format.
  *
  */
-ssize_t command_channel_log_transfer_command(
-    struct command_channel_log *c, const struct command_channel *source,
-    const struct command_base *cmd) {
+ssize_t command_channel_log_transfer_command(struct command_channel_log *c, const struct command_channel *source,
+                                             const struct command_base *cmd) {
   struct command_channel_log *chan = (struct command_channel_log *)c;
   ssize_t pos = lseek(chan->fd, 0, SEEK_END);  // Seek to end.
   void *cmd_data_region = command_channel_get_data_region(source, cmd);
@@ -157,20 +143,17 @@ ssize_t command_channel_log_transfer_command(
   ssize_t ret;
   ret = write(chan->fd, &metadata, sizeof(struct record_command_metadata));
   if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno,
-            strerror(errno), __FILE__, __LINE__);
+    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
     exit(EXIT_FAILURE);
   }
   ret = write(chan->fd, cmd, cmd->command_size);
   if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno,
-            strerror(errno), __FILE__, __LINE__);
+    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
     exit(EXIT_FAILURE);
   }
   ret = write(chan->fd, cmd_data_region, cmd->region_size);
   if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno,
-            strerror(errno), __FILE__, __LINE__);
+    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
     exit(EXIT_FAILURE);
   }
 
@@ -182,16 +165,14 @@ ssize_t command_channel_log_transfer_command(
  * must be non-negative. This function is exposed only if the file
  * descriptor is seekable.
  */
-void command_channel_log_update_flags(struct command_channel_log *chan,
-                                      ssize_t offset, uint32_t flags) {
+void command_channel_log_update_flags(struct command_channel_log *chan, ssize_t offset, uint32_t flags) {
   assert(offset >= 0);
   off_t r = lseek(chan->fd, offset + sizeof(size_t), SEEK_SET);
   assert(r == offset + sizeof(size_t));
   (void)r;
   ssize_t ret = write(chan->fd, &flags, sizeof(flags));
   if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno,
-            strerror(errno), __FILE__, __LINE__);
+    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
     exit(EXIT_FAILURE);
   }
 }
@@ -203,22 +184,20 @@ void command_channel_log_update_flags(struct command_channel_log *chan,
  * offset value is negative, it continues from the last position. The
  * offset can be non-negative only if the file descriptor is seekable.
  */
-struct command_base *command_channel_log_load_command(
-    struct command_channel_log *chan, ssize_t offset, uint32_t *flags) {
+struct command_base *command_channel_log_load_command(struct command_channel_log *chan, ssize_t offset,
+                                                      uint32_t *flags) {
   struct record_command_metadata metadata;
   struct command_base *cmd;
 
   if (offset < 0) offset = chan->read_offset;
   lseek(chan->fd, offset, SEEK_SET);
 
-  ssize_t size =
-      read(chan->fd, &metadata, sizeof(struct record_command_metadata));
+  ssize_t size = read(chan->fd, &metadata, sizeof(struct record_command_metadata));
   if (size != sizeof(struct record_command_metadata)) return NULL;
   if (flags != NULL) {
     *flags = metadata.flags;
   }
-  chan->read_offset =
-      offset + metadata.size + sizeof(struct record_command_metadata);
+  chan->read_offset = offset + metadata.size + sizeof(struct record_command_metadata);
   cmd = (struct command_base *)malloc(metadata.size);
   // PERFORMANCE: If this read turns out to be huge and a problem we could mmap
   // instead.
@@ -231,33 +210,26 @@ struct command_base *command_channel_log_load_command(
   return cmd;
 }
 
-struct command_base *command_channel_load_next_command(
-    struct command_channel *chan) {
-  return command_channel_log_load_command((struct command_channel_log *)chan,
-                                          -1, NULL);
+struct command_base *command_channel_load_next_command(struct command_channel *chan) {
+  return command_channel_log_load_command((struct command_channel_log *)chan, -1, NULL);
 }
 
 /**
  * Free the loaded command.
  */
-void command_channel_load_free_command(struct command_channel *c,
-                                       struct command_base *cmd) {
-  free(cmd);
-}
+void command_channel_load_free_command(struct command_channel *c, struct command_base *cmd) { free(cmd); }
 
 /**
  * Translate a buffer_id in the recorded command into a data pointer.
  * The returned pointer will be valid until `command_channel_load_free_command`
  * is called on `cmd`.
  */
-void *command_channel_load_get_buffer(const struct command_channel *chan,
-                                      const struct command_base *cmd,
+void *command_channel_load_get_buffer(const struct command_channel *chan, const struct command_base *cmd,
                                       void *buffer_id) {
   return (void *)((uintptr_t)cmd + buffer_id);
 }
 
-void *command_channel_load_get_data_region(const struct command_channel *c,
-                                           const struct command_base *cmd) {
+void *command_channel_load_get_data_region(const struct command_channel *c, const struct command_base *cmd) {
   return (void *)((uintptr_t)cmd + cmd->command_size);
 }
 
@@ -273,9 +245,8 @@ static struct command_channel_vtable command_channel_log_vtable = {
     .command_channel_buffer_size = command_channel_log_buffer_size,
     .command_channel_attach_buffer = command_channel_log_attach_buffer,
     .command_channel_send_command = command_channel_log_send_command,
-    .command_channel_transfer_command = (void (*)(
-        struct command_channel *, const struct command_channel *,
-        const struct command_base *))command_channel_log_transfer_command,
+    .command_channel_transfer_command = (void (*)(struct command_channel *, const struct command_channel *,
+                                                  const struct command_base *))command_channel_log_transfer_command,
     .command_channel_free = command_channel_log_free,
     .command_channel_free_command = command_channel_load_free_command,
     .command_channel_get_buffer = command_channel_load_get_buffer,
@@ -284,10 +255,8 @@ static struct command_channel_vtable command_channel_log_vtable = {
     .command_channel_get_data_region = command_channel_load_get_data_region};
 
 struct command_channel_log *command_channel_log_new(int worker_port) {
-  struct command_channel_log *chan =
-      (struct command_channel_log *)malloc(sizeof(struct command_channel_log));
-  command_channel_preinitialize((struct command_channel *)chan,
-                                &command_channel_log_vtable);
+  struct command_channel_log *chan = (struct command_channel_log *)malloc(sizeof(struct command_channel_log));
+  command_channel_preinitialize((struct command_channel *)chan, &command_channel_log_vtable);
 
   chan->read_offset = 0;
 

@@ -11,4 +11,3 @@ void setupSignalHandlers();
 }  // namespace ava_manager
 
 #endif  // AVA_WORKER_SIGNAL_HANDLER_H_
-

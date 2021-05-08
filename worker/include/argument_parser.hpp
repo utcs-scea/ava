@@ -10,9 +10,7 @@ namespace po = boost::program_options;
 
 class ArgumentParser {
  public:
-  ArgumentParser(int argc, const char* argv[],
-                 std::string description = "Allow options")
-      : argc_(argc), argv_(argv) {
+  ArgumentParser(int argc, const char *argv[], std::string description = "Allow options") : argc_(argc), argv_(argv) {
     desc = std::make_shared<po::options_description>(description);
     init_essential_options();
   }
@@ -31,7 +29,7 @@ class ArgumentParser {
   std::shared_ptr<po::options_description> desc;
   po::variables_map vm;
   int argc_;
-  const char** argv_;
+  const char **argv_;
 
  public:
   // Parsed arguments.

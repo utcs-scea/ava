@@ -1,3 +1,5 @@
+#include "common/cmd_channel_socket_utilities.hpp"
+
 #include <assert.h>
 #include <errno.h>
 #include <netinet/tcp.h>
@@ -5,7 +7,6 @@
 #include <unistd.h>
 
 #include "common/cmd_channel_impl.h"
-#include "common/cmd_channel_socket_utilities.hpp"
 #include "common/cmd_handler.h"
 #include "common/debug.h"
 #include "common/devconf.h"
@@ -16,8 +17,7 @@ namespace chansocketutil {
 /**
  * Print a command for debugging.
  */
-void command_channel_socket_print_command(const struct command_channel *chan,
-                                          const struct command_base *cmd) {
+void command_channel_socket_print_command(const struct command_channel *chan, const struct command_base *cmd) {
   /*
   DEBUG_PRINT("struct command_base {\n"
               "  command_type=%ld\n"
@@ -59,10 +59,7 @@ void command_channel_socket_free(struct command_channel *c) {
  * to a cache line, so as to maintain the alignment of buffers when
  * they are concatinated into the data region.
  */
-size_t command_channel_socket_buffer_size(const struct command_channel *c,
-                                          size_t size) {
-  return size;
-}
+size_t command_channel_socket_buffer_size(const struct command_channel *c, size_t size) { return size; }
 
 /**
  * Allocate a new command struct with size `command_struct_size` and
@@ -71,12 +68,10 @@ size_t command_channel_socket_buffer_size(const struct command_channel *c,
  * `data_region_size` should be computed by adding up the result of
  * calls to `command_channel_buffer_size` on the same channel.
  */
-struct command_base *command_channel_socket_new_command(
-    struct command_channel *c, size_t command_struct_size,
-    size_t data_region_size) {
+struct command_base *command_channel_socket_new_command(struct command_channel *c, size_t command_struct_size,
+                                                        size_t data_region_size) {
   struct command_channel_socket *chan = (struct command_channel_socket *)c;
-  struct command_base *cmd =
-      (struct command_base *)malloc(command_struct_size + data_region_size);
+  struct command_base *cmd = (struct command_base *)malloc(command_struct_size + data_region_size);
   static_assert(sizeof(struct block_seeker) <= sizeof(cmd->reserved_area),
                 "command_base::reserved_area is not large enough.");
   struct block_seeker *seeker = (struct block_seeker *)cmd->reserved_area;
@@ -99,9 +94,8 @@ struct command_base *command_channel_socket_new_command(
  * The combined attached buffers must fit within the initially
  * provided `data_region_size` (to `command_channel_new_command`).
  */
-void *command_channel_socket_attach_buffer(struct command_channel *c,
-                                           struct command_base *cmd,
-                                           void *buffer, size_t size) {
+void *command_channel_socket_attach_buffer(struct command_channel *c, struct command_base *cmd, void *buffer,
+                                           size_t size) {
   assert(buffer && size != 0);
 
   struct block_seeker *seeker = (struct block_seeker *)cmd->reserved_area;
@@ -118,8 +112,7 @@ void *command_channel_socket_attach_buffer(struct command_channel *c,
  * This call is asynchronous and does not block for the command to
  * complete execution.
  */
-void command_channel_socket_send_command(struct command_channel *c,
-                                         struct command_base *cmd) {
+void command_channel_socket_send_command(struct command_channel *c, struct command_base *cmd) {
   struct command_channel_socket *chan = (struct command_channel_socket *)c;
   cmd->command_type = NW_NEW_INVOCATION;
 
@@ -132,9 +125,8 @@ void command_channel_socket_send_command(struct command_channel *c,
   free(cmd);
 }
 
-void command_channel_socket_transfer_command(
-    struct command_channel *c, const struct command_channel *source,
-    const struct command_base *cmd) {
+void command_channel_socket_transfer_command(struct command_channel *c, const struct command_channel *source,
+                                             const struct command_base *cmd) {
   struct command_channel_socket *chan = (struct command_channel_socket *)c;
   void *cmd_data_region = command_channel_get_data_region(source, cmd);
 
@@ -151,8 +143,7 @@ void command_channel_socket_transfer_command(
  * This call blocks waiting for a command to be sent along this
  * channel.
  */
-struct command_base *command_channel_socket_receive_command(
-    struct command_channel *c) {
+struct command_base *command_channel_socket_receive_command(struct command_channel *c) {
   struct command_channel_socket *chan = (struct command_channel_socket *)c;
   struct command_base cmd_base;
   struct command_base *cmd;
@@ -177,13 +168,11 @@ struct command_base *command_channel_socket_receive_command(
     pthread_mutex_lock(&chan->recv_mutex);
     memset(&cmd_base, 0, sizeof(struct command_base));
     recv_socket(chan->pfd.fd, &cmd_base, sizeof(struct command_base));
-    cmd = (struct command_base *)malloc(cmd_base.command_size +
-                                        cmd_base.region_size);
+    cmd = (struct command_base *)malloc(cmd_base.command_size + cmd_base.region_size);
     memcpy(cmd, &cmd_base, sizeof(struct command_base));
 
     recv_socket(chan->pfd.fd, (uint8_t *)cmd + sizeof(struct command_base),
-                cmd_base.command_size + cmd_base.region_size -
-                    sizeof(struct command_base));
+                cmd_base.command_size + cmd_base.region_size - sizeof(struct command_base));
     pthread_mutex_unlock(&chan->recv_mutex);
 
     command_channel_socket_print_command(c, cmd);
@@ -199,8 +188,7 @@ struct command_base *command_channel_socket_receive_command(
  * The returned pointer will be valid until
  * `command_channel_free_command` is called on `cmd`.
  */
-void *command_channel_socket_get_buffer(const struct command_channel *chan,
-                                        const struct command_base *cmd,
+void *command_channel_socket_get_buffer(const struct command_channel *chan, const struct command_base *cmd,
                                         void *buffer_id) {
   return (void *)((uintptr_t)cmd + buffer_id);
 }
@@ -209,17 +197,13 @@ void *command_channel_socket_get_buffer(const struct command_channel *chan,
  * Returns the pointer to data region. The returned pointer is mainly
  * used for data extraction for migration.
  */
-void *command_channel_socket_get_data_region(const struct command_channel *c,
-                                             const struct command_base *cmd) {
+void *command_channel_socket_get_data_region(const struct command_channel *c, const struct command_base *cmd) {
   return (void *)((uintptr_t)cmd + cmd->command_size);
 }
 
 /**
  * Free a command returned by `command_channel_receive_command`.
  */
-void command_channel_socket_free_command(struct command_channel *c,
-                                         struct command_base *cmd) {
-  free(cmd);
-}
+void command_channel_socket_free_command(struct command_channel *c, struct command_base *cmd) { free(cmd); }
 
 };  // namespace chansocketutil

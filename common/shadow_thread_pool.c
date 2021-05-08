@@ -3,8 +3,10 @@
 //
 
 #include "common/shadow_thread_pool.h"
+
 #include <assert.h>
 #include <stdio.h>
+
 #include "common/cmd_handler.h"
 #include "common/debug.h"
 #include "common/endpoint_lib.h"
@@ -30,8 +32,7 @@ struct shadow_thread_command_t {
 
 static void *shadow_thread_loop(void *arg);
 
-struct shadow_thread_t *shadow_thread_new(struct shadow_thread_pool_t *pool,
-                                          intptr_t ava_id) {
+struct shadow_thread_t *shadow_thread_new(struct shadow_thread_pool_t *pool, intptr_t ava_id) {
   assert(g_hash_table_lookup(pool->threads, (gpointer)ava_id) == NULL);
   DEBUG_PRINT("Creating shadow thread id = %lx\n", ava_id);
   struct shadow_thread_t *t = malloc(sizeof(struct shadow_thread_t));
@@ -51,8 +52,7 @@ struct shadow_thread_t *shadow_thread_self(struct shadow_thread_pool_t *pool) {
   struct shadow_thread_t *t = pthread_getspecific(pool->key);
   if (t == NULL) {
     t = malloc(sizeof(struct shadow_thread_t));
-    intptr_t ava_id = (intptr_t)
-        pthread_self();  // TODO: This may not work correctly on non-Linux
+    intptr_t ava_id = (intptr_t)pthread_self();  // TODO: This may not work correctly on non-Linux
     assert(g_hash_table_lookup(pool->threads, (gpointer)ava_id) == NULL);
     t->ava_id = ava_id;
     t->queue = g_async_queue_new_full(NULL);
@@ -73,8 +73,7 @@ void shadow_thread_free_from_thread(struct shadow_thread_t *t) {
   // (instead of shadow) thread. If we are solid, send a command to exit the
   // shadow.
   if (t->ava_id == t->thread) {
-    struct command_base *cmd = command_channel_new_command(
-        nw_global_command_channel, sizeof(struct command_base), 0);
+    struct command_base *cmd = command_channel_new_command(nw_global_command_channel, sizeof(struct command_base), 0);
     cmd->api_id = COMMAND_HANDLER_API;
     cmd->command_id = COMMAND_HANDLER_THREAD_EXIT;
     cmd->thread_id = t->ava_id;
@@ -91,12 +90,9 @@ void shadow_thread_free_from_thread(struct shadow_thread_t *t) {
 }
 
 struct shadow_thread_pool_t *shadow_thread_pool_new() {
-  struct shadow_thread_pool_t *pool =
-      malloc(sizeof(struct shadow_thread_pool_t));
-  pool->threads =
-      g_hash_table_new_full(nw_hash_pointer, g_direct_equal, NULL, NULL);
-  pthread_key_create(&pool->key,
-                     (void (*)(void *))shadow_thread_free_from_thread);
+  struct shadow_thread_pool_t *pool = malloc(sizeof(struct shadow_thread_pool_t));
+  pool->threads = g_hash_table_new_full(nw_hash_pointer, g_direct_equal, NULL, NULL);
+  pthread_key_create(&pool->key, (void (*)(void *))shadow_thread_free_from_thread);
   pthread_mutex_init(&pool->lock, NULL);
   return pool;
 }
@@ -114,8 +110,7 @@ int shadow_thread_handle_single_command(struct shadow_thread_pool_t *pool) {
   struct command_base *cmd = scmd->cmd;
   free(scmd);
 
-  if (cmd->api_id == COMMAND_HANDLER_API &&
-      cmd->command_id == COMMAND_HANDLER_THREAD_EXIT) {
+  if (cmd->api_id == COMMAND_HANDLER_API && cmd->command_id == COMMAND_HANDLER_THREAD_EXIT) {
     command_channel_free_command(chan, cmd);
     return 1;
   }
@@ -143,15 +138,12 @@ void shadow_thread_pool_free(struct shadow_thread_pool_t *pool) {
   free(pool);
 }
 
-void shadow_thread_pool_dispatch(struct shadow_thread_pool_t *pool,
-                                 struct command_channel *chan,
+void shadow_thread_pool_dispatch(struct shadow_thread_pool_t *pool, struct command_channel *chan,
                                  struct command_base *cmd) {
   pthread_mutex_lock(&pool->lock);
-  struct shadow_thread_t *t =
-      g_hash_table_lookup(pool->threads, (gpointer)cmd->thread_id);
+  struct shadow_thread_t *t = g_hash_table_lookup(pool->threads, (gpointer)cmd->thread_id);
   if (t == NULL) {
-    if (cmd->api_id == INTERNAL_API &&
-        cmd->command_id == COMMAND_HANDLER_THREAD_EXIT) {
+    if (cmd->api_id == INTERNAL_API && cmd->command_id == COMMAND_HANDLER_THREAD_EXIT) {
       // If a thread for which we have no shadow is exiting, just drop the
       // message.
       pthread_mutex_unlock(&pool->lock);
@@ -159,8 +151,7 @@ void shadow_thread_pool_dispatch(struct shadow_thread_pool_t *pool,
     }
     t = shadow_thread_new(pool, cmd->thread_id);
   }
-  struct shadow_thread_command_t *scmd =
-      malloc(sizeof(struct shadow_thread_command_t));
+  struct shadow_thread_command_t *scmd = malloc(sizeof(struct shadow_thread_command_t));
   scmd->chan = chan;
   scmd->cmd = cmd;
   g_async_queue_push(t->queue, scmd);
