@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[tool.black]
+line-length = 120
+multi_line_output = 3
+lines_after_imports = 2
+combine_as_imports = true
+force_grid_wrap = 0
+use_parentheses = true
+include_trailing_comma = true
+
+target-version = ['py36', 'py37', 'py38']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  | \.git
+  | \.build
+  | \.llvm
+  | tests
+)/
+'''
+
+[tool.isort]
+profile = "black"
+indent = '  '
