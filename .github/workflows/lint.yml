@@ -4,8 +4,11 @@ on:
   push:
     branches:
       - master
-      - 'fix/**'
-      - 'feature/**'
+      - r*.*
+      # - 'fix/**'
+      # - 'feature/**'
+    tags:
+      - r*.*
     paths-ignore:
       - 'cava/samples/**'
   pull_request:
