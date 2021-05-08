@@ -27,38 +27,36 @@ unsigned provision_gpu_get_gpu_count();
 #include <vector>
 
 class ProvisionGpu {
-public:
-  ProvisionGpu(std::string& cuda_uuid_list, std::string& uuid_list, std::string& mem_list);
-  ProvisionGpu(std::vector<std::string>& cuda_uuid_vector,
-               std::vector<std::string>& uuid_vector,
-               std::vector<uint64_t>& mem_vector);
+ public:
+  ProvisionGpu(std::string &cuda_uuid_list, std::string &uuid_list, std::string &mem_list);
+  ProvisionGpu(std::vector<std::string> &cuda_uuid_vector, std::vector<std::string> &uuid_vector,
+               std::vector<uint64_t> &mem_vector);
 
-  std::vector<uint64_t> ParseGpuMemoryList(std::string& mem_list);
-  std::vector<std::string> ParseGpuUuidList(std::string& uuid_list);
+  std::vector<uint64_t> ParseGpuMemoryList(std::string &mem_list);
+  std::vector<std::string> ParseGpuUuidList(std::string &uuid_list);
 
   uint64_t GetGpuTotalMemory(unsigned gpu_id);
   uint64_t GetGpuFreeMemory(unsigned gpu_id);
   int ConsumeGpuMemory(unsigned gpu_id, uint64_t size);
   void FreeGpuMemory(unsigned gpu_id, uint64_t size);
   unsigned GetGpuIndex(unsigned gpu_id);
-  unsigned GetCurrentGpuIndex();  /* Returns provisioned GPU index. */
+  unsigned GetCurrentGpuIndex(); /* Returns provisioned GPU index. */
   void SetCurrentGpuIndex(unsigned gpu_id);
   unsigned GetGpuCount();
 
-private:
-  void Init(std::vector<std::string>& cuda_uuid_vector,
-            std::vector<std::string>& uuid_vector,
-            std::vector<uint64_t>& mem_vector);
+ private:
+  void Init(std::vector<std::string> &cuda_uuid_vector, std::vector<std::string> &uuid_vector,
+            std::vector<uint64_t> &mem_vector);
   unsigned PerThreadCurrentGpuIndex(bool get, unsigned index = 0);
 
-  std::vector<unsigned> index_;        /* GPU ordinal */
+  std::vector<unsigned> index_; /* GPU ordinal */
   std::vector<std::string> uuid_;
   std::vector<uint64_t> memory_;
   std::vector<uint64_t> free_memory_;
   std::mutex free_memory_mtx_;
 };
 
-extern ProvisionGpu* provision_gpu;
+extern ProvisionGpu *provision_gpu;
 #endif
 
 #endif  // AVA_WORKER_INCLUDE_PROVISION_GPU_H_

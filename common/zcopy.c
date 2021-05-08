@@ -2,6 +2,8 @@
 // Created by amp on 8/7/19.
 //
 
+#include "common/zcopy.h"
+
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -15,7 +17,6 @@
 
 #include "common/devconf.h"
 #include "common/ioctl.h"
-#include "common/zcopy.h"
 
 struct ava_zcopy_region {
   int fd;
@@ -32,8 +33,7 @@ struct ava_zcopy_region {
   pthread_mutex_t lock;
 };
 
-#define ENCODED_PTR_OFFSET \
-  4096  // One page (not actually important as long as it is > 0)
+#define ENCODED_PTR_OFFSET 4096  // One page (not actually important as long as it is > 0)
 
 struct ava_zcopy_region *ava_zcopy_region_new_worker() {
   struct ava_zcopy_region *ret = malloc(sizeof(struct ava_zcopy_region));
@@ -56,8 +56,7 @@ struct ava_zcopy_region *ava_zcopy_region_new_worker() {
   }
 
   ret->size = VGPU_ZERO_COPY_SIZE;
-  ret->base = mmap(NULL, VGPU_ZERO_COPY_SIZE, PROT_READ | PROT_WRITE,
-                   MAP_SHARED, ret->fd, 0);
+  ret->base = mmap(NULL, VGPU_ZERO_COPY_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, ret->fd, 0);
   if (ret->base == MAP_FAILED) {
     DEBUG_PRINT("ava mmap VGPU_ZERO_COPY_SIZE failed\n");
     return NULL;
@@ -91,8 +90,7 @@ struct ava_zcopy_region *ava_zcopy_region_new_guest() {
   }
 
   r = ioctl(ret->fd, IOCTL_REQUEST_ZCOPY);
-  ret->base = mmap(NULL, VGPU_ZERO_COPY_SIZE, PROT_READ | PROT_WRITE,
-                   MAP_SHARED, ret->fd, 0);
+  ret->base = mmap(NULL, VGPU_ZERO_COPY_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, ret->fd, 0);
   if (r < 0 || ret->base == MAP_FAILED) {
     DEBUG_PRINT("ava mmap VGPU_ZERO_COPY_SIZE failed\n");
     return NULL;
@@ -117,8 +115,7 @@ void ava_zcopy_region_free_region(struct ava_zcopy_region *region) {
 }
 
 void *ava_zcopy_region_alloc(struct ava_zcopy_region *region, size_t size) {
-  assert(region != NULL &&
-         "The appropriate zero-copy driver may not be installed.");
+  assert(region != NULL && "The appropriate zero-copy driver may not be installed.");
   pthread_mutex_lock(&region->lock);
   // TODO: Align the allocated memory.
   void *ret = region->allocation_ptr;
@@ -134,8 +131,7 @@ void *ava_zcopy_region_alloc(struct ava_zcopy_region *region, size_t size) {
 }
 
 void ava_zcopy_region_free(struct ava_zcopy_region *region, void *ptr) {
-  assert(region != NULL &&
-         "The appropriate zero-copy driver may not be installed.");
+  assert(region != NULL && "The appropriate zero-copy driver may not be installed.");
   pthread_mutex_lock(&region->lock);
   // TODO: Implement deallocation. This will be complicated by the need for
   // potential coordination between the guest and worker allocating in the same
@@ -143,39 +139,30 @@ void ava_zcopy_region_free(struct ava_zcopy_region *region, void *ptr) {
   pthread_mutex_unlock(&region->lock);
 }
 
-uintptr_t ava_zcopy_region_get_physical_address(struct ava_zcopy_region *region,
-                                                const void *ptr) {
-  assert(region != NULL &&
-         "The appropriate zero-copy driver may not be installed.");
-  if (region->base == NULL ||
-      (ptr < region->base || ptr > region->base + region->size)) {
+uintptr_t ava_zcopy_region_get_physical_address(struct ava_zcopy_region *region, const void *ptr) {
+  assert(region != NULL && "The appropriate zero-copy driver may not be installed.");
+  if (region->base == NULL || (ptr < region->base || ptr > region->base + region->size)) {
     errno = EFAULT;
     return 0;
   }
   return (uintptr_t)(ptr - region->base) + region->physical_base;
 }
 
-void *ava_zcopy_region_encode_position_independent(
-    struct ava_zcopy_region *region, const void *ptr) {
-  assert(region != NULL &&
-         "The appropriate zero-copy driver may not be installed.");
+void *ava_zcopy_region_encode_position_independent(struct ava_zcopy_region *region, const void *ptr) {
+  assert(region != NULL && "The appropriate zero-copy driver may not be installed.");
   if (ptr == NULL) return NULL;
-  if (region->base == NULL ||
-      (ptr < region->base || ptr > region->base + region->size)) {
+  if (region->base == NULL || (ptr < region->base || ptr > region->base + region->size)) {
     errno = EFAULT;
     return 0;
   }
   // Add offset to avoid valid ptrs being encoded to NULL
   return (void *)(ptr - region->base) + ENCODED_PTR_OFFSET;
 }
-void *ava_zcopy_region_decode_position_independent(
-    struct ava_zcopy_region *region, const void *ptr) {
-  assert(region != NULL &&
-         "The appropriate zero-copy driver may not be installed.");
+void *ava_zcopy_region_decode_position_independent(struct ava_zcopy_region *region, const void *ptr) {
+  assert(region != NULL && "The appropriate zero-copy driver may not be installed.");
   if (ptr == NULL) return NULL;
   if (region->base == NULL ||
-      ((uintptr_t)ptr < ENCODED_PTR_OFFSET ||
-       (uintptr_t)ptr > ENCODED_PTR_OFFSET + region->size)) {
+      ((uintptr_t)ptr < ENCODED_PTR_OFFSET || (uintptr_t)ptr > ENCODED_PTR_OFFSET + region->size)) {
     errno = EFAULT;
     return 0;
   }

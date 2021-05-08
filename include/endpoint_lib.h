@@ -1,11 +1,11 @@
 #ifndef __VGPU_ENDPOINT_LIB_H__
 #define __VGPU_ENDPOINT_LIB_H__
 
-#include <stdio.h>
+#include <assert.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <assert.h>
 
 #ifdef __cplusplus
 #include <atomic>
@@ -17,13 +17,12 @@ using namespace std;
 #include <glib.h>
 #include <glib/ghash.h>
 #include <gmodule.h>
-
 #include <string.h>
 #include <sys/time.h>
 
-#include "common/murmur3.h"
 #include "common/cmd_channel.h"
 #include "common/cmd_handler.h"
+#include "common/murmur3.h"
 #include "common/shadow_thread_pool.h"
 #include "common/zcopy.h"
 
@@ -33,35 +32,34 @@ extern "C" {
 
 //// Utilities
 
-#define __ava_check_type(type, expr) ({ type __tmp = (expr); __tmp; })
+#define __ava_check_type(type, expr) \
+  ({                                 \
+    type __tmp = (expr);             \
+    __tmp;                           \
+  })
 
 struct nw_handle_pool;
 
-struct nw_handle_pool* nw_handle_pool_new();
+struct nw_handle_pool *nw_handle_pool_new();
 void nw_handle_pool_free(struct nw_handle_pool *pool);
-void* nw_handle_pool_insert(struct nw_handle_pool *pool,
-                            const void* handle);
-void* nw_handle_pool_lookup_or_insert(struct nw_handle_pool *pool,
-                                      const void* handle);
-GPtrArray * nw_handle_pool_get_live_handles(struct nw_handle_pool *pool);
-void* nw_handle_pool_deref(struct nw_handle_pool *pool,
-                           const void* id);
-void* nw_handle_pool_deref_and_remove(struct nw_handle_pool *pool,
-                                      const void* id);
-void nw_handle_pool_assign_handle(struct nw_handle_pool *pool, const void *id,
-                                  const void *handle);
+void *nw_handle_pool_insert(struct nw_handle_pool *pool, const void *handle);
+void *nw_handle_pool_lookup_or_insert(struct nw_handle_pool *pool, const void *handle);
+GPtrArray *nw_handle_pool_get_live_handles(struct nw_handle_pool *pool);
+void *nw_handle_pool_deref(struct nw_handle_pool *pool, const void *id);
+void *nw_handle_pool_deref_and_remove(struct nw_handle_pool *pool, const void *id);
+void nw_handle_pool_assign_handle(struct nw_handle_pool *pool, const void *id, const void *handle);
 
 gboolean nw_hash_table_remove_flipped(gconstpointer key, GHashTable *hash_table);
 
-gpointer nw_hash_table_steal_value(GHashTable *hash_table,
-                                   gconstpointer key);
+gpointer nw_hash_table_steal_value(GHashTable *hash_table, gconstpointer key);
 
 #ifdef NDEBUG
 #define abort_with_reason(reason) abort()
 #else
 #define abort_with_reason(reason) __assert_fail(reason, __FILE__, __LINE__, __FUNCTION__)
 #endif
-#define AVA_CHECK_RET(code) if (G_UNLIKELY(!(code))) abort_with_reason("Function returned failure: " __STRING(code))
+#define AVA_CHECK_RET(code) \
+  if (G_UNLIKELY(!(code))) abort_with_reason("Function returned failure: " __STRING(code))
 
 #ifndef AVA_RELEASE
 #define AVA_DEBUG_ASSERT(code) assert(code)
@@ -73,114 +71,91 @@ gpointer nw_hash_table_steal_value(GHashTable *hash_table,
 #define __PRAGMA(t) __INTERNAL_PRAGMA(t)
 
 /// A combined compile time warning and runtime abort_with_reason.
-#define ABORT_TODO(t) __PRAGMA(GCC warning __STRING(TODO: t)) abort_with_reason(__STRING(TODO: t))
+#define ABORT_TODO(t) __PRAGMA(GCC warning __STRING(TODO : t)) abort_with_reason(__STRING(TODO : t))
 
 /* Sentinel to tell worker there is a buffer to return data into. */
-#define HAS_OUT_BUFFER_SENTINEL ((void*)1)
+#define HAS_OUT_BUFFER_SENTINEL ((void *)1)
 
 /// Extract the explicit state of the object `o` and return it as a malloc'd buffer.
 /// The caller takes ownership of the buffer. The length of the buffer must be written to `*length`.
-typedef void* (*ava_extract_function)(void *obj, size_t *length);
+typedef void *(*ava_extract_function)(void *obj, size_t *length);
 
 /// Replace (reconstruct) the explicit state of the object `o` from data (which has length `length`).
-typedef void (*ava_replace_function)(void* obj, void* data, size_t length);
+typedef void (*ava_replace_function)(void *obj, void *data, size_t length);
 
 typedef void *(*ava_allocator)(size_t size);
 typedef void (*ava_deallocator)(void *ptr);
 
-
 //// Library functions/macros expected by metadata expressions
 
-enum ava_sync_mode_t {
-    NW_ASYNC = 0,
-    NW_SYNC,
-    NW_FLUSH
-};
+enum ava_sync_mode_t { NW_ASYNC = 0, NW_SYNC, NW_FLUSH };
 
-enum ava_transfer_t {
-    NW_NONE = 0,
-    NW_HANDLE,
-    NW_OPAQUE,
-    NW_BUFFER,
-    NW_CALLBACK,
-    NW_CALLBACK_REGISTRATION,
-    NW_FILE
-};
+enum ava_transfer_t { NW_NONE = 0, NW_HANDLE, NW_OPAQUE, NW_BUFFER, NW_CALLBACK, NW_CALLBACK_REGISTRATION, NW_FILE };
 
 enum ava_lifetime_t {
-    AVA_CALL = 0,
-    AVA_COUPLED,
-    AVA_STATIC,
-    AVA_MANUAL,
+  AVA_CALL = 0,
+  AVA_COUPLED,
+  AVA_STATIC,
+  AVA_MANUAL,
 };
-
 
 struct ava_metadata_base {
-    //! For handles and buffers
-    GPtrArray * /* ava_shadow_record_t* */ coupled_shadow_buffers;
-    struct ava_shadow_record_t *shadow;
+  //! For handles and buffers
+  GPtrArray * /* ava_shadow_record_t* */ coupled_shadow_buffers;
+  struct ava_shadow_record_t *shadow;
 
-    //! For handles (worker only)
-    ava_extract_function extract;
-    ava_replace_function replace;
-    GPtrArray * /* ava_offset_pair_t* */ recorded_calls;
-    GPtrArray * /* handle */ dependencies;
+  //! For handles (worker only)
+  ava_extract_function extract;
+  ava_replace_function replace;
+  GPtrArray * /* ava_offset_pair_t* */ recorded_calls;
+  GPtrArray * /* handle */ dependencies;
 
-    //! For buffers
-    ava_deallocator deallocator;
+  //! For buffers
+  ava_deallocator deallocator;
 };
-
 
 struct call_id_and_handle_t {
-    int call_id;
-    const void *handle;
+  int call_id;
+  const void *handle;
 };
 
-__attribute__ ((const))
-guint nw_hash_mix64variant13(gconstpointer ptr);
+__attribute__((const)) guint nw_hash_mix64variant13(gconstpointer ptr);
 
-__attribute__ ((pure))
-static inline guint nw_hash_struct(gconstpointer ptr, int size) {
-    guint ret;
-    MurmurHash3_x86_32(ptr, size, 0xfbcdabc7 + size, &ret);
-    return ret;
+__attribute__((pure)) static inline guint nw_hash_struct(gconstpointer ptr, int size) {
+  guint ret;
+  MurmurHash3_x86_32(ptr, size, 0xfbcdabc7 + size, &ret);
+  return ret;
 }
 
-__attribute__ ((pure))
-guint nw_hash_call_id_and_handle(gconstpointer ptr);
+__attribute__((pure)) guint nw_hash_call_id_and_handle(gconstpointer ptr);
 
-__attribute__ ((pure))
-gint nw_equal_call_id_and_handle(gconstpointer ptr1, gconstpointer ptr2);
+__attribute__((pure)) gint nw_equal_call_id_and_handle(gconstpointer ptr1, gconstpointer ptr2);
 
-__attribute__ ((const))
-static inline guint nw_hash_pointer(gconstpointer ptr) {
-    return nw_hash_mix64variant13(ptr);
-}
-
+__attribute__((const)) static inline guint nw_hash_pointer(gconstpointer ptr) { return nw_hash_mix64variant13(ptr); }
 
 struct ava_handle_pair_t {
-    void *a;
-    void *b;
+  void *a;
+  void *b;
 };
 
 struct ava_offset_pair_t {
-    size_t a;
-    size_t b;
+  size_t a;
+  size_t b;
 };
 
 static inline struct ava_offset_pair_t *ava_new_offset_pair(size_t a, size_t b) {
-    struct ava_offset_pair_t *ret = (struct ava_offset_pair_t *) malloc(sizeof(struct ava_offset_pair_t));
-    ret->a = a;
-    ret->b = b;
-    return ret;
+  struct ava_offset_pair_t *ret = (struct ava_offset_pair_t *)malloc(sizeof(struct ava_offset_pair_t));
+  ret->a = a;
+  ret->b = b;
+  return ret;
 }
 
 /// Create a new metadata map.
-GHashTable * metadata_map_new();
+GHashTable *metadata_map_new();
 
-extern struct nw_handle_pool* nw_global_handle_pool;
+extern struct nw_handle_pool *nw_global_handle_pool;
 extern struct shadow_thread_pool_t *nw_shadow_thread_pool;
-extern GHashTable* nw_global_metadata_map;
+extern GHashTable *nw_global_metadata_map;
 extern pthread_mutex_t nw_global_metadata_map_mutex;
 
 struct ava_replay_command_t;
@@ -191,7 +166,8 @@ struct ava_replay_command_t;
  * @param log_chan The log channel which has been used by the system.
  * @param to_extract The set of root objects to extract.
  */
-void ava_extract_objects(struct command_channel *output_chan, struct command_channel_log *log_chan, GPtrArray *to_extract);
+void ava_extract_objects(struct command_channel *output_chan, struct command_channel_log *log_chan,
+                         GPtrArray *to_extract);
 
 /**
  * Extract state from a set of objects, combine each pair into a large command and write it to output_chan.
@@ -199,14 +175,16 @@ void ava_extract_objects(struct command_channel *output_chan, struct command_cha
  * @param log_chan The log channel which has been used by the system.
  * @param to_extract The set of root objects to extract.
  */
-void ava_extract_objects_in_pair(struct command_channel *output_chan, struct command_channel_log *log_chan, GPtrArray *to_extract);
+void ava_extract_objects_in_pair(struct command_channel *output_chan, struct command_channel_log *log_chan,
+                                 GPtrArray *to_extract);
 
 /**
  * Execute the replacement based on cmd.
  * @param chan
  * @param cmd
  */
-void ava_handle_replace_explicit_state(struct command_channel *chan, struct nw_handle_pool *handle_pool, struct ava_replay_command_t *cmd);
+void ava_handle_replace_explicit_state(struct command_channel *chan, struct nw_handle_pool *handle_pool,
+                                       struct ava_replay_command_t *cmd);
 
 //! Custom allocator/deallocator handling
 struct ava_buffer_with_deallocator;
@@ -218,7 +196,7 @@ struct ava_buffer_with_deallocator;
  * @param buffer A pointer of some kind.
  * @return
  */
-struct ava_buffer_with_deallocator *ava_buffer_with_deallocator_new(void (*deallocator)(void*), void *buffer);
+struct ava_buffer_with_deallocator *ava_buffer_with_deallocator_new(void (*deallocator)(void *), void *buffer);
 
 /** Use the stored deallocator to free the buffer.
  *
@@ -232,8 +210,8 @@ void ava_buffer_with_deallocator_free(struct ava_buffer_with_deallocator *buffer
  * The representation of a callback closure. These are stored in endpoint where the callback will execute.
  */
 struct ava_callback_user_data {
-    void *userdata;
-    void *function_pointer;
+  void *userdata;
+  void *function_pointer;
 };
 
 //! The endpoint representation itself
@@ -242,9 +220,9 @@ struct ava_callback_user_data {
 #define metadata_map_mutex nw_global_metadata_map_mutex
 
 struct ava_shadow_buffer_pool {
-    pthread_mutex_t mutex;
-    GHashTable *buffers_by_id;
-    // The mapping by local is in the metadata_map
+  pthread_mutex_t mutex;
+  GHashTable *buffers_by_id;
+  // The mapping by local is in the metadata_map
 };
 
 /**
@@ -253,19 +231,19 @@ struct ava_shadow_buffer_pool {
  * Generated code does not access these fields directly. Instead it uses the functions below as "public methods".
  */
 struct ava_endpoint {
-    size_t metadata_size;
-    GHashTable *managed_buffer_map;
-    GHashTable *managed_by_coupled_map;
-    pthread_mutex_t managed_buffer_map_mutex;
-    // GHashTable* metadata_map;
-    // pthread_mutex_t metadata_map_mutex = PTHREAD_MUTEX_INITIALIZER;
-    GHashTable *call_map;
-    pthread_mutex_t call_map_mutex;
-    atomic_long call_counter;
-    struct ava_zcopy_region *zcopy_region;
-    struct ava_shadow_buffer_pool shadow_buffers;
+  size_t metadata_size;
+  GHashTable *managed_buffer_map;
+  GHashTable *managed_by_coupled_map;
+  pthread_mutex_t managed_buffer_map_mutex;
+  // GHashTable* metadata_map;
+  // pthread_mutex_t metadata_map_mutex = PTHREAD_MUTEX_INITIALIZER;
+  GHashTable *call_map;
+  pthread_mutex_t call_map_mutex;
+  atomic_long call_counter;
+  struct ava_zcopy_region *zcopy_region;
+  struct ava_shadow_buffer_pool shadow_buffers;
 #ifdef AVA_BENCHMARKING_MIGRATE
-    intptr_t migration_call_id;
+  intptr_t migration_call_id;
 #endif
 };
 
@@ -281,8 +259,7 @@ extern struct ava_endpoint __ava_endpoint;
  * @param p The handle with which that returned metadata is associated.
  * @return
  */
-__attribute__ ((pure))
-struct ava_metadata_base *ava_internal_metadata(struct ava_endpoint *endpoint, const void *p);
+__attribute__((pure)) struct ava_metadata_base *ava_internal_metadata(struct ava_endpoint *endpoint, const void *p);
 
 /**
  * Get the next call ID.
@@ -344,23 +321,18 @@ void *ava_static_alloc(struct ava_endpoint *endpoint, int cmd_id, size_t size);
  */
 void ava_coupled_free(struct ava_endpoint *endpoint, const void *coupled);
 
-
 __attribute_alloc_size__((2)) __attribute_malloc__ __attribute_used__
-static void *ava_endpoint_zerocopy_alloc(struct ava_endpoint *endpoint, size_t size)
-{
-    return ava_zcopy_region_alloc(endpoint->zcopy_region, size);
+    static void *ava_endpoint_zerocopy_alloc(struct ava_endpoint *endpoint, size_t size) {
+  return ava_zcopy_region_alloc(endpoint->zcopy_region, size);
 }
 
-__attribute_used__
-static void ava_endpoint_zerocopy_free(struct ava_endpoint *endpoint, void *ptr)
-{
-    ava_zcopy_region_free(endpoint->zcopy_region, ptr);
+__attribute_used__ static void ava_endpoint_zerocopy_free(struct ava_endpoint *endpoint, void *ptr) {
+  ava_zcopy_region_free(endpoint->zcopy_region, ptr);
 }
 
-__attribute_used__
-static uintptr_t ava_endpoint_zerocopy_get_physical_address(struct ava_endpoint *endpoint, void *ptr)
-{
-    return ava_zcopy_region_get_physical_address(endpoint->zcopy_region, ptr);
+__attribute_used__ static uintptr_t ava_endpoint_zerocopy_get_physical_address(struct ava_endpoint *endpoint,
+                                                                               void *ptr) {
+  return ava_zcopy_region_get_physical_address(endpoint->zcopy_region, ptr);
 }
 
 /**
@@ -394,15 +366,18 @@ void ava_add_dependency(struct ava_endpoint *endpoint, void *a, void *b);
  * @param extract
  * @param replace
  */
-void ava_assign_record_replay_functions(struct ava_endpoint *endpoint, const void *handle, ava_extract_function extract, ava_replace_function replace);
+void ava_assign_record_replay_functions(struct ava_endpoint *endpoint, const void *handle, ava_extract_function extract,
+                                        ava_replace_function replace);
 
 /**
  * Initialize an ava_endpoint.
  * @param endpoint
  * @param metadata_size The size of the metadata structure used by this endpoint.
- * @param counter_tag The tag placed in the low 4 bits of counters to make sure they are different between different ID generation scopes.
+ * @param counter_tag The tag placed in the low 4 bits of counters to make sure they are different between different ID
+ * generation scopes.
  */
-void ava_endpoint_init(struct ava_endpoint *endpoint, size_t metadata_size, uint8_t counter_tag, struct ava_zcopy_region*zcopy_region);
+void ava_endpoint_init(struct ava_endpoint *endpoint, size_t metadata_size, uint8_t counter_tag,
+                       struct ava_zcopy_region *zcopy_region);
 
 #define AVA_COUNTER_TAG_WORKER 1
 #define AVA_COUNTER_TAG_GUEST 2
@@ -413,45 +388,40 @@ void ava_endpoint_init(struct ava_endpoint *endpoint, size_t metadata_size, uint
  */
 void ava_endpoint_destroy(struct ava_endpoint *endpoint);
 
-
 //! Shadow buffer handling
 
 struct ava_buffer_header_t {
-    /**
-     * The buffer on the sender that provided this data. This is used as an ID
-     * to identify the shadow buffer.
-     */
-    void *id;
+  /**
+   * The buffer on the sender that provided this data. This is used as an ID
+   * to identify the shadow buffer.
+   */
+  void *id;
 
-    /**
-     * True (non-zero) if this buffer has real data. If this is False then there
-     * is no data attached to this buffer and the content can be undefined.
-     */
-    uint8_t has_data;
+  /**
+   * True (non-zero) if this buffer has real data. If this is False then there
+   * is no data attached to this buffer and the content can be undefined.
+   */
+  uint8_t has_data;
 
-    /**
-     * The size of the buffer. This is not strictly needed, but provides a very
-     * useful check to make sure size computations are consistent. It can be
-     * removed if the space this value takes up becomes an issue.
-     */
-    size_t size;
+  /**
+   * The size of the buffer. This is not strictly needed, but provides a very
+   * useful check to make sure size computations are consistent. It can be
+   * removed if the space this value takes up becomes an issue.
+   */
+  size_t size;
 };
 
-__attribute__ ((pure))
-static inline size_t ava_shadow_buffer_size(
-        struct ava_endpoint *endpoint, struct command_channel *chan, size_t size)
-{
-    return command_channel_buffer_size(chan, sizeof(struct ava_buffer_header_t)) +
-           command_channel_buffer_size(chan, size);
+__attribute__((pure)) static inline size_t ava_shadow_buffer_size(struct ava_endpoint *endpoint,
+                                                                  struct command_channel *chan, size_t size) {
+  return command_channel_buffer_size(chan, sizeof(struct ava_buffer_header_t)) +
+         command_channel_buffer_size(chan, size);
 }
 
-__attribute__ ((pure))
-static inline size_t ava_shadow_buffer_size_without_data(
-        struct ava_endpoint *endpoint, struct command_channel *chan, size_t size)
-{
-    return command_channel_buffer_size(chan, sizeof(struct ava_buffer_header_t));
+__attribute__((pure)) static inline size_t ava_shadow_buffer_size_without_data(struct ava_endpoint *endpoint,
+                                                                               struct command_channel *chan,
+                                                                               size_t size) {
+  return command_channel_buffer_size(chan, sizeof(struct ava_buffer_header_t));
 }
-
 
 /**
  * Attach a buffer to a command with all information need to make or update a shadow buffer.
@@ -467,11 +437,10 @@ static inline size_t ava_shadow_buffer_size_without_data(
  * @param header
  * @return
  */
-void *ava_shadow_buffer_attach_buffer(
-        struct ava_endpoint *endpoint, struct command_channel *chan, struct command_base *cmd,
-        const void *local, const void *data_buffer, size_t size,
-        enum ava_lifetime_t lifetime, ava_allocator alloc, ava_deallocator dealloc,
-        struct ava_buffer_header_t *header);
+void *ava_shadow_buffer_attach_buffer(struct ava_endpoint *endpoint, struct command_channel *chan,
+                                      struct command_base *cmd, const void *local, const void *data_buffer, size_t size,
+                                      enum ava_lifetime_t lifetime, ava_allocator alloc, ava_deallocator dealloc,
+                                      struct ava_buffer_header_t *header);
 
 /**
  * Pseudo-attach a buffer to a command with all the information needed to create or identify a shadow buffer.
@@ -487,18 +456,16 @@ void *ava_shadow_buffer_attach_buffer(
  * @param header
  * @return
  */
-void *ava_shadow_buffer_attach_buffer_without_data(
-        struct ava_endpoint *endpoint, struct command_channel *chan, struct command_base *cmd,
-        const void *local, const void *data_buffer, size_t size,
-        enum ava_lifetime_t lifetime,
-        ava_allocator alloc, ava_deallocator dealloc,
-        struct ava_buffer_header_t *header);
+void *ava_shadow_buffer_attach_buffer_without_data(struct ava_endpoint *endpoint, struct command_channel *chan,
+                                                   struct command_base *cmd, const void *local, const void *data_buffer,
+                                                   size_t size, enum ava_lifetime_t lifetime, ava_allocator alloc,
+                                                   ava_deallocator dealloc, struct ava_buffer_header_t *header);
 
-__attribute__ ((pure))
-void *ava_shadow_buffer_get_buffer(
-        struct ava_endpoint *endpoint, struct command_channel *chan, struct command_base *cmd,
-        void *offset, enum ava_lifetime_t lifetime, void *lifetime_coupled, size_t *size_out,
-        ava_allocator alloc, ava_deallocator dealloc);
+__attribute__((pure)) void *ava_shadow_buffer_get_buffer(struct ava_endpoint *endpoint, struct command_channel *chan,
+                                                         struct command_base *cmd, void *offset,
+                                                         enum ava_lifetime_t lifetime, void *lifetime_coupled,
+                                                         size_t *size_out, ava_allocator alloc,
+                                                         ava_deallocator dealloc);
 
 void ava_shadow_buffer_free_coupled(struct ava_endpoint *endpoint, void *obj);
 

@@ -1,9 +1,9 @@
+#include "signal_handler.h"
+
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
-
-#include "signal_handler.h"
 
 namespace ava_manager {
 
@@ -16,11 +16,9 @@ void sigint_handler(int signo) {
 }
 
 void setupSignalHandlers() {
-  if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR)
-    printf("failed to catch SIGINT\n");
+  if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR) printf("failed to catch SIGINT\n");
 
-  if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR)
-    printf("failed to ignore SIGCHLD\n");
+  if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR) printf("failed to ignore SIGCHLD\n");
 }
 
 }  // namespace ava_manager

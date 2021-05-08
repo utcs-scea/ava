@@ -7,9 +7,9 @@
 #ifndef AVA_EXTENSIONS_TF_OPTIMIZATION_H_
 #define AVA_EXTENSIONS_TF_OPTIMIZATION_H_
 
+#include <cublas_v2.h>
 #include <cuda.h>
 #include <cudnn.h>
-#include <cublas_v2.h>
 #include <glib.h>
 
 #include "cudnn_optimization.h"

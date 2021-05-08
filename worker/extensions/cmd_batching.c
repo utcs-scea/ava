@@ -1,8 +1,9 @@
-#include "common/debug.h"
 #include "common/extensions/cmd_batching.h"
+
+#include "common/debug.h"
 #include "common/linkage.h"
 
-struct command_batch *nw_global_cmd_batch = NULL; // always NULL
+struct command_batch *nw_global_cmd_batch = NULL;  // always NULL
 
 /**
  * API server side
@@ -16,22 +17,19 @@ struct command_batch *nw_global_cmd_batch = NULL; // always NULL
  * We use AvA to generate the wrapper for this function, named __do_batch_emit.
  * TODO: we need to consider and process return values.
  */
-EXPORTED_WEAKLY void __do_batch_execute(void *command_buffer, size_t total_buffer_size)
-{
-    off_t offset = 0;
-    struct command_base *cmd;
+EXPORTED_WEAKLY void __do_batch_execute(void *command_buffer, size_t total_buffer_size) {
+  off_t offset = 0;
+  struct command_base *cmd;
 
-    while (offset < total_buffer_size) {
-        cmd = (struct command_base *)(command_buffer + offset);
-        offset += cmd->command_size + cmd->region_size;
-        __handle_command_cudart_opt_single(NULL, NULL, NULL, cmd);
-    }
+  while (offset < total_buffer_size) {
+    cmd = (struct command_base *)(command_buffer + offset);
+    offset += cmd->command_size + cmd->region_size;
+    __handle_command_cudart_opt_single(NULL, NULL, NULL, cmd);
+  }
 }
 
-
-EXPORTED_WEAKLY void __do_batch_emit(void *command_buffer, size_t total_buffer_size)
-{
-    __do_batch_execute(command_buffer, total_buffer_size);
+EXPORTED_WEAKLY void __do_batch_emit(void *command_buffer, size_t total_buffer_size) {
+  __do_batch_execute(command_buffer, total_buffer_size);
 }
 
 /**
@@ -45,39 +43,33 @@ EXPORTED_WEAKLY void __do_batch_emit(void *command_buffer, size_t total_buffer_s
  * called with only @cmd parameter to execute the command.
  */
 EXPORTED_WEAKLY void __handle_command_cudart_opt_single(struct command_channel *chan,
-        struct nw_handle_pool *handle_pool, struct command_channel *log,
-        const struct command_base *cmd)
-{
-    static struct command_channel *__chan = NULL;
-    static struct nw_handle_pool *__handle_pool = NULL;
-    static struct command_channel *__log = NULL;
+                                                        struct nw_handle_pool *handle_pool, struct command_channel *log,
+                                                        const struct command_base *cmd) {
+  static struct command_channel *__chan = NULL;
+  static struct nw_handle_pool *__handle_pool = NULL;
+  static struct command_channel *__log = NULL;
 
-    if (chan) {
-        __chan = chan;
-        __handle_pool = handle_pool;
-        __log = log;
-    }
+  if (chan) {
+    __chan = chan;
+    __handle_pool = handle_pool;
+    __log = log;
+  }
 
-    if (cmd) {
-        assert(__chan && "Command channel has not been set");
+  if (cmd) {
+    assert(__chan && "Command channel has not been set");
 #ifdef AVA_DEBUG
-        if (__print_command_onnx_opt)
-            __print_command_onnx_opt(stderr, __chan, cmd);
-        else if (__print_command_tf_opt)
-            __print_command_tf_opt(stderr, __chan, cmd);
+    if (__print_command_onnx_opt)
+      __print_command_onnx_opt(stderr, __chan, cmd);
+    else if (__print_command_tf_opt)
+      __print_command_tf_opt(stderr, __chan, cmd);
 #endif
-        if (__handle_command_onnx_opt)
-            __handle_command_onnx_opt(__chan, __handle_pool, __log, cmd);
-        else if (__handle_command_tf_opt)
-            __handle_command_tf_opt(__chan, __handle_pool, __log, cmd);
-    }
+    if (__handle_command_onnx_opt)
+      __handle_command_onnx_opt(__chan, __handle_pool, __log, cmd);
+    else if (__handle_command_tf_opt)
+      __handle_command_tf_opt(__chan, __handle_pool, __log, cmd);
+  }
 }
 
-EXPORTED_WEAKLY struct command_batch *cmd_batch_thread_init(void)
-{
-    return NULL;
-}
+EXPORTED_WEAKLY struct command_batch *cmd_batch_thread_init(void) { return NULL; }
 
-EXPORTED_WEAKLY void cmd_batch_thread_fini(struct command_batch *cmd_batch)
-{
-}
+EXPORTED_WEAKLY void cmd_batch_thread_fini(struct command_batch *cmd_batch) {}

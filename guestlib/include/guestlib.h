@@ -6,7 +6,6 @@
 #include "common/cmd_channel.h"
 #include "migration.h"
 
-
 #ifdef __cplusplus
 #include <vector>
 
@@ -19,7 +18,7 @@ void nw_destroy_guestlib(void);
 #ifdef __cplusplus
 }
 
-std::vector<struct command_channel*> command_channel_socket_tcp_guest_new();
+std::vector<struct command_channel *> command_channel_socket_tcp_guest_new();
 #endif
 
 #endif

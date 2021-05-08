@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <assert.h>
+#include <stdlib.h>
 
 //////// Internal Utilities
 #define __CONCATENATE_DETAIL(x, y) x##y
@@ -15,11 +15,10 @@
 #define __AVA_ANNOTATE_STMT(name, value) __AVA_ANNOTATE_STMT_TYPED(typeof(value), name, value)
 #define __AVA_ANNOTATE_FLAG(name) __AVA_ANNOTATE_STMT_TYPED(int, name, 1)
 
-
 struct ava_throughput_resource_t;
-typedef struct ava_throughput_resource_t* ava_throughput_resource;
+typedef struct ava_throughput_resource_t *ava_throughput_resource;
 struct ava_storage_resource_t;
-typedef struct ava_storage_resource_t* ava_storage_resource;
+typedef struct ava_storage_resource_t *ava_storage_resource;
 
 #define __AVA__ 1
 #define __CAVA__ 1
@@ -30,56 +29,54 @@ typedef struct ava_storage_resource_t* ava_storage_resource;
 
 /// Apply annotations to the elements of the argument. This can be
 /// nested to apply to elements of elements.
-#define ava_element if(__AVA_NAME(element_block))
+#define ava_element if (__AVA_NAME(element_block))
 int __AVA_NAME(element_block) = 1;
 
 /// Apply annotations to a specific field of the current value.
-#define ava_field(name) int __AVA_NAME(__CONCATENATE(field_block_, name)) = 1; \
-                        if(__AVA_NAME(__CONCATENATE(field_block_, name)))
+#define ava_field(name)                                  \
+  int __AVA_NAME(__CONCATENATE(field_block_, name)) = 1; \
+  if (__AVA_NAME(__CONCATENATE(field_block_, name)))
 
 /// Apply annotations to a specific argument of a function.
-#define ava_argument(arg) if(__AVA_NAME(argument_block) && arg)
+#define ava_argument(arg) if (__AVA_NAME(argument_block) && arg)
 int __AVA_NAME(argument_block) = 1;
 
 /// Apply annotations to the return value of a function.
-#define ava_return_value if(__AVA_NAME(return_value_block))
+#define ava_return_value if (__AVA_NAME(return_value_block))
 int __AVA_NAME(return_value_block) = 1;
-
 
 extern unsigned long int ava_index;
 
 /// Provide a return value which specifies success for a given type.
 #define ava_success(v) __AVA_ANNOTATE_STMT(success, v)
 
-// TODO: failure? There could be multiple kinds of failure. It's not clear how to represent this. When will failure need to be forged?
-// I think failure may need to be handled by code in the bodies of functions. Simply by returning the appropriate value.
+// TODO: failure? There could be multiple kinds of failure. It's not clear how to represent this. When will failure need
+// to be forged? I think failure may need to be handled by code in the bodies of functions. Simply by returning the
+// appropriate value.
 
 enum ava_transfer_t {
-    NW_NONE=0,
-    NW_HANDLE,
-    NW_OPAQUE,
-    NW_BUFFER,
-    NW_CALLBACK,
-    NW_CALLBACK_REGISTRATION,
-    NW_FILE,
-    NW_ZEROCOPY_BUFFER
+  NW_NONE = 0,
+  NW_HANDLE,
+  NW_OPAQUE,
+  NW_BUFFER,
+  NW_CALLBACK,
+  NW_CALLBACK_REGISTRATION,
+  NW_FILE,
+  NW_ZEROCOPY_BUFFER
 };
 
-enum ava_lifetime_t {
-    AVA_CALL=0,
-    AVA_COUPLED,
-    AVA_STATIC,
-    AVA_MANUAL
-};
+enum ava_lifetime_t { AVA_CALL = 0, AVA_COUPLED, AVA_STATIC, AVA_MANUAL };
 
 typedef void *(*ava_buffer_allocator)(size_t size);
 typedef void (*ava_buffer_deallocator)(void *ptr);
 
 /// Specify special allocation and deallocation (free) functions to be used on the worker. The functions may be API
 /// functions or utility functions (see ava_utility).
-#define ava_buffer_allocator(allocator, deallocator)  ({ \
-        __AVA_ANNOTATE_STMT_TYPED(ava_buffer_allocator, buffer_allocator, allocator); \
-        __AVA_ANNOTATE_STMT_TYPED(ava_buffer_deallocator, buffer_deallocator, deallocator); })
+#define ava_buffer_allocator(allocator, deallocator)                                    \
+  ({                                                                                    \
+    __AVA_ANNOTATE_STMT_TYPED(ava_buffer_allocator, buffer_allocator, allocator);       \
+    __AVA_ANNOTATE_STMT_TYPED(ava_buffer_deallocator, buffer_deallocator, deallocator); \
+  })
 
 /// The value is a string which identifies a file. The file will be
 /// copied to the target and the filename replaced with the actual
@@ -106,19 +103,22 @@ typedef void (*ava_buffer_deallocator)(void *ptr);
 /// is an element of the original type provided in the function prototype. Type
 /// casts do not affect the buffer size, so you must specify all the buffer sizes
 /// using `sizeof(T)` if the original argument is `void*` but has been cast to `T*`.
-#define ava_buffer(len) ({                          \
-            __AVA_ANNOTATE_STMT_TYPED(enum ava_transfer_t, transfer, NW_BUFFER); \
-            __AVA_ANNOTATE_STMT_TYPED(unsigned long int, buffer, len); \
-        })
+#define ava_buffer(len)                                                  \
+  ({                                                                     \
+    __AVA_ANNOTATE_STMT_TYPED(enum ava_transfer_t, transfer, NW_BUFFER); \
+    __AVA_ANNOTATE_STMT_TYPED(unsigned long int, buffer, len);           \
+  })
 
 /// Specify that the value is a pointer which was allocated with ava_zerocopy_alloc.
 /// The pointer is adjusted to match the virtual address space in the destination, but is not otherwise changed.
-#define ava_zerocopy_buffer ({ \
+#define ava_zerocopy_buffer                                                       \
+  ({                                                                              \
     __AVA_ANNOTATE_STMT_TYPED(enum ava_transfer_t, transfer, NW_ZEROCOPY_BUFFER); \
-    ava_lifetime_call; \
-    __AVA_ANNOTATE_STMT_TYPED(unsigned long int, buffer, 4294967295); \
-    ava_in; ava_out; \
-    })
+    ava_lifetime_call;                                                            \
+    __AVA_ANNOTATE_STMT_TYPED(unsigned long int, buffer, 4294967295);             \
+    ava_in;                                                                       \
+    ava_out;                                                                      \
+  })
 // The size is set to a large value since it does have a size, but that size is unknown (and not needed).
 
 #ifdef __cplusplus
@@ -129,10 +129,11 @@ typedef void (*ava_buffer_deallocator)(void *ptr);
 
 /// Mark an argument as a callback with the provided callback declaration. The same call
 /// must have another argument annotated with ava_userdata.
-#define ava_callback(decl) ({             \
-            __AVA_ANNOTATE_STMT_TYPED(enum ava_transfer_t, transfer, NW_CALLBACK); \
-            __AVA_ANNOTATE_STMT_TYPED(void*, callback_stub_function, (void*)decl); \
-        })
+#define ava_callback(decl)                                                   \
+  ({                                                                         \
+    __AVA_ANNOTATE_STMT_TYPED(enum ava_transfer_t, transfer, NW_CALLBACK);   \
+    __AVA_ANNOTATE_STMT_TYPED(void *, callback_stub_function, (void *)decl); \
+  })
 
 /// Mark an argument as a callback with the provided callback declaration. The
 /// call using this annotation need not have an ava_userdata argument, but
@@ -140,11 +141,11 @@ typedef void (*ava_buffer_deallocator)(void *ptr);
 /// argument (probably an ava_implicit_argument) annotated with ava_callback.
 /// Because of that you should probably store the actual callback function
 /// pointer in ava_metadata for use in the later argument.
-#define ava_callback_registration(decl) ({             \
-            __AVA_ANNOTATE_STMT_TYPED(enum ava_transfer_t, transfer, NW_CALLBACK_REGISTRATION); \
-            __AVA_ANNOTATE_STMT_TYPED(void*, callback_stub_function, decl); \
-        })
-
+#define ava_callback_registration(decl)                                                 \
+  ({                                                                                    \
+    __AVA_ANNOTATE_STMT_TYPED(enum ava_transfer_t, transfer, NW_CALLBACK_REGISTRATION); \
+    __AVA_ANNOTATE_STMT_TYPED(void *, callback_stub_function, decl);                    \
+  })
 
 /// Specify the lifetime of the annotated value's shadow as coupled a specific value, `obj`.
 /// Whenever `obj` is transported with the ava_deallocates annotation the shadow will be
@@ -152,10 +153,11 @@ typedef void (*ava_buffer_deallocator)(void *ptr);
 ///
 /// The lifetime of a buffer needs to be specified every time it is passed. This is because
 /// AvA needs to know about lifetimes without examining a history of live buffers.
-#define ava_lifetime_coupled(obj) ({             \
-            __AVA_ANNOTATE_STMT_TYPED(enum ava_lifetime_t, lifetime, AVA_COUPLED); \
-            __AVA_ANNOTATE_STMT_TYPED(void*, lifetime_coupled, obj); \
-        })
+#define ava_lifetime_coupled(obj)                                          \
+  ({                                                                       \
+    __AVA_ANNOTATE_STMT_TYPED(enum ava_lifetime_t, lifetime, AVA_COUPLED); \
+    __AVA_ANNOTATE_STMT_TYPED(void *, lifetime_coupled, obj);              \
+  })
 
 /// Specify that the value's shadow has the lifetime of this specific call.
 ///
@@ -207,9 +209,11 @@ typedef void (*ava_buffer_deallocator)(void *ptr);
 /// The value is deallocated by this call.
 /// This specifies the amount of a storage resource which is freed.
 /// This annotation implies `ava_deallocates`.
-#define ava_deallocates_resource(resource, amount) ({ \
-    __AVA_ANNOTATE_FLAG(deallocates); \
-    __AVA_ANNOTATE_STMT_TYPED(long int, __CONCATENATE(deallocates_amount_, resource), amount); })
+#define ava_deallocates_resource(resource, amount)                                             \
+  ({                                                                                           \
+    __AVA_ANNOTATE_FLAG(deallocates);                                                          \
+    __AVA_ANNOTATE_STMT_TYPED(long int, __CONCATENATE(deallocates_amount_, resource), amount); \
+  })
 
 /// The value is a new object allocated by this call. This only makes
 /// sense on output arguments (return value and `out` values).
@@ -218,9 +222,11 @@ typedef void (*ava_buffer_deallocator)(void *ptr);
 /// The value is a new object allocated by this call.
 /// This specifies the amount of a storage resource which is allocated.
 /// This annotation implies `ava_allocates`.
-#define ava_allocates_resource(resource, amount) ({ \
-    __AVA_ANNOTATE_FLAG(allocates); \
-    __AVA_ANNOTATE_STMT_TYPED(long int, __CONCATENATE(allocates_amount_, resource), amount); })
+#define ava_allocates_resource(resource, amount)                                             \
+  ({                                                                                         \
+    __AVA_ANNOTATE_FLAG(allocates);                                                          \
+    __AVA_ANNOTATE_STMT_TYPED(long int, __CONCATENATE(allocates_amount_, resource), amount); \
+  })
 
 /////// Argument annotations
 
@@ -241,7 +247,7 @@ typedef void (*ava_buffer_deallocator)(void *ptr);
 /// Currently there is no way to make parts of an argument depend on
 /// another, which makes cyclic dependancies between arguments
 /// unsupported.
-#define ava_depends_on(...) __AVA_ANNOTATE_STMT_TYPED(const char*, depends_on, #__VA_ARGS__)
+#define ava_depends_on(...) __AVA_ANNOTATE_STMT_TYPED(const char *, depends_on, #__VA_ARGS__)
 
 /// Cast the current value to a new type. All annotations on this
 /// value (and nested values) are applied to the new type.
@@ -270,8 +276,8 @@ typedef void (*ava_buffer_deallocator)(void *ptr);
 
 /// This function consumes `amount` of `resources` (an existing throughput resource).
 /// `amount` must be convertible to `long int`.
-#define ava_consumes_resource(resource, amount) ({ \
-    __AVA_ANNOTATE_STMT_TYPED(long int, __CONCATENATE(consumes_amount_, resource), amount); })
+#define ava_consumes_resource(resource, amount) \
+  ({ __AVA_ANNOTATE_STMT_TYPED(long int, __CONCATENATE(consumes_amount_, resource), amount); })
 
 // This is a utility annotation used to generate code to measure time spent in different parts
 // of the offloading.
@@ -286,29 +292,30 @@ typedef void (*ava_buffer_deallocator)(void *ptr);
 
 /// Extract the explicit state of the object `o` and return it as a malloc'd buffer.
 /// The caller takes ownership of the buffer. The length of the buffer must be written to `*length`.
-typedef void* (*ava_extract_function)(void *obj, size_t *length);
+typedef void *(*ava_extract_function)(void *obj, size_t *length);
 
 /// Replace (reconstruct) the explicit state of the object `o` from data (which has length `length`).
-typedef void (*ava_replace_function)(void* obj, void* data, size_t length);
+typedef void (*ava_replace_function)(void *obj, void *data, size_t length);
 
-/// Add a dependency on object `dependency` to object `dependent`, causing `dependency` to be captured along with `dependent`.
-#define ava_object_depends_on(dependency) \
-    __AVA_ANNOTATE_STMT_TYPED(const void*, object_depends_on, dependency)
+/// Add a dependency on object `dependency` to object `dependent`, causing `dependency` to be captured along with
+/// `dependent`.
+#define ava_object_depends_on(dependency) __AVA_ANNOTATE_STMT_TYPED(const void *, object_depends_on, dependency)
 
 /// Record this call for the object `obj`. This will implicitly add dependencies on all other object handles passed
 /// to the call.
 #define ava_object_record __AVA_ANNOTATE_FLAG(object_record)
 
 /// Mark this object to use the provided `extract` and `replace` functions.
-#define ava_object_explicit_state_functions(extract, replace) ({ \
-        __AVA_ANNOTATE_STMT_TYPED(ava_extract_function, object_explicit_state_extract, extract); \
-        __AVA_ANNOTATE_STMT_TYPED(ava_replace_function, object_explicit_state_replace, replace); })
-
+#define ava_object_explicit_state_functions(extract, replace)                                \
+  ({                                                                                         \
+    __AVA_ANNOTATE_STMT_TYPED(ava_extract_function, object_explicit_state_extract, extract); \
+    __AVA_ANNOTATE_STMT_TYPED(ava_replace_function, object_explicit_state_replace, replace); \
+  })
 
 //////// Category annotation declarations
 
 /// Apply annotations to type `ty`.
-#define ava_type(ty) ty* __MAKE_UNIQUE(__AVA_NAME(category_type_))()
+#define ava_type(ty) ty *__MAKE_UNIQUE(__AVA_NAME(category_type_))()
 
 /// Apply annotations to all functions.
 #define ava_functions void __MAKE_UNIQUE(__AVA_NAME(category_functions_))()
@@ -331,38 +338,37 @@ typedef void (*ava_replace_function)(void* obj, void* data, size_t length);
 /// available for a given annotable entity.
 #define ava_defaults __AVA_ANNOTATE("default")
 
-
 //////// Global declarations
 
 /// The name of the API as a string. This is only used for
 /// documentation and error reporting.
-#define ava_name(n) const char* __AVA_NAME(name) = n
+#define ava_name(n) const char *__AVA_NAME(name) = n
 
 /// The version of the API as a string. This is used for
 /// documentation, error reporting, and passed to version checking
 /// functions.
-#define ava_version(n) const char* __AVA_NAME(version) = n
+#define ava_version(n) const char *__AVA_NAME(version) = n
 
 /// The internal identifier of this API. This must be a valid
 /// identifier the target language and in C.
-#define ava_identifier(n) const char* __AVA_NAME(identifier) = __STRINGIFY(n)
+#define ava_identifier(n) const char *__AVA_NAME(identifier) = __STRINGIFY(n)
 
 /// The internal ID number of this API. This must be unique across all
 /// APIs used in the same hypervisor.
-#define ava_number(n) const char* __AVA_NAME(number) = __STRINGIFY(n)
+#define ava_number(n) const char *__AVA_NAME(number) = __STRINGIFY(n)
 
 /// A qualifier string to apply to each exported function in the
 /// generated API implementation. For example, for Windows supporting
 /// libraries this will often be "dllexport".
-#define ava_export_qualifier(n) const char* __AVA_NAME(export_qualifier) = __STRINGIFY(n)
+#define ava_export_qualifier(n) const char *__AVA_NAME(export_qualifier) = __STRINGIFY(n)
 
-#define ava_cflags(n) const char* __AVA_NAME(cflags) = __STRINGIFY(n)
-#define ava_cxxflags(n) const char* __AVA_NAME(cxxflags) = __STRINGIFY(n)
-#define ava_libs(n) const char* __AVA_NAME(libs) = __STRINGIFY(n)
-#define ava_soname(n) const char* __AVA_NAME(soname) = __STRINGIFY(n)
+#define ava_cflags(n) const char *__AVA_NAME(cflags) = __STRINGIFY(n)
+#define ava_cxxflags(n) const char *__AVA_NAME(cxxflags) = __STRINGIFY(n)
+#define ava_libs(n) const char *__AVA_NAME(libs) = __STRINGIFY(n)
+#define ava_soname(n) const char *__AVA_NAME(soname) = __STRINGIFY(n)
 
-#define ava_guestlib_srcs(n) const char* __AVA_NAME(guestlib_srcs) = __STRINGIFY(n)
-#define ava_worker_srcs(n) const char* __AVA_NAME(worker_srcs) = __STRINGIFY(n)
+#define ava_guestlib_srcs(n) const char *__AVA_NAME(guestlib_srcs) = __STRINGIFY(n)
+#define ava_worker_srcs(n) const char *__AVA_NAME(worker_srcs) = __STRINGIFY(n)
 
 /// Mark a function or variable as a utility for the rest of the specification.
 /// These definitions will be passed through to the generated code without any changes.
@@ -389,29 +395,25 @@ typedef void (*ava_replace_function)(void* obj, void* data, size_t length);
 /// The helper functions called in the guestlib's and worker's constructors and
 /// destructors. The endpoint library is always initialized first and destroyed
 /// last.
-#define ava_guestlib_init_prologue(n) const char* __AVA_NAME(guestlib_init_prologue) = __STRINGIFY(n)
-#define ava_guestlib_init_epilogue(n) const char* __AVA_NAME(guestlib_init_epilogue) = __STRINGIFY(n)
-#define ava_guestlib_fini_prologue(n) const char* __AVA_NAME(guestlib_fini_prologue) = __STRINGIFY(n)
-#define ava_guestlib_fini_epilogue(n) const char* __AVA_NAME(guestlib_fini_epilogue) = __STRINGIFY(n)
-#define ava_worker_init_epilogue(n)   const char* __AVA_NAME(worker_init_epilogue) = __STRINGIFY(n)
+#define ava_guestlib_init_prologue(n) const char *__AVA_NAME(guestlib_init_prologue) = __STRINGIFY(n)
+#define ava_guestlib_init_epilogue(n) const char *__AVA_NAME(guestlib_init_epilogue) = __STRINGIFY(n)
+#define ava_guestlib_fini_prologue(n) const char *__AVA_NAME(guestlib_fini_prologue) = __STRINGIFY(n)
+#define ava_guestlib_fini_epilogue(n) const char *__AVA_NAME(guestlib_fini_epilogue) = __STRINGIFY(n)
+#define ava_worker_init_epilogue(n) const char *__AVA_NAME(worker_init_epilogue) = __STRINGIFY(n)
 
 /// The helper Python functions used to replace the send code (from guestlib to worker)
 /// and reply code (from worker to guestlib). The strings are executed in CAvA by
 /// `exec(...)`.
-#define ava_send_code(n)   const char* __AVA_NAME(send_code) = __STRINGIFY(n)
-#define ava_reply_code(n)  const char* __AVA_NAME(reply_code) = __STRINGIFY(n)
+#define ava_send_code(n) const char *__AVA_NAME(send_code) = __STRINGIFY(n)
+#define ava_reply_code(n) const char *__AVA_NAME(reply_code) = __STRINGIFY(n)
 
 /// The helper Python functions called before `{call_function_wrapper(f)}`. It must set
 /// a Python variable `worker_argument_process_code`.
-#define ava_worker_argument_process_code(n)  const char* __AVA_NAME(worker_argument_process_code) = __STRINGIFY(n)
+#define ava_worker_argument_process_code(n) const char *__AVA_NAME(worker_argument_process_code) = __STRINGIFY(n)
 
 /////// Enums
 
-enum ava_sync_mode_t {
-  NW_ASYNC = 0,
-  NW_SYNC,
-  NW_FLUSH
-};
+enum ava_sync_mode_t { NW_ASYNC = 0, NW_SYNC, NW_FLUSH };
 
 /// True iff the expression is executing in the worker.
 extern int ava_is_worker;
@@ -424,22 +426,20 @@ extern int ava_is_in;
 extern int ava_is_out;
 
 /// Register `metadata_t` as the metadata type for this API. This must be provided to enable object metadata.
-#define ava_register_metadata(metadata_t) metadata_t* ava_metadata(const void* const)
+#define ava_register_metadata(metadata_t) metadata_t *ava_metadata(const void *const)
 
 /////// Defaults
 
-ava_non_transferable_types {
-    ava_handle;
-}
+ava_non_transferable_types { ava_handle; }
 
 ava_const_pointer_types ava_defaults {
-    ava_in;
-    ava_buffer(1);
+  ava_in;
+  ava_buffer(1);
 }
 ava_nonconst_pointer_types ava_defaults {
-    ava_in;
-    ava_out;
-    ava_buffer(1);
+  ava_in;
+  ava_out;
+  ava_buffer(1);
 }
 
 /////// Utility functions
@@ -448,18 +448,17 @@ unsigned long int max(unsigned long int a, unsigned long int b);
 unsigned long int min(unsigned long int a, unsigned long int b);
 int DEBUG_PRINT(const char *fmt, ...);
 
-#include <stdint.h>
 #include <ctype.h>
+#include <stdint.h>
 #include <string.h>
 
 void *ava_zerocopy_alloc(size_t size);
-void ava_zerocopy_free(void* ptr);
-uintptr_t ava_zerocopy_get_physical_address(void* ptr);
-
+void ava_zerocopy_free(void *ptr);
+uintptr_t ava_zerocopy_get_physical_address(void *ptr);
 
 struct __ava_unknown;
 
 /// Used within function to trigger the invocation of the underlying
 /// API. The actual return type is the return type of the API call. If
 /// the return value is captured, the variable name must be "ret".
-struct __ava_unknown* ava_execute();
+struct __ava_unknown *ava_execute();

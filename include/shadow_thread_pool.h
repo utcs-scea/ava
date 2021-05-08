@@ -26,7 +26,7 @@ struct shadow_thread_pool_t;
 /**
  * @return A newly-constructed empty shadow_thread_pool_t.
  */
-struct shadow_thread_pool_t* shadow_thread_pool_new();
+struct shadow_thread_pool_t *shadow_thread_pool_new();
 
 /**
  * Destroy a shadow_thread_pool_t signaling all threads to exit. Any solid threads will not exit but will
@@ -58,20 +58,22 @@ intptr_t shadow_thread_id(struct shadow_thread_pool_t *pool);
  * @param chan The channel from which `cmd` came.
  * @param cmd The command to dispatch.
  */
-void shadow_thread_pool_dispatch(struct shadow_thread_pool_t *pool, struct command_channel *chan, struct command_base *cmd);
+void shadow_thread_pool_dispatch(struct shadow_thread_pool_t *pool, struct command_channel *chan,
+                                 struct command_base *cmd);
 
 /**
  * Block until a command for this thread is executed and the
  * predicate is true.
  */
-#define shadow_thread_handle_command_until(pool, predicate) while(!(predicate))  { \
-        int r = shadow_thread_handle_single_command(pool);                         \
-        assert(r == 0 && ("Thread exit requested while waiting for " #predicate));      \
-        (void)r; \
-    }
+#define shadow_thread_handle_command_until(pool, predicate)                    \
+  while (!(predicate)) {                                                       \
+    int r = shadow_thread_handle_single_command(pool);                         \
+    assert(r == 0 && ("Thread exit requested while waiting for " #predicate)); \
+    (void)r;                                                                   \
+  }
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //AVA_SHADOWN_THREAD_POOL_H
+#endif  // AVA_SHADOWN_THREAD_POOL_H

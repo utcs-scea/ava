@@ -10,14 +10,14 @@
 struct handle_t;
 
 struct struct_buffer_t {
-    struct handle_t *handle;
-    int *buffer;
-    size_t size;
+  struct handle_t *handle;
+  int *buffer;
+  size_t size;
 };
 
 struct simple_buffer_t {
-    int *buffer;
-    size_t size;
+  int *buffer;
+  size_t size;
 };
 
 int function1();
@@ -25,8 +25,8 @@ int function4a(char *in);
 int function4b(char *out);
 int function4c(char *inout);
 
-void function2(int (*on_error)(int, void*), void *arg);
-void function3a(int session, void (*callback)(void*, char*));
+void function2(int (*on_error)(int, void *), void *arg);
+void function3a(int session, void (*callback)(void *, char *));
 void function3b(int session, void *userdata);
 
 void write_simple_buffer(struct simple_buffer_t *buf);
@@ -55,15 +55,14 @@ void free_handle(struct handle_t **handle);
 
 //! Zero-copy
 
-void* special_alloc(size_t size);
-void special_free(void* ptr);
+void *special_alloc(size_t size);
+void special_free(void *ptr);
 
 // Used with special buffers only.
 
 void read_special_buffer(int *buffer, size_t size);
 void mutate_special_buffer(int *buffer, size_t size);
 void write_special_buffer(int *buffer, size_t size);
-
 
 //! Benchmarking functions
 
@@ -75,4 +74,4 @@ void benchmark_copy_in_shadow_buffer(void *data, size_t size, time_t execution_t
 void benchmark_copy_out_existing_buffer(void *data, size_t size, time_t execution_time);
 void *benchmark_copy_out_shadow_buffer(size_t size, time_t execution_time);
 
-#endif //AVA_LIBTRIVIAL_H
+#endif  // AVA_LIBTRIVIAL_H

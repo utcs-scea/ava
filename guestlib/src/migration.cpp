@@ -1,3 +1,5 @@
+#include "migration.h"
+
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdlib.h>
@@ -9,7 +11,6 @@
 #include "common/endpoint_lib.h"
 #include "common/linkage.h"
 #include "common/shadow_thread_pool.h"
-#include "migration.h"
 
 /**
  * Starts migration process for test.
@@ -27,8 +28,7 @@ EXPORTED_WEAKLY void start_migration(struct command_channel *chan) {
     serv_addr.sin_port = htons(4000);
     inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
     connect(manager_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
-  } else if (!strcmp(getenv("AVA_CHANNEL"), "SHM") ||
-             !strcmp(getenv("AVA_CHANNEL"), "VSOCK")) {
+  } else if (!strcmp(getenv("AVA_CHANNEL"), "SHM") || !strcmp(getenv("AVA_CHANNEL"), "VSOCK")) {
     /**
      * Get manager's host address from ENV('AVA_MANAGER_ADDR').
      * The address can either be a full IP:port or only the port (3333),
@@ -47,16 +47,14 @@ EXPORTED_WEAKLY void start_migration(struct command_channel *chan) {
     conn_vm_socket(manager_fd, &sa);
   }
 
-  struct command_base *msg =
-      command_channel_new_command(chan, sizeof(struct command_base), 0);
+  struct command_base *msg = command_channel_new_command(chan, sizeof(struct command_base), 0);
   msg->command_type = COMMAND_START_MIGRATION;
   *((uintptr_t *)msg->reserved_area) = nw_worker_id;
   send_socket(manager_fd, msg, sizeof(struct command_base));
 
   recv_socket(manager_fd, msg, sizeof(struct command_base));
   new_worker_id = *((uintptr_t *)msg->reserved_area);
-  printf("start to migrate from worker@%d to worker@%lu\n", nw_worker_id,
-         new_worker_id);
+  printf("start to migrate from worker@%d to worker@%lu\n", nw_worker_id, new_worker_id);
   command_channel_free_command((struct command_channel *)chan, msg);
   close(manager_fd);
 
@@ -74,16 +72,14 @@ extern int nw_end_migration_flag;
  */
 EXPORTED_WEAKLY void start_self_migration(struct command_channel *chan) {
   nw_end_migration_flag = 0;
-  struct command_base *msg =
-      command_channel_new_command(chan, sizeof(struct command_base), 0);
+  struct command_base *msg = command_channel_new_command(chan, sizeof(struct command_base), 0);
   msg->api_id = COMMAND_HANDLER_API;
   msg->command_id = COMMAND_START_MIGRATION;
   msg->thread_id = shadow_thread_id(nw_shadow_thread_pool);
   command_channel_send_command(chan, msg);
 
   /* wait until the migration finishes */
-  shadow_thread_handle_command_until(nw_shadow_thread_pool,
-                                     nw_end_migration_flag);
+  shadow_thread_handle_command_until(nw_shadow_thread_pool, nw_end_migration_flag);
 }
 
 // TODO(migration): instead of letting guestlib initiates the migration, we
@@ -106,16 +102,14 @@ EXPORTED_WEAKLY void start_self_migration(struct command_channel *chan) {
 // guestlib, so that the source API server will shut down by itself.
 EXPORTED_WEAKLY void start_live_migration(struct command_channel *chan) {
   nw_end_migration_flag = 0;
-  struct command_base *msg =
-      command_channel_new_command(chan, sizeof(struct command_base), 0);
+  struct command_base *msg = command_channel_new_command(chan, sizeof(struct command_base), 0);
   msg->api_id = COMMAND_HANDLER_API;
   msg->command_id = COMMAND_START_LIVE_MIGRATION;
   msg->thread_id = shadow_thread_id(nw_shadow_thread_pool);
   command_channel_send_command(chan, msg);
 
   /* wait until the migration finishes */
-  shadow_thread_handle_command_until(nw_shadow_thread_pool,
-                                     nw_end_migration_flag);
+  shadow_thread_handle_command_until(nw_shadow_thread_pool, nw_end_migration_flag);
 
   // TODO(migration): reconnect to new worker to execute the left APIs.
   // Currently, the APIs after the migration point are still executed by

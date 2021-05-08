@@ -33,13 +33,10 @@ namespace {
 extern struct command_channel_vtable command_channel_socket_tcp_vtable;
 }
 
-struct command_channel *command_channel_socket_tcp_migration_new(
-    int worker_port, int is_source) {
+struct command_channel *command_channel_socket_tcp_migration_new(int worker_port, int is_source) {
   struct chansocketutil::command_channel_socket *chan =
-      (struct chansocketutil::command_channel_socket *)malloc(
-          sizeof(struct chansocketutil::command_channel_socket));
-  command_channel_preinitialize((struct command_channel *)chan,
-                                &command_channel_socket_tcp_vtable);
+      (struct chansocketutil::command_channel_socket *)malloc(sizeof(struct chansocketutil::command_channel_socket));
+  command_channel_preinitialize((struct command_channel *)chan, &command_channel_socket_tcp_vtable);
   pthread_mutex_init(&chan->send_mutex, NULL);
   pthread_mutex_init(&chan->recv_mutex, NULL);
 
@@ -66,38 +63,32 @@ struct command_channel *command_channel_socket_tcp_migration_new(
     }
     // Forcefully attaching socket to the worker port
     opt = 1;
-    if (setsockopt(chan->listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt,
-                   sizeof(opt))) {
+    if (setsockopt(chan->listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
       perror("setsockopt reuseaddr");
     }
     opt = 1;
-    if (setsockopt(chan->listen_fd, SOL_SOCKET, SO_REUSEPORT, &opt,
-                   sizeof(opt))) {
+    if (setsockopt(chan->listen_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))) {
       perror("setsockopt reuseport");
     }
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(chan->listen_port);
 
-    if (bind(chan->listen_fd, (struct sockaddr *)&address, sizeof(address)) <
-        0) {
+    if (bind(chan->listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
       perror("bind failed");
     }
     if (listen(chan->listen_fd, 10) < 0) {
       perror("listen");
     }
 
-    printf("[target worker@%d] waiting for source worker connection\n",
-           chan->listen_port);
-    chan->sock_fd = accept(chan->listen_fd, (struct sockaddr *)&address,
-                           (socklen_t *)&addrlen);
+    printf("[target worker@%d] waiting for source worker connection\n", chan->listen_port);
+    chan->sock_fd = accept(chan->listen_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen);
 
     /* Get source address */
 #ifdef AVA_DEBUG
     struct sockaddr_storage source_addr;
     socklen_t source_addr_len = sizeof(struct sockaddr_storage);
-    getpeername(chan->sock_fd, (struct sockaddr *)&source_addr,
-                &source_addr_len);
+    getpeername(chan->sock_fd, (struct sockaddr *)&source_addr, &source_addr_len);
     if (source_addr.ss_family == AF_INET) {
       struct sockaddr_in *s = (struct sockaddr_in *)&source_addr;
       char ipstr[64];
@@ -115,16 +106,11 @@ struct command_channel *command_channel_socket_tcp_migration_new(
 
 namespace {
 struct command_channel_vtable command_channel_socket_tcp_vtable = {
-    chansocketutil::command_channel_socket_buffer_size,
-    chansocketutil::command_channel_socket_new_command,
-    chansocketutil::command_channel_socket_attach_buffer,
-    chansocketutil::command_channel_socket_send_command,
-    chansocketutil::command_channel_socket_transfer_command,
-    chansocketutil::command_channel_socket_receive_command,
-    chansocketutil::command_channel_socket_get_buffer,
-    chansocketutil::command_channel_socket_get_data_region,
-    chansocketutil::command_channel_socket_free_command,
-    chansocketutil::command_channel_socket_free,
+    chansocketutil::command_channel_socket_buffer_size,      chansocketutil::command_channel_socket_new_command,
+    chansocketutil::command_channel_socket_attach_buffer,    chansocketutil::command_channel_socket_send_command,
+    chansocketutil::command_channel_socket_transfer_command, chansocketutil::command_channel_socket_receive_command,
+    chansocketutil::command_channel_socket_get_buffer,       chansocketutil::command_channel_socket_get_data_region,
+    chansocketutil::command_channel_socket_free_command,     chansocketutil::command_channel_socket_free,
     chansocketutil::command_channel_socket_print_command};
 };
 

@@ -1,10 +1,10 @@
+#include <errno.h>
+#include <string.h>
+
 #include "common/cmd_channel.h"
 #include "common/cmd_handler.h"
 #include "common/devconf.h"
 #include "common/socket.h"
-
-#include <errno.h>
-#include <string.h>
 
 struct command_channel_hv {
   int netlink_fd;
@@ -16,8 +16,8 @@ struct command_channel_hv {
 
 //! Utilities
 
-void command_channel_hv_report_storage_resource_allocation(
-    struct command_channel *c, const char *const name, ssize_t amount) {
+void command_channel_hv_report_storage_resource_allocation(struct command_channel *c, const char *const name,
+                                                           ssize_t amount) {
 #if ENABLE_SWAP
   struct command_channel_hv *chan = (struct command_channel_hv *)c;
   struct command_base *raw_msg = (struct command_base *)NLMSG_DATA(chan->nlh);
@@ -30,8 +30,8 @@ void command_channel_hv_report_storage_resource_allocation(
 #endif
 }
 
-void command_channel_hv_report_throughput_resource_consumption(
-    struct command_channel *c, const char *const name, ssize_t amount) {
+void command_channel_hv_report_throughput_resource_consumption(struct command_channel *c, const char *const name,
+                                                               ssize_t amount) {
 #ifdef AVA_ENABLE_KVM_MEDIATION
   struct command_channel_hv *chan = (struct command_channel_hv *)c;
   struct command_base *raw_msg = (struct command_base *)NLMSG_DATA(chan->nlh);
@@ -76,8 +76,7 @@ void command_channel_hv_report_throughput_resource_consumption(
 }
 
 struct command_channel *command_channel_hv_new(int worker_port) {
-  struct command_channel_hv *chan =
-      (struct command_channel_hv *)malloc(sizeof(struct command_channel_hv));
+  struct command_channel_hv *chan = (struct command_channel_hv *)malloc(sizeof(struct command_channel_hv));
   memset(chan, 0, sizeof(struct command_channel_hv));
 
   /* connect hypervisor */
@@ -86,8 +85,7 @@ struct command_channel *command_channel_hv_new(int worker_port) {
 
   chan->netlink_fd = init_netlink_socket(&chan->src_addr, &chan->dst_addr);
   chan->nl_msg = (struct msghdr *)malloc(sizeof(struct msghdr));
-  chan->nlh = init_netlink_msg(&chan->dst_addr, chan->nl_msg,
-                               sizeof(struct command_base));
+  chan->nlh = init_netlink_msg(&chan->dst_addr, chan->nl_msg, sizeof(struct command_base));
 
   struct command_base *raw_msg = (struct command_base *)NLMSG_DATA(chan->nlh);
   raw_msg->api_id = COMMAND_HANDLER_API;

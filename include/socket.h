@@ -8,19 +8,17 @@
 
 #else
 
+#include <linux/netlink.h>
+#include <linux/vm_sockets.h>
+#include <netdb.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <netdb.h>
-
 #include <sys/socket.h>
-#include <linux/vm_sockets.h>
 #include <sys/types.h>
-#include <linux/netlink.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 #ifndef SOL_NETLINK
 #define SOL_NETLINK 270
@@ -37,29 +35,29 @@ _Static_assert(SOL_NETLINK == 270, "SOL_NETLINK assumption broken");
 #include "devconf.h"
 
 enum {
-    CONSUME_RC_UNSPEC = 0,
+  CONSUME_RC_UNSPEC = 0,
 
-    /* internal netlink messages */
-    NW_NEW_WORKER,
-    NW_NEW_APPLICATION,
-    NW_NEW_INVOCATION,
-    COMMAND_SWAP_OUT,
-    COMMAND_SWAP_IN,
-    COMMAND_MSG_SWAPPING,
+  /* internal netlink messages */
+  NW_NEW_WORKER,
+  NW_NEW_APPLICATION,
+  NW_NEW_INVOCATION,
+  COMMAND_SWAP_OUT,
+  COMMAND_SWAP_IN,
+  COMMAND_MSG_SWAPPING,
 
-    /* consume resource */
-    CONSUME_RC_DEVICE_TIME,
-    CONSUME_RC_COMMAND_RATE,
-    CONSUME_RC_QAT_THROUGHPUT,
-    CONSUME_RC_DEVICE_MEMORY,
+  /* consume resource */
+  CONSUME_RC_DEVICE_TIME,
+  CONSUME_RC_COMMAND_RATE,
+  CONSUME_RC_QAT_THROUGHPUT,
+  CONSUME_RC_DEVICE_MEMORY,
 };
 
 int init_netlink_socket(struct sockaddr_nl *src_addr, struct sockaddr_nl *dst_addr);
 struct nlmsghdr *init_netlink_msg(struct sockaddr_nl *dst_addr, struct msghdr *msg, size_t size);
 void free_netlink_msg(struct msghdr *msg);
 
-int init_vm_socket(struct sockaddr_vm* sa, int cid, int port);
-int conn_vm_socket(int sockfd, struct sockaddr_vm* sa);
+int init_vm_socket(struct sockaddr_vm *sa, int cid, int port);
+int conn_vm_socket(int sockfd, struct sockaddr_vm *sa);
 void listen_vm_socket(int listen_fd, struct sockaddr_vm *sa_listen);
 int accept_vm_socket(int listen_fd, int *guest_cid);
 
@@ -93,9 +91,7 @@ size_t recv_socket(int sockfd, void *buf, size_t size);
  * @info: server info gotten by `gethostbyname`
  * @port: return port number
  */
-void parseServerAddress(const char* full_address, struct hostent** info,
-                        char* ip, int* port);
-
+void parseServerAddress(const char *full_address, struct hostent **info, char *ip, int *port);
 
 int setsockopt_lowlatency(int fd);
 

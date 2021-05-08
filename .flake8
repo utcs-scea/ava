@@ -17,3 +17,4 @@ ignore =
   I
   N
 avoid-escape = no
+indent-size = 4

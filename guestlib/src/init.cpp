@@ -12,12 +12,12 @@
 #include "guest_config.h"
 #include "guestlib.h"
 
-struct command_channel* chan;
+struct command_channel *chan;
 
 struct param_block_info nw_global_pb_info = {0, 0};
 extern int nw_global_vm_id;
 
-static struct command_channel* channel_create() { return chan; }
+static struct command_channel *channel_create() { return chan; }
 
 EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id) {
   std::ios_base::Init();
@@ -35,18 +35,15 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id) {
 
   /* Create connection to worker and start command handler thread */
   if (guestconfig::config->channel_ == "TCP") {
-    std::vector<struct command_channel*> channels =
-        command_channel_socket_tcp_guest_new();
+    std::vector<struct command_channel *> channels = command_channel_socket_tcp_guest_new();
     chan = channels[0];
   } else if (guestconfig::config->channel_ == "SHM") {
     chan = command_channel_shm_new();
   } else if (guestconfig::config->channel_ == "VSOCK") {
     chan = command_channel_socket_new();
   } else {
-    std::cerr << "Unsupported channel specified in "
-              << guestconfig::kConfigFilePath
-              << ", expect channel = [\"TCP\" | \"SHM\" | \"VSOCK\"]"
-              << std::endl;
+    std::cerr << "Unsupported channel specified in " << guestconfig::kConfigFilePath
+              << ", expect channel = [\"TCP\" | \"SHM\" | \"VSOCK\"]" << std::endl;
     exit(0);
   }
   if (!chan) {
@@ -57,23 +54,20 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id) {
   init_internal_command_handler();
 
   /* Send initialize API command to the worker */
-  struct command_handler_initialize_api_command* api_init_command =
-      (struct command_handler_initialize_api_command*)
-          command_channel_new_command(
-              nw_global_command_channel,
-              sizeof(struct command_handler_initialize_api_command), 0);
+  struct command_handler_initialize_api_command *api_init_command =
+      (struct command_handler_initialize_api_command *)command_channel_new_command(
+          nw_global_command_channel, sizeof(struct command_handler_initialize_api_command), 0);
   api_init_command->base.api_id = COMMAND_HANDLER_API;
   api_init_command->base.command_id = COMMAND_HANDLER_INITIALIZE_API;
   api_init_command->base.vm_id = nw_global_vm_id;
   api_init_command->new_api_id = api_id;
   api_init_command->pb_info = nw_global_pb_info;
-  command_channel_send_command(chan, (struct command_base*)api_init_command);
+  command_channel_send_command(chan, (struct command_base *)api_init_command);
 
 #ifdef AVA_PRINT_TIMESTAMP
   struct timeval ts_end;
   gettimeofday(&ts_end, NULL);
-  printf("loading_time: %f\n", ((ts_end.tv_sec - ts.tv_sec) * 1000.0 +
-                                (float)(ts_end.tv_usec - ts.tv_usec) / 1000.0));
+  printf("loading_time: %f\n", ((ts_end.tv_sec - ts.tv_sec) * 1000.0 + (float)(ts_end.tv_usec - ts.tv_usec) / 1000.0));
 #endif
 }
 

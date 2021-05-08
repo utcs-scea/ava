@@ -1,12 +1,19 @@
-#!/usr/bin/sudo /bin/bash
+#!/bin/bash
+
+# shellcheck disable=SC2046
+dir_name=$(dirname $(realpath "$0"))
 
 # Set up environment
-. $(dirname $0)/scripts/environment
+# shellcheck disable=SC1091
+. "$dir_name"/scripts/environment
 
 # Set up options
-. $(dirname $0)/scripts/options-vm1
-. $(dirname $0)/scripts/settings-vm1
-. $(dirname $0)/scripts/bindings
+# shellcheck disable=SC1091
+. "$dir_name"/scripts/options-vm1
+# shellcheck disable=SC1091
+. "$dir_name"/scripts/settings-vm1
+# shellcheck disable=SC1091
+. "$dir_name"/scripts/bindings
 
 # Probe drivers
 sudo modprobe vhost_vsock
@@ -15,9 +22,9 @@ sudo modprobe vhost_vsock
 
 # Run KVM
 set -x
-${QEMU_BIN} ${MEM_OPT} ${IMAGE} ${!CDROM} ${!VIRTFS} ${!VIRTGPU} \
-    ${SMP} ${!GRAPHICS} ${!SOUND} ${!SERIAL} ${!AUTOBALLOON} ${NET} ${!QMP} \
-    ${!SNAPSHOT} ${!DEBUG} ${!MONITOR} \
+${QEMU_BIN} "${MEM_OPT}" "${IMAGE}" "${!CDROM}" "${!VIRTFS}" "${!VIRTGPU}" \
+    "${SMP}" "${!GRAPHICS}" "${!SOUND}" "${!SERIAL}" "${!AUTOBALLOON}" "${NET}" "${!QMP}" \
+    "${!SNAPSHOT}" "${!DEBUG}" "${!MONITOR}" \
     -enable-kvm -machine accel=kvm -cpu host,kvm=on \
     -device vhost-vsock-pci,guest-cid=6 \
     -device ava-vdev

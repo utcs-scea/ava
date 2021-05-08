@@ -1,28 +1,26 @@
 #ifndef __CTYPE_UTIL_H__
 #define __CTYPE_UTIL_H__
 
-
 #ifdef __KERNEL__
 
 #include <linux/types.h>
 
 #else
 
-#include <stdint.h>
 #include <setjmp.h>
+#include <stdint.h>
 
 #endif
 
-
 typedef unsigned char BOOLEAN;
-typedef uintptr_t     HANDLE;
+typedef uintptr_t HANDLE;
 
-typedef void          VOID;
-typedef void *        PVOID;
+typedef void VOID;
+typedef void *PVOID;
 
 #ifndef TRUE
-  #define TRUE 1
-  #define FALSE 0
+#define TRUE 1
+#define FALSE 0
 #endif
 
 //
@@ -31,26 +29,23 @@ typedef void *        PVOID;
 #define UNREFERENCED_PARAMETER(_Parameter_) (_Parameter_)
 #define UNUSED_VARIABLE(_x_) UNREFERENCED_PARAMETER(_x_)
 
-
 //
 // Array macros.
 //
-#define ARRAY_COUNT(_Array_) (sizeof(_Array_)/sizeof(_Array_[0]))
-
+#define ARRAY_COUNT(_Array_) (sizeof(_Array_) / sizeof(_Array_[0]))
 
 //
 // Terminal colors.
 //
-#define KNRM   "\x1B[0m"
-#define KRED   "\x1B[31m"
-#define KGRN   "\x1B[32m"
-#define KYEL   "\x1B[33m"
-#define KBLU   "\x1B[34m"
-#define KMAG   "\x1B[35m"
-#define KCYN   "\x1B[36m"
-#define KWHT   "\x1B[37m"
+#define KNRM "\x1B[0m"
+#define KRED "\x1B[31m"
+#define KGRN "\x1B[32m"
+#define KYEL "\x1B[33m"
+#define KBLU "\x1B[34m"
+#define KMAG "\x1B[35m"
+#define KCYN "\x1B[36m"
+#define KWHT "\x1B[37m"
 #define KRESET "\x1B[0m"
-
 
 //
 // Generic macro wrappers (HT_MACRO_START, HT_MACRO_END)
@@ -64,8 +59,9 @@ typedef void *        PVOID;
 //      ...
 
 #define HT_MACRO_START do {
-#define HT_MACRO_END   } while (0)
-
+#define HT_MACRO_END \
+  }                  \
+  while (0)
 
 //
 // Macros for error propagation.
@@ -79,9 +75,16 @@ typedef void *        PVOID;
 // HT_EXIT() - Goto Cleanup.
 //
 
-#define HT_CHK(_Status_)    HT_MACRO_START if (HT_FAILURE(_Status_)) HT_EXIT(); HT_MACRO_END
-#define HT_EXIT()           HT_MACRO_START goto Cleanup; HT_MACRO_END
-#define HT_ERR(_Status_)    HT_MACRO_START _Status_; HT_EXIT(); HT_MACRO_END
+#define HT_CHK(_Status_)                              \
+  HT_MACRO_START if (HT_FAILURE(_Status_)) HT_EXIT(); \
+  HT_MACRO_END
+#define HT_EXIT()              \
+  HT_MACRO_START goto Cleanup; \
+  HT_MACRO_END
+#define HT_ERR(_Status_)   \
+  HT_MACRO_START _Status_; \
+  HT_EXIT();               \
+  HT_MACRO_END
 
 /* Memory sizes */
 #define KB(x) (x << 10)
@@ -89,8 +92,8 @@ typedef void *        PVOID;
 #define GB(x) ((MB(x)) << 10)
 
 /* Time */
-#define US_TO_US(x)  ((long)x)
-#define MS_TO_US(x)  (US_TO_US(x) * 1000L)
+#define US_TO_US(x) ((long)x)
+#define MS_TO_US(x) (US_TO_US(x) * 1000L)
 #define SEC_TO_US(x) (MS_TO_US(x) * 1000L)
 
 #endif

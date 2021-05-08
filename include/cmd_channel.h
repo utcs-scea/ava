@@ -97,7 +97,7 @@ struct command_base {
    * A reference to the data region associated with this command. It
    * may be a pointer, but can also be an offset or something else.
    */
-  void* data_region;
+  void *data_region;
   /**
    * The size of the data region attached to this command.
    */
@@ -112,7 +112,7 @@ struct command_base {
  * Disconnect this command channel and free all resources associated
  * with it.
  */
-void command_channel_free(struct command_channel* c);
+void command_channel_free(struct command_channel *c);
 
 //! Sending
 
@@ -120,8 +120,7 @@ void command_channel_free(struct command_channel* c);
  * Compute the buffer size that will actually be used for a buffer of
  * `size`. The returned value may be larger than `size`.
  */
-__attribute__ ((pure))
-size_t command_channel_buffer_size(const struct command_channel* chan, size_t size);
+__attribute__((pure)) size_t command_channel_buffer_size(const struct command_channel *chan, size_t size);
 
 /**
  * Allocate a new command struct with size `command_struct_size` and
@@ -130,8 +129,9 @@ size_t command_channel_buffer_size(const struct command_channel* chan, size_t si
  * `data_region_size` should be computed by adding up the result of
  * calls to `command_channel_buffer_size` on the same channel.
  */
-__attribute__((malloc))
-struct command_base* command_channel_new_command(struct command_channel* chan, size_t command_struct_size, size_t data_region_size);
+__attribute__((malloc)) struct command_base *command_channel_new_command(struct command_channel *chan,
+                                                                         size_t command_struct_size,
+                                                                         size_t data_region_size);
 
 /**
  * Attach a buffer to a command and return a location independent
@@ -141,7 +141,8 @@ struct command_base* command_channel_new_command(struct command_channel* chan, s
  * The combined attached buffers must fit within the initially
  * provided `data_region_size` (to `command_channel_new_command`).
  */
-void* command_channel_attach_buffer(struct command_channel* chan, struct command_base* cmd, const void* buffer, size_t size);
+void *command_channel_attach_buffer(struct command_channel *chan, struct command_base *cmd, const void *buffer,
+                                    size_t size);
 
 /**
  * Send the message and all its attached buffers.
@@ -149,7 +150,7 @@ void* command_channel_attach_buffer(struct command_channel* chan, struct command
  * This call is asynchronous and does not block for the command to
  * complete execution.
  */
-void command_channel_send_command(struct command_channel* chan, struct command_base* cmd);
+void command_channel_send_command(struct command_channel *chan, struct command_base *cmd);
 
 /**
  * Take a command received (or loaded) in one channel and send it along another.
@@ -161,7 +162,8 @@ void command_channel_send_command(struct command_channel* chan, struct command_b
  * @param source_chan The input channel.
  * @param cmd The command received on `source_chan`.
  */
-void command_channel_transfer_command(struct command_channel* chan, const struct command_channel* source_chan, const struct command_base* cmd);
+void command_channel_transfer_command(struct command_channel *chan, const struct command_channel *source_chan,
+                                      const struct command_base *cmd);
 
 //! Receiving
 
@@ -172,8 +174,7 @@ void command_channel_transfer_command(struct command_channel* chan, const struct
  * This call blocks waiting for a command to be sent along this
  * channel.
  */
-__attribute__((malloc))
-struct command_base* command_channel_receive_command(struct command_channel* chan);
+__attribute__((malloc)) struct command_base *command_channel_receive_command(struct command_channel *chan);
 
 /**
  * Translate a buffer_id (as returned by
@@ -181,25 +182,25 @@ struct command_base* command_channel_receive_command(struct command_channel* cha
  * The returned pointer will be valid until
  * `command_channel_free_command` is called on `cmd`.
  */
-__attribute__ ((pure))
-void* command_channel_get_buffer(const struct command_channel* chan, const struct command_base* cmd, const void* buffer_id);
+__attribute__((pure)) void *command_channel_get_buffer(const struct command_channel *chan,
+                                                       const struct command_base *cmd, const void *buffer_id);
 
 /**
  * Returns the pointer to data region. The returned pointer is mainly
  * used for data extraction for migration.
  */
-__attribute__ ((pure))
-void* command_channel_get_data_region(const struct command_channel* c, const struct command_base* cmd);
+__attribute__((pure)) void *command_channel_get_data_region(const struct command_channel *c,
+                                                            const struct command_base *cmd);
 
 /**
  * Free a command returned by `command_channel_receive_command`.
  */
-void command_channel_free_command(struct command_channel* chan, struct command_base* cmd);
+void command_channel_free_command(struct command_channel *chan, struct command_base *cmd);
 
 /**
  * Print a command for debugging.
  */
-void command_channel_print_command(const struct command_channel* chan, const struct command_base* cmd);
+void command_channel_print_command(const struct command_channel *chan, const struct command_base *cmd);
 
 //! Examples
 
@@ -246,7 +247,8 @@ char simple_func(int size, int* buffer, ... and more ...)
   total_buffer_size += command_channel_buffer_size(chan, size * sizeof(int));
   ... add sizes of more buffers (including potentially nested buffers) ...;
 
-  simple_func_call *call = (simple_func_call *)command_channel_new_command(chan, CMD_SIMPLE_FUNC_CALL, sizeof(simple_func_call), total_buffer_size);
+  simple_func_call *call = (simple_func_call *)command_channel_new_command(chan, CMD_SIMPLE_FUNC_CALL,
+sizeof(simple_func_call), total_buffer_size);
 
   call->size = size;
   call->buffer = command_channel_attach_buffer(chan, call, buffer, size * sizeof(int));
@@ -292,7 +294,8 @@ void command_execution_loop() {
         total_buffer_size += command_channel_buffer_size(chan, size * sizeof(int));
         ... add sizes of more buffers (including potentially nested buffers) ...;
 
-        simple_func_return *ret_cmd = (simple_func_return *)command_channel_new_command(chan, CMD_SIMPLE_FUNC_RET, sizeof(SimpleFuncRet), total_buffer_size);
+        simple_func_return *ret_cmd = (simple_func_return *)command_channel_new_command(chan, CMD_SIMPLE_FUNC_RET,
+sizeof(SimpleFuncRet), total_buffer_size);
         // Imagining buffer is in/out
         ret_cmd->buffer = command_channel_attach_buffer(chan, ret_cmd, buffer, size * sizeof(int));
         ... assign more values into call and attach additional buffers ...;
@@ -310,26 +313,27 @@ void command_execution_loop() {
 
 */
 
-
 //! Channel constructors
-struct command_channel* command_channel_shm_new(void);
-struct command_channel* command_channel_socket_new(void);
+struct command_channel *command_channel_shm_new(void);
+struct command_channel *command_channel_socket_new(void);
 
-struct command_channel* command_channel_shm_worker_new(int listen_port);
-struct command_channel* command_channel_socket_worker_new(int listen_port);
-struct command_channel* command_channel_socket_tcp_migration_new(int worker_port, int is_source);
+struct command_channel *command_channel_shm_worker_new(int listen_port);
+struct command_channel *command_channel_socket_worker_new(int listen_port);
+struct command_channel *command_channel_socket_tcp_migration_new(int worker_port, int is_source);
 struct command_channel_log *command_channel_log_new(int worker_port);
 
 //! Hypervisor
 
 struct command_channel *command_channel_hv_new(int worker_port);
-void command_channel_hv_free(struct command_channel* c);
+void command_channel_hv_free(struct command_channel *c);
 
 /**
  * Report resource usages to the hypervisor.
  */
-void command_channel_hv_report_storage_resource_allocation(struct command_channel*c, const char* const name, ssize_t amount);
-void command_channel_hv_report_throughput_resource_consumption(struct command_channel* c, const char* const name, ssize_t amount);
+void command_channel_hv_report_storage_resource_allocation(struct command_channel *c, const char *const name,
+                                                           ssize_t amount);
+void command_channel_hv_report_throughput_resource_consumption(struct command_channel *c, const char *const name,
+                                                               ssize_t amount);
 
 //! Configurations
 
@@ -339,11 +343,11 @@ enum command_channel_type { AVA_LOCAL, AVA_SHM, AVA_VSOCK };
 
 ssize_t command_channel_log_transfer_command(struct command_channel_log *c, const struct command_channel *source,
                                              const struct command_base *cmd);
-void command_channel_log_update_flags(struct command_channel_log* chan, ssize_t offset, uint32_t flags);
+void command_channel_log_update_flags(struct command_channel_log *chan, ssize_t offset, uint32_t flags);
 struct command_base *command_channel_log_load_command(struct command_channel_log *c, ssize_t offset, uint32_t *flags);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ndef __VGPU_CMD_CHANNEL_H__
+#endif  // ndef __VGPU_CMD_CHANNEL_H__

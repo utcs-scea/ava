@@ -1,16 +1,16 @@
 #ifndef __EXECUTOR_SHADOW_H__
 #define __EXECUTOR_SHADOW_H__
 
-#include <stdint.h>
 #include <glib.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 struct vm_state {
-    GHashTable *map_hash;
-    uintptr_t map_addr;
+  GHashTable *map_hash;
+  uintptr_t map_addr;
 };
 
 #define HASH_TIMES 3

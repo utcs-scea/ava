@@ -14,12 +14,12 @@ extern "C" {
 #endif
 
 typedef struct MemoryRegion {
-    void *addr;
-    size_t size;
+  void *addr;
+  size_t size;
 } MemoryRegion;
 
-void nw_report_storage_resource_allocation(const char* const name, ssize_t amount);
-void nw_report_throughput_resource_consumption(const char* const name, ssize_t amount);
+void nw_report_storage_resource_allocation(const char *const name, ssize_t amount);
+void nw_report_throughput_resource_consumption(const char *const name, ssize_t amount);
 
 /* For Python wrapper */
 int init_manager_vsock();
@@ -30,7 +30,7 @@ void close_client(int client_fd);
 #ifdef __cplusplus
 }
 
-struct command_channel* command_channel_socket_tcp_worker_new(int worker_port);
+struct command_channel *command_channel_socket_tcp_worker_new(int worker_port);
 #endif
 
 #endif

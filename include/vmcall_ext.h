@@ -19,30 +19,40 @@ extern "C" {
 #define PROT4 PROT3, unsigned long a3
 #define PROT5 PROT4, unsigned long _a4
 
-#define LOADREG0 do{}while(0)
-#define LOADREG1 do{}while(0)
-#define LOADREG2 do{}while(0)
-#define LOADREG3 do{}while(0)
-#define LOADREG4 do{}while(0)
-#define LOADREG5 register long a4 asm ("r8") = _a4
+#define LOADREG0 \
+  do {           \
+  } while (0)
+#define LOADREG1 \
+  do {           \
+  } while (0)
+#define LOADREG2 \
+  do {           \
+  } while (0)
+#define LOADREG3 \
+  do {           \
+  } while (0)
+#define LOADREG4 \
+  do {           \
+  } while (0)
+#define LOADREG5 register long a4 asm("r8") = _a4
 
 #define INK_RETRY 2000
 
-#define VMCALL(n) \
-   static inline unsigned long _vmcall##n(PROT##n) { \
-      unsigned long ret; \
-      register long sys_hook asm ("r14") = 0; \
-      LOADREG##n; \
-      asm volatile ( \
-            "1: movq %%rdi, %%rax;" /* Reset nr for retry */ \
-            "vmcall;" \
-            "cmpq %[retry_code], %%rax;" \
-            "je 1b;" \
-            : "=a"(ret) : [retry_code]"i"(-INK_RETRY), ARGS##n, "r"(sys_hook) \
-            : "memory"); \
-      return ret; \
-   }
-
+#define VMCALL(n)                                                \
+  static inline unsigned long _vmcall##n(PROT##n) {              \
+    unsigned long ret;                                           \
+    register long sys_hook asm("r14") = 0;                       \
+    LOADREG##n;                                                  \
+    asm volatile(                                                \
+        "1: movq %%rdi, %%rax;" /* Reset nr for retry */         \
+        "vmcall;"                                                \
+        "cmpq %[retry_code], %%rax;"                             \
+        "je 1b;"                                                 \
+        : "=a"(ret)                                              \
+        : [ retry_code ] "i"(-INK_RETRY), ARGS##n, "r"(sys_hook) \
+        : "memory");                                             \
+    return ret;                                                  \
+  }
 
 VMCALL(0)
 VMCALL(1)
@@ -51,7 +61,7 @@ VMCALL(3)
 VMCALL(4)
 VMCALL(5)
 
-#define KVM_HC_VGPU_GUEST_PARAM   10
+#define KVM_HC_VGPU_GUEST_PARAM 10
 
 #ifdef __cplusplus
 }

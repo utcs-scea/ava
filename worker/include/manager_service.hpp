@@ -20,13 +20,11 @@ class ManagerServiceServerBase {
    * accepted
    * @param worker_argv arguments to forward to exec
    */
-  ManagerServiceServerBase(uint32_t manager_port, uint32_t worker_port_base,
-                           std::string worker_path,
-                           std::vector<std::string>& worker_argv);
+  ManagerServiceServerBase(uint32_t manager_port, uint32_t worker_port_base, std::string worker_path,
+                           std::vector<std::string> &worker_argv);
 
   void RunServer() {
-    std::cerr << "Manager Service listening on ::" << manager_port_
-              << std::endl;
+    std::cerr << "Manager Service listening on ::" << manager_port_ << std::endl;
     io_service_.run();
   }
 
@@ -45,12 +43,10 @@ class ManagerServiceServerBase {
   std::unique_ptr<boost::asio::ip::tcp::socket> socket_;
   std::unique_ptr<boost::asio::ip::tcp::endpoint> endpoint_;
 
-  virtual ava_proto::WorkerAssignReply HandleRequest(
-      const ava_proto::WorkerAssignRequest& request);
+  virtual ava_proto::WorkerAssignReply HandleRequest(const ava_proto::WorkerAssignRequest &request);
 
  protected:
-  virtual pid_t SpawnWorker(const std::vector<std::string>& environments,
-                            const std::vector<std::string>& parameters);
+  virtual pid_t SpawnWorker(const std::vector<std::string> &environments, const std::vector<std::string> &parameters);
 
   uint32_t manager_port_;
   uint32_t worker_port_base_;
