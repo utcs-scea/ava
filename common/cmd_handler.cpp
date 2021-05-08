@@ -3,7 +3,7 @@
 #include "common/debug.h"
 #include "common/endpoint_lib.h"
 #include "common/linkage.h"
-#include "common/shadow_thread_pool.h"
+#include "common/shadow_thread_pool.hpp"
 #include "common/singleton.hpp"
 
 #ifdef __cplusplus

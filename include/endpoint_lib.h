@@ -23,7 +23,7 @@ using namespace std;
 #include "common/cmd_channel.hpp"
 #include "common/cmd_handler.h"
 #include "common/murmur3.h"
-#include "common/shadow_thread_pool.h"
+#include "common/shadow_thread_pool.hpp"
 #include "common/zcopy.h"
 
 #ifdef __cplusplus

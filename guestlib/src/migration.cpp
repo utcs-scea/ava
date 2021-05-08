@@ -10,7 +10,7 @@
 #include "common/cmd_handler.h"
 #include "common/endpoint_lib.h"
 #include "common/linkage.h"
-#include "common/shadow_thread_pool.h"
+#include "common/shadow_thread_pool.hpp"
 
 /**
  * Starts migration process for test.

@@ -62,7 +62,7 @@ add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.c
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_record.c
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_hv.c
-  ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
@@ -90,7 +90,7 @@ add_library({api.soname} SHARED
   ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.c
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_record.c
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_hv.c
-  ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp

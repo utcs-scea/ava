@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "common/shadow_thread_pool.h"
+#include "common/shadow_thread_pool.hpp"
 
 struct ava_endpoint __ava_endpoint;
 

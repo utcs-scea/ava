@@ -8,7 +8,7 @@
 #include "common/debug.h"
 #include "common/endpoint_lib.h"
 #include "common/linkage.h"
-#include "common/shadow_thread_pool.h"
+#include "common/shadow_thread_pool.hpp"
 
 #define batch_array_index(array, index_) ((struct command_base *)g_ptr_array_index(array, index_))
 
