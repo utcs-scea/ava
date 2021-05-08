@@ -30,7 +30,7 @@ jobs:
     - name: Install lint dependencies
       if: startsWith(matrix.os, 'ubuntu-')
       run: |
-        sudo scripts/setup_lint_dependencies.sh
+        scripts/setup_lint_dependencies.sh
 
     ###
     # Check formatting
@@ -43,4 +43,6 @@ jobs:
     
     - name: Check Python formatting
       run: scripts/check_python_format.sh .
+      
+    - name: Check Python linting
       run: scripts/check_python_lint.sh .
