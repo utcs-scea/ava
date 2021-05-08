@@ -25,7 +25,7 @@ emit_prunes() {
     for p in ${PRUNE_NAMES}; do echo "-name ${p} -prune -o"; done; } | xargs
 }
 
-pushd "$GIT_ROOT"
+pushd "$GIT_ROOT" > /dev/null
 
 # shellcheck disable=SC2046,SC2207,SC2038
 FILES=($(find "${ROOTS[@]}" $(emit_prunes) -name '*.py' -print | xargs))
@@ -36,4 +36,4 @@ else
   ${PYFMT} --check "${FILES[@]}"
 fi
 
-popd
+popd > /dev/null

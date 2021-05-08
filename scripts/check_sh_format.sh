@@ -26,7 +26,7 @@ emit_prunes() {
     for p in $PRUNE_NAMES; do echo "-name $p -prune -o"; done; } | xargs
 }
 
-pushd "$GIT_ROOT"
+pushd "$GIT_ROOT" > /dev/null
 
 while read -r -d '' filename; do
   if [ -n "$FIX" ]; then
@@ -42,4 +42,4 @@ done < <(
     find "$ROOTS" $(emit_prunes) -name '*.sh' -print0
 )
 
-popd
+popd > /dev/null

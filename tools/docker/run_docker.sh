@@ -14,14 +14,14 @@ RUN_DOCKER_INTERACTIVE=${RUN_DOCKER_INTERACTIVE:-1}
 
 DEBUG_FLAGS="--cap-add=SYS_PTRACE --security-opt seccomp=unconfined"
 DOCKER_MAP="-v $PWD:$PWD -w $PWD -v /etc/passwd:/etc/passwd -v /etc/group:/etc/group"
-DOCKER_FLAGS="--rm ${DOCKER_MAP} -u`id -u`:`id -g` --ipc=host --security-opt seccomp=unconfined ${DEBUG_FLAGS}"
+DOCKER_FLAGS="--rm ${DOCKER_MAP} -u$(id -u):$(id -g) --ipc=host --security-opt seccomp=unconfined ${DEBUG_FLAGS}"
 if [[ ${DOCKER_IMAGE} == *"rocm"* ]]; then
     DOCKER_FLAGS="${DOCKER_FLAGS} --device=/dev/kfd --device=/dev/dri --group-add video"
 elif [[ ${DOCKER_IMAGE} == *"cuda"* ]]; then
     DOCKER_FLAGS="${DOCKER_FLAGS} --gpus all"
 fi
 
-if [ ${RUN_DOCKER_INTERACTIVE} -eq 1 ]; then
+if [ "${RUN_DOCKER_INTERACTIVE}" -eq 1 ]; then
     DOCKER_CMD="docker run -it ${DOCKER_FLAGS} ${DOCKER_IMAGE}"
 else
     DOCKER_CMD="docker run -i ${DOCKER_FLAGS} ${DOCKER_IMAGE}"

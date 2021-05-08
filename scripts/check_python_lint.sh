@@ -42,7 +42,7 @@ is_test() {
 
 TEST_ARGS="${ARGS} $(emit_test_nolint)"
 
-pushd "$GIT_ROOT"
+pushd "$GIT_ROOT" > /dev/null
 
 # shellcheck disable=SC2046
 while read -r -d '' filename; do
@@ -60,7 +60,7 @@ while read -r -d '' filename; do
   fi
 done < <(find "${ROOTS[@]}" $(emit_prunes) -name '*.py' -print0)
 
-popd
+popd > /dev/null
 
 if [ -n "${FAILED}" ]; then
   exit 1
