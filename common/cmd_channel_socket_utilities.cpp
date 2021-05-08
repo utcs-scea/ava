@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "common/cmd_channel_impl.h"
+#include "common/cmd_channel_impl.hpp"
 #include "common/cmd_handler.h"
 #include "common/debug.h"
 #include "common/devconf.h"

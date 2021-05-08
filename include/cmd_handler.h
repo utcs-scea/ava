@@ -5,7 +5,7 @@
 
 #include <pthread.h>
 
-#include "common/cmd_channel.h"
+#include "common/cmd_channel.hpp"
 #include "common/guest_mem.h"
 
 #ifdef __cplusplus

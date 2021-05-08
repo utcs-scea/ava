@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "common/cmd_channel.h"
+#include "common/cmd_channel.hpp"
 #include "common/debug.h"
 #include "common/endpoint_lib.h"
 #include "common/linkage.h"

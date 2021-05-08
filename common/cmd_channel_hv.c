@@ -1,7 +1,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include "common/cmd_channel.h"
+#include "common/cmd_channel.hpp"
 #include "common/cmd_handler.h"
 #include "common/devconf.h"
 #include "common/socket.h"

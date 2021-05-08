@@ -1,4 +1,4 @@
-#include "common/cmd_channel_impl.h"
+#include "common/cmd_channel_impl.hpp"
 #include "common/endpoint_lib.h"
 
 int nw_worker_id = 0;

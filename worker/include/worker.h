@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#include "common/cmd_channel.h"
+#include "common/cmd_channel.hpp"
 
 #ifdef __cplusplus
 #include <vector>

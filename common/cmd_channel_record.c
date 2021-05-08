@@ -6,8 +6,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "common/cmd_channel.h"
-#include "common/cmd_channel_impl.h"
+#include "common/cmd_channel_impl.hpp"
 #include "common/debug.h"
 
 #if _FILE_OFFSET_BITS != 64

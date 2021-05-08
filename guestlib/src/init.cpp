@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 
-#include "common/cmd_channel.h"
+#include "common/cmd_channel.hpp"
 #include "common/cmd_handler.h"
 #include "common/endpoint_lib.h"
 #include "common/linkage.h"

@@ -1,5 +1,5 @@
-#ifndef __VGPU_CMD_CHANNEL_H__
-#define __VGPU_CMD_CHANNEL_H__
+#ifndef AVA_COMMON_CMD_CHANNEL_HPP_
+#define AVA_COMMON_CMD_CHANNEL_HPP_
 
 #ifdef __KERNEL__
 #include <linux/types.h>
@@ -350,4 +350,4 @@ struct command_base *command_channel_log_load_command(struct command_channel_log
 }
 #endif
 
-#endif  // ndef __VGPU_CMD_CHANNEL_H__
+#endif  // AVA_COMMON_CMD_CHANNEL_HPP_

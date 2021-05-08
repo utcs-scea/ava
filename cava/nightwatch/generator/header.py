@@ -79,7 +79,7 @@ def header(api: API, errors):
 #include <sys/time.h>
 #include <glib.h>
 
-#include "common/cmd_channel.h"
+#include "common/cmd_channel.hpp"
 
 #include "{api.c_types_header_spelling}"
 

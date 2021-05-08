@@ -1,11 +1,11 @@
-#ifndef __VGPU_CMD_CHANNEL_IMPL_H__
-#define __VGPU_CMD_CHANNEL_IMPL_H__
+#ifndef AVA_COMMON_CMD_CHANNEL_IMPL_HPP_
+#define AVA_COMMON_CMD_CHANNEL_IMPL_HPP_
 
 #ifndef __KERNEL__
 
 #include <assert.h>
 
-#include "cmd_channel.h"
+#include "cmd_channel.hpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,4 +65,4 @@ void command_channel_simple_print_command(const struct command_channel *chan, co
 
 #endif
 
-#endif  // ndef __VGPU_CMD_CHANNEL_IMPL_H__
+#endif  // AVA_COMMON_CMD_CHANNEL_IMPL_HPP_

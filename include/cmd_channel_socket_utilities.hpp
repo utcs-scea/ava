@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include "cmd_channel_impl.h"
+#include "cmd_channel_impl.hpp"
 
 namespace chansocketutil {
 

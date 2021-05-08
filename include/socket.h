@@ -9,12 +9,15 @@
 #else
 
 #include <linux/netlink.h>
-#include <linux/vm_sockets.h>
 #include <netdb.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <sys/socket.h>
 #include <sys/types.h>
+// clang-format off
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <linux/vm_sockets.h>
+// clang-format on
 
 #ifdef __cplusplus
 extern "C" {

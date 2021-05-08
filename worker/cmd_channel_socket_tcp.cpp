@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "common/cmd_channel_impl.h"
+#include "common/cmd_channel_impl.hpp"
 #include "common/cmd_channel_socket_utilities.hpp"
 #include "common/cmd_handler.h"
 #include "common/debug.h"

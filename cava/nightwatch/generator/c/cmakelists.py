@@ -54,7 +54,7 @@ add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../worker/provision_gpu.cpp
   {' '.join(worker_srcs)}
   {api.c_worker_spelling}
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.c
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.c
@@ -82,7 +82,7 @@ add_library({api.soname} SHARED
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm.c
   {' '.join(guestlib_srcs)}
   {api.c_library_spelling}
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.c
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.c

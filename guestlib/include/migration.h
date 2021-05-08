@@ -1,7 +1,7 @@
 #ifndef AVA_GUESTLIB_MIGRATION_H_
 #define AVA_GUESTLIB_MIGRATION_H_
 
-#include "common/cmd_channel.h"
+#include "common/cmd_channel.hpp"
 
 #ifdef __cplusplus
 extern "C" {

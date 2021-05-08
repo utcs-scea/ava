@@ -1,16 +1,14 @@
 #include <assert.h>
 #include <fcntl.h>
-#include <linux/vm_sockets.h>
 #include <poll.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
-#include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "common/cmd_channel_impl.h"
+#include "common/cmd_channel_impl.hpp"
 #include "common/cmd_handler.h"
 #include "common/debug.h"
 #include "common/devconf.h"
