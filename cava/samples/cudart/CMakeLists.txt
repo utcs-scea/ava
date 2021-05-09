@@ -7,9 +7,9 @@ include(ExternalProject)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
-###### Compile cudart.c ######
+###### Compile cudart.cpp ######
 
-set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/cudart/cudart.c")
+set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/cudart/cudart.cpp")
 
 ExternalProject_Add_Step(cava cudart-nwcc
   DEPENDS ${spec_name}

@@ -2,7 +2,7 @@ ava_name("CUDA Runtime");
 ava_version("10.1.0");
 ava_identifier(CUDART);
 ava_number(9);
-ava_cflags(-I/usr/local/cuda-10.1/include -I../headers);
+ava_cxxflags(-I/usr/local/cuda-10.1/include -I../headers);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn);
 ava_export_qualifier();
 
@@ -34,6 +34,8 @@ ava_begin_utility;
 #include "cudart_nw_internal.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <cstdio>
 
 struct fatbin_wrapper {
     uint32_t magic;
@@ -137,14 +139,14 @@ ava_utility int __helper_cubin_num(void **cubin_handle) {
 ava_utility void __helper_dump_fatbin(void *fatCubin,
                                     GHashTable **fatbin_funcs,
                                     int *num_funcs) {
-    struct fatbin_wrapper *wp = fatCubin;
+    struct fatbin_wrapper *wp = (struct fatbin_wrapper *)fatCubin;
     struct fatBinaryHeader *fbh = (struct fatBinaryHeader *)wp->ptr;
 
     /* Dump fat binary to a file */
-    int fd;
-    fd = open("/tmp/fatbin.cubin", O_WRONLY | O_TRUNC | O_CREAT, 0666);
-    write(fd, (const void *)wp->ptr, fbh->headerSize + fbh->fatSize);
-    close(fd);
+    std::FILE *fd;
+    fd = std::fopen("/tmp/fatbin.cubin", "w");
+    std::fwrite((const void *)wp->ptr, 1, fbh->headerSize + fbh->fatSize, fd);
+    std::fclose(fd);
 
     /* Execute cuobjdump and construct function information table */
     FILE *fp_pipe;
@@ -226,7 +228,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
 }
 
 ava_utility void __helper_print_fatcubin_info(void *fatCubin, void **ret) {
-    struct fatbin_wrapper *wp = fatCubin;
+    struct fatbin_wrapper *wp = (struct fatbin_wrapper *)fatCubin;
     printf("fatCubin_wrapper=%p, []={.magic=0x%X, .seq=%d, ptr=0x%lx, data_ptr=0x%lx}\n",
             fatCubin,
             wp->magic, wp->seq, wp->ptr, wp->data_ptr);
@@ -240,7 +242,7 @@ ava_utility void __helper_print_fatcubin_info(void *fatCubin, void **ret) {
     int i, j;
     for (i = 0; i < 100; i++)
         if (fatBinaryEnd[i] == 0x7F && fatBinaryEnd[i+1] == 'E' && fatBinaryEnd[i+2] == 'L') {
-            printf("ELF header appears at 0x%d (%p): \n", i, (void *)wp->ptr + i);
+            printf("ELF header appears at 0x%d (%lx): \n", i, (uintptr_t)wp->ptr + i);
             break;
         }
     for (j = i; j < i + 32; j++)
@@ -277,7 +279,8 @@ __cudaRegisterFatBinary(void *fatCubin)
     ava_return_value {
         ava_out; ava_buffer(__helper_cubin_num(ret) + 1);
         ava_element {
-            if (ret[ava_index] != NULL) ava_handle;
+            // TODO(yuhc): Fix "GCC error \"CursorKind.CXX_NULL_PTR_LITERAL_EXPR not supported in specification expressions.\""
+            if ((uintptr_t)ret[ava_index] != 0) ava_handle;
         }
         ava_allocates;
         ava_lifetime_manual;
@@ -288,7 +291,7 @@ __cudaRegisterFatBinary(void *fatCubin)
 
     if (ava_is_worker) {
         //__helper_print_fatcubin_info(fatCubin, ret);
-        __helper_init_module(fatCubin, ret);
+        __helper_init_module((struct fatbin_wrapper *)fatCubin, ret);
     }
 }
 
@@ -444,7 +447,8 @@ __cudaRegisterFunction(
     ava_argument(fatCubinHandle) {
         ava_in; ava_buffer(__helper_cubin_num(fatCubinHandle) + 1);
         ava_element {
-            if (fatCubinHandle[ava_index] != NULL) ava_handle;
+            // TODO(yuhc): Fix "GCC error \"CursorKind.CXX_NULL_PTR_LITERAL_EXPR not supported in specification expressions.\""
+            if ((uintptr_t)fatCubinHandle[ava_index] != 0) ava_handle;
         }
     }
 
@@ -835,7 +839,7 @@ cudaGetLastError(void);
 __host__ __cudart_builtin__ const char* CUDARTAPI
 cudaGetErrorString(cudaError_t error)
 {
-    const char *ret = ava_execute();
+    const char *ret = (const char *)ava_execute();
     ava_return_value {
         ava_out; ava_buffer(strlen(ret) + 1);
         ava_lifetime_static;
@@ -845,7 +849,7 @@ cudaGetErrorString(cudaError_t error)
 __host__ __cudart_builtin__ const char* CUDARTAPI
 cudaGetErrorName(cudaError_t error)
 {
-    const char *ret = ava_execute();
+    const char *ret = (const char *)ava_execute();
     ava_return_value {
         ava_out; ava_buffer(strlen(ret) + 1);
         ava_lifetime_static;
@@ -1490,7 +1494,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasGetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t *mode)
 {
     /* XXX seems ok for tensorflow but might be wrong !FIXME */
-    *mode = 0;
+    *mode = CUBLAS_POINTER_MODE_HOST;
     return CUBLAS_STATUS_SUCCESS;
 }
 

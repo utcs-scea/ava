@@ -25,6 +25,8 @@ __cudaPushCallConfiguration(dim3 gridDim, dim3 blockDim,
 
 cudaError_t CUDARTAPI __cudaPopCallConfiguration(dim3 *gridDim, dim3 *blockDim, size_t *sharedMem, void *stream);
 
+void CUDARTAPI __cudaRegisterFatBinaryEnd(void **fatCubinHandle);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif

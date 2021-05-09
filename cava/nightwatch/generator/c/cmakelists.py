@@ -20,7 +20,7 @@ set(c_flags {api.cflags})
 set(cxx_flags {api.cxxflags})
 add_compile_options("$<$<COMPILE_LANGUAGE:C>:${{c_flags}}>")
 add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:${{cxx_flags}}>")
-add_compile_options(-Wall -D_FILE_OFFSET_BITS=64 -fPIC -rdynamic)
+add_compile_options(-Wall -D_FILE_OFFSET_BITS=64 -fPIC -rdynamic -fpermissive)
 
 string(TOUPPER "${{CMAKE_BUILD_TYPE}}" cmake_build_type_upper)
 if (cmake_build_type_upper MATCHES RELEASE)
