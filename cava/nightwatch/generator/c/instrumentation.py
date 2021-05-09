@@ -2,7 +2,7 @@ from nightwatch.model import Type, Argument, Function
 
 
 # TODO: Split this function into it's three conceptual elements.
-def timing_code_guest(selector: str, name: str, enabled: bool):
+def timing_code_guest(selector: str, name: str, enabled: bool) -> str:
     if not enabled:
         return ""
     return f"""#ifdef AVA_PRINT_TIMESTAMP
@@ -14,7 +14,7 @@ def timing_code_guest(selector: str, name: str, enabled: bool):
     #endif\n"""
 
 
-def report_type_alloc_resources(ty: Type):
+def report_type_alloc_resources(ty: Type) -> str:
     ret = ""
     for resource, amount in ty.allocates_resources.items():
         ret += f"""nw_report_storage_resource_allocation("{resource}", {amount});\n"""
@@ -23,14 +23,14 @@ def report_type_alloc_resources(ty: Type):
     return ret
 
 
-def report_alloc_resources(arg: Argument):
+def report_alloc_resources(arg: Argument) -> str:
     ret = ""
     for ty in arg.contained_types:
         ret += report_type_alloc_resources(ty)
     return ret
 
 
-def report_consume_resources(f: Function):
+def report_consume_resources(f: Function) -> str:
     ret = ""
     for resource, amount in f.consumes_resources.items():
         ret += f"""nw_report_throughput_resource_consumption("{resource}", {amount});\n"""
@@ -42,9 +42,9 @@ def report_consume_resources(f: Function):
     return ret
 
 
-def timing_code_worker(location:str, name:str, enabled:bool):
+def timing_code_worker(location: str, name: str, enabled: bool) -> str:
     if not enabled:
-       return "".strip()
+        return "".strip()
     return f"""#ifdef AVA_PRINT_TIMESTAMP
         {{
             struct timeval ts_{name}_timing;

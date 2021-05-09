@@ -8,12 +8,15 @@ from nightwatch.model import Function, Type, Argument, API
 
 def command_print_implementation(f: Function):
     with location(f"at {term.yellow(str(f.name))}", f.location):
-        def printf(format, *values): return f"""fprintf(file, "{format}", {",".join(values)});"""
+
+        def printf(format, *values):
+            return f"""fprintf(file, "{format}", {",".join(values)});"""
+
         def print_value_deep(values, type: Type, depth, no_depends, argument, **other):
-            value, = values
+            (value,) = values
             if type.is_void:
                 return ""
-            buffer_pred = (Expr(type.transfer).equals("NW_BUFFER") & Expr(value).not_equals("NULL"))
+            buffer_pred = Expr(type.transfer).equals("NW_BUFFER") & Expr(value).not_equals("NULL")
 
             def address():
                 if not hasattr(type, "pointee"):
@@ -27,7 +30,8 @@ def command_print_implementation(f: Function):
                     {tmp_name} = {get_transfer_buffer_expr(value, type)};
                     {for_all_elements(inner_values, type, precomputed_size=Expr(1), depth=depth, argument=argument, no_depends=no_depends, **other)}
                     fprintf(file, ",...}}");
-                    """)
+                    """
+                )
                 return f"""
                 {printf("ptr 0x%012lx", f"(long int){value}")}
                 {data_code}
@@ -49,27 +53,33 @@ def command_print_implementation(f: Function):
                     return printf("%#lx", f"(long int){value}")
 
             return Expr(bool(type.fields or argument.depends_on and no_depends)).if_then_else(
-                "", # Using only else branch
-                Expr(type.transfer).equals("NW_BUFFER").if_then_else(
+                "",  # Using only else branch
+                Expr(type.transfer)
+                .equals("NW_BUFFER")
+                .if_then_else(
                     address,
-                    Expr(type.transfer).equals("NW_ZEROCOPY_BUFFER").if_then_else(
+                    Expr(type.transfer)
+                    .equals("NW_ZEROCOPY_BUFFER")
+                    .if_then_else(
                         address,
-                        Expr(type.transfer).equals("NW_OPAQUE").if_then_else(
-                            opaque,
-                            Expr(type.transfer).equals("NW_HANDLE").if_then_else(
-                                handle
-                            )
-                        )
-                    )
-                )
+                        Expr(type.transfer)
+                        .equals("NW_OPAQUE")
+                        .if_then_else(opaque, Expr(type.transfer).equals("NW_HANDLE").if_then_else(handle)),
+                    ),
+                ),
             )
 
         def print_value(argument: Argument, value, type: Type, no_depends):
-            conv = print_value_deep((value,), argument.type,
-                                    depth=0, name=argument.name,
-                                    argument=argument,
-                                    no_depends=no_depends,
-                                    kernel=print_value_deep, self_index=0)
+            conv = print_value_deep(
+                (value,),
+                argument.type,
+                depth=0,
+                name=argument.name,
+                argument=argument,
+                no_depends=no_depends,
+                kernel=print_value_deep,
+                self_index=0,
+            )
             return (printf("%s=", f'"{argument.name}"') if not argument.ret else "") + str(conv)
 
         print_comma = """ fprintf(file, ", ");\n"""
@@ -104,7 +114,7 @@ def command_print_implementation(f: Function):
         """.strip()
 
 
-def print_command_function(api: API):
+def print_command_function(api: API) -> str:
     function_name = f"__print_command_{api.identifier.lower()}"
     return f"""
     void {function_name}(FILE* file, const struct command_channel* __chan, const struct command_base* __cmd) {{

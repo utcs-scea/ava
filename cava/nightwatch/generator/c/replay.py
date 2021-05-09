@@ -1,12 +1,18 @@
 from nightwatch import location, term
 from nightwatch.c_dsl import Expr
 from nightwatch.generator.c.buffer_handling import get_buffer
-from nightwatch.generator.c.callee import convert_input_for_argument, record_call_metadata, record_argument_metadata, \
-    log_call_declaration, log_ret_declaration
+from nightwatch.generator.c.callee import (
+    convert_input_for_argument,
+    record_call_metadata,
+    record_argument_metadata,
+    log_call_declaration,
+    log_ret_declaration,
+)
 from nightwatch.generator.c.stubs import call_function_wrapper
 from nightwatch.generator.c.util import for_all_elements, AllocList
 from nightwatch.generator.common import lines, comment_block
 from nightwatch.model import Type, Argument, ConditionalType, Function, FunctionPointer, API
+from typing import List
 
 
 def replay_command_implementation(f: Function):
@@ -59,14 +65,16 @@ def assign_original_handle_for_argument(arg: Argument, original: str):
         if isinstance(type, ConditionalType):
             return Expr(type.predicate).if_then_else(
                 convert_result_value(values, type.then_type, depth, original_type=type.original_type, **other),
-                convert_result_value(values, type.else_type, depth, original_type=type.original_type, **other))
+                convert_result_value(values, type.else_type, depth, original_type=type.original_type, **other),
+            )
 
         if type.is_void:
             return """abort_with_reason("Reached code to handle void value.");"""
 
         original_value, local_value = values
-        buffer_pred = (Expr(type.transfer).equals("NW_BUFFER") &
-                       Expr(local_value).not_equals("NULL") & (Expr(type.buffer) > 0))
+        buffer_pred = (
+            Expr(type.transfer).equals("NW_BUFFER") & Expr(local_value).not_equals("NULL") & (Expr(type.buffer) > 0)
+        )
 
         def simple_buffer_case():
             return ""
@@ -81,35 +89,47 @@ def assign_original_handle_for_argument(arg: Argument, original: str):
                 {type.nonconst.attach_to(tmp_name)}; 
                 {get_buffer(tmp_name, original_value, type, original_type=original_type)}
                 {for_all_elements(inner_values, type, depth=depth, original_type=original_type, **other)}
-                """)
+                """
+            )
 
         def default_case():
-            return Expr(type.transfer).equals("NW_HANDLE").if_then_else(
-                (~Expr(type.deallocates)).if_then_else(
-                    f"nw_handle_pool_assign_handle(handle_pool, (void*){original_value}, (void*){local_value});"),
-                ((Expr(arg.ret) | Expr(type.transfer).equals("NW_OPAQUE")) & Expr(not isinstance(type, FunctionPointer))).if_then_else(
-                    f"assert({original_value} == {local_value});")
+            return (
+                Expr(type.transfer)
+                .equals("NW_HANDLE")
+                .if_then_else(
+                    (~Expr(type.deallocates)).if_then_else(
+                        f"nw_handle_pool_assign_handle(handle_pool, (void*){original_value}, (void*){local_value});"
+                    ),
+                    (
+                        (Expr(arg.ret) | Expr(type.transfer).equals("NW_OPAQUE"))
+                        & Expr(not isinstance(type, FunctionPointer))
+                    ).if_then_else(f"assert({original_value} == {local_value});"),
+                )
             )
 
         if type.fields:
             return for_all_elements(values, type, depth=depth, original_type=original_type, **other)
-        return type.is_simple_buffer().if_then_else(
-            simple_buffer_case,
-            Expr(type.transfer).equals("NW_BUFFER").if_then_else(
-                buffer_case,
-                default_case
+        return (
+            type.is_simple_buffer()
+            .if_then_else(
+                simple_buffer_case, Expr(type.transfer).equals("NW_BUFFER").if_then_else(buffer_case, default_case)
             )
-        ).scope()
+            .scope()
+        )
 
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
-        conv = convert_result_value((f"{original}->{arg.param_spelling}", f"{arg.name}"), arg.type,
-                                    depth=0, name=arg.name,
-                                    kernel=convert_result_value, self_index=1)
-        return (Expr(arg.output) | arg.ret).if_then_else(
-            comment_block(f"Assign or check: {arg}", conv))
+        conv = convert_result_value(
+            (f"{original}->{arg.param_spelling}", f"{arg.name}"),
+            arg.type,
+            depth=0,
+            name=arg.name,
+            kernel=convert_result_value,
+            self_index=1,
+        )
+        return (Expr(arg.output) | arg.ret).if_then_else(comment_block(f"Assign or check: {arg}", conv))
 
 
-def replay_command_function(api: API, calls):
+def replay_command_function(api: API, calls: List[Function]) -> str:
     function_name = f"__replay_command_{api.identifier.lower()}"
     return f"""
     void {function_name}(struct command_channel* __chan, struct nw_handle_pool* handle_pool,

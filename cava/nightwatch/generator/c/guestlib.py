@@ -1,12 +1,13 @@
 from nightwatch.generator.c.stubs import function_implementation, unsupported_function_implementation
 from .command_handler import *
+from nightwatch.model import API
+from typing import Any, List, Tuple
 
 
-def source(api: API, errors):
+def source(api: API, errors: List[Any]) -> Tuple[str, str]:
     handle_command_func_code = handle_command_function(
-        api,
-        api.callback_functions,
-        list(api.real_functions) + list(api.callback_functions))
+        api, api.callback_functions, list(api.real_functions) + list(api.callback_functions)
+    )
     code = f"""
 #define __AVA__ 1
 #define ava_is_worker 0

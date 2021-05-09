@@ -3,20 +3,22 @@ import logging
 import nightwatch
 from nightwatch import location, term, error, warning, info, ice, MultipleError, capture_errors, captured_errors
 
-__all__ = ["logger",
-           "GenerateError",
-           "MultipleError",
-           "generate_assert",
-           "generate_requires",
-           "generate_expects",
-           "term",
-           "error",
-           "warning",
-           "info",
-           "ice",
-           "location",
-           "capture_errors",
-           "captured_errors"]
+__all__ = [
+    "logger",
+    "GenerateError",
+    "MultipleError",
+    "generate_assert",
+    "generate_requires",
+    "generate_expects",
+    "term",
+    "error",
+    "warning",
+    "info",
+    "ice",
+    "location",
+    "capture_errors",
+    "captured_errors",
+]
 
 logger = logging.getLogger(__name__)
 

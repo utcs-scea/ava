@@ -5,6 +5,8 @@ cmake-build-*
 *.so
 *.a
 *.swp
+*.sqlite3
+*build
 
 # Cloned repository
 benchmark/

@@ -1,12 +1,13 @@
 from inspect import isclass
+from typing import Callable
 
 
-def replace(meth):
+def replace(meth: Callable) -> Callable:
     meth.__replace__ = True
     return meth
 
 
-def extension(cls):
+def extension(cls) -> Callable:
     def decorator(val):
         if isclass(val):
             for n, v in val.__dict__.items():
