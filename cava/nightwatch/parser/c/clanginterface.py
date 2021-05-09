@@ -163,7 +163,10 @@ class _CursorExtension:
         # logger.info(("_unparse_expression", self.kind, self.source, self.spelling, self.untokenized,
         # self.displayname, self.mangled_name, self.canonical.spelling, self.referenced))
         if self.kind == CursorKind.CALL_EXPR:
-            args = ", ".join(c._unparse_expression() for c in self.children[1:])
+            if len(self.children) > 1:
+                args = ", ".join(c._unparse_expression() for c in self.children[1:])
+            else:
+                args = ""
             return f"{self.spelling}({args})"
         elif self.kind == CursorKind.CXX_UNARY_EXPR:
             return self.untokenized
@@ -193,7 +196,10 @@ class _CursorExtension:
             return f"{l} {self.spelling} {r}"
         elif self.kind == CursorKind.UNARY_OPERATOR:
             v, = [c._unparse_expression() for c in self.children]
-            return f"{self.tokens[0].spelling}{v}"
+            if len(self.tokens) > 0:
+                return f"{self.tokens[0].spelling}{v}"
+            else:
+                return ""
         elif self.kind == CursorKind.ARRAY_SUBSCRIPT_EXPR:
             v, i = [c._unparse_expression() for c in self.children]
             return f"{v}[{i}]"
@@ -201,6 +207,11 @@ class _CursorExtension:
             return " ".join(c._unparse_expression() for c in self.children)
         elif self.kind == CursorKind.INIT_LIST_EXPR:
             return "{" + ", ".join(c._unparse_expression() for c in self.children) + "}"
+        elif self.kind == CursorKind.CXX_NULL_PTR_LITERAL_EXPR or self.kind == CursorKind.GNU_NULL_EXPR:
+            return f"({self.source})"
+        elif self.kind == CursorKind.NAMESPACE_REF:
+            # TODO(yuhc): debug me.
+            return f"{self.spelling}::"
         else:
             return f"""_Pragma("GCC error \\"{self.kind} not supported in specification expressions.\\"")"""
 
@@ -208,7 +219,6 @@ class _CursorExtension:
     def unparsed(self):
         if self.kind.is_expression():
             r = self._unparse_expression()
-            # print(r)
             return r
         else:
             return self.source or self.untokenized

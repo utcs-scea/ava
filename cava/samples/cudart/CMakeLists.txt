@@ -7,13 +7,17 @@ include(ExternalProject)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
-###### Compile cudart.c ######
+###### Compile cudart.cpp ######
 
-set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/cudart/cudart.c")
+set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/cudart/cudart.cpp")
 
 ExternalProject_Add_Step(cava cudart-nwcc
   DEPENDS ${spec_name}
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name} -I /usr/local/cuda-10.1/include -I ${CMAKE_CURRENT_SOURCE_DIR}/headers ${GLIB2_CFLAGS}
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name}
+    -I /usr/local/cuda-10.1/include
+    -I ${CMAKE_CURRENT_SOURCE_DIR}/headers
+    ${GLIB2_CFLAGS}
+    -I ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/plog/include
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDEES download
 )

@@ -80,12 +80,10 @@ Functions are missing from {args.inputfile}, but appear in {", ".join(api.includ
             from .generator.c import worker
             write_file_c(*worker.source(api, errors), filename_prefix=filename_prefix)
 
-            from .generator.c import makefile
-            write_file_c(*makefile.source(api, errors), indent=False, filename_prefix=filename_prefix)
-
             from .generator.c import cmakelists
             write_file_c(*cmakelists.source(api, errors), indent=False, filename_prefix=filename_prefix)
 
+            # TODO(yuhc): Fix build.
             if args.build:
                 import subprocess
                 try:

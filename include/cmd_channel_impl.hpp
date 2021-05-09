@@ -7,9 +7,9 @@
 
 #include "cmd_channel.hpp"
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
 struct command_channel_vtable {
   size_t (*command_channel_buffer_size)(const struct command_channel *chan, size_t size);
@@ -59,9 +59,9 @@ static inline void command_channel_preinitialize(struct command_channel *chan, s
 /// A simple default implementation of print_command for use in command_channel implementations.
 void command_channel_simple_print_command(const struct command_channel *chan, const struct command_base *cmd);
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 }
-#endif
+#endif /* __cplusplus */
 
 #endif
 
