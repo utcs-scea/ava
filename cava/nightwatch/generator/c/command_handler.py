@@ -4,12 +4,14 @@ from nightwatch.generator.c.printer import print_command_function
 from nightwatch.generator.c.replay import replay_command_function
 from nightwatch.generator.c.stubs import function_wrapper
 from .util import *
+from nightwatch.model import API, Function
+from typing import Iterable
 
 
 # TODO: Abstract the case structure of most functions into a class or something.
 
 
-def handle_command_function(api: API, calls: Iterable[Function], returns: Iterable[Function]):
+def handle_command_function(api: API, calls: Iterable[Function], returns: Iterable[Function]) -> str:
     function_name = f"__handle_command_{api.identifier.lower()}"
     calls = list(calls)
     returns = list(returns)
@@ -44,7 +46,7 @@ def handle_command_function(api: API, calls: Iterable[Function], returns: Iterab
     """
 
 
-def handle_command_header(api: API):
+def handle_command_header(api: API) -> str:
     return f"""
 #include "common/endpoint_lib.hpp"
 #include "common/linkage.h"

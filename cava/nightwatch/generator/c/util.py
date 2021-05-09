@@ -29,17 +29,15 @@ class _TypeExtensions:
         """
         individual_field_preds = [t.is_blob(allow_handle) for t in self.fields.values()]
         fields_pred = reduce(lambda a, b: Expr(a) & b, individual_field_preds, True)
-        allowed = {"NW_OPAQUE", "NW_CALLBACK", "NW_CALLBACK", "NW_CALLBACK_REGISTRATION"} | \
-                  ({"NW_HANDLE"} if allow_handle else set())
+        allowed = {"NW_OPAQUE", "NW_CALLBACK", "NW_CALLBACK", "NW_CALLBACK_REGISTRATION"} | (
+            {"NW_HANDLE"} if allow_handle else set()
+        )
         transfer_pred = Expr(self.transfer).one_of(allowed)
         pointee_pred = True
         if isinstance(self, StaticArray):
-            pointee_pred = (
-                    self.pointee.is_blob(allow_handle) &
-                    Expr(self.buffer_allocator == "malloc")
-                    )
+            pointee_pred = self.pointee.is_blob(allow_handle) & Expr(self.buffer_allocator == "malloc")
         pred = transfer_pred & fields_pred & pointee_pred
-        if "ava_index" in str(pred): # TODO: Remove this hack by tracking the usage of variables in expressions.
+        if "ava_index" in str(pred):  # TODO: Remove this hack by tracking the usage of variables in expressions.
             return Expr(False)
         return pred
 
@@ -71,9 +69,18 @@ def compute_buffer_size(type: Type, original_type: Optional[Type] = None):
     return Expr(f"(size_t){size_expr.group()}{size_adjustment}").group()
 
 
-
-def for_all_elements(values: tuple, type: Type, *, depth: int, kernel,
-                     name: str, self_index: int, precomputed_size=None, original_type=None, **extra):
+def for_all_elements(
+    values: tuple,
+    type: Type,
+    *,
+    depth: int,
+    kernel,
+    name: str,
+    self_index: int,
+    precomputed_size=None,
+    original_type=None,
+    **extra,
+):
     """
     kernel(values, type, **other)
     """
@@ -87,16 +94,23 @@ def for_all_elements(values: tuple, type: Type, *, depth: int, kernel,
             eval_size = f"const size_t {size} = {size_expr};"
             inner_values = tuple(f"__{name}_{_letters[i]}_{depth}" for i in range(len(values)))
             type_pointee = _char_type_like(type.pointee) if type.pointee.is_void else type.pointee
-            nested = kernel(tuple("*"+v for v in inner_values), type_pointee,
-                            depth=depth+1, name=name, kernel=kernel, self_index=self_index,
-                            **extra)
+            nested = kernel(
+                tuple("*" + v for v in inner_values),
+                type_pointee,
+                depth=depth + 1,
+                name=name,
+                kernel=kernel,
+                self_index=self_index,
+                **extra,
+            )
             if nested:
                 set_inner_values = lines(
-                     f"""
+                    f"""
                      {type_pointee.nonconst.attach_to(iv, additional_inner_type_elements="*")}; 
                      {iv} = {type_pointee.nonconst.cast_type(type.ascribe_type(v), "*")} + {index};
                      """
-                     for v, iv in zip(values, inner_values))
+                    for v, iv in zip(values, inner_values)
+                )
                 if size_expr.is_constant(1):
                     loop = f"""
                         const size_t {index} = 0;
@@ -125,9 +139,15 @@ def for_all_elements(values: tuple, type: Type, *, depth: int, kernel,
             field_infos = []
             for field_name, field in type.fields.items():
                 inner_values = tuple(f"__{name}_{_letters[i]}_{depth}_{field_name}" for i in range(len(values)))
-                nested = kernel(tuple("*" + v for v in inner_values), field, depth=depth + 1, name=name,
-                                kernel=kernel, self_index=self_index,
-                                **extra)
+                nested = kernel(
+                    tuple("*" + v for v in inner_values),
+                    field,
+                    depth=depth + 1,
+                    name=name,
+                    kernel=kernel,
+                    self_index=self_index,
+                    **extra,
+                )
                 inner_code = ""
                 if str(nested).strip():
                     set_inner_values = lines(
@@ -135,7 +155,8 @@ def for_all_elements(values: tuple, type: Type, *, depth: int, kernel,
                         {field.nonconst.attach_to(iv, additional_inner_type_elements="*")};
                         {iv} = {field.nonconst.cast_type(field.ascribe_type(f"&({v}).{field_name}", "*"), "*")}; 
                         """.strip()
-                        for v, iv in zip(values, inner_values))
+                        for v, iv in zip(values, inner_values)
+                    )
                     inner_code = set_inner_values + str(nested)
                 field_infos.append((field_name, nested, inner_code))
             code = "\n".join(inner_code for _, _, inner_code in _sort_fields(field_infos))
@@ -157,8 +178,9 @@ def _sort_fields(field_infos: List[tuple]):
     try:
         return [fields[n] for n in toposort_flatten(dag, sort=True)]
     except CircularDependencyError:
-        generate_expects(False,
-                         "Struct fields may be processed out of order, due to hacks in the current implementation.")
+        generate_expects(
+            False, "Struct fields may be processed out of order, due to hacks in the current implementation."
+        )
         return field_infos
 
 

@@ -1,7 +1,9 @@
 import ast as pyast
+
 # import astor
 
 from ...model import *
+
 
 class Name:
     __slots__ = ("names",)
@@ -15,6 +17,7 @@ class Name:
             else:
                 assert isinstance(v, str)
                 return v.split(".")
+
         self.names = tuple(conv(v))
 
     def __str__(self):

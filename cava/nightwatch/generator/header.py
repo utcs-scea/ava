@@ -1,14 +1,16 @@
 from .common import *
 from . import *
+from nightwatch.model import API, Argument, Function
+from typing import Any, List, Tuple
 
 
-def argument(arg: Argument):
+def argument(arg: Argument) -> str:
     return f"""
     {arg.type.nonconst.attach_to(arg.param_spelling)};
     """.strip()
 
 
-def function_call_struct(f: Function, errors):
+def function_call_struct(f: Function, errors: List[Any]):
     with capture_errors():
         with location(f"at {term.yellow(str(f.name))}", f.location, report_continue=errors):
             arg_suffix = "\n"
@@ -20,10 +22,10 @@ def function_call_struct(f: Function, errors):
             }};
             """
         # noinspection PyUnreachableCode
-        return f"#error \"{captured_errors()}\" "
+        return f'#error "{captured_errors()}" '
 
 
-def function_ret_struct(f: Function, errors):
+def function_ret_struct(f: Function, errors: List[Any]):
     with capture_errors():
         with location(f"at {term.yellow(str(f.name))}", f.location, report_continue=errors):
             arg_suffix = "\n"
@@ -36,10 +38,10 @@ def function_ret_struct(f: Function, errors):
             }};
             """
         # noinspection PyUnreachableCode
-        return f"#error \"{captured_errors()}\" "
+        return f'#error "{captured_errors()}" '
 
 
-def function_call_record_struct(f: Function, errors):
+def function_call_record_struct(f: Function, errors: List[Any]):
     with capture_errors():
         with location(f"at {term.yellow(str(f.name))}", f.location, report_continue=errors):
             arg_suffix = "\n"
@@ -53,18 +55,18 @@ def function_call_record_struct(f: Function, errors):
             }};
             """
         # noinspection PyUnreachableCode
-        return f"#error \"{captured_errors()}\" "
+        return f'#error "{captured_errors()}" '
 
 
-def function_struct(f: Function, errors):
+def function_struct(f: Function, errors: List[Any]) -> str:
     return function_call_struct(f, errors) + function_ret_struct(f, errors) + function_call_record_struct(f, errors)
 
 
-def command_ids(f: Function):
+def command_ids(f: Function) -> str:
     return f"{f.call_id_spelling}, {f.ret_id_spelling}"
 
 
-def header(api: API, errors):
+def header(api: API, errors: List[Any]) -> Tuple[str, str]:
     functions = list(api.supported_functions)
     # TODO: Any objects pointed to by metadata will be leaked when the metadata is discarded. metadata needs a destructor.
     code = f"""
@@ -133,7 +135,7 @@ struct {api.metadata_struct_spelling} {{
     return api.c_header_spelling, code
 
 
-def utilities_header(api, errors):
+def utilities_header(api: API, errors: List[Any]) -> Tuple[str, str]:
     code = f"""
 #ifndef {guard_macro_spelling(api.c_utilities_header_spelling)}
 #define {guard_macro_spelling(api.c_utilities_header_spelling)}
@@ -151,7 +153,7 @@ def utilities_header(api, errors):
     return api.c_utilities_header_spelling, code
 
 
-def utility_types_header(api, errors):
+def utility_types_header(api: API, errors: List[Any]) -> Tuple[str, str]:
     code = f"""
 #ifndef {guard_macro_spelling(api.c_utility_types_header_spelling)}
 #define {guard_macro_spelling(api.c_utility_types_header_spelling)}
@@ -163,7 +165,7 @@ def utility_types_header(api, errors):
     return api.c_utility_types_header_spelling, code
 
 
-def types_header(api, errors):
+def types_header(api: API, errors: List[Any]) -> Tuple[str, str]:
     nw_header = f"""
 /** NightWatch MODIFIED header for {api.name} (version {api.version})
  *  Lines marked with "NWR:" were removed by NightWatch.

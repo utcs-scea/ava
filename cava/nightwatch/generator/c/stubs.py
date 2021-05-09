@@ -1,5 +1,5 @@
 from nightwatch import location, term
-from nightwatch.c_dsl import ExprOrStr
+from nightwatch.c_dsl import Expr, ExprOrStr
 from nightwatch.generator import generate_requires
 from nightwatch.generator.c.buffer_handling import compute_total_size
 from nightwatch.generator.c.caller import compute_argument_value, attach_for_argument
@@ -7,6 +7,7 @@ from nightwatch.generator.c.instrumentation import timing_code_guest, report_all
 from nightwatch.generator.c.util import *
 from nightwatch.generator.common import *
 from nightwatch.model import *
+from typing import Union
 
 
 def function_implementation(f: Function) -> Union[str, Expr]:
@@ -47,18 +48,19 @@ def function_implementation(f: Function) -> Union[str, Expr]:
             command_channel_send_command(__chan, (struct command_base*)__cmd);
         """.strip()
 
-        if (f.api.send_code):
-            import_code = f.api.send_code.encode('ascii', 'ignore').decode('unicode_escape')[1:-1]
+        if f.api.send_code:
+            import_code = f.api.send_code.encode("ascii", "ignore").decode("unicode_escape")[1:-1]
             ldict = locals()
             exec(import_code, globals(), ldict)
-            send_code = ldict['send_code']
+            send_code = ldict["send_code"]
 
         return_code = is_async.if_then_else(
             forge_success,
             f"""
                 shadow_thread_handle_command_until(nw_shadow_thread_pool, __call_record->__call_complete);
                 {return_statement}
-            """.strip())
+            """.strip(),
+        )
 
         return f"""
         EXPORTED {(f.api.export_qualifier + " ") if f.api.export_qualifier else ""}{f.return_value.type.spelling} {f.name}(
@@ -161,10 +163,11 @@ def function_wrapper(f: Function) -> str:
         else:
             # Indirect call (callback)
             try:
-                userdata_arg, = [a for a  in f.arguments if a.userdata]
+                (userdata_arg,) = [a for a in f.arguments if a.userdata]
             except ValueError:
-                generate_requires(False, "ava_callback_decl function must have exactly one argument annotated with "
-                                         "ava_userdata.")
+                generate_requires(
+                    False, "ava_callback_decl function must have exactly one argument annotated with " "ava_userdata."
+                )
             call_code = f"""__target_function({", ".join(a.name for a in f.real_arguments)})"""
             callback_unpack = f"""
                 {f.type.attach_to("__target_function")};

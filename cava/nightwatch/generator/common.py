@@ -1,10 +1,12 @@
-from typing import Iterable
+from typing import Callable, List, Union, Iterable
 
 from ..model import *
 from ..extension import extension
+from nightwatch.c_dsl import Expr
+from nightwatch.model import Argument
 
 
-def comment_block(comment, block):
+def comment_block(comment: str, block: Union[str, Expr]) -> str:
     if hasattr(block, "strip") and block.strip() or block:
         return f"\n /* {comment} */\n{block}"
     return ""
@@ -14,11 +16,13 @@ nl = "\n"
 snl = "\\n"
 
 
-def lines(strs: Iterable, nl="\n"):
+def lines(strs: Iterable, nl: str = "\n") -> str:
     return nl.join(str(s) for s in strs if s)
 
 
-def unpack_struct(struct: str, fields: Iterable, access=".", convert=lambda v, t: v, nl="\n") -> str:
+def unpack_struct(
+    struct: str, fields: Iterable, access: str = ".", convert: Callable = lambda v, t: v, nl: str = "\n"
+) -> str:
     """
     Generate statements to unpack the fields of struct into scope.
 
@@ -26,37 +30,50 @@ def unpack_struct(struct: str, fields: Iterable, access=".", convert=lambda v, t
     """
     # {f.name} = {f.type.nonconst.cast_type(f.type.ascribe_type(convert(struct + access + f.name, f.type)))};
     return lines(
-        (f"""
+        (
+            f"""
          {f.type.nonconst.attach_to(f.name)}; 
          {f.name} = {convert(struct + access + f.name, f.type)};
          """
-         for f in fields), nl=nl)
+            for f in fields
+        ),
+        nl=nl,
+    )
 
 
 def unpack_struct_scope(code, *args, nl="\n", **kws):
     return f"""({{{nl}{unpack_struct(*args, **kws, nl=nl)}{nl}{code}{nl}}})"""
 
 
-def pack_struct(struct, fields, access=".", convert=(lambda v, t: v), nl="\n") -> str:
+def pack_struct(
+    struct: str, fields: List[Argument], access: str = ".", convert: Callable = (lambda v, t: v), nl: str = "\n"
+) -> str:
     """
     Generate statements to pack the fields of struct from the current scope.
 
     fields: an iterable of values with attributes "name" and "type" (usually Argument).
     """
     # {struct}{access}{f.name} = {f.type.nonconst.cast_type(f.type.ascribe_type(convert(f.name, f.type)))};
-    return lines((f"""
+    return lines(
+        (
+            f"""
         {struct}{access}{f.name} = {convert(f.name, f.type)};
-        """ for f in fields), nl)
+        """
+            for f in fields
+        ),
+        nl,
+    )
 
 
 # Extensions to model
+
 
 @extension(Type)
 class _TypeSpelling:
     # Information
 
     @property
-    def contains_buffer(self):
+    def contains_buffer(self) -> bool:
         return hasattr(self, "buffer") and bool(self.buffer)
 
     # Identifiers
@@ -72,7 +89,7 @@ class _ArgumentSpelling:
 
     # Identifiers
     @property
-    def param_spelling(self):
+    def param_spelling(self) -> str:
         return "{}".format(self.name)
 
 
@@ -83,23 +100,23 @@ class _FunctionSpelling:
     # Identifiers
 
     @property
-    def call_id_spelling(self):
+    def call_id_spelling(self) -> str:
         return "CALL_{}_{}".format(self.api.identifier.upper(), uncamel(self.name).upper())
 
     @property
-    def ret_id_spelling(self):
+    def ret_id_spelling(self) -> str:
         return "RET_{}_{}".format(self.api.identifier.upper(), uncamel(self.name).upper())
 
     @property
-    def call_spelling(self):
+    def call_spelling(self) -> str:
         return "{}_{}_call".format(self.api.identifier.lower(), uncamel(self.name))
 
     @property
-    def ret_spelling(self):
+    def ret_spelling(self) -> str:
         return "{}_{}_ret".format(self.api.identifier.lower(), uncamel(self.name))
 
     @property
-    def call_record_spelling(self):
+    def call_record_spelling(self) -> str:
         return "{}_{}_call_record".format(self.api.identifier.lower(), uncamel(self.name))
 
 
@@ -108,30 +125,30 @@ class _APISpelling:
     # Filenames
 
     @property
-    def source_extension(self):
+    def source_extension(self) -> str:
         if self.cplusplus:
             return "cpp"
         else:
             return "c"
 
     @property
-    def c_header_spelling(self):
+    def c_header_spelling(self) -> str:
         return "{}_nw.h".format(self.identifier.lower())
 
     @property
-    def c_utilities_header_spelling(self):
+    def c_utilities_header_spelling(self) -> str:
         return "{}_nw_utilities.h".format(self.identifier.lower())
 
     @property
-    def c_utility_types_header_spelling(self):
+    def c_utility_types_header_spelling(self) -> str:
         return "{}_nw_utility_types.h".format(self.identifier.lower())
 
     @property
-    def c_types_header_spelling(self):
+    def c_types_header_spelling(self) -> str:
         return "{}_nw_types.h".format(self.identifier.lower())
 
     @property
-    def c_library_spelling(self):
+    def c_library_spelling(self) -> str:
         return "{}_nw_guestlib.{}".format(self.identifier.lower(), self.source_extension)
 
     @property
@@ -139,7 +156,7 @@ class _APISpelling:
         return "{}_nw_guestdrv.{}".format(self.identifier.lower(), self.source_extension)
 
     @property
-    def c_worker_spelling(self):
+    def c_worker_spelling(self) -> str:
         return "{}_nw_worker.{}".format(self.identifier.lower(), self.source_extension)
 
     @property
@@ -150,15 +167,15 @@ class _APISpelling:
     # Identifiers
 
     @property
-    def number_spelling(self):
+    def number_spelling(self) -> str:
         return "{}_API".format(self.identifier.upper())
 
     @property
-    def functions_enum_spelling(self):
+    def functions_enum_spelling(self) -> str:
         return "{}_functions".format(self.identifier.lower())
 
     @property
-    def metadata_struct_spelling(self):
+    def metadata_struct_spelling(self) -> str:
         return "{}_metadata".format(self.identifier.lower())
 
     @property

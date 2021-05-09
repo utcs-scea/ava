@@ -12,7 +12,9 @@ immutable_dict_type = Opaque("dict", out=None)
 
 
 class Converter:
-    def __init__(self, ):
+    def __init__(
+        self,
+    ):
         self.name = ""
         self.version = ""
         self.identifier = ""
@@ -24,18 +26,18 @@ class Converter:
         self.filename = filename
         decls = list(self.convert_decls(ast.body))
         print(self.type_annotations)
-        return API(self.name,
-                   self.version,
-                   self.identifier,
-                   self.number,
-                   self.imports,
-                   functions=decls,
-                   dynamic_rules=self.type_annotations)
-
+        return API(
+            self.name,
+            self.version,
+            self.identifier,
+            self.number,
+            self.imports,
+            functions=decls,
+            dynamic_rules=self.type_annotations,
+        )
 
     def convert_location(self, e):
         return Location(self.filename, getattr(e, "lineno"), getattr(e, "col_offset"), None)
-
 
     def convert_arguments(self, args):
         for a in args.args:
@@ -44,7 +46,6 @@ class Converter:
             yield Argument(Name(args.vararg.arg), tuple_type)
         if args.kwarg:
             yield Argument(Name(args.kwarg.arg), immutable_dict_type)
-
 
     def convert_annotation(self, e):
         if isinstance(e, pyast.Name):
@@ -62,7 +63,6 @@ class Converter:
             except TypeError as e:
                 parse_requires(False, f"Unsupported annotation: {e}")
 
-
     def convert_type(self, e):
         if isinstance(e, pyast.Name):
             return Opaque(e.id)
@@ -78,7 +78,6 @@ class Converter:
         else:
             parse_requires(False, "Unsupported type")
 
-
     def convert_decls(self, exprs, prefix=None):
         is_toplevel = prefix is None
         ret = []
@@ -90,11 +89,13 @@ class Converter:
                 if isinstance(e, pyast.FunctionDef):
                     args = list(self.convert_arguments(e.args))
                     function_annotations = self.convert_annotation(e.decorator_list)
-                    f = Function(Name(name),
-                                 Argument(Name(RET_ARGUMENT_NAME), self.convert_type(e.returns)),
-                                 args,
-                                 **function_annotations,
-                                 location=self.convert_location(e))
+                    f = Function(
+                        Name(name),
+                        Argument(Name(RET_ARGUMENT_NAME), self.convert_type(e.returns)),
+                        args,
+                        **function_annotations,
+                        location=self.convert_location(e),
+                    )
                     yield f
                 elif isinstance(e, pyast.ClassDef):
                     for ann in e.decorator_list:
@@ -110,7 +111,9 @@ class Converter:
                 elif isinstance(e, pyast.Expr):
                     e = e.value
                     if isinstance(e, pyast.Subscript):
-                        parse_requires(e.value.attr == "a", "Subscripting may only be used on '.a' for applying annotations")
+                        parse_requires(
+                            e.value.attr == "a", "Subscripting may only be used on '.a' for applying annotations"
+                        )
                         annotations = self.convert_annotation(e.slice.value)
                         self.type_annotations[Name(e.value.value)] = annotations
                     elif isinstance(e, pyast.BinOp):

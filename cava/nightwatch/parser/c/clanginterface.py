@@ -1,15 +1,17 @@
 clang_version = 7
 
+
 def _config_clang():
     from pathlib import Path
     import sys
+
     here = Path(__file__)
-    llvm_build_python = (here/".."/".."/".."/".."/".."/"llvm"/"clang"/"bindings"/"python").resolve()
+    llvm_build_python = (here / ".." / ".." / ".." / ".." / ".." / "llvm" / "clang" / "bindings" / "python").resolve()
     if llvm_build_python.exists():
         sys.path.insert(0, str(llvm_build_python))
     from clang import cindex
 
-    llvm_build_lib = (here/".."/".."/".."/".."/".."/"llvm"/"build"/"lib").resolve()
+    llvm_build_lib = (here / ".." / ".." / ".." / ".." / ".." / "llvm" / "build" / "lib").resolve()
     clang_so_names = [s.format(clang_version) for s in ["libclang.so.{}", "libclang-{}.so"]]
     for name in [str(llvm_build_lib / s) for s in clang_so_names] + clang_so_names:
         cindex.Config.set_library_file(name)
@@ -18,6 +20,8 @@ def _config_clang():
             break
         except cindex.LibclangError:
             continue
+
+
 _config_clang()
 
 from clang.cindex import *
@@ -28,15 +32,19 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-clang_directories = (glob("/usr/lib*/llvm-{v}/lib/clang/{v}*/include".format(v=clang_version)) +
-                     glob("/usr/lib*/clang/{v}*/include".format(v=clang_version)))
-clang_flags = [
-    "-Wno-return-type",
-    # "-Wno-implicit-function-declaration",
-    "-Wno-empty-body",
-    "-nobuiltininc",
-    ] + [a for d in clang_directories for a in ["-isystem", d]] + \
-    ["-I../worker/include"]
+clang_directories = glob("/usr/lib*/llvm-{v}/lib/clang/{v}*/include".format(v=clang_version)) + glob(
+    "/usr/lib*/clang/{v}*/include".format(v=clang_version)
+)
+clang_flags = (
+    [
+        "-Wno-return-type",
+        # "-Wno-implicit-function-declaration",
+        "-Wno-empty-body",
+        "-nobuiltininc",
+    ]
+    + [a for d in clang_directories for a in ["-isystem", d]]
+    + ["-I../worker/include"]
+)
 
 
 @extension(Type)
@@ -66,6 +74,7 @@ class _TypeExtension:
             return self
 
     _original_get_pointee = Type.get_pointee
+
     @replace
     def get_pointee(self):
         pointee = self.expanded._original_get_pointee()
@@ -109,8 +118,12 @@ class _CursorExtension:
     @property
     def referenced_parameters(self):
         def is_parameter(c):
-            return c.kind == CursorKind.DECL_REF_EXPR and \
-                   c.get_definition() and c.get_definition().kind == CursorKind.PARM_DECL
+            return (
+                c.kind == CursorKind.DECL_REF_EXPR
+                and c.get_definition()
+                and c.get_definition().kind == CursorKind.PARM_DECL
+            )
+
         refs = [c.displayname for c in self.find_all_descendants(is_parameter)]
         return refs
 
@@ -174,14 +187,14 @@ class _CursorExtension:
             # print(self.kind, self.spelling)
             return self.spelling
         elif self.kind == CursorKind.MEMBER_REF_EXPR:
-            v, = [c._unparse_expression() for c in self.children]
+            (v,) = [c._unparse_expression() for c in self.children]
             accessor = self.tokens[-2].spelling
             return f"{v}{accessor}{self.spelling}"
         elif self.kind == CursorKind.STMT_EXPR:
-            c, = self.children
+            (c,) = self.children
             return f"({{ {c._unparse_expression()} }})"
         elif self.kind == CursorKind.PAREN_EXPR:
-            c, = self.children
+            (c,) = self.children
             return f"({c._unparse_expression()})"
         elif self.kind == CursorKind.CSTYLE_CAST_EXPR:
             expr = self.children[-1]
@@ -195,7 +208,7 @@ class _CursorExtension:
             l, r = [c._unparse_expression() for c in self.children]
             return f"{l} {self.spelling} {r}"
         elif self.kind == CursorKind.UNARY_OPERATOR:
-            v, = [c._unparse_expression() for c in self.children]
+            (v,) = [c._unparse_expression() for c in self.children]
             if len(self.tokens) > 0:
                 return f"{self.tokens[0].spelling}{v}"
             else:

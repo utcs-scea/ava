@@ -15,17 +15,17 @@ _annotation_prefix = "ava_"
 ASCRIBE_TYPES = False
 
 
-def lines(strs):
+def lines(strs: List[str]) -> str:
     return "\n".join(s for s in strs if s)
 
 
-def uncamel(self):
+def uncamel(self: str) -> str:
     s1 = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", self)
     s2 = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s1)
     return s2.lower()
 
 
-def guard_macro_spelling(self):
+def guard_macro_spelling(self: str) -> str:
     s1 = re.sub(r"[^a-zA-Z0-9]", r"_", self)
     return "__" + s1.upper() + "__"
 
@@ -56,10 +56,11 @@ buffer_index_spelling = "ava_index"
 
 # Location
 
+
 class Location(namedtuple("Location", ["filename", "line", "column", "offset"])):
     __slots__ = ()
 
-    def __str__(self):
+    def __str__(self) -> str:
         ss = []
         if self.filename:
             ss.append(self.filename)
@@ -71,6 +72,7 @@ class Location(namedtuple("Location", ["filename", "line", "column", "offset"]))
 
 
 # Types
+
 
 class Type(object):
     success: Optional[ExprOrStr]
@@ -84,7 +86,7 @@ class Type(object):
     buffer_allocator: ExprOrStr
     buffer_deallocator: ExprOrStr
 
-    def __init__(self, spelling, **annotations):
+    def __init__(self, spelling: str, **annotations) -> None:
         self.fields = {}
         self.spelling = spelling
         self.success = None
@@ -98,13 +100,18 @@ class Type(object):
         self.__dict__.update(annotations)
         parse_assert(self.transfer is not None, "The parser must set transfer.")
         parse_assert(self.spelling, "Types must have spellings.")
-        parse_assert(self.type_cast is None or isinstance(self.type_cast, (str, Conditional)),
-                     f"type_cast must be None, str, or Conditional: {self.type_cast}")
+        parse_assert(
+            self.type_cast is None or isinstance(self.type_cast, (str, Conditional)),
+            f"type_cast must be None, str, or Conditional: {self.type_cast}",
+        )
         parse_requires(not self.buffer or hasattr(self, "pointee"), "Buffer values must be of a pointer type")
-        parse_requires(not (self.buffer_allocator != "malloc" or self.buffer_deallocator != "free") or self.buffer,
-                       "Buffer (de)allocators are only allowed on buffers. (You probably forgot to add `ava_buffer(size)`.)")
-        parse_assert(not (hasattr(self, "pointee") and self.fields),
-                     "Types must be either a pointer or a struct, not both")
+        parse_requires(
+            not (self.buffer_allocator != "malloc" or self.buffer_deallocator != "free") or self.buffer,
+            "Buffer (de)allocators are only allowed on buffers. (You probably forgot to add `ava_buffer(size)`.)",
+        )
+        parse_assert(
+            not (hasattr(self, "pointee") and self.fields), "Types must be either a pointer or a struct, not both"
+        )
 
     @property
     def contained_types(self) -> Set:
@@ -123,7 +130,7 @@ class Type(object):
         return s
 
     @property
-    def nonconst(self):
+    def nonconst(self) -> "Type":
         new_spelling = self._drop_const(self.spelling)
         v = copy(self)
         v.spelling = new_spelling
@@ -165,7 +172,9 @@ class Type(object):
                         late_annotations += f"{_annotation_prefix}field({fname}) {{ {anns} }}\n"
             elif name == "transfer" and value in self.transfer_spellings and value != default_annotations.get(name):
                 if value in ("NW_CALLBACK", "NW_CALLBACK_REGISTRATION"):
-                    annotations += f"{_annotation_prefix}{self.transfer_spellings[value]}({self.callback_stub_function});\n"
+                    annotations += (
+                        f"{_annotation_prefix}{self.transfer_spellings[value]}({self.callback_stub_function});\n"
+                    )
                 elif self.transfer_spellings[value]:
                     annotations += f"{_annotation_prefix}{self.transfer_spellings[value]};\n"
             elif name == "lifetime" and value in self.lifetime_spellings and value != default_annotations.get(name):
@@ -189,27 +198,27 @@ class Type(object):
         annotations += late_annotations
         return annotations
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.spelling
 
     def __repr__(self):
         nl = "\n"
         return f"""<{self.spelling} {self.annotations.replace(nl, " ")}>"""
 
-    def attach_to(self, name, additional_inner_type_elements="") -> str:
+    def attach_to(self, name: str, additional_inner_type_elements: str = "") -> str:
         s = self.spelling
         return f"{s}{additional_inner_type_elements} {name}"
 
-    def spelled_with(self, additional_inner_type_elements="") -> str:
+    def spelled_with(self, additional_inner_type_elements: str = "") -> str:
         return self.attach_to("", additional_inner_type_elements=additional_inner_type_elements)
 
-    def ascribe_type(self, v, additional_inner_type_elements="") -> str:
+    def ascribe_type(self, v: str, additional_inner_type_elements: str = "") -> str:
         if ASCRIBE_TYPES:
             return f"__ava_check_type({self.spelled_with(additional_inner_type_elements)}, {v})"
         else:
             return v
 
-    def cast_type(self, v, additional_inner_type_elements="") -> str:
+    def cast_type(self, v: str, additional_inner_type_elements: str = "") -> str:
         return f"({self.spelled_with(additional_inner_type_elements)})({v})"
 
 
@@ -217,9 +226,10 @@ class ConditionalType(Type):
     """
     A type-level if-statement specifying a type which varies based on a runtime expression.
     """
+
     predicate: ExprOrStr
 
-    def __init__(self, predicate, then_type: Type, else_type: Type, original_type: Type):
+    def __init__(self, predicate: str, then_type: Type, else_type: Type, original_type: Type) -> None:
         d = original_type.__dict__.copy()
         d.pop("spelling")
         super().__init__(original_type.spelling, **d)
@@ -232,7 +242,7 @@ class ConditionalType(Type):
     def contained_types(self):
         return self.then_type.contained_types | self.else_type.contained_types
 
-    def attach_to(self, name, additional_inner_type_elements=""):
+    def attach_to(self, name: str, additional_inner_type_elements: str = "") -> str:
         return self.original_type.attach_to(name, additional_inner_type_elements)
 
 
@@ -240,15 +250,16 @@ class StaticArray(Type):
     """
     Fixed size array.
     """
+
     pointee: Type
 
-    def __init__(self, spelling, **annotations):
+    def __init__(self, spelling: str, **annotations) -> None:
         super().__init__(spelling, **annotations)
         assert self.buffer
         assert self.pointee
 
-    def attach_to(self, name, additional_inner_type_elements=""):
-        return self.pointee.attach_to(name, additional_inner_type_elements=additional_inner_type_elements+"*")
+    def attach_to(self, name: str, additional_inner_type_elements: str = "") -> str:
+        return self.pointee.attach_to(name, additional_inner_type_elements=additional_inner_type_elements + "*")
 
 
 class FunctionPointer(Type):
@@ -258,12 +269,16 @@ class FunctionPointer(Type):
 
     hidden_annotations = Type.hidden_annotations | {"argument_types", "return_type"}
 
-    def __init__(self, spelling, pointee, return_type, argument_types, **annotations):
+    def __init__(
+        self, spelling: str, pointee: Type, return_type: Type, argument_types: List[Type], **annotations
+    ) -> None:
         args = ", ".join(str(a) for a in argument_types)
         spelling = f"{return_type} (*)({args})"
         super().__init__(spelling, **annotations)
-        parse_assert(str(self.transfer) in ("NW_OPAQUE", "NW_CALLBACK", "NW_CALLBACK_REGISTRATION"),
-                     "Function pointers must be opaque: " + str(self.transfer))
+        parse_assert(
+            str(self.transfer) in ("NW_OPAQUE", "NW_CALLBACK", "NW_CALLBACK_REGISTRATION"),
+            "Function pointers must be opaque: " + str(self.transfer),
+        )
         self.return_type = return_type
         self.argument_types = argument_types
 
@@ -273,7 +288,7 @@ class FunctionPointer(Type):
         v.return_type = v.return_type.nonconst
         return v
 
-    def attach_to(self, name, additional_inner_type_elements=""):
+    def attach_to(self, name: str, additional_inner_type_elements: str = "") -> str:
         args = ", ".join(str(a) for a in self.argument_types)
         return f"{self.return_type} (*{additional_inner_type_elements}{name}) ({args})"
 
@@ -290,7 +305,7 @@ RET_ARGUMENT_NAME = "ret"
 class Argument(object):
     type: Type
 
-    def __init__(self, name, type: Type, **annotations):
+    def __init__(self, name: str, type: Type, **annotations) -> None:
         assert isinstance(type, Type)
         self.name = name
         self.type = type
@@ -303,26 +318,29 @@ class Argument(object):
         self.ret = False
         self.__dict__.update(annotations)
 
-        parse_requires(not self.userdata or self.type.spelling == "void *",
-                       "Type of userdata arguments must be exactly void*.")
-        parse_requires(not self.implicit_argument or self.value,
-                       f"Implicit arguments must have a value assigned to them: {self}")
-        parse_requires(not any(t.buffer for t in self.contained_types) or (self.no_copy or self.input or self.output),
-                      f"Arguments containing buffers must be either ava_input or "
-                      f"ava_output (and it was not guessed). If you want no copies "
-                      f"at all, provide ava_no_copy.")
-
+        parse_requires(
+            not self.userdata or self.type.spelling == "void *", "Type of userdata arguments must be exactly void*."
+        )
+        parse_requires(
+            not self.implicit_argument or self.value, f"Implicit arguments must have a value assigned to them: {self}"
+        )
+        parse_requires(
+            not any(t.buffer for t in self.contained_types) or (self.no_copy or self.input or self.output),
+            f"Arguments containing buffers must be either ava_input or "
+            f"ava_output (and it was not guessed). If you want no copies "
+            f"at all, provide ava_no_copy.",
+        )
 
     @property
     def contained_types(self) -> Set[Type]:
         """Return an iterable contains all types in this argument."""
         return self.type.contained_types
 
-    def __str__(self):
+    def __str__(self) -> str:
         value_str = " = " + str(self.value) if self.value else ""
         return self.type.attach_to(self.name + value_str)
 
-    def __lt__(self, other):
+    def __lt__(self, other: "Argument") -> bool:
         a = self._all_arguments.index(self)
         b = self._all_arguments.index(other)
         return a < b
@@ -336,7 +354,7 @@ class Argument(object):
             if name in self.hidden_annotations:
                 pass
             elif name == "type":
-                pass # Handled below
+                pass  # Handled below
             elif name == "depends_on" and value:
                 annotations += f"{_annotation_prefix}{name}({', '.join(value)});\n"
             elif not name.startswith("_") and value != default_annotations.get(name):
@@ -356,15 +374,16 @@ class Argument(object):
             return ""
 
     @property
-    def declaration(self):
+    def declaration(self) -> str:
         return self.type.attach_to(self.name)
 
     @property
-    def original_declaration(self):
+    def original_declaration(self) -> str:
         return self.type.original_type.attach_to(self.name)
 
 
 # Function
+
 
 class Function(object):
     name: str
@@ -376,7 +395,9 @@ class Function(object):
     generate_timing_code: bool
     disable_native: bool
 
-    def __init__(self, name: str, return_value: Argument, arguments: List[Argument], location, **annotations):
+    def __init__(
+        self, name: str, return_value: Argument, arguments: List[Argument], location: Location, **annotations
+    ) -> None:
         self.prologue = ""
         self.epilogue = ""
         self.logue_declarations = []
@@ -401,8 +422,10 @@ class Function(object):
         for a in arguments:
             a.function = self
 
-        parse_assert(all(sum(1 for b in self.arguments if a.name == b.name) == 1 for a in self.arguments),
-                     "All argument names much be different.")
+        parse_assert(
+            all(sum(1 for b in self.arguments if a.name == b.name) == 1 for a in self.arguments),
+            "All argument names much be different.",
+        )
 
     @property
     def real_arguments(self) -> Iterator[Argument]:
@@ -413,7 +436,7 @@ class Function(object):
         return (a for a in self._original_arguments if a.implicit_argument)
 
     @classmethod
-    def _get_argument_by_name(cls, arguments, name: str, default = None) -> Argument:
+    def _get_argument_by_name(cls, arguments: List[Argument], name: str, default: None = None) -> Argument:
         for a in arguments:
             if a.name == name:
                 return a
@@ -423,7 +446,7 @@ class Function(object):
             raise LookupError(name)
 
     @classmethod
-    def _order_arguments(cls, arguments: List[Argument], location) -> List[Argument]:
+    def _order_arguments(cls, arguments: List[Argument], location: Location) -> List[Argument]:
         dag = {}
         # Build dag to have deps specified by depends_on, and a dep
         # chain through all the NON-depends_on arguments in order.
@@ -435,17 +458,13 @@ class Function(object):
                 else:
                     dag[arg] = set()
             except LookupError as e:
-                parse_requires(False,
-                               f"Unknown argument name: {e.args[0]}",
-                               loc=arg.location)
+                parse_requires(False, f"Unknown argument name: {e.args[0]}", loc=arg.location)
 
         # Compute an order which honors the deps
         try:
             return toposort_flatten(dag, sort=True)
         except CircularDependencyError:
-            parse_requires(False,
-                           "The dependencies between arguments are cyclic.",
-                           loc=location)
+            parse_requires(False, "The dependencies between arguments are cyclic.", loc=location)
 
     @property
     def contained_types(self) -> Set[Type]:
@@ -506,11 +525,23 @@ class Function(object):
 
 # API
 
+
 class API(object):
-    def __init__(self, name, version, identifier, number, includes: Collection[str],
-                 functions, c_types_header_code="", c_utility_code="",
-                 metadata_type=None, export_qualifier="", cplusplus=False,
-                 **kwds):
+    def __init__(
+        self,
+        name: str,
+        version: str,
+        identifier: str,
+        number: str,
+        includes: Collection[str],
+        functions: List[Function],
+        c_types_header_code: str = "",
+        c_utility_code: str = "",
+        metadata_type: Optional[Type] = None,
+        export_qualifier: str = "",
+        cplusplus: bool = False,
+        **kwds,
+    ) -> None:
         self.name = name
         self.includes = includes
         self.version = version
@@ -544,15 +575,20 @@ class API(object):
 
         for f in functions:
             f.api = self
-            parse_requires(all(a.name not in callback_names for a in f.arguments),
-                           "A declared callback specification and a function argument may not have the same name.")
+            parse_requires(
+                all(a.name not in callback_names for a in f.arguments),
+                "A declared callback specification and a function argument may not have the same name.",
+            )
         # TODO: Add check to verify that all callback_stubs are actually the names of callback_decls.
 
     def __str__(self):
         functions = lines(str(f) for f in self.functions)
         includes = self.include_lines
-        register_metadata = f"{_annotation_prefix}register_metadata({self.metadata_type.spelling});" if self.metadata_type else ""
-        return indent_c(f"""
+        register_metadata = (
+            f"{_annotation_prefix}register_metadata({self.metadata_type.spelling});" if self.metadata_type else ""
+        )
+        return indent_c(
+            f"""
         {_annotation_prefix}name("{self.name}");
         {_annotation_prefix}version("{self.version}");
         {_annotation_prefix}identifier({self.identifier});
@@ -566,10 +602,11 @@ class API(object):
         {register_metadata}
 
         {functions}
-        """.strip())
+        """.strip()
+        )
 
     @property
-    def include_lines(self):
+    def include_lines(self) -> str:
         return lines(f"#include <{f}>" for f in self.includes)
 
     @property
@@ -594,8 +631,7 @@ class API(object):
 
     @property
     def contained_types(self) -> Set[Type]:
-        """Return an iterable contains all types in this API. Each type will appear only once (based on Type == Type).
-        """
+        """Return an iterable contains all types in this API. Each type will appear only once (based on Type == Type)."""
         seen = set()
         for f in self.functions:
             seen.update(f.contained_types)

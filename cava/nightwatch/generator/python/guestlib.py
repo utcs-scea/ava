@@ -9,6 +9,7 @@ from .. import *
 # classes will need to be replaced or modified and stubs will need to
 # be injected.
 
+
 def generate_pickler(api):
     handlers = f"""
         if isinstance(obj, {tpe}):
@@ -21,6 +22,7 @@ class {api.identifier}Pickler(Pickler):
         {handlers}
         return None
 """
+
 
 def generate_unpickler(api):
     return f"""
@@ -51,6 +53,7 @@ def generate_stub(f):
     return f"""
 {f.name} = {f}
 """
+
 
 def source(api, errors):
     imports = lines(f"import {mod}" + (f" as {name}" if name else "") for mod, name in api.include.items())
