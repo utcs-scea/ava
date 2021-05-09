@@ -3,3 +3,8 @@
 	url = https://github.com/utcs-scea/ava-llvm.git
 	branch = v7.1.0
   ignore = dirty
+[submodule "third_party/plog"]
+	path = third_party/plog
+	url = https://github.com/SergiusTheBest/plog.git
+  branch = 1.1.5
+  ignore = dirty
