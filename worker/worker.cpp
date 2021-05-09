@@ -5,12 +5,14 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
 #include <time.h>
 #include <unistd.h>
+
+#include <cstdio>
+#include <iostream>
 
 #include "common/cmd_channel_impl.hpp"
 #include "common/cmd_handler.hpp"
@@ -18,6 +20,7 @@
 #include "common/register.h"
 #include "common/singleton.hpp"
 #include "common/socket.hpp"
+#include "plog/Initializers/RollingFileInitializer.h"
 #include "provision_gpu.h"
 
 struct command_channel *chan;
@@ -88,6 +91,10 @@ int main(int argc, char *argv[]) {
   std::string gpu_mem = gpu_mem_str ? std::string(gpu_mem_str) : "";
   provision_gpu = new ProvisionGpu(cuda_uuid, gpu_uuid, gpu_mem);
 
+  // Initialize logger
+  std::string log_file = std::tmpnam(nullptr);
+  plog::init(plog::debug, log_file.c_str());
+
   /* setup signal handler */
   if ((original_sigint_handler = signal(SIGINT, sigint_handler)) == SIG_ERR) printf("failed to catch SIGINT\n");
 
@@ -104,13 +111,15 @@ int main(int argc, char *argv[]) {
   if (!strcmp(argv[1], "migrate")) {
     listen_port = (unsigned int)atoi(argv[2]);
     setting.set_listen_port(listen_port);
+    std::cerr << "[worker#" << listen_port << "] To check the state of AvA remoting progress, use `tail -f " << log_file
+              << "`" << std::endl;
 
     chan = (struct command_channel *)command_channel_socket_tcp_migration_new(listen_port, 0);
     nw_record_command_channel = command_channel_log_new(listen_port);
 
     init_internal_command_handler();
     init_command_handler(channel_create);
-    DEBUG_PRINT("[worker#%d] start polling tasks\n", listen_port);
+    LOG_INFO << "[worker#" << listen_port << "] start polling tasks";
     wait_for_command_handler();
 
     // TODO(migration): connect the guestlib
@@ -121,6 +130,8 @@ int main(int argc, char *argv[]) {
   /* parse arguments */
   listen_port = (unsigned int)atoi(argv[1]);
   setting.set_listen_port(listen_port);
+  std::cerr << "[worker#" << listen_port << "] To check the state of AvA remoting progress, use `tail -f " << log_file
+            << "`" << std::endl;
 
   if (!getenv("AVA_CHANNEL") || !strcmp(getenv("AVA_CHANNEL"), "TCP")) {
     chan_hv = NULL;
@@ -141,7 +152,7 @@ int main(int argc, char *argv[]) {
   nw_record_command_channel = command_channel_log_new(listen_port);
   init_internal_command_handler();
   init_command_handler(channel_create);
-  DEBUG_PRINT("[worker#%d] start polling tasks\n", listen_port);
+  LOG_INFO << "[worker#" << listen_port << "] start polling tasks";
   wait_for_command_handler();
   command_channel_free(chan);
   command_channel_free((struct command_channel *)nw_record_command_channel);

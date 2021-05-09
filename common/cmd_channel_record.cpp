@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <plog/Log.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -138,7 +139,7 @@ ssize_t command_channel_log_transfer_command(struct command_channel_log *c, cons
       .flags = 0,
   };
 
-  DEBUG_PRINT("record command %lu size %lx\n", cmd->command_id, metadata.size);
+  LOG_DEBUG << "record command " << cmd->command_id << " size " << std::hex << metadata.size;
   ssize_t ret;
   ret = write(chan->fd, &metadata, sizeof(struct record_command_metadata));
   if (ret == -1) {
@@ -265,7 +266,7 @@ struct command_channel_log *command_channel_log_new(int worker_port) {
   sprintf(fname, "record_log_worker_%d.bin", worker_port);
   chan->fd = open(fname, O_RDWR | O_CREAT | O_TRUNC, 0600);
   unlink(fname);
-  DEBUG_PRINT("temporary file %s created for recording\n", fname);
+  LOG_INFO << "temporary file %s created for recording" << fname;
 
   return chan;
 }

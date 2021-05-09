@@ -1,6 +1,7 @@
 #include "common/cmd_handler.hpp"
 
-#include "common/debug.hpp"
+#include <plog/Log.h>
+
 #include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
 #include "common/shadow_thread_pool.hpp"
@@ -47,7 +48,8 @@ EXPORTED_WEAKLY void register_command_handler(int api_id,
                                                              struct command_channel *, const struct command_base *,
                                                              const struct command_base *)) {
   assert(api_id < MAX_API_ID);
-  DEBUG_PRINT("Registering API command handler for API id %d: handler at 0x%lx\n", api_id, (uintptr_t)handle);
+  LOG_INFO << "Registering API command handler for API id " << api_id << ": handler at 0x" << std::hex
+           << (uintptr_t)handle;
   struct command_handler_t *api = &nw_apis[api_id];
   assert(api->handle == NULL && "Only one handler can be registered for each API id");
   api->handle = handle;
@@ -276,20 +278,20 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
       log_init->command_id = COMMAND_ACCEPT_LIVE_MIGRATION;
       // TODO: send more worker information
       command_channel_send_command(transfer_chan, log_init);
-      DEBUG_PRINT("sent init migration message to target\n");
+      LOG_DEBUG << "sent init migration message to target";
     }
 
     // Extract recorded commands and exlicit objects
     ava_extract_objects_in_pair(transfer_chan, nw_record_command_channel,
                                 nw_handle_pool_get_live_handles(nw_global_handle_pool));
-    DEBUG_PRINT("sent recorded commands to target\n");
+    LOG_DEBUG << "sent recorded commands to target";
 
     {
       struct command_base *log_end = command_channel_new_command(transfer_chan, sizeof(struct command_base), 0);
       log_end->api_id = COMMAND_HANDLER_API;
       log_end->command_id = COMMAND_END_LIVE_MIGRATION;
       command_channel_send_command(transfer_chan, log_end);
-      DEBUG_PRINT("sent end migration message to target\n");
+      LOG_DEBUG << "sent end migration message to target";
     }
 
     /* notify guestlib of completion */
@@ -341,7 +343,7 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
   }
 
   default:
-    DEBUG_PRINT("Unknown internal command: %lu", cmd->command_id);
+    LOG_ERROR << "Unknown internal command: " << cmd->command_id;
     exit(0);
   }
 }

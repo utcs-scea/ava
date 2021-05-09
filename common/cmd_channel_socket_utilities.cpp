@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <netinet/tcp.h>
+#include <plog/Log.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -18,22 +19,6 @@ namespace chansocketutil {
  * Print a command for debugging.
  */
 void command_channel_socket_print_command(const struct command_channel *chan, const struct command_base *cmd) {
-  /*
-  DEBUG_PRINT("struct command_base {\n"
-              "  command_type=%ld\n"
-              "  flags=%d\n"
-              "  api_id=%d\n"
-              "  command_id=%ld\n"
-              "  command_size=%lx\n"
-              "  region_size=%lx\n"
-              "}\n",
-              cmd->command_type,
-              cmd->flags,
-              cmd->api_id,
-              cmd->command_id,
-              cmd->command_size,
-              cmd->region_size);
-  */
   DEBUG_PRINT_COMMAND(chan, cmd);
 }
 
@@ -159,7 +144,7 @@ struct command_base *command_channel_socket_receive_command(struct command_chann
 
   /* terminate guestlib when worker exits */
   if (chan->pfd.revents & POLLRDHUP) {
-    DEBUG_PRINT("command_channel_socket shutdown\n");
+    LOG_WARNING << "command_channel_socket shutdown";
     close(chan->pfd.fd);
     exit(-1);
   }
