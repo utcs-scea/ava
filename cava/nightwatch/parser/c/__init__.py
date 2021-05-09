@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from .rules import *
 from .util import *
@@ -9,7 +9,12 @@ allocates_amount_prefix = "allocates_amount_"
 deallocates_amount_prefix = "deallocates_amount_"
 
 
-def parse(filename: str, include_path, definitions, extra_args):
+def parse(
+        filename: str,
+        include_path: List[str],
+        definitions: List[str],
+        extra_args: List[str],
+        combine_files: List[str]):
     index = Index.create(True)
     includes = [s
                 for p in include_path
