@@ -291,6 +291,7 @@ __cudaRegisterFatBinary(void *fatCubin)
 
     if (ava_is_worker) {
         //__helper_print_fatcubin_info(fatCubin, ret);
+        // TODO(yuhc): use static_cast.
         __helper_init_module((struct fatbin_wrapper *)fatCubin, ret);
     }
 }
