@@ -279,8 +279,7 @@ __cudaRegisterFatBinary(void *fatCubin)
     ava_return_value {
         ava_out; ava_buffer(__helper_cubin_num(ret) + 1);
         ava_element {
-            // TODO(yuhc): Fix "GCC error \"CursorKind.CXX_NULL_PTR_LITERAL_EXPR not supported in specification expressions.\""
-            if ((uintptr_t)ret[ava_index] != 0) ava_handle;
+            if (ret[ava_index] != NULL) ava_handle;
         }
         ava_allocates;
         ava_lifetime_manual;
@@ -447,8 +446,7 @@ __cudaRegisterFunction(
     ava_argument(fatCubinHandle) {
         ava_in; ava_buffer(__helper_cubin_num(fatCubinHandle) + 1);
         ava_element {
-            // TODO(yuhc): Fix "GCC error \"CursorKind.CXX_NULL_PTR_LITERAL_EXPR not supported in specification expressions.\""
-            if ((uintptr_t)fatCubinHandle[ava_index] != 0) ava_handle;
+            if (fatCubinHandle[ava_index] != NULL) ava_handle;
         }
     }
 

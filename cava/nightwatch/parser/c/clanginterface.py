@@ -201,6 +201,8 @@ class _CursorExtension:
             return " ".join(c._unparse_expression() for c in self.children)
         elif self.kind == CursorKind.INIT_LIST_EXPR:
             return "{" + ", ".join(c._unparse_expression() for c in self.children) + "}"
+        elif self.kind == CursorKind.CXX_NULL_PTR_LITERAL_EXPR or self.kind == CursorKind.GNU_NULL_EXPR:
+            return f"({self.source})"
         else:
             return f"""_Pragma("GCC error \\"{self.kind} not supported in specification expressions.\\"")"""
 
