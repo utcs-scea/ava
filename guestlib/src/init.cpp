@@ -1,7 +1,8 @@
-#include <stdio.h>
+#include <plog/Log.h>
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <cstdio>
 #include <iostream>
 #include <vector>
 
@@ -11,7 +12,7 @@
 #include "common/linkage.h"
 #include "guest_config.h"
 #include "guestlib.h"
-
+#include "plog/Initializers/RollingFileInitializer.h"
 struct command_channel *chan;
 
 struct param_block_info nw_global_pb_info = {0, 0};
@@ -27,6 +28,11 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id) {
 #ifdef DEBUG
   guestconfig::config->print();
 #endif
+
+  // Initialize logger
+  std::string log_file = std::tmpnam(nullptr);
+  plog::init(guestconfig::config->logger_severity_, log_file.c_str());
+  std::cerr << "To check the state of AvA remoting progress, use `tail -f " << log_file << "`" << std::endl;
 
 #ifdef AVA_PRINT_TIMESTAMP
   struct timeval ts;

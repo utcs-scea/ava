@@ -44,6 +44,7 @@ include_directories(
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/include
   ${{CMAKE_SOURCE_DIR}}/../../proto
   ${{GLIB2_INCLUDE_DIRS}}
+  ${{CMAKE_SOURCE_DIR}}/../../third_party/plog/include
 )
 add_definitions(-D_GNU_SOURCE)
 
