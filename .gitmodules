@@ -1,7 +1,7 @@
 [submodule "llvm"]
 	path = llvm
 	url = https://github.com/utcs-scea/ava-llvm.git
-	branch = v7.1.0
+	branch = llvmorg-7.1.0
   ignore = dirty
 [submodule "third_party/plog"]
 	path = third_party/plog
