@@ -1,6 +1,7 @@
 #include "common/endpoint_lib.hpp"
 
 #include <glib.h>
+#include <plog/Log.h>
 #include <pthread.h>
 #include <stdlib.h>
 
@@ -222,7 +223,8 @@ static void _ava_extract_traverse(gpointer root, struct ava_extraction_state_t *
   gboolean added = g_hash_table_add(state->dependencies, root);
   if (added) {
     struct ava_metadata_base *metadata = (struct ava_metadata_base *)g_hash_table_lookup(state->metadata_map, root);
-    DEBUG_PRINT("root addr=%lx, id=%lx\n", (uintptr_t)root, (uintptr_t)g_hash_table_lookup(state->pool->to_id, root));
+    LOG_DEBUG << "root addr=" << std::hex << (uintptr_t)root << ", id=" << std::hex
+              << (uintptr_t)g_hash_table_lookup(state->pool->to_id, root);
     if (metadata == NULL) return;
 
     // Copy recorded calls into the array
@@ -350,7 +352,7 @@ void ava_extract_objects_in_pair(struct command_channel *output_chan, struct com
   for (size_t i = 0; i < offset_pairs->len; i++) {
     const struct ava_offset_pair_t *pair = (const struct ava_offset_pair_t *)g_ptr_array_index(offset_pairs, i);
     if (pair->a != prev_call_offset) {
-      DEBUG_PRINT("transfer log pair /offset=%lx/\n", pair->a);
+      LOG_DEBUG << "transfer log pair, offset=" << std::hex << pair->a;
       _ava_transfer_command_in_pair(output_chan, log_chan, pair->a, pair->b);
     }
     prev_call_offset = pair->a;
@@ -695,10 +697,8 @@ struct ava_shadow_record_t *ava_shadow_buffer_new_record_unlocked(struct ava_end
 
 void ava_shadow_buffer_free_record_unlocked(const struct ava_endpoint *endpoint,
                                             const struct ava_shadow_record_t *record) {
-  DEBUG_PRINT(
-      "shadow buffer: Deallocating shadow buffer: id=%#lx, local=%#lx, "
-      "size=%ld\n",
-      (long int)record->id, (long int)record->local, (long int)record->size);
+  LOG_DEBUG << "shadow buffer: Deallocating shadow buffer: id=%#" << std::hex << (long int)record->id
+            << ", local=" << std::hex << (long int)record->local << ", size=" << std::hex << (long int)record->size;
   assert(record->deallocator != NULL && "solid buffer is not supposed to be deallocated by AvA");
   record->deallocator(record->local);
   g_hash_table_remove(endpoint->shadow_buffers.buffers_by_id, record->id);
@@ -718,10 +718,9 @@ void *ava_shadow_buffer_new_shadow_unlocked(struct ava_endpoint *endpoint, void 
         (struct ava_shadow_record_t *)g_hash_table_lookup(endpoint->shadow_buffers.buffers_by_id, id);
     if (record != NULL) {
       // TODO: Avoid additional lookup in ava_shadow_buffer_get_unlocked
-      DEBUG_PRINT(
-          "Create shadow buffer: Existing shadow buffer: id=%#lx, local=%#lx, "
-          "size=%ld; new: size=%ld\n",
-          (long int)record->id, (long int)record->local, (long int)record->size, (long int)size);
+      LOG_DEBUG << "Create shadow buffer: Existing shadow buffer: id=" << std::hex << (long int)record->id
+                << ", local=" << std::hex << (long int)record->local << ", size=" << std::hex << (long int)record->size
+                << "; new size=" << std::hex << (long int)size;
       return ava_shadow_buffer_get_unlocked(endpoint, id, size, lifetime, lifetime_coupled, alloc, dealloc);
     }
   }
@@ -731,8 +730,8 @@ void *ava_shadow_buffer_new_shadow_unlocked(struct ava_endpoint *endpoint, void 
   struct ava_metadata_base *metadata = ava_internal_metadata(endpoint, local);
   struct ava_shadow_record_t *record =
       ava_shadow_buffer_new_record_unlocked(endpoint, id, size, local, dealloc, metadata);
-  DEBUG_PRINT("shadow buffer: Creating shadow buffer: id=%#lx, local=%#lx, size=%ld\n", (long int)record->id,
-              (long int)record->local, (long int)record->size);
+  LOG_DEBUG << "shadow buffer: Creating shadow buffer: id=" << std::hex << (long int)record->id
+            << ", local=" << std::hex << (long int)record->local << ", size=" << std::hex << (long int)record->size;
   if (lifetime == AVA_MANUAL) lifetime_coupled = record->local;
   if (lifetime_coupled != NULL) {
     struct ava_metadata_base *coupled_metadata = ava_internal_metadata(endpoint, lifetime_coupled);
@@ -759,8 +758,8 @@ void ava_shadow_buffer_new_solid_unlocked(struct ava_endpoint *endpoint, void *l
 
   void *id = next_id();
   record = ava_shadow_buffer_new_record_unlocked(endpoint, id, size, local, NULL, metadata);
-  DEBUG_PRINT("shadow buffer: Attaching solid buffer: id=%#lx, local=%#lx, size=%ld\n", (long int)record->id,
-              (long int)record->local, (long int)record->size);
+  LOG_DEBUG << "shadow buffer: Attaching solid buffer: id=" << std::hex << (long int)record->id
+            << ", local=" << std::hex << (long int)record->local << ", size=" << std::hex << (long int)record->size;
 }
 
 void ava_shadow_buffer_free_unlocked(struct ava_endpoint *endpoint, void *local) {

@@ -24,6 +24,7 @@ std::shared_ptr<GuestConfig> readGuestConfig() {
   unsigned long long connect_timeout = guestconfig::kDefaultConnectTimeout;
   std::string manager_address = guestconfig::kDefaultManagerAddress;
   std::vector<uint64_t> gpu_memory;
+  std::string logger_severity = guestconfig::kDefaultLoggerSeverity;
 
   try {
     root.lookupValue("channel", channel);
@@ -46,8 +47,34 @@ std::shared_ptr<GuestConfig> readGuestConfig() {
     std::cerr << "Elements in config[\"gpu_memory\"] expect \"L\" or \"LL\" suffix" << std::endl;
     return nullptr;
   }
+  try {
+    root.lookupValue("log_level", logger_severity);
+  } catch (const libconfig::SettingNotFoundException &nfex) {
+  }
 
-  return std::make_shared<GuestConfig>(channel, manager_address, connect_timeout, gpu_memory);
+  // Translate logger severity level
+  plog::Severity severity_level = plog::info;
+  if (logger_severity == "verbose") {
+    severity_level = plog::verbose;
+  } else if (logger_severity == "debug") {
+    severity_level = plog::debug;
+  } else if (logger_severity == "info") {
+    severity_level = plog::info;
+  } else if (logger_severity == "warning") {
+    severity_level = plog::warning;
+  } else if (logger_severity == "error") {
+    severity_level = plog::error;
+  } else if (logger_severity == "fatal") {
+    severity_level = plog::fatal;
+  } else if (logger_severity == "none") {
+    severity_level = plog::none;
+  } else {
+    std::cerr << "Unrecognized logger severity level " << logger_severity << ", expected ["
+              << "verbose|debug|info|warning|error|fatal|none]" << std::endl;
+    return nullptr;
+  }
+
+  return std::make_shared<GuestConfig>(channel, manager_address, connect_timeout, gpu_memory, severity_level);
 }
 
 }  // namespace guestconfig

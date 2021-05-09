@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <plog/Log.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
@@ -64,7 +65,7 @@ struct command_channel *command_channel_socket_new() {
   close(manager_fd);
 
   /* connect worker */
-  DEBUG_PRINT("assigned worker at %lu\n", worker_port);
+  LOG_INFO << "assigned worker at " << worker_port;
   chan->sock_fd = init_vm_socket(&sa, VMADDR_CID_HOST, worker_port);
   // FIXME: connect is always non-blocking for vm socket!
   if (!getenv("AVA_WPOOL") || !strcmp(getenv("AVA_WPOOL"), "FALSE")) usleep(2000000);

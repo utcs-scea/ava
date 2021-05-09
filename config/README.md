@@ -16,3 +16,4 @@ Run `setup.sh` to install an example configuration.
 | instance_type    | "ava.xlarge"   | Ignored        | Service instance type                   |
 | gpu_count        | 2              | Ignored        | Number of requested GPU, currently represented by `gpu_memory.size()` |
 | gpu_memory       | [1024L,512LL]  | []             | Requested GPU memory sizes, in MB       |
+| log_level        | "info"         | "info"         | Logger severity (verbose\|debug\|info\|warning\|error\|fatal\|none) |

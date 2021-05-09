@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <plog/Log.h>
 #include <poll.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,7 +39,9 @@ struct command_channel_shm {
   pthread_mutex_t recv_mutex;
 };
 
-static struct command_channel_vtable command_channel_shm_vtable;
+namespace {
+extern struct command_channel_vtable command_channel_shm_vtable;
+}
 
 pthread_spinlock_t block_lock;
 
@@ -46,17 +49,6 @@ pthread_spinlock_t block_lock;
  * Print a command for debugging.
  */
 static void command_channel_shm_print_command(const struct command_channel *chan, const struct command_base *cmd) {
-  DEBUG_PRINT(
-      "struct command_base {\n"
-      "  command_type=%ld\n"
-      "  vm_id=%d\n"
-      "  flags=%d\n"
-      "  api_id=%d\n"
-      "  command_id=%ld\n"
-      "  command_size=%lx\n"
-      "  region_size=%lx\n"
-      "}\n",
-      cmd->command_type, cmd->vm_id, cmd->flags, cmd->api_id, cmd->command_id, cmd->command_size, cmd->region_size);
   DEBUG_PRINT_COMMAND(chan, cmd);
 }
 
@@ -160,7 +152,6 @@ static void *command_channel_shm_attach_buffer(struct command_channel *c, struct
 static void command_channel_shm_send_command(struct command_channel *c, struct command_base *cmd) {
   struct command_channel_shm *chan = (struct command_channel_shm *)c;
 
-  DEBUG_PRINT("[worker#%d] send message to guestlib\n", chan->listen_port);
   command_channel_shm_print_command(c, cmd);
 
   /* vsock interposition does not block send_message */
@@ -220,9 +211,9 @@ static struct command_base *command_channel_shm_receive_command(struct command_c
 
   if (chan->pfd.revents & POLLIN) {
     pthread_mutex_lock(&chan->recv_mutex);
-    DEBUG_PRINT("[worker#%d] start to recv guestlib message\n", chan->listen_port);
+    LOG_DEBUG << "[worker#" << chan->listen_port << "] start to recv guestlib message";
     recv_socket(chan->guestlib_fd, &cmd_base, sizeof(struct command_base));
-    DEBUG_PRINT("[worker#%d] recv guestlib message\n", chan->listen_port);
+    LOG_DEBUG << "[worker#" << chan->listen_port << "] recv guestlib message";
     cmd = (struct command_base *)malloc(cmd_base.command_size);
     memcpy(cmd, &cmd_base, sizeof(struct command_base));
     recv_socket(chan->guestlib_fd, (void *)cmd + sizeof(struct command_base),
@@ -363,8 +354,10 @@ static void command_channel_shm_free(struct command_channel *c) {
   free(chan);
 }
 
-static struct command_channel_vtable command_channel_shm_vtable = {
+namespace {
+struct command_channel_vtable command_channel_shm_vtable = {
     command_channel_shm_buffer_size,  command_channel_shm_new_command,      command_channel_shm_attach_buffer,
     command_channel_shm_send_command, command_channel_shm_transfer_command, command_channel_shm_receive_command,
     command_channel_shm_get_buffer,   command_channel_shm_get_data_region,  command_channel_shm_free_command,
     command_channel_shm_free,         command_channel_shm_print_command};
+}

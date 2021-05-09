@@ -8,6 +8,8 @@
 #include "common/cmd_channel.hpp"
 
 #ifdef __cplusplus
+#include <plog/Log.h>
+
 #include <vector>
 
 extern "C" {

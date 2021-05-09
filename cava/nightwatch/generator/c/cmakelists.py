@@ -44,13 +44,14 @@ include_directories(
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/include
   ${{CMAKE_SOURCE_DIR}}/../../proto
   ${{GLIB2_INCLUDE_DIRS}}
+  ${{CMAKE_SOURCE_DIR}}/../../third_party/plog/include
 )
 add_definitions(-D_GNU_SOURCE)
 
 add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../worker/worker.cpp
   ${{CMAKE_SOURCE_DIR}}/../../worker/cmd_channel_socket_tcp.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm_worker.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm_worker.cpp
   ${{CMAKE_SOURCE_DIR}}/../../worker/provision_gpu.cpp
   {' '.join(worker_srcs)}
   {api.c_worker_spelling}

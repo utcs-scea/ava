@@ -5,6 +5,7 @@
 #include "common/shadow_thread_pool.hpp"
 
 #include <assert.h>
+#include <plog/Log.h>
 #include <stdio.h>
 
 #include "common/cmd_handler.hpp"
@@ -34,7 +35,7 @@ static void *shadow_thread_loop(void *arg);
 
 struct shadow_thread_t *shadow_thread_new(struct shadow_thread_pool_t *pool, intptr_t ava_id) {
   assert(g_hash_table_lookup(pool->threads, (gpointer)ava_id) == NULL);
-  DEBUG_PRINT("Creating shadow thread id = %lx\n", ava_id);
+  LOG_DEBUG << "Creating shadow thread id = " << ava_id;
   struct shadow_thread_t *t = (struct shadow_thread_t *)malloc(sizeof(struct shadow_thread_t));
   t->ava_id = ava_id;
   t->queue = g_async_queue_new_full(NULL);

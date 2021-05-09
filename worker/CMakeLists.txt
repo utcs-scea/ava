@@ -16,6 +16,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../include
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/../proto
+  ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/plog/include
 )
 set(manager_service_proto_srcs "${CMAKE_CURRENT_SOURCE_DIR}/../proto/manager_service.proto.cpp")
 set(manager_service_ava_srcs   "${CMAKE_CURRENT_SOURCE_DIR}/manager_service.cpp"

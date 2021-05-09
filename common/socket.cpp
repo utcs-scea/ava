@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <netinet/tcp.h>
+#include <plog/Log.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/select.h>
@@ -129,7 +130,7 @@ int conn_vm_socket(int sockfd, struct sockaddr_vm *sa) {
 
   sock_flags = fcntl(sockfd, F_GETFL);
   if (sock_flags & O_NONBLOCK) {
-      DEBUG_PRINT("socket was non-blocking\n");
+      LOG_INGO << socket was non-blocking";
       if (fcntl(sockfd, F_SETFL, sock_flags & (~O_NONBLOCK)) < 0) {
           perror("fcntl blocking");
           exit(0);
@@ -155,7 +156,7 @@ int conn_vm_socket(int sockfd, struct sockaddr_vm *sa) {
 
   sock_flags = fcntl(sockfd, F_GETFL);
   if ((sock_flags & O_NONBLOCK) == 0) {
-    DEBUG_PRINT("socket was blocking\n");
+    LOG_INFO << "socket was blocking";
     if (fcntl(sockfd, F_SETFL, sock_flags | O_NONBLOCK) < 0) {
       perror("fcntl non-blocking");
       exit(0);
@@ -165,7 +166,7 @@ int conn_vm_socket(int sockfd, struct sockaddr_vm *sa) {
   ret = connect(sockfd, (struct sockaddr *)sa, sizeof(*sa));
   if (ret < 0) {
     if (errno == EINPROGRESS) {
-      DEBUG_PRINT("EINPROGRESS in connect() - selecting\n");
+      LOG_INFO << "EINPROGRESS in connect() - selecting";
 
       tv.tv_sec = 5;
       tv.tv_usec = 0;
@@ -174,13 +175,12 @@ int conn_vm_socket(int sockfd, struct sockaddr_vm *sa) {
       ret = select(sockfd + 1, NULL, &wset, NULL, &tv);
       if (ret > 0) {
         ret = 0;
-        DEBUG_PRINT("connect!\n");
         goto connect_exit;
       }
     }
   }
   if (!ret) {
-    DEBUG_PRINT("connection failed with errcode=%s...\n", strerror(errno));
+    LOG_ERROR << "connection failed with errcode=" << strerror(errno) << "...";
   }
 
 connect_exit:
