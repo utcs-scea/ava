@@ -1,5 +1,7 @@
-#pragma once
+#ifndef __AVA_LOGGING_H__
+#define __AVA_LOGGING_H__
 
+#ifdef __cplusplus
 #include <plog/Log.h>
 #define PLOG_CAPTURE_FILE
 
@@ -38,3 +40,21 @@ class Voidify {
 };
 
 }  // namespace ava
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void ava_trace(const char *format, ...);
+void ava_debug(const char *format, ...);
+void ava_info(const char *format, ...);
+void ava_warning(const char *format, ...);
+void ava_error(const char *format, ...);
+void ava_fatal(const char *format, ...);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
