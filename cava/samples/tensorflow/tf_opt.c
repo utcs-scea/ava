@@ -1174,24 +1174,6 @@ cudaMemset(void *devPtr, int value, size_t count)
     ava_argument(devPtr) ava_opaque;
 }
 
-ava_utility void __helper_print_pointer_attributes(const struct cudaPointerAttributes *attributes,
-                                              const void *ptr) {
-    DEBUG_PRINT("Pointer %lx attributes = {\n"
-                "\tmemoryType = %d,\n"
-                "\ttype = %d, \n"
-                "\tdevice = %d, \n"
-                "\tdevicePointer = %lx,\n"
-                "\thostPointer = %lx, \n"
-                "\tisManaged = %d\n",
-                (uintptr_t)ptr,
-                attributes->memoryType,
-                attributes->type,
-                attributes->device,
-                (uintptr_t)attributes->devicePointer,
-                (uintptr_t)attributes->hostPointer,
-                attributes->isManaged);
-}
-
 /*
 __host__ cudaError_t CUDARTAPI
 cudaPointerGetAttributes(struct cudaPointerAttributes *attributes, const void *ptr)
@@ -5045,46 +5027,6 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemmBatched (cublasHandle_t handle,
 {
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
-}
-
-ava_utility int __helper_a_last_dim_size(cublasOperation_t transa, int k, int m)
-{
-    if (transa == CUBLAS_OP_N) {
-        return k;
-    } else {
-        return m;
-    }
-}
-
-ava_utility int __helper_b_last_dim_size(cublasOperation_t transb, int k, int n)
-{
-    if (transb == CUBLAS_OP_N) {
-        return n;
-    } else {
-        return k;
-    }
-}
-
-ava_utility int __helper_type_size(cudaDataType dataType)
-{
-    switch (dataType) {
-        case CUDA_R_16F: return 2;
-        case CUDA_C_16F: return 4;
-        case CUDA_R_32F: return 4;
-        case CUDA_C_32F: return sizeof(float _Complex);
-        case CUDA_R_64F: return 8;
-        case CUDA_C_64F: return sizeof(double _Complex);
-        case CUDA_R_8I: return 1;
-        case CUDA_C_8I: return 2;
-        case CUDA_R_8U: return 1;
-        case CUDA_C_8U: return 2;
-        case CUDA_R_32I: return 4;
-        case CUDA_C_32I: return 8;
-        case CUDA_R_32U: return 4;
-        case CUDA_C_32U: return 8;
-        default: fprintf(stderr, "invalid data type: %d\n", dataType);
-                 abort();
-    }
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGemmBatchedEx(cublasHandle_t handle,
@@ -23547,47 +23489,6 @@ __host__ cudaError_t CUDARTAPI cudaFuncSetSharedMemConfig(const void *func, enum
     abort();
 }
 
-ava_utility cudaError_t __helper_func_get_attributes(struct cudaFuncAttributes *attr,
-                                                     struct fatbin_function *func,
-                                                     const void *hostFun)
-{
-    if (func == NULL) {
-        DEBUG_PRINT("func is NULL, hostFun=%lx\n", (uintptr_t)hostFun);
-        return (cudaError_t) cudaErrorInvalidDeviceFunction;
-    }
-
-    if (func->hostfunc != hostFun) {
-        fprintf(stderr, "search host func %p -> stored %p (device func %p)\n",
-                hostFun, (void *)func->hostfunc, (void *)func->cufunc);
-    }
-    else {
-        DEBUG_PRINT("matched host func %p -> device func %p\n", hostFun, (void *)func->cufunc);
-    }
-
-    CUresult ret;
-    ret = cuFuncGetAttribute((int *)&attr->sharedSizeBytes,
-                             CU_FUNC_ATTRIBUTE_SHARED_SIZE_BYTES, func->cufunc);
-    ret = cuFuncGetAttribute((int *)&attr->constSizeBytes,
-                             CU_FUNC_ATTRIBUTE_CONST_SIZE_BYTES, func->cufunc);
-    ret = cuFuncGetAttribute((int *)&attr->localSizeBytes,
-                             CU_FUNC_ATTRIBUTE_LOCAL_SIZE_BYTES, func->cufunc);
-    ret = cuFuncGetAttribute(&attr->maxThreadsPerBlock,
-                             CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK, func->cufunc);
-    ret = cuFuncGetAttribute(&attr->numRegs,
-                             CU_FUNC_ATTRIBUTE_NUM_REGS, func->cufunc);
-    ret = cuFuncGetAttribute(&attr->ptxVersion,
-                             CU_FUNC_ATTRIBUTE_PTX_VERSION, func->cufunc);
-    ret = cuFuncGetAttribute(&attr->binaryVersion,
-                             CU_FUNC_ATTRIBUTE_BINARY_VERSION, func->cufunc);
-    attr->cacheModeCA = 0;
-    ret = cuFuncGetAttribute(&attr->maxDynamicSharedSizeBytes,
-                             CU_FUNC_ATTRIBUTE_MAX_DYNAMIC_SHARED_SIZE_BYTES, func->cufunc);
-    ret = cuFuncGetAttribute(&attr->preferredShmemCarveout,
-                             CU_FUNC_ATTRIBUTE_PREFERRED_SHARED_MEMORY_CARVEOUT, func->cufunc);
-
-    return (cudaError_t) ret;
-}
-
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
 cudaFuncGetAttributes(struct cudaFuncAttributes *attr, const void *func)
 {
@@ -23627,30 +23528,6 @@ __host__ cudaError_t CUDARTAPI cudaLaunchHostFunc(cudaStream_t stream, cudaHostF
     abort();
 }
 
-ava_utility cudaError_t
-__helper_occupancy_max_active_blocks_per_multiprocessor(int *numBlocks,
-                                                        struct fatbin_function *func,
-                                                        const void *hostFun,
-                                                        int blockSize,
-                                                        size_t dynamicSMemSize)
-{
-    if (func == NULL) {
-        DEBUG_PRINT("func is NULL, hostFun=%lx\n", (uintptr_t)hostFun);
-        return (cudaError_t) cudaErrorInvalidDeviceFunction;
-    }
-
-    if (func->hostfunc != hostFun) {
-        fprintf(stderr, "search host func %p -> stored %p (device func %p)\n",
-                hostFun, (void *)func->hostfunc, (void *)func->cufunc);
-    }
-    else {
-        DEBUG_PRINT("matched host func %p -> device func %p\n", hostFun, (void *)func->cufunc);
-    }
-    cudaError_t ret = cuOccupancyMaxActiveBlocksPerMultiprocessor(numBlocks,
-        func->cufunc, blockSize, dynamicSMemSize);
-    return ret;
-}
-
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
 cudaOccupancyMaxActiveBlocksPerMultiprocessor(int *numBlocks,
                                               const void *func,
@@ -23679,31 +23556,6 @@ cudaOccupancyMaxActiveBlocksPerMultiprocessor(int *numBlocks,
                 func_id, blockSize, dynamicSMemSize);
         return ret;
     }
-}
-
-ava_utility cudaError_t
-__helper_occupancy_max_active_blocks_per_multiprocessor_with_flags(int *numBlocks,
-                                                                   struct fatbin_function *func,
-                                                                   const void *hostFun,
-                                                                   int blockSize,
-                                                                   size_t dynamicSMemSize,
-                                                                   unsigned int flags)
-{
-    if (func == NULL) {
-        DEBUG_PRINT("func is NULL, hostFun=%lx\n", (uintptr_t)hostFun);
-        return (cudaError_t) cudaErrorInvalidDeviceFunction;
-    }
-
-    if (func->hostfunc != hostFun) {
-        fprintf(stderr, "search host func %p -> stored %p (device func %p)\n",
-                hostFun, (void *)func->hostfunc, (void *)func->cufunc);
-    }
-    else {
-        DEBUG_PRINT("matched host func %p -> device func %p\n", hostFun, (void *)func->cufunc);
-    }
-    cudaError_t ret = cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(numBlocks,
-        func->cufunc, blockSize, dynamicSMemSize, flags);
-    return ret;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI

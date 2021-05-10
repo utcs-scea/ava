@@ -1,6 +1,7 @@
 #ifndef AVA_COMMON_EXTENSIONS_CUDART_10_1_UTILITIES_HPP_
 #define AVA_COMMON_EXTENSIONS_CUDART_10_1_UTILITIES_HPP_
 
+#include <cublas_v2.h>
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <glib.h>
@@ -71,6 +72,27 @@ struct async_buffer_list {
 void __helper_register_async_buffer(struct async_buffer_list *buffers, void *buffer, size_t size);
 
 struct async_buffer_list *__helper_load_async_buffer_list(struct async_buffer_list *buffers);
+
+int __helper_a_last_dim_size(cublasOperation_t transa, int k, int m);
+
+int __helper_b_last_dim_size(cublasOperation_t transb, int k, int n);
+
+int __helper_type_size(cudaDataType dataType);
+
+cudaError_t __helper_func_get_attributes(struct cudaFuncAttributes *attr, struct fatbin_function *func,
+                                         const void *hostFun);
+
+cudaError_t __helper_occupancy_max_active_blocks_per_multiprocessor(int *numBlocks, struct fatbin_function *func,
+                                                                    const void *hostFun, int blockSize,
+                                                                    size_t dynamicSMemSize);
+
+cudaError_t __helper_occupancy_max_active_blocks_per_multiprocessor_with_flags(int *numBlocks,
+                                                                               struct fatbin_function *func,
+                                                                               const void *hostFun, int blockSize,
+                                                                               size_t dynamicSMemSize,
+                                                                               unsigned int flags);
+
+void __helper_print_pointer_attributes(const struct cudaPointerAttributes *attributes, const void *ptr);
 
 #if defined(__cplusplus)
 }
