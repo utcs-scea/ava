@@ -144,6 +144,7 @@ void __helper_parse_function_args(const char *name, struct kernel_arg *args) {
 }
 
 size_t __helper_launch_extra_size(void **extra) {
+  if (extra == NULL) return 0;
   size_t size = 1;
   while (extra[size - 1] != CU_LAUNCH_PARAM_END) size++;
   return size;
@@ -151,14 +152,14 @@ size_t __helper_launch_extra_size(void **extra) {
 
 void *__helper_cu_mem_host_alloc_portable(size_t size) {
   void *p = aligned_alloc(64, size);
-  assert(p);
+  assert(p && "p should not be null");
   return p;
 }
 
 void __helper_cu_mem_host_free(void *ptr) { free(ptr); }
 
-void __helper_assosiate_function(GHashTable *funcs, struct fatbin_function **func, void *local,
-                                 const char *deviceName) {
+void __helper_assosiate_function_dump(GHashTable *funcs, struct fatbin_function **func, void *local,
+                                      const char *deviceName) {
   if (*func != NULL) {
     LOG_DEBUG << "Function (" << deviceName << ") metadata (" << local << ") already exists";
     return;
@@ -168,6 +169,9 @@ void __helper_assosiate_function(GHashTable *funcs, struct fatbin_function **fun
   assert(*func && "device function not found!");
 }
 
+/**
+ * Look up the CUDA kernel function and save it in the list.
+ */
 void __helper_register_function(struct fatbin_function *func, const char *hostFun, CUmodule module,
                                 const char *deviceName) {
   // Empty fatbinary
@@ -185,7 +189,10 @@ void __helper_register_function(struct fatbin_function *func, const char *hostFu
   if (func->hostfunc != NULL) return;
 
   CUresult ret = cuModuleGetFunction(&func->cufunc, module, deviceName);
-  assert(ret == CUDA_SUCCESS);
+  if (ret != CUDA_SUCCESS) {
+    LOG_ERROR << "cuModuleGetFunction fail with " << ret;
+    throw std::runtime_error("failed to get module function");
+  }
   LOG_DEBUG << "register host func " << std::hex << (uintptr_t)hostFun << " -> device func " << (uintptr_t)func->cufunc;
   func->hostfunc = (void *)hostFun;
   func->module = module;
@@ -208,6 +215,9 @@ struct async_buffer_list *__helper_load_async_buffer_list(struct async_buffer_li
 
   LOG_DEBUG << "Load " << buffers->num_buffers << " async buffers";
   struct async_buffer_list *new_copy = (struct async_buffer_list *)malloc(sizeof(struct async_buffer_list));
+  if (new_copy == NULL) {
+    throw std::runtime_error("failed to malloc async_buffer_list");
+  }
   memcpy(new_copy, buffers, sizeof(struct async_buffer_list));
   memset(buffers, 0, sizeof(struct async_buffer_list));
 

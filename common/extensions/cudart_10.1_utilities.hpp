@@ -5,9 +5,13 @@
 #include <cuda_runtime_api.h>
 #include <glib.h>
 
-#define MAX_KERNEL_ARG 25
+#define MAX_KERNEL_ARG 30
 #define MAX_KERNEL_NAME_LEN 1024
 #define MAX_ASYNC_BUFFER_NUM 16
+
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
 
 struct fatbin_wrapper {
   uint32_t magic;
@@ -51,7 +55,8 @@ void *__helper_cu_mem_host_alloc_portable(size_t size);
 
 void __helper_cu_mem_host_free(void *ptr);
 
-void __helper_assosiate_function(GHashTable *funcs, struct fatbin_function **func, void *local, const char *deviceName);
+void __helper_assosiate_function_dump(GHashTable *funcs, struct fatbin_function **func, void *local,
+                                      const char *deviceName);
 
 void __helper_register_function(struct fatbin_function *func, const char *hostFun, CUmodule module,
                                 const char *deviceName);
@@ -66,5 +71,9 @@ struct async_buffer_list {
 void __helper_register_async_buffer(struct async_buffer_list *buffers, void *buffer, size_t size);
 
 struct async_buffer_list *__helper_load_async_buffer_list(struct async_buffer_list *buffers);
+
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus */
 
 #endif  // AVA_COMMON_EXTENSIONS_CUDART_10_1_UTILITIES_HPP_

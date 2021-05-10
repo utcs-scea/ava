@@ -300,7 +300,7 @@ __cudaRegisterFunction(
         ava_in; ava_buffer(strlen(deviceName) + 1);
     }
 
-    __helper_assosiate_function(ava_metadata(NULL)->fatbin_funcs,
+    __helper_assosiate_function_dump(ava_metadata(NULL)->fatbin_funcs,
                 &ava_metadata(hostFun)->func, (void *)hostFun,
                 deviceName);
 
