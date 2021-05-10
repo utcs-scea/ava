@@ -13,7 +13,11 @@ set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/onnxruntime/onnx_dump.c")
 
 ExternalProject_Add_Step(cava onnx_dump-nwcc
   DEPENDS ${spec_name}
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name} -I /usr/local/cuda-10.1/include -I ${CMAKE_CURRENT_SOURCE_DIR}/headers ${GLIB2_CFLAGS}
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name}
+    -I ${CMAKE_CURRENT_SOURCE_DIR}/..
+    -I /usr/local/cuda-10.1/include
+    -I ${CMAKE_CURRENT_SOURCE_DIR}/headers
+    ${GLIB2_CFLAGS}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDEES download
 )
@@ -56,7 +60,11 @@ set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/onnxruntime/onnx_opt.c")
 
 ExternalProject_Add_Step(cava onnx_opt-nwcc
   DEPENDS ${spec_name}
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name} -I /usr/local/cuda-10.1/include -I ${CMAKE_CURRENT_SOURCE_DIR}/headers ${GLIB2_CFLAGS}
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name}
+    -I ${CMAKE_CURRENT_SOURCE_DIR}/..
+    -I /usr/local/cuda-10.1/include
+    -I ${CMAKE_CURRENT_SOURCE_DIR}/headers
+    ${GLIB2_CFLAGS}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDEES download
 )

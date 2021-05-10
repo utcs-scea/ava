@@ -12,9 +12,9 @@
 #include <stdio.h>
 
 #ifndef __CAVA__
-#include "cmd_channel.h"
-#include "cmd_handler.h"
-#include "endpoint_lib.h"
+#include "cmd_channel.hpp"
+#include "cmd_handler.hpp"
+#include "endpoint_lib.hpp"
 #endif
 
 #ifdef __cplusplus

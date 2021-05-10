@@ -14,6 +14,7 @@ set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/cudart/cudart.cpp")
 ExternalProject_Add_Step(cava cudart-nwcc
   DEPENDS ${spec_name}
   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name}
+    -I ${CMAKE_CURRENT_SOURCE_DIR}/..
     -I /usr/local/cuda-10.1/include
     -I ${CMAKE_CURRENT_SOURCE_DIR}/headers
     ${GLIB2_CFLAGS}
