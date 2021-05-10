@@ -12,6 +12,7 @@
 #include "common/debug.hpp"
 #include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
+#include "common/logging.h"
 
 struct shadow_thread_pool_t {
   GHashTable *threads; /* Keys are ava IDs, values are shadow_thread_t* */
@@ -35,7 +36,7 @@ static void *shadow_thread_loop(void *arg);
 
 struct shadow_thread_t *shadow_thread_new(struct shadow_thread_pool_t *pool, intptr_t ava_id) {
   assert(g_hash_table_lookup(pool->threads, (gpointer)ava_id) == NULL);
-  LOG_DEBUG << "Creating shadow thread id = " << ava_id;
+  AVA_DEBUG << "Creating shadow thread id = " << ava_id;
   struct shadow_thread_t *t = (struct shadow_thread_t *)malloc(sizeof(struct shadow_thread_t));
   t->ava_id = ava_id;
   t->queue = g_async_queue_new_full(NULL);

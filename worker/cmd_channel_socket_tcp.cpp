@@ -70,7 +70,7 @@ struct command_channel *command_channel_socket_tcp_worker_new(int worker_port) {
   setsockopt_lowlatency(chan->sock_fd);
 
   /* Get source address */
-#ifdef AVA_DEBUG
+#ifdef AVA_DEBUG_BUILD
   struct sockaddr_storage source_addr;
   socklen_t source_addr_len = sizeof(struct sockaddr_storage);
   getpeername(chan->sock_fd, (struct sockaddr *)&source_addr, &source_addr_len);

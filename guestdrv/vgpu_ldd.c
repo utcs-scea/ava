@@ -134,7 +134,7 @@ static int vgpu_mmap(struct file *filp, struct vm_area_struct *vma) {
   struct app_info *app_info = filp->private_data;
   unsigned long offset = vma->vm_pgoff << PAGE_SHIFT;
 
-  DEBUG_PRINT("mmap type=%d\n", app_info->alloc_type);
+  AVA_DEBUG.printf("mmap type=%d\n", app_info->alloc_type);
   switch (app_info->alloc_type) {
   case ALLOC_TYPE_SHM:
     if (app_info->pblock_size != (vma->vm_end - vma->vm_start)) {
@@ -142,7 +142,7 @@ static int vgpu_mmap(struct file *filp, struct vm_area_struct *vma) {
       return -EAGAIN;
     }
     offset += (unsigned long)(vgpu_dev.shm->start + app_info->free_pblock_offset);
-    DEBUG_PRINT("mmap block offset=%lx\n", app_info->free_pblock_offset);
+    AVA_DEBUG.printf("mmap block offset=%lx\n", app_info->free_pblock_offset);
 
     app_info->alloc_type = ALLOC_TYPE_UNSPEC;
     break;
@@ -158,8 +158,8 @@ static int vgpu_mmap(struct file *filp, struct vm_area_struct *vma) {
       return -EAGAIN;
     }
     offset += (unsigned long)vgpu_dev.zcopy->start;
-    DEBUG_PRINT("mmap zero-copy vpa=%lx, spa=%lx\n", (uintptr_t)vgpu_dev.zcopy->base_addr,
-                DRM_READ64(vgpu_dev.reg, REG_ZERO_COPY_PHYS));
+    AVA_DEBUG.printf("mmap zero-copy vpa=%lx, spa=%lx\n", (uintptr_t)vgpu_dev.zcopy->base_addr,
+                     DRM_READ64(vgpu_dev.reg, REG_ZERO_COPY_PHYS));
     app_info->alloc_type = 0;
     break;
 
@@ -311,7 +311,7 @@ static int __init vgpu_init(void) {
   /* register VM in executor */
   DRM_WRITE8(vgpu_dev.reg, REG_MOD_INIT, 1);
   vgpu_dev.vm_id = DRM_READ32(vgpu_dev.reg, REG_VM_ID);
-  DEBUG_PRINT("assigned vm id=%d\n", vgpu_dev.vm_id);
+  AVA_DEBUG.printf("assigned vm id=%d\n", vgpu_dev.vm_id);
 
   register_reboot_notifier(&vgpu_reboot_notifier);
 

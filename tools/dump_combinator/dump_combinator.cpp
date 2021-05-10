@@ -14,6 +14,7 @@
 #include <string>
 
 #include "debug.h"
+#include "logging.h"
 
 struct fatbin_wrapper {
   uint32_t magic;
@@ -96,7 +97,7 @@ GHashTable *__helper_load_function_arg_info(char *load_dir, char *dump_dir, int 
   ss << dump_dir << "/function_arg-" << global_num_fatbins << ".ava";
   filename = ss.str();
   fd_w = open(filename.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0666);
-  DEBUG_PRINT("Dump function argument info to %s\n", filename.c_str());
+  AVA_DEBUG.printf("Dump function argument info to %s\n", filename.c_str());
   ss.str(std::string());
   ss.clear();
 
@@ -124,7 +125,7 @@ GHashTable *__helper_load_function_arg_info(char *load_dir, char *dump_dir, int 
       fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", read_ret, strerror(errno), __FILE__, __LINE__);
       exit(EXIT_FAILURE);
     }
-    DEBUG_PRINT("function %d (%s) has argc = %d\n", fatbin_funcs->len - 1, func_name, func->argc);
+    AVA_DEBUG.printf("function %d (%s) has argc = %d\n", fatbin_funcs->len - 1, func_name, func->argc);
     /* Insert into the function table */
     g_ptr_array_add(fatbin_funcs, (gpointer)func);
 
@@ -171,7 +172,7 @@ void __helper_load_and_dump_fatbin(char *load_dir, char *dump_dir, int fatbin_nu
   std::stringstream ss;
   ss << load_dir << "/fatbin-" << fatbin_num << ".ava";
   std::string filename = ss.str();
-  DEBUG_PRINT("loading %s\n", filename.c_str());
+  AVA_DEBUG.printf("loading %s\n", filename.c_str());
   fd = open(filename.c_str(), O_RDONLY, 0666);
   ss.str(std::string());
   ss.clear();
@@ -188,8 +189,8 @@ void __helper_load_and_dump_fatbin(char *load_dir, char *dump_dir, int fatbin_nu
   close(fd);
 
   struct fatBinaryHeader *fbh = (struct fatBinaryHeader *)fatbin;
-  DEBUG_PRINT("Read fatbin-%d.ava size = %lu, should be %llu\n", fatbin_num, fatbin_size,
-              fbh->headerSize + fbh->fatSize);
+  AVA_DEBUG.printf("Read fatbin-%d.ava size = %lu, should be %llu\n", fatbin_num, fatbin_size,
+                   fbh->headerSize + fbh->fatSize);
   assert(fatbin_size == fbh->headerSize + fbh->fatSize && "fatbin size is wrong");
   (void)fbh;
 
@@ -203,7 +204,7 @@ void __helper_load_and_dump_fatbin(char *load_dir, char *dump_dir, int fatbin_nu
     fprintf(stderr, "Unexpected error open [errno=%d, errstr=%s] at %s:%d", fd, strerror(errno), __FILE__, __LINE__);
     exit(EXIT_FAILURE);
   }
-  DEBUG_PRINT("Dump fatbinary to %s\n", fatbin_filename.c_str());
+  AVA_DEBUG.printf("Dump fatbinary to %s\n", fatbin_filename.c_str());
   write_ret = write(fd, (const void *)wp->ptr, fbh->headerSize + fbh->fatSize);
   if (write_ret == -1) {
     fprintf(stderr, "Unexpected error write [errno=%d, errstr=%s] at %s:%d", write_ret, strerror(errno), __FILE__,
@@ -217,7 +218,7 @@ void __helper_load_and_dump_fatbin(char *load_dir, char *dump_dir, int fatbin_nu
   if (fatfunction_fd_dump == 0) {
     ss << dump_dir << "/fatfunction.ava";
     filename = ss.str();
-    DEBUG_PRINT("fatfunction ava file to dump is %s\n", filename.c_str());
+    AVA_DEBUG.printf("fatfunction ava file to dump is %s\n", filename.c_str());
     fatfunction_fd_dump = open(filename.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0666);
     ss.str(std::string());
     ss.clear();
@@ -260,7 +261,7 @@ void __helper_load_and_dump_fatbin(char *load_dir, char *dump_dir, int fatbin_nu
       break;
     }
     if (size == 0) {  // Meet separator
-      DEBUG_PRINT("Finish reading functions for fatbin-%d.ava\n", fatbin_num);
+      AVA_DEBUG.printf("Finish reading functions for fatbin-%d.ava\n", fatbin_num);
       break;
     }
     if (read_ret == -1) {
@@ -480,7 +481,7 @@ void __helper_load_and_dump_fatbin(char *load_dir, char *dump_dir, int fatbin_nu
     } else
       wSize = NULL;
 
-    DEBUG_PRINT("Register function deviceName = %s\n", deviceName);
+    AVA_DEBUG.printf("Register function deviceName = %s\n", deviceName);
     func_id = (void *)g_hash_table_lookup(ht, deviceName);
     assert(func_id != NULL && "func_id should not be NULL");
     func = (fatbin_function *)g_ptr_array_index(fatbin_funcs, (intptr_t)func_id);
@@ -508,7 +509,7 @@ void __helper_load_and_dump_fatbin(char *load_dir, char *dump_dir, int fatbin_nu
   ss << dump_dir << "/fatbin-info.ava";
   filename = ss.str();
   fd = open(filename.c_str(), O_RDWR | O_CREAT, 0666);
-  DEBUG_PRINT("Fatbinary counter = %d\n", global_num_fatbins);
+  AVA_DEBUG.printf("Fatbinary counter = %d\n", global_num_fatbins);
   write_ret = write(fd, (const void *)&global_num_fatbins, sizeof(int));
   if (write_ret == -1) {
     fprintf(stderr, "Unexpected error write [errno=%d, errstr=%s] at %s:%d", write_ret, strerror(errno), __FILE__,
@@ -539,7 +540,7 @@ void load_dump_fatbin(char *load_dir, char *dump_dir) {
   if (ret == -1) {
     fprintf(stderr, "Unexpected error read [errno=%d, errstr=%s] at %s:%d", ret, strerror(errno), __FILE__, __LINE__);
   }
-  DEBUG_PRINT("%s fatbin num is %d\n", load_dir, fatbin_num);
+  AVA_DEBUG.printf("%s fatbin num is %d\n", load_dir, fatbin_num);
 
   int i;
   void *fatCubin;
