@@ -9,14 +9,14 @@
 #include <boost/assert.hpp>
 #endif
 
-#ifndef AVA_RELEASE
-#define AVA_DEBUG
+#ifndef AVA_RELEASE_BUILD
+#define AVA_DEBUG_BUILD
 #else
-#undef AVA_DEBUG
+#undef AVA_DEBUG_BUILD
 #endif
 
 /* debug print */
-#ifdef AVA_DEBUG
+#ifdef AVA_DEBUG_BUILD
 #ifdef __KERNEL__
 #define DEBUG_PRINT(fmt, args...) printk(KERN_INFO fmt, ##args)
 #else
