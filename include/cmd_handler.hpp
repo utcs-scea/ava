@@ -4,6 +4,7 @@
 #ifndef __KERNEL__
 
 #include <pthread.h>
+#include <stdio.h>
 
 #include "common/cmd_channel.hpp"
 #include "common/guest_mem.h"

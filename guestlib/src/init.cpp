@@ -44,7 +44,7 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id) {
     std::vector<struct command_channel *> channels = command_channel_socket_tcp_guest_new();
     chan = channels[0];
   } else if (guestconfig::config->channel_ == "SHM") {
-    chan = command_channel_shm_new();
+    chan = command_channel_shm_guest_new();
   } else if (guestconfig::config->channel_ == "VSOCK") {
     chan = command_channel_socket_new();
   } else {
