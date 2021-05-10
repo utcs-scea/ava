@@ -8,6 +8,7 @@
 #include "common/debug.hpp"
 #include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
+#include "common/logging.h"
 #include "common/shadow_thread_pool.hpp"
 
 #define batch_array_index(array, index_) ((struct command_base *)g_ptr_array_index(array, index_))
@@ -25,7 +26,7 @@ struct command_wrapper {
  * @active_cmds: the commands to be emitted
  */
 static void batch_emit(GAsyncQueue *active_cmds) {
-  DEBUG_PRINT("Emit a batch with %u commands\n", g_async_queue_length(active_cmds));
+  AVA_DEBUG.printf("Emit a batch with %u commands\n", g_async_queue_length(active_cmds));
 
   GQueue *queue = g_queue_new();
   size_t __total_buffer_size = 0;
@@ -73,7 +74,7 @@ EXPORTED_WEAKLY void batch_insert_command(struct command_batch *cmd_batch, struc
   wrap->chan = chan;
   wrap->is_async = is_async;
 
-  DEBUG_PRINT("Add command (%ld) to pending batched command list\n", cmd->command_id);
+  AVA_DEBUG.printf("Add command (%ld) to pending batched command list\n", cmd->command_id);
   g_async_queue_push(cmd_batch->pending_cmds, (gpointer)wrap);
 }
 
@@ -114,8 +115,8 @@ static void *batch_process_thread(void *opaque) {
 
     /* Emit the single synchronous API. */
     if (wrap && !wrap->is_async && g_async_queue_length(cmd_batch->active_cmds) == 0) {
-      DEBUG_PRINT("Emit a synchronous command %ld, thread id %lx->%lx\n", wrap->cmd->command_id, wrap->cmd->thread_id,
-                  thread_id);
+      AVA_DEBUG.printf("Emit a synchronous command %ld, thread id %lx->%lx\n", wrap->cmd->command_id,
+                       wrap->cmd->thread_id, thread_id);
       wrap->cmd->thread_id = thread_id;
       command_channel_send_command(wrap->chan, wrap->cmd);
       g_free(wrap);
@@ -132,7 +133,7 @@ static void *batch_process_thread(void *opaque) {
     if ((wrap && !wrap->is_async) || g_async_queue_length(cmd_batch->active_cmds) >= BATCH_SIZE ||
         elapsed_time >= BATCH_TIME_OUT_US) {
       if (wrap && !wrap->is_async) {
-        DEBUG_PRINT("Emit a batch ending with a synchronous command %ld\n", wrap->cmd->command_id);
+        AVA_DEBUG.printf("Emit a batch ending with a synchronous command %ld\n", wrap->cmd->command_id);
       }
 
       batch_emit(cmd_batch->active_cmds);
