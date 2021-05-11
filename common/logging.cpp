@@ -1,4 +1,5 @@
 #include "logging.h"
+
 #include "cstdarg"
 
 void ava_trace(const char *format, ...) {
