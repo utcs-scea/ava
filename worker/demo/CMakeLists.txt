@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(demo-manager C CXX CUDA)
+project(demo-manager C CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 

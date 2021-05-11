@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(legacy-manager C CXX CUDA)
+project(legacy-manager C CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 
