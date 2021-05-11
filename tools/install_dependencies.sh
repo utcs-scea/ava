@@ -16,4 +16,4 @@ sudo apt purge --auto-remove cmake
 sudo apt install cmake cmake-curses-gui
 sudo apt install git build-essential python3 python3-pip libglib2.0-dev clang-7 libclang-7-dev libboost-all-dev libconfig++-dev indent
 python3 -m pip install pip
-python3 -m pip install toposort astor 'numpy==1.15.0'
+python3 -m pip install toposort astor 'numpy==1.15.0' blessings

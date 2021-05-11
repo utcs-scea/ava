@@ -1,0 +1,61 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches:
+    - master
+    - r*.*
+    tags:
+      - r*.*
+  pull_request:
+
+jobs:
+  build_and_test:
+    runs-on: ${{matrix.os}}
+    continue-on-error: ${{matrix.os == 'macOS-latest'}}
+    strategy:
+      matrix:
+        os:
+        - ubuntu-18.04
+        build_type:
+        - Release
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+        # We need history so that we have tags to provide version information.
+        fetch-depth: 0
+        # 0 fetches all history. See https://github.com/actions/checkout#checkout-v2
+
+    ###
+    # Caching between builds
+    ###
+    - name: Cache ava-llvm library
+      uses: actions/cache@v2
+      with:
+        key: ${{matrix.os}}-ava-llvm-${{hashFiles('cava/CMakeLists.txt')}}
+        path: llvm/build
+
+    ###
+    # Install platform-level dependencies (OS-specific)
+    ###
+    - name: Install dependencies
+      if: startsWith(matrix.os, 'ubuntu-')
+      run: |
+        tools/install_dependencies.sh
+
+    ###
+    # Standard CMake build process
+    ###
+    - name: Configure
+      run: |
+        cmake -S . -B $HOME/build \
+          -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
+          -DAVA_MANAGER_DEMO=ON \
+          -DAVA_MANAGER_LEGACY=ON \
+          -DAVA_GEN_DEMO_SPEC=ON \
+          -DAVA_GEN_TEST_SPEC=ON
+
+    - name: Build
+      run: |
+        cmake --build $HOME/build --parallel 2
