@@ -19,8 +19,7 @@ def handle_command_function(api: API, calls: Iterable[Function], returns: Iterab
     {lines(function_wrapper(f) for f in calls)}
 
     void {function_name}_init() {{
-        ava_endpoint_init(&__ava_endpoint, sizeof(struct {api.metadata_struct_spelling}), ava_is_worker ? 1 : 2,
-                          ava_is_worker ? ava_zcopy_region_new_worker() : ava_zcopy_region_new_guest());
+        ava_endpoint_init(&__ava_endpoint, sizeof(struct {api.metadata_struct_spelling}), ava_is_worker ? 1 : 2);
         register_command_handler({api.number_spelling}, {function_name}, 
             __print_command_{api.identifier.lower()}, __replay_command_{api.identifier.lower()});
     }}
