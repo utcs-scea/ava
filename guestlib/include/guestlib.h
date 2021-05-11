@@ -19,6 +19,7 @@ void nw_destroy_guestlib(void);
 }
 
 std::vector<struct command_channel *> command_channel_socket_tcp_guest_new();
+struct command_channel *command_channel_shm_guest_new();
 #endif
 
 #endif

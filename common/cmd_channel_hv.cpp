@@ -100,9 +100,6 @@ struct command_channel *command_channel_hv_new(int worker_port) {
     exit(-1);
   } else
     printf("[worker#%d] kvm-vgpu netlink notified\n", worker_port);
-
-    // recvmsg(chan->netlink_fd, chan->nl_msg, 0);
-    // DEBUG_PRINT("receive netlink cmd_id=%lu\n", raw_msg->command_id);
 #endif
 
   return (struct command_channel *)chan;

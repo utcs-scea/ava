@@ -10,10 +10,10 @@
 
 #include "common/cmd_channel_impl.hpp"
 #include "common/cmd_handler.hpp"
-#include "common/debug.hpp"
 #include "common/devconf.h"
 #include "common/guest_mem.h"
 #include "common/ioctl.h"
+#include "common/logging.h"
 #include "common/socket.hpp"
 #include "memory.h"
 
@@ -39,23 +39,14 @@ struct command_channel_shm {
 
 pthread_spinlock_t block_lock;
 
-static struct command_channel_vtable command_channel_shm_vtable;
+namespace {
+extern struct command_channel_vtable command_channel_shm_vtable;
+}
 
 /**
  * Print a command for debugging.
  */
 static void command_channel_shm_print_command(const struct command_channel *chan, const struct command_base *cmd) {
-  DEBUG_PRINT(
-      "struct command_base {\n"
-      "  command_type=%ld\n"
-      "  vm_id=%d\n"
-      "  flags=%d\n"
-      "  api_id=%d\n"
-      "  command_id=%ld\n"
-      "  command_size=%lx\n"
-      "  region_size=%lx\n"
-      "}\n",
-      cmd->command_type, cmd->vm_id, cmd->flags, cmd->api_id, cmd->command_id, cmd->command_size, cmd->region_size);
   DEBUG_PRINT_COMMAND(chan, cmd);
 }
 
@@ -206,12 +197,11 @@ static struct command_base *command_channel_shm_receive_command(struct command_c
     exit(0);
   }
 
-  DEBUG_PRINT("revents=%d\n", chan->pfd.revents);
   if (chan->pfd.revents == 0) return NULL;
 
   /* terminate guestlib when worker exits */
   if (chan->pfd.revents & POLLRDHUP) {
-    DEBUG_PRINT("worker shutdown\n");
+    AVA_WARNING << "worker shutdown";
     close(chan->pfd.fd);
     exit(0);
   }
@@ -224,7 +214,6 @@ static struct command_base *command_channel_shm_receive_command(struct command_c
     memcpy(cmd, &cmd_base, sizeof(struct command_base));
     recv_socket(chan->pfd.fd, (void *)cmd + sizeof(struct command_base),
                 cmd_base.command_size - sizeof(struct command_base));
-    DEBUG_PRINT("receive new command:\n");
     pthread_mutex_unlock(&chan->recv_mutex);
 
     command_channel_shm_print_command(c, cmd);
@@ -269,7 +258,7 @@ static void command_channel_shm_free_command(struct command_channel *chan, struc
  * Initialize a new command channel with vsock as doorbell and shared
  * memory as data transport.
  */
-struct command_channel *command_channel_shm_new() {
+struct command_channel *command_channel_shm_guest_new() {
   struct command_channel_shm *chan = (struct command_channel_shm *)malloc(sizeof(struct command_channel_shm));
   command_channel_preinitialize((struct command_channel *)chan, &command_channel_shm_vtable);
   pthread_spin_init(&block_lock, 0);
@@ -370,11 +359,13 @@ static void command_channel_shm_free(struct command_channel *c) {
   free(chan);
 }
 
-static struct command_channel_vtable command_channel_shm_vtable = {
+namespace {
+struct command_channel_vtable command_channel_shm_vtable = {
     command_channel_shm_buffer_size,  command_channel_shm_new_command,      command_channel_shm_attach_buffer,
     command_channel_shm_send_command, command_channel_shm_transfer_command, command_channel_shm_receive_command,
     command_channel_shm_get_buffer,   command_channel_shm_get_data_region,  command_channel_shm_free_command,
     command_channel_shm_free,         command_channel_shm_print_command};
+}
 
 // warning TODO: Does there need to be a separate socket specific function which
 // handles listening/accepting instead of connecting?

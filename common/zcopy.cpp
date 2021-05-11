@@ -17,6 +17,7 @@
 
 #include "common/devconf.h"
 #include "common/ioctl.h"
+#include "common/logging.h"
 
 struct ava_zcopy_region {
   int fd;
@@ -45,20 +46,20 @@ struct ava_zcopy_region *ava_zcopy_region_new_worker() {
 
   ret->fd = open("/dev/ava_zcopy", O_RDWR);
   if (ret->fd < 0) {
-    DEBUG_PRINT("Zero-copy driver is not installed: %s\n", strerror(errno));
+    AVA_ERROR << "Zero-copy driver is not installed: " << strerror(errno);
     return NULL;
   }
 
   r = ioctl(ret->fd, KVM_GET_ZCOPY_PHY_ADDR, &ret->physical_base);
   if (r < 0) {
-    DEBUG_PRINT("ava_map_zero_copy_region failed\n");
+    AVA_ERROR << "ava_map_zero_copy_region failed";
     return NULL;
   }
 
   ret->size = VGPU_ZERO_COPY_SIZE;
   ret->base = mmap(NULL, VGPU_ZERO_COPY_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, ret->fd, 0);
   if (ret->base == MAP_FAILED) {
-    DEBUG_PRINT("ava mmap VGPU_ZERO_COPY_SIZE failed\n");
+    AVA_ERROR << "ava mmap VGPU_ZERO_COPY_SIZE failed";
     return NULL;
   }
 
@@ -77,7 +78,7 @@ struct ava_zcopy_region *ava_zcopy_region_new_guest() {
 
   ret->fd = open("/dev/scea-vgpu0", O_RDWR);
   if (ret->fd < 0) {
-    DEBUG_PRINT("VGPU driver is not installed, trying host driver.\n");
+    AVA_ERROR << "VGPU driver is not installed, trying host driver.";
     free(ret);
     return ava_zcopy_region_new_worker();
   }
@@ -85,14 +86,14 @@ struct ava_zcopy_region *ava_zcopy_region_new_guest() {
   ret->size = VGPU_ZERO_COPY_SIZE;
   r = ioctl(ret->fd, IOCTL_GET_ZCOPY_PHY_ADDR, &ret->physical_base);
   if (r < 0) {
-    DEBUG_PRINT("IOCTL_GET_ZCOPY_PHY_ADDR failed\n");
+    AVA_ERROR << "IOCTL_GET_ZCOPY_PHY_ADDR failed";
     return NULL;
   }
 
   r = ioctl(ret->fd, IOCTL_REQUEST_ZCOPY);
   ret->base = mmap(NULL, VGPU_ZERO_COPY_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, ret->fd, 0);
   if (r < 0 || ret->base == MAP_FAILED) {
-    DEBUG_PRINT("ava mmap VGPU_ZERO_COPY_SIZE failed\n");
+    AVA_ERROR << "ava mmap VGPU_ZERO_COPY_SIZE failed";
     return NULL;
   }
 
@@ -145,7 +146,7 @@ uintptr_t ava_zcopy_region_get_physical_address(struct ava_zcopy_region *region,
     errno = EFAULT;
     return 0;
   }
-  return (uintptr_t)(ptr - region->base) + region->physical_base;
+  return (uintptr_t)ptr - (uintptr_t)region->base + (uintptr_t)region->physical_base;
 }
 
 void *ava_zcopy_region_encode_position_independent(struct ava_zcopy_region *region, const void *ptr) {
@@ -156,7 +157,7 @@ void *ava_zcopy_region_encode_position_independent(struct ava_zcopy_region *regi
     return 0;
   }
   // Add offset to avoid valid ptrs being encoded to NULL
-  return (void *)(ptr - region->base) + ENCODED_PTR_OFFSET;
+  return (void *)((uintptr_t)ptr - (uintptr_t)region->base) + ENCODED_PTR_OFFSET;
 }
 void *ava_zcopy_region_decode_position_independent(struct ava_zcopy_region *region, const void *ptr) {
   assert(region != NULL && "The appropriate zero-copy driver may not be installed.");

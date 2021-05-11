@@ -53,18 +53,18 @@ add_definitions(-D_GNU_SOURCE)
 add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../worker/worker.cpp
   ${{CMAKE_SOURCE_DIR}}/../../worker/cmd_channel_socket_tcp.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm_worker.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../worker/cmd_channel_shm.cpp
   ${{CMAKE_SOURCE_DIR}}/../../worker/provision_gpu.cpp
   {' '.join(worker_srcs)}
   {api.c_worker_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/socket.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_record.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_hv.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_hv.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
@@ -82,17 +82,17 @@ add_library({api.soname} SHARED
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/guest_config.cpp
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/migration.cpp
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/cmd_channel_socket_tcp.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_shm.c
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/cmd_channel_shm.cpp
   {' '.join(guestlib_srcs)}
   {api.c_library_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/murmur3.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/socket.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_record.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_hv.c
+  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_hv.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
