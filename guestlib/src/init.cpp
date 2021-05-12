@@ -43,13 +43,13 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id) {
   if (guestconfig::config->channel_ == "TCP") {
     std::vector<struct command_channel *> channels = command_channel_socket_tcp_guest_new();
     chan = channels[0];
-  } else if (guestconfig::config->channel_ == "SHM") {
-    chan = command_channel_shm_guest_new();
-  } else if (guestconfig::config->channel_ == "VSOCK") {
-    chan = command_channel_socket_new();
+    // } else if (guestconfig::config->channel_ == "SHM") {
+    //   chan = command_channel_shm_guest_new();
+    // } else if (guestconfig::config->channel_ == "VSOCK") {
+    //   chan = command_channel_socket_new();
   } else {
-    std::cerr << "Unsupported channel specified in " << guestconfig::kConfigFilePath
-              << ", expect channel = [\"TCP\" | \"SHM\" | \"VSOCK\"]" << std::endl;
+    std::cerr << "Unsupported channel specified in " << guestconfig::kConfigFilePath << ", expect channel = [\"TCP\"]"
+              << std::endl;
     exit(0);
   }
   if (!chan) {

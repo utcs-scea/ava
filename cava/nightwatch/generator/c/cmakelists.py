@@ -53,7 +53,6 @@ add_definitions(-D_GNU_SOURCE)
 add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../worker/worker.cpp
   ${{CMAKE_SOURCE_DIR}}/../../worker/cmd_channel_socket_tcp.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../worker/cmd_channel_shm.cpp
   ${{CMAKE_SOURCE_DIR}}/../../worker/provision_gpu.cpp
   {' '.join(worker_srcs)}
   {api.c_worker_spelling}
@@ -67,7 +66,6 @@ add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
 )
 target_link_libraries(worker
   ${{GLIB2_LIBRARIES}}
@@ -81,7 +79,6 @@ add_library({api.soname} SHARED
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/guest_config.cpp
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/migration.cpp
   ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/cmd_channel_socket_tcp.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/cmd_channel_shm.cpp
   {' '.join(guestlib_srcs)}
   {api.c_library_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.cpp
@@ -94,7 +91,6 @@ add_library({api.soname} SHARED
   ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
   ${{CMAKE_SOURCE_DIR}}/../../proto/manager_service.proto.cpp
 )
 target_link_libraries({api.soname}
