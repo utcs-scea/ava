@@ -40,9 +40,9 @@ find_library(Config++ NAMES libconfig++ config++ REQUIRED)
 ###### Compile ######
 
 include_directories(
-  ${{CMAKE_SOURCE_DIR}}/../../include
-  ${{CMAKE_SOURCE_DIR}}/../../worker/include
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/include
+  ${{CMAKE_SOURCE_DIR}}/../../common
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib
+  ${{CMAKE_SOURCE_DIR}}/../../worker
   ${{CMAKE_SOURCE_DIR}}/../../proto
   ${{GLIB2_INCLUDE_DIRS}}
   ${{CMAKE_SOURCE_DIR}}/../..
@@ -53,7 +53,6 @@ add_definitions(-D_GNU_SOURCE)
 add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../worker/worker.cpp
   ${{CMAKE_SOURCE_DIR}}/../../worker/cmd_channel_socket_tcp.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../worker/cmd_channel_shm.cpp
   ${{CMAKE_SOURCE_DIR}}/../../worker/provision_gpu.cpp
   {' '.join(worker_srcs)}
   {api.c_worker_spelling}
@@ -62,13 +61,11 @@ add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/socket.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_record.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_hv.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
 )
 target_link_libraries(worker
   ${{GLIB2_LIBRARIES}}
@@ -78,11 +75,10 @@ target_link_libraries(worker
 )
 
 add_library({api.soname} SHARED
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/init.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/guest_config.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/migration.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/cmd_channel_socket_tcp.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/cmd_channel_shm.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/init.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/guest_config.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/migration.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/cmd_channel_socket_tcp.cpp
   {' '.join(guestlib_srcs)}
   {api.c_library_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.cpp
@@ -90,13 +86,11 @@ add_library({api.soname} SHARED
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_handler.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/endpoint_lib.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/socket.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/zcopy.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_record.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_hv.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_tcp.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel_socket_vsock.cpp
   ${{CMAKE_SOURCE_DIR}}/../../proto/manager_service.proto.cpp
 )
 target_link_libraries({api.soname}

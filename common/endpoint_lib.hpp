@@ -24,7 +24,6 @@ using namespace std;
 #include "common/cmd_handler.hpp"
 #include "common/murmur3.h"
 #include "common/shadow_thread_pool.hpp"
-#include "common/zcopy.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -240,7 +239,7 @@ struct ava_endpoint {
   GHashTable *call_map;
   pthread_mutex_t call_map_mutex;
   atomic_long call_counter;
-  struct ava_zcopy_region *zcopy_region;
+  // struct ava_zcopy_region *zcopy_region;
   struct ava_shadow_buffer_pool shadow_buffers;
 #ifdef AVA_BENCHMARKING_MIGRATE
   intptr_t migration_call_id;
@@ -321,19 +320,19 @@ void *ava_static_alloc(struct ava_endpoint *endpoint, int cmd_id, size_t size);
  */
 void ava_coupled_free(struct ava_endpoint *endpoint, const void *coupled);
 
-__attribute_alloc_size__((2)) __attribute_malloc__ __attribute_used__
-    static void *ava_endpoint_zerocopy_alloc(struct ava_endpoint *endpoint, size_t size) {
-  return ava_zcopy_region_alloc(endpoint->zcopy_region, size);
-}
+// __attribute_alloc_size__((2)) __attribute_malloc__ __attribute_used__
+//     static void *ava_endpoint_zerocopy_alloc(struct ava_endpoint *endpoint, size_t size) {
+//   return ava_zcopy_region_alloc(endpoint->zcopy_region, size);
+// }
 
-__attribute_used__ static void ava_endpoint_zerocopy_free(struct ava_endpoint *endpoint, void *ptr) {
-  ava_zcopy_region_free(endpoint->zcopy_region, ptr);
-}
+// __attribute_used__ static void ava_endpoint_zerocopy_free(struct ava_endpoint *endpoint, void *ptr) {
+//   ava_zcopy_region_free(endpoint->zcopy_region, ptr);
+// }
 
-__attribute_used__ static uintptr_t ava_endpoint_zerocopy_get_physical_address(struct ava_endpoint *endpoint,
-                                                                               void *ptr) {
-  return ava_zcopy_region_get_physical_address(endpoint->zcopy_region, ptr);
-}
+// __attribute_used__ static uintptr_t ava_endpoint_zerocopy_get_physical_address(struct ava_endpoint *endpoint,
+//                                                                                void *ptr) {
+//   return ava_zcopy_region_get_physical_address(endpoint->zcopy_region, ptr);
+// }
 
 /**
  * Record a call with for the object `handle`.
@@ -376,8 +375,7 @@ void ava_assign_record_replay_functions(struct ava_endpoint *endpoint, const voi
  * @param counter_tag The tag placed in the low 4 bits of counters to make sure they are different between different ID
  * generation scopes.
  */
-void ava_endpoint_init(struct ava_endpoint *endpoint, size_t metadata_size, uint8_t counter_tag,
-                       struct ava_zcopy_region *zcopy_region);
+void ava_endpoint_init(struct ava_endpoint *endpoint, size_t metadata_size, uint8_t counter_tag);
 
 #define AVA_COUNTER_TAG_WORKER 1
 #define AVA_COUNTER_TAG_GUEST 2

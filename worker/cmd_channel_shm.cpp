@@ -14,7 +14,6 @@
 #include "common/cmd_handler.hpp"
 #include "common/devconf.h"
 #include "common/guest_mem.h"
-#include "common/ioctl.h"
 #include "common/socket.hpp"
 #include "worker.h"
 

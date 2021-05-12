@@ -37,8 +37,10 @@ def get_transfer_buffer_expr(value: str, type: Type, *, not_null=False) -> ExprO
             f"({type.spelling})command_channel_get_buffer(__chan, __cmd, {value})",
             Expr(type.transfer)
             .equals("NW_ZEROCOPY_BUFFER")
-            .if_then_else_expression(
-                f"({type.spelling})ava_zcopy_region_decode_position_independent(__ava_endpoint.zcopy_region, {value})",
+            .if_then_else_expression(                
+                # TODO(yuhc): Add back zero copy region supprot after this feature is refactored.
+                # f"({type.spelling})ava_zcopy_region_decode_position_independent(__ava_endpoint.zcopy_region, {value})",
+                f"({type.spelling})command_channel_get_buffer(__chan, __cmd, {value})",
                 f"({type.spelling}){value}",
             ),
         ),
@@ -166,7 +168,9 @@ def attach_buffer(
         )
 
     return type.transfer.equals("NW_ZEROCOPY_BUFFER").if_then_else(
-        zerocopy_attach(),
+        # TODO(yuhc): Add back zero copy region supprot after this feature is refactored.
+        # zerocopy_attach(),
+        simple_attach("command_channel_attach_buffer"),
         type.lifetime.equals("AVA_CALL").if_then_else(
             Expr(copy).if_then_else(
                 simple_attach("command_channel_attach_buffer"),

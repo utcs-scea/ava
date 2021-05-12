@@ -61,11 +61,21 @@ def main():
         if args.language.lower() == "c":
             errors = []
 
+            from pathlib import Path
+            here = Path(__file__)
+            default_include_path = [
+                str(p) for p in [
+                    (here / ".." / ".." / "..").resolve(),
+                    (here / ".." / ".." / ".." / "include").resolve(),
+                    (here / ".." / ".." / ".." / "third_party" / "plog" / "include" ).resolve(),
+                ]
+            ]
+
             from .parser import c
 
             api = c.parse(
                 args.inputfile,
-                include_path=args.include_path or [],
+                include_path=default_include_path if args.include_path is None else args.include_path + default_include_path,
                 definitions=args.definitions or [],
                 extra_args=(["-v"] if args.verbose else []) + (args.extra_args or []),
             )

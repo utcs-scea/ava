@@ -549,13 +549,13 @@ void ava_add_dependency(struct ava_endpoint *endpoint, void *a, void *b) {
   pthread_mutex_unlock(&metadata_map_mutex);
 }
 
-void ava_endpoint_init(struct ava_endpoint *endpoint, size_t metadata_size, uint8_t counter_tag,
-                       struct ava_zcopy_region *zcopy_region) {
+void ava_endpoint_init(struct ava_endpoint *endpoint, size_t metadata_size, uint8_t counter_tag) {
   assert(counter_tag == (counter_tag & 0xf) && "Only the low 4 bits of the tag may be used.");
   global_counter_tag = counter_tag;
 
   endpoint->metadata_size = metadata_size;
-  endpoint->zcopy_region = zcopy_region;
+  // TODO(yuhc): Add back zero-copy.
+  // endpoint->zcopy_region = zcopy_region;
 
 #ifdef AVA_BENCHMARKING_MIGRATE
   endpoint->migration_call_id = -1;
@@ -607,7 +607,8 @@ void ava_endpoint_destroy(struct ava_endpoint *endpoint) {
   }
 #endif
 
-  if (endpoint->zcopy_region) ava_zcopy_region_free_region(endpoint->zcopy_region);
+  // TODO(yuhc): Add back zero-copy.
+  // if (endpoint->zcopy_region) ava_zcopy_region_free_region(endpoint->zcopy_region);
 
   g_hash_table_unref(endpoint->managed_buffer_map);
   g_hash_table_unref(endpoint->managed_by_coupled_map);

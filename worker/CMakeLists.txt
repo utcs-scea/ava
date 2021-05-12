@@ -13,8 +13,8 @@ set(manager_service_libraries Threads::Threads
 
 # Common files
 include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../include
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/../common
   ${CMAKE_CURRENT_SOURCE_DIR}/../proto
   ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/plog/include
 )
