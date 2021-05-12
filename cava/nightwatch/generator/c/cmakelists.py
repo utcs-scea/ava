@@ -40,9 +40,9 @@ find_library(Config++ NAMES libconfig++ config++ REQUIRED)
 ###### Compile ######
 
 include_directories(
-  ${{CMAKE_SOURCE_DIR}}/../../include
-  ${{CMAKE_SOURCE_DIR}}/../../worker/include
+  ${{CMAKE_SOURCE_DIR}}/../../common
   ${{CMAKE_SOURCE_DIR}}/../../guestlib
+  ${{CMAKE_SOURCE_DIR}}/../../worker
   ${{CMAKE_SOURCE_DIR}}/../../proto
   ${{GLIB2_INCLUDE_DIRS}}
   ${{CMAKE_SOURCE_DIR}}/../..

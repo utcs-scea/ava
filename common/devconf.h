@@ -1,7 +1,6 @@
 #ifndef __VGPU_DEVCONF_H__
 #define __VGPU_DEVCONF_H__
 
-#include "ctype_util.h"
 #include "debug.hpp"
 
 /******************************************************************************
@@ -84,9 +83,17 @@
 #define DEST_SERVER_IP "10.0.0.2"
 
 /* Hardware */
+#define KB(x) (x << 10)
+#define MB(x) ((KB(x)) << 10)
+#define GB(x) ((MB(x)) << 10)
+
 #define DEVICE_MEMORY_TOTAL_SIZE GB(2)
 
 /* fair scheduling */
+#define US_TO_US(x) ((long)x)
+#define MS_TO_US(x) (US_TO_US(x) * 1000L)
+#define SEC_TO_US(x) (MS_TO_US(x) * 1000L)
+
 #define AVA_SEND_QUEUE_SIZE_DEFAULT 512
 #define GPU_SCHEDULE_PERIOD 5          /* millisecond */
 #define DEVICE_TIME_MEASURE_PERIOD 500 /* millisecond */

@@ -21,7 +21,6 @@ size_t __args_index_0;
 size_t __kernelParams_index_0;
 
 ava_begin_utility;
-#include "common/linkage.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -34,7 +33,9 @@ ava_begin_utility;
 #include <cublas_v2.h>
 #include <cudnn.h>
 #include <glib.h>
+
 #include "cudart_nw_internal.h"
+#include "common/linkage.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
 
 #include <stdio.h>
