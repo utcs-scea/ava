@@ -42,7 +42,7 @@ find_library(Config++ NAMES libconfig++ config++ REQUIRED)
 include_directories(
   ${{CMAKE_SOURCE_DIR}}/../../include
   ${{CMAKE_SOURCE_DIR}}/../../worker/include
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/include
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib
   ${{CMAKE_SOURCE_DIR}}/../../proto
   ${{GLIB2_INCLUDE_DIRS}}
   ${{CMAKE_SOURCE_DIR}}/../..
@@ -75,10 +75,10 @@ target_link_libraries(worker
 )
 
 add_library({api.soname} SHARED
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/init.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/guest_config.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/migration.cpp
-  ${{CMAKE_SOURCE_DIR}}/../../guestlib/src/cmd_channel_socket_tcp.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/init.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/guest_config.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/migration.cpp
+  ${{CMAKE_SOURCE_DIR}}/../../guestlib/cmd_channel_socket_tcp.cpp
   {' '.join(guestlib_srcs)}
   {api.c_library_spelling}
   ${{CMAKE_SOURCE_DIR}}/../../common/cmd_channel.cpp
