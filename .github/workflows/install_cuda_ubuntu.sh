@@ -3,9 +3,12 @@
 # Thanks to ptheywood/cuda-cmake-github-actions
 
 CUDA_PACKAGES_IN=(
+    "minimal-build"
     "libraries-dev"
     "driver-dev"
     "nvml-dev"
+    "compat"
+    "license"
 )
 
 ## -------------------
@@ -122,10 +125,15 @@ if [[ $? -ne 0 ]]; then
     echo "CUDA Installation Error."
     exit 1
 fi
+
+## -----------------
+## Link libcuda.so
+## -----------------
+sudo ln -s /usr/local/cuda-"${cuda}"/targets/x86_64-linux/lib/stubs/libcuda.so /usr/local/cuda-"${cuda}"/targets/x86_64-linux/lib
+
 ## -----------------
 ## Set environment vars / vars to be propagated
 ## -----------------
-
 CUDA_PATH=/usr/local/cuda-${CUDA_MAJOR}.${CUDA_MINOR}
 echo "CUDA_PATH=${CUDA_PATH}"
 export CUDA_PATH=${CUDA_PATH}
