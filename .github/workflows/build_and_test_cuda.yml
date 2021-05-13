@@ -42,7 +42,7 @@ jobs:
       uses: actions/cache@v2
       with:
         key: ${{matrix.os}}-cudnn-${{hashFiles('.github/workflows/install_cuda10.1_cudnn7.6.sh')}}
-        path: ~/cudnn-10.1-linux-x64-7.6.5.32.tgz
+        path: ~/cudnn-10.1-linux-x64-v7.6.5.32.tgz
 
     ###
     # Install platform-level dependencies (OS-specific)
