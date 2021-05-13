@@ -5,7 +5,7 @@
 CUDA_PACKAGES_IN=(
     "libraries-dev"
     "driver-dev"
-    "runtime"
+    "misc-headers"
 )
 
 ## -------------------
