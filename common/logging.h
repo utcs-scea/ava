@@ -135,8 +135,8 @@ T CheckNotNull(const char *file, int line, const char *exprtext, T &&t) {
 
 #if DCHECK_IS_ON()
 
-#define DLOG(severity) LOG(severity)
-#define DLOG_IF(severity, condition) LOG_IF(severity, condition)
+#define DLOG(severity) AVA_LOG(severity)
+#define DLOG_IF(severity, condition) PLOG_IF(severity, condition)
 #define DCHECK(condition) CHECK(condition)
 #define DCHECK_EQ(val1, val2) CHECK_EQ(val1, val2)
 #define DCHECK_NE(val1, val2) CHECK_NE(val1, val2)
