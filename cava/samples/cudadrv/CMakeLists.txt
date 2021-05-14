@@ -10,7 +10,7 @@ set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/cudadrv/cuda_driver.c")
 
 ExternalProject_Add_Step(cava cudadrv-nwcc
   DEPENDS ${spec_name}
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name} -I /usr/local/cuda/include
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name} -I /usr/local/cuda-10.1/include
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDEES download
 )
