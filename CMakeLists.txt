@@ -113,6 +113,9 @@ endif()
 
 include(ExternalProject)
 
+###### Dependent libs ######
+add_subdirectory(third_party/fmt)
+
 ###### Build AvA manager ######
 
 ExternalProject_Add(ava-manager
