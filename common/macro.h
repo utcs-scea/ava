@@ -52,7 +52,7 @@
 
 #define AVA_UNUSED(x) (void)x
 #define __AVA_PREDICT_FALSE(x) __builtin_expect(x, 0)
-#define __AVA_PREDICT_TRUE(x)  __builtin_expect(false || (x), true)
+#define __AVA_PREDICT_TRUE(x) __builtin_expect(false || (x), true)
 
 #define AVA_NORETURN __attribute__((noreturn))
 #define AVA_PREFETCH(addr) __builtin_prefetch(addr)
