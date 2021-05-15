@@ -16,6 +16,9 @@ project({api.identifier.lower()}_nw C CXX)
 list(APPEND CMAKE_MODULE_PATH "${{CMAKE_CURRENT_BINARY_DIR}}/../..")
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(c_flags {api.cflags})
 set(cxx_flags {api.cxxflags})

@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.13)
 
 project(galvanic-manager C CXX CUDA)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-
 set(protobuf_MODULE_COMPATIBLE TRUE)
 find_package(Protobuf REQUIRED QUIET)
 set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
