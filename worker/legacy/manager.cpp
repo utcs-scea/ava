@@ -8,6 +8,7 @@
 #include <thread>
 
 #include "flags.h"
+#include <absl/flags/parse.h>
 #include "manager_service.hpp"
 #include "manager_service.proto.h"
 
@@ -66,7 +67,7 @@ class LegacyManager : public ManagerServiceServerBase {
     return port;
   }
 
-  ava_proto::WorkerAssignReply HandleRequest(const ava_proto::WorkerAssignRequest &request) {
+  ava_proto::WorkerAssignReply HandleRequest(const ava_proto::WorkerAssignRequest & request) {
     ava_proto::WorkerAssignReply reply;
     uint32_t worker_port;
 
@@ -101,6 +102,7 @@ int main(int argc, const char *argv[]) {
     signal(SIGINT, SIG_DFL);
     std::quick_exit(EXIT_SUCCESS);
   });
+  auto worker_argv = absl::GetFlag(FLAGS_worker_argv);
   manager = std::make_unique<LegacyManager>(absl::GetFlag(FLAGS_manager_port), absl::GetFlag(FLAGS_worker_port_base),
                                             absl::GetFlag(FLAGS_worker_path), worker_argv);
   manager->RunServer();

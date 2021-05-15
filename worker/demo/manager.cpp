@@ -5,7 +5,6 @@
 #include <iostream>
 #include <thread>
 
-#include "argument_parser.hpp"
 #include "flags.h"
 #include "manager_service.hpp"
 #include "manager_service.proto.h"
