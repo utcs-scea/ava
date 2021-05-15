@@ -9,6 +9,7 @@ add_executable(demo-manager
 )
 target_link_libraries(demo-manager
   ${manager_service_libraries}
+  ${absl_flags_libraries}
 )
 set_target_properties(demo-manager
   PROPERTIES OUTPUT_NAME manager

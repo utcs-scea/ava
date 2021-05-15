@@ -22,6 +22,20 @@ add_compile_options(-Wall -Wextra -pedantic -Wno-write-strings -g)
 
 set(manager_service_libraries Threads::Threads
                               "${Boost_LIBRARIES}")
+set(absl_flags_libraries
+  absl::flags
+  absl::flags_commandlineflag
+  absl::flags_commandlineflag_internal
+  absl::flags_config
+  absl::flags_internal
+  absl::flags_marshalling
+  absl::flags_parse
+  absl::flags_private_handle_accessor
+  absl::flags_program_name
+  absl::flags_reflection
+  absl::flags_usage
+  absl::flags_usage_internal
+)
 
 # Common files
 include_directories(

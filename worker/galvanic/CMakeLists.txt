@@ -60,6 +60,7 @@ target_link_libraries(galvanic-manager
   ${_PROTOBUF_LIBPROTOBUF}
   ${_FLATBUFFERS}
   Threads::Threads
+  ${absl_flags_libraries}
   ${NVML_LIB}
 )
 set_target_properties(galvanic-manager

@@ -9,6 +9,7 @@ add_executable(legacy-manager
 )
 target_link_libraries(legacy-manager
   ${manager_service_libraries}
+  ${absl_flags_libraries}
 )
 set_target_properties(legacy-manager
   PROPERTIES OUTPUT_NAME manager

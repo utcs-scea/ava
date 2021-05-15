@@ -30,6 +30,7 @@
 #include "common/socket.hpp"
 #include "daemon_service.grpc.fb.h"
 #include "daemon_service_generated.h"
+#include "flags.h"
 #include "manager_service.grpc.fb.h"
 #include "manager_service_generated.h"
 
@@ -47,7 +48,7 @@ void sigint_handler(int signo) {
 class ManagerConfig {
  public:
   static std::string const kDefaultManagerAddress;
-  static int const kDefaultWorkerPoolSize;
+  static uint32_t const kDefaultWorkerPoolSize;
 
   ManagerConfig(std::string ma = kDefaultManagerAddress, int wps = kDefaultWorkerPoolSize)
       : manager_address_(ma), worker_pool_size_(wps) {}
@@ -68,7 +69,7 @@ class ManagerConfig {
   }
 
   ServerAddress manager_address_;
-  int worker_pool_size_;
+  uint32_t worker_pool_size_;
   std::vector<std::unique_ptr<DaemonInfo>> daemons_;
 };
 
@@ -77,29 +78,11 @@ int const ManagerConfig::kDefaultWorkerPoolSize = 3;
 
 std::shared_ptr<ManagerConfig> config;
 
-std::shared_ptr<ManagerConfig> parseArguments(int argc, char *argv[]) {
+std::shared_ptr<ManagerConfig> getManagerConfig() {
   int c;
   opterr = 0;
-  std::string manager_address = ManagerConfig::kDefaultManagerAddress;
-  int worker_pool_size = ManagerConfig::kDefaultWorkerPoolSize;
-
-  while ((c = getopt(argc, argv, "m:n:")) != -1) {
-    switch (c) {
-    case 'm':
-      manager_address = optarg;
-      break;
-    case 'n':
-      worker_pool_size = (uint32_t)atoi(optarg);
-      break;
-    default:
-      fprintf(stderr,
-              "Usage: %s "
-              "[-m manager_address {%s}] "
-              "[-n worker_pool_size {%d}]\n",
-              argv[0], ManagerConfig::kDefaultManagerAddress.c_str(), ManagerConfig::kDefaultWorkerPoolSize);
-      exit(EXIT_FAILURE);
-    }
-  }
+  std::string manager_address = absl::GetFlag(FLAGS_manager_address);
+  uint32_t worker_pool_size = absl::GetFlag(FLAGS_worker_pool_size);
 
   return std::make_shared<ManagerConfig>(manager_address, worker_pool_size);
 }
@@ -373,7 +356,8 @@ void setupSignalHandler() {
 }
 
 int main(int argc, char *argv[]) {
-  config = parseArguments(argc, argv);
+  absl::ParseCommandLine(argc, const_cast<char **>(argv));
+  config = getManagerConfig();
   config->Print();
 
   setupSignalHandler();
