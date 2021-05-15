@@ -37,6 +37,7 @@ ava_begin_utility;
 #include "cudart_nw_internal.h"
 #include "common/linkage.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
+#include "common/declaration.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -163,8 +164,9 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
                     while (i < strlen(line) && isspace(line[i])) i++;
                     if (strncmp(&line[i], "EIATTR_KPARAM_INFO", 18) == 0) {
                         /* Skip the format line */
-                        fgets(line, sizeof(line), fp_pipe);
-                        fgets(line, sizeof(line), fp_pipe);
+                        char* s = fgets(line, sizeof(line), fp_pipe);
+                        s = fgets(line, sizeof(line), fp_pipe);
+                        AVA_UNUSED(s);
 
                         /* Get ordinal and size */
                         i = 0;
