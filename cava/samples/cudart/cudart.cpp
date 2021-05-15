@@ -4,8 +4,10 @@ ava_identifier(CUDART);
 ava_number(9);
 ava_cxxflags(-I/usr/local/cuda-10.1/include -I../headers);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn);
-ava_guestlib_srcs(../common/extensions/cudart_10.1_utilities.cpp);
-ava_worker_srcs(../common/extensions/cudart_10.1_utilities.cpp);
+<<<<<<< HEAD:cava/samples/cudart/cudart.cpp
+ava_guestlib_srcs(../common/extensions/cudart_10.1_utilities.cpp extensions/migration_barrier.c);
+ava_worker_srcs(../common/extensions/cudart_10.1_utilities.cpp extensions/migration_barrier.c);
+// TODO (#86) the migration_barrier is not used by the worker but this is required to link correctly
 ava_export_qualifier();
 
 /**
@@ -37,7 +39,7 @@ ava_begin_utility;
 #include "cudart_nw_internal.h"
 #include "common/linkage.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
-
+#include "common/extensions/migration_barrier.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstdio>
@@ -1691,3 +1693,14 @@ cudnnPoolingBackward(cudnnHandle_t handle,
    ava_argument(dxDesc) ava_handle;
    ava_argument(dx) ava_handle;
 }
+
+ava_utility void __helper_guestlib_init_prologue() {
+    migration_barrier_init();
+}
+
+ava_utility void __helper_guestlib_fini_epilogue() {
+    migration_barrier_destroy();
+}
+
+ava_guestlib_init_prologue(__helper_guestlib_init_prologue());
+ava_guestlib_fini_epilogue(__helper_guestlib_fini_epilogue());

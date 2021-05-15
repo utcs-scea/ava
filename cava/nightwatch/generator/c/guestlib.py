@@ -13,6 +13,7 @@ def source(api: API, errors: List[Any]) -> Tuple[str, str]:
 #define ava_is_worker 0
 #define ava_is_guest 1
 
+#include "common/extensions/migration_barrier.h"
 #include "guestlib.h"
 
 {handle_command_header(api)}
