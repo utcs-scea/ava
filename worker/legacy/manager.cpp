@@ -8,9 +8,9 @@
 #include <thread>
 
 #include "argument_parser.hpp"
+#include "flags.h"
 #include "manager_service.hpp"
 #include "manager_service.proto.h"
-#include "flags.h"
 
 using ava_manager::ManagerServiceServerBase;
 
