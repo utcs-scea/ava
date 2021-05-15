@@ -2,7 +2,6 @@ ava_name("CUDA Runtime for PyTorch");
 ava_version("10.1.0");
 ava_identifier(PT_DUMP);
 ava_number(9);
-ava_cflags(-I/usr/local/cuda-10.1/include -I../headers);
 ava_cxxflags(-I/usr/local/cuda-10.1/include -I../headers);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
 ava_guestlib_srcs(../common/extensions/cudart_10.1_utilities.cpp);
@@ -13,7 +12,7 @@ ava_export_qualifier();
  * The spec is used to dump the fat binaries and CUDA functions from
  * PyTorch library.
  * Compile by
- * ./nwcc samples/pytorch/pt_dump.c -I /usr/local/cuda-10.1/include -I headers `pkg-config --cflags glib-2.0`
+ * ./nwcc samples/pytorch/pt_dump.cpp -I /usr/local/cuda-10.1/include -I headers `pkg-config --cflags glib-2.0`
  *
  * Dependencies:
  * CUDA 10.1, cuDNN 7.6.5
@@ -54,19 +53,17 @@ ava_begin_utility;
 #include "common/extensions/cudart_10.1_utilities.hpp"
 
 #if !defined(__dv)
-
-#if defined(__cplusplus)
-
-#define __dv(v) \
-        = v
-
-#else /* __cplusplus */
-
 #define __dv(v)
-
-#endif /* __cplusplus */
-
 #endif /* !__dv */
+
+// TODO(yuhc): Correctly generate code for union in struct (cudnnAlgorithm_t).
+typedef union Algorithm {
+    cudnnConvolutionFwdAlgo_t convFwdAlgo;
+    cudnnConvolutionBwdFilterAlgo_t convBwdFilterAlgo;
+    cudnnConvolutionBwdDataAlgo_t convBwdDataAlgo;
+    cudnnRNNAlgo_t RNNAlgo;
+    cudnnCTCLossAlgo_t CTCLossAlgo;
+};
 ava_end_utility;
 
 ava_type(cudaError_t) {
@@ -175,8 +172,8 @@ __cudaInitModule(void **fatCubinHandle)
 ava_utility void __helper_dump_fatbin(void *fatCubin,
                                     GHashTable **fatbin_funcs,
                                     int *num_funcs) {
-    struct fatbin_wrapper *wp = fatCubin;
-    struct fatBinaryHeader *fbh = (struct fatBinaryHeader *)wp->ptr;
+    struct fatbin_wrapper *wp = static_cast<struct fatbin_wrapper *>(fatCubin);
+    struct fatBinaryHeader *fbh = reinterpret_cast<struct fatBinaryHeader *>(wp->ptr);
     int fd, ret;
 
     /* Increase fatbin counter */
@@ -427,7 +424,7 @@ __cudaRegisterFatBinary(void *fatCubin)
 
     if (ava_is_worker) {
         //__helper_print_fatcubin_info(fatCubin, ret);
-        __helper_init_module(fatCubin, ret);
+        __helper_init_module((struct fatbin_wrapper *)fatCubin, ret);
     }
 }
 
@@ -960,7 +957,7 @@ cudaGetLastError(void);
 __host__ __cudart_builtin__ const char* CUDARTAPI
 cudaGetErrorString(cudaError_t error)
 {
-    const char *ret = ava_execute();
+    const char *ret = reinterpret_cast<const char *>(ava_execute());
     ava_return_value {
         ava_out; ava_buffer(strlen(ret) + 1);
         ava_lifetime_static;
@@ -1656,7 +1653,7 @@ EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasGetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t *mode)
 {
     /* XXX seems ok for tensorflow but might be wrong !FIXME */
-    *mode = 0;
+    *mode = CUBLAS_POINTER_MODE_HOST;
     return CUBLAS_STATUS_SUCCESS;
 }
 
@@ -1664,7 +1661,7 @@ EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasSetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t mode)
 {
     /* XXX seems ok for tensorflow but might be wrong ! FIXME */
-    assert(mode == 0);
+    assert(mode == CUBLAS_POINTER_MODE_HOST);
     return CUBLAS_STATUS_SUCCESS;
 }
 ava_end_replacement;
@@ -3671,13 +3668,6 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemm3m  (cublasHandle_t handle,
     abort();
 }
 
-#warning FIXME: must generate C++ code to support this API.
-#ifndef __cplusplus
-typedef struct __CUDA_ALIGN__(2) __half {
-    unsigned short __x;
-} __half;
-#endif
-
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemm    (cublasHandle_t handle,
                                                       cublasOperation_t transa,
                                                       cublasOperation_t transb,
@@ -4423,7 +4413,6 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrmm_v2(cublasHandle_t handle, cubl
 }
 /* BATCH GEMM */
 
-#warning FIXME: must generate C++ code to support this API.
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmBatched (cublasHandle_t handle,
                                                           cublasOperation_t transa,
                                                           cublasOperation_t transb,
@@ -4743,7 +4732,6 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemmStridedBatched (cublasHandle_t 
     abort();
 }
 
-#warning FIXME: must generate C++ code to support this API.
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmStridedBatched (cublasHandle_t handle,
                                                                  cublasOperation_t transa,
                                                                  cublasOperation_t transb,
@@ -13649,7 +13637,7 @@ cusparseSetPointerMode(cusparseHandle_t      handle,
 const char* CUSPARSEAPI
 cusparseGetErrorName(cusparseStatus_t status)
 {
-    const char *ret = ava_execute();
+    const char *ret = reinterpret_cast<const char *>(ava_execute());
     ava_return_value {
         ava_out; ava_buffer(strlen(ret) + 1);
         ava_lifetime_static;
@@ -13660,7 +13648,7 @@ cusparseGetErrorName(cusparseStatus_t status)
 const char* CUSPARSEAPI
 cusparseGetErrorString(cusparseStatus_t status)
 {
-    const char *ret = ava_execute();
+    const char *ret = reinterpret_cast<const char *>(ava_execute());
     ava_return_value {
         ava_out; ava_buffer(strlen(ret) + 1);
         ava_lifetime_static;
@@ -21361,8 +21349,6 @@ cusparseZcsr2csru(cusparseHandle_t         handle,
     abort();
 }
 
-
-#if defined(__cplusplus)
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneDense2csr_bufferSizeExt(cusparseHandle_t         handle,
                                       int                      m,
@@ -21379,8 +21365,6 @@ cusparseHpruneDense2csr_bufferSizeExt(cusparseHandle_t         handle,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneDense2csr_bufferSizeExt(cusparseHandle_t         handle,
@@ -21417,8 +21401,6 @@ cusparseDpruneDense2csr_bufferSizeExt(cusparseHandle_t         handle,
     abort();
 }
 
-
-#if defined(__cplusplus)
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneDense2csrNnz(cusparseHandle_t         handle,
                            int                      m,
@@ -21434,8 +21416,6 @@ cusparseHpruneDense2csrNnz(cusparseHandle_t         handle,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneDense2csrNnz(cusparseHandle_t         handle,
@@ -21470,8 +21450,6 @@ cusparseDpruneDense2csrNnz(cusparseHandle_t         handle,
     abort();
 }
 
-
-#if defined(__cplusplus)
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneDense2csr(cusparseHandle_t         handle,
                         int                      m,
@@ -21488,8 +21466,6 @@ cusparseHpruneDense2csr(cusparseHandle_t         handle,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneDense2csr(cusparseHandle_t         handle,
@@ -21526,8 +21502,6 @@ cusparseDpruneDense2csr(cusparseHandle_t         handle,
     abort();
 }
 
-
-#if defined(__cplusplus)
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneCsr2csr_bufferSizeExt(cusparseHandle_t         handle,
                                     int                      m,
@@ -21547,8 +21521,6 @@ cusparseHpruneCsr2csr_bufferSizeExt(cusparseHandle_t         handle,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneCsr2csr_bufferSizeExt(cusparseHandle_t         handle,
@@ -21591,8 +21563,6 @@ cusparseDpruneCsr2csr_bufferSizeExt(cusparseHandle_t         handle,
     abort();
 }
 
-
-#if defined(__cplusplus)
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneCsr2csrNnz(cusparseHandle_t         handle,
                          int                      m,
@@ -21611,8 +21581,6 @@ cusparseHpruneCsr2csrNnz(cusparseHandle_t         handle,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneCsr2csrNnz(cusparseHandle_t         handle,
@@ -21653,8 +21621,6 @@ cusparseStatus_t CUSPARSEAPI
     abort();
 }
 
-
-#if defined(__cplusplus)
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneCsr2csr(cusparseHandle_t         handle,
                       int                      m,
@@ -21674,8 +21640,6 @@ cusparseHpruneCsr2csr(cusparseHandle_t         handle,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneCsr2csr(cusparseHandle_t         handle,
@@ -21718,8 +21682,6 @@ cusparseDpruneCsr2csr(cusparseHandle_t         handle,
     abort();
 }
 
-
-#if defined(__cplusplus)
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneDense2csrByPercentage_bufferSizeExt(
                                    cusparseHandle_t         handle,
@@ -21738,8 +21700,6 @@ cusparseHpruneDense2csrByPercentage_bufferSizeExt(
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneDense2csrByPercentage_bufferSizeExt(
@@ -21780,8 +21740,6 @@ cusparseDpruneDense2csrByPercentage_bufferSizeExt(
     abort();
 }
 
-
-#if defined(__cplusplus)
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneDense2csrNnzByPercentage(
                                     cusparseHandle_t         handle,
@@ -21799,8 +21757,6 @@ cusparseHpruneDense2csrNnzByPercentage(
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneDense2csrNnzByPercentage(
@@ -21839,8 +21795,6 @@ cusparseDpruneDense2csrNnzByPercentage(
     abort();
 }
 
-
-#if defined(__cplusplus)
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneDense2csrByPercentage(cusparseHandle_t         handle,
                                     int                      m,
@@ -21858,8 +21812,6 @@ cusparseHpruneDense2csrByPercentage(cusparseHandle_t         handle,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneDense2csrByPercentage(cusparseHandle_t         handle,
@@ -21898,9 +21850,6 @@ cusparseDpruneDense2csrByPercentage(cusparseHandle_t         handle,
     abort();
 }
 
-
-#if defined(__cplusplus)
-
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneCsr2csrByPercentage_bufferSizeExt(
                                    cusparseHandle_t         handle,
@@ -21922,9 +21871,6 @@ cusparseHpruneCsr2csrByPercentage_bufferSizeExt(
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneCsr2csrByPercentage_bufferSizeExt(
@@ -21971,9 +21917,6 @@ cusparseDpruneCsr2csrByPercentage_bufferSizeExt(
     abort();
 }
 
-
-#if defined(__cplusplus)
-
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneCsr2csrNnzByPercentage(
                                     cusparseHandle_t         handle,
@@ -21994,9 +21937,6 @@ cusparseHpruneCsr2csrNnzByPercentage(
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneCsr2csrNnzByPercentage(
@@ -22041,8 +21981,6 @@ cusparseDpruneCsr2csrNnzByPercentage(
     abort();
 }
 
-
-#if defined(__cplusplus)
 cusparseStatus_t CUSPARSEAPI
 cusparseHpruneCsr2csrByPercentage(cusparseHandle_t         handle,
                                   int                      m,
@@ -22063,9 +22001,6 @@ cusparseHpruneCsr2csrByPercentage(cusparseHandle_t         handle,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-
-#endif // defined(__cplusplus)
 
 cusparseStatus_t CUSPARSEAPI
 cusparseSpruneCsr2csrByPercentage(cusparseHandle_t         handle,
@@ -22714,7 +22649,7 @@ __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaPeekAtLastError(void);
 
 __host__ __cudart_builtin__ const char* CUDARTAPI cudaGetErrorName(cudaError_t error)
 {
-    const char *ret = ava_execute();
+    const char *ret = reinterpret_cast<const char *>(ava_execute());
     ava_return_value {
         ava_out; ava_buffer(strlen(ret) + 1);
         ava_lifetime_static;
@@ -23739,7 +23674,7 @@ cusparseScsrmm2(cusparseHandle_t         handle,
 const char *CUDNNWINAPI
 cudnnGetErrorString(cudnnStatus_t status)
 {
-    const char *ret = ava_execute();
+    const char *ret = reinterpret_cast<const char *>(ava_execute());
     ava_return_value {
         ava_out; ava_buffer(strlen(ret) + 1);
         ava_lifetime_static;

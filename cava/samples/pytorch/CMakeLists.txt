@@ -9,12 +9,11 @@ pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
 ###### Compile pytorch/pt_dump.c ######
 
-set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/pytorch/pt_dump.c")
+set(spec_name "${CMAKE_CURRENT_SOURCE_DIR}/samples/pytorch/pt_dump.cpp")
 
 ExternalProject_Add_Step(cava pt_dump-nwcc
   DEPENDS ${spec_name}
   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/nwcc ${spec_name}
-    -I ${CMAKE_CURRENT_SOURCE_DIR}/..
     -I /usr/local/cuda-10.1/include
     -I ${CMAKE_CURRENT_SOURCE_DIR}/headers
     ${GLIB2_CFLAGS}
