@@ -115,23 +115,9 @@ include(ExternalProject)
 
 ###### Dependent libs ######
 add_subdirectory(third_party/fmt)
+add_subdirectory(third_party/abseil-cpp)
 
-###### Build AvA manager ######
-
-ExternalProject_Add(ava-manager
-  PREFIX ava-manager
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker"
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/worker"
-  BUILD_ALWAYS ON
-  CMAKE_CACHE_ARGS
-        -DAVA_MANAGER_GALVANIC:BOOL=${AVA_MANAGER_GALVANIC}
-        -DAVA_MANAGER_KATANA:BOOL=${AVA_MANAGER_KATANA}
-        -DAVA_MANAGER_LEGACY:BOOL=${AVA_MANAGER_LEGACY}
-        -DAVA_MANAGER_DEMO:BOOL=${AVA_MANAGER_DEMO}
-        -DCMAKE_TOOLCHAIN_FILE:STRING=${CMAKE_TOOLCHAIN_FILE}
-        -DCMAKE_INSTALL_PREFIX:PATH=${AVA_INSTALL_DIR}
-  INSTALL_DIR ${AVA_INSTALL_DIR}
-)
+add_subdirectory(worker)
 
 ###### Generate and build remoting stubs ######
 
