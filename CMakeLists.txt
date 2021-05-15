@@ -6,12 +6,18 @@ project(ava)
 
 set(CMAKE_BUILD_TYPE Release CACHE STRING "Build configuration (Relase/Debug)")
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
-if (NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
+
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE PATH "Installation path of AvA" FORCE)
+ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+
 set(AVA_BENCHMARK_DIR "" CACHE PATH "Path to AvA benchmarks")
 
 message(STATUS "Build configuration: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Install directory: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "Benchmark directory: ${AVA_BENCHMARK_DIR}")
 
 ###### Configure compiler ######
@@ -66,8 +72,7 @@ message(STATUS "Build Katana manager:                  ${AVA_MANAGER_KATANA}")
 message(STATUS "Build legacy (r1.0) manager:           ${AVA_MANAGER_LEGACY}")
 message(STATUS "Build demo manager:                    ${AVA_MANAGER_DEMO}")
 
-set(AVA_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE PATH "Installation path of AvA")
-set(AVA_DEP_INSTALL_DIR "${AVA_INSTALL_DIR}/third_party" CACHE PATH "Installation path of AvA dependencies")
+set(AVA_DEP_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/third_party" CACHE PATH "Installation path of AvA dependencies")
 
 # Always include debug info
 add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-g>")
@@ -148,7 +153,7 @@ ExternalProject_Add(ava-spec
         -DAVA_GEN_DEMO_SPEC:BOOL=${AVA_GEN_DEMO_SPEC}
         -DAVA_GEN_CUDNN_SPEC:BOOL=${AVA_GEN_CUDNN_SPEC}
         -DAVA_GEN_PYTORCH_SPEC:BOOL=${AVA_GEN_PYTORCH_SPEC}
-        -DAVA_INSTALL_DIR:PATH=${AVA_INSTALL_DIR}
+        -DAVA_INSTALL_DIR:PATH=${CMAKE_INSTALL_PREFIX}
   BUILD_ALWAYS ON
 )
 
