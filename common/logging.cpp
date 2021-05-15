@@ -1,5 +1,7 @@
 #include "logging.h"
 
+#include <fmt/format.h>
+
 #include "cstdarg"
 
 void ava_trace(const char *format, ...) {
@@ -66,3 +68,57 @@ void ava_error(const char *format, ...) {
   AVA_ERROR << str;
   free(str);
 }
+
+namespace ava {
+namespace logging {
+
+CheckOpMessageBuilder::CheckOpMessageBuilder(const char *exprtext) : stream_(new std::ostringstream) {
+  *stream_ << exprtext << " (";
+}
+
+CheckOpMessageBuilder::~CheckOpMessageBuilder() { delete stream_; }
+
+std::ostream *CheckOpMessageBuilder::ForVar2() {
+  *stream_ << " vs ";
+  return stream_;
+}
+
+std::string *CheckOpMessageBuilder::NewString() {
+  *stream_ << ")";
+  return new std::string(stream_->str());
+}
+
+template <>
+void MakeCheckOpValueString(std::ostream *os, const char &v) {
+  if (v >= 32 && v <= 126) {
+    (*os) << fmt::format("'{}'", v);
+  } else {
+    (*os) << fmt::format("char value {}", static_cast<int16_t>(v));
+  }
+}
+
+template <>
+void MakeCheckOpValueString(std::ostream *os, const signed char &v) {
+  if (v >= 32 && v <= 126) {
+    (*os) << fmt::format("'{}'", static_cast<char>(v));
+  } else {
+    (*os) << fmt::format("signed char value {}", static_cast<int16_t>(v));
+  }
+}
+
+template <>
+void MakeCheckOpValueString(std::ostream *os, const unsigned char &v) {
+  if (v >= 32 && v <= 126) {
+    (*os) << fmt::format("'{}'", static_cast<char>(v));
+  } else {
+    (*os) << fmt::format("unsigned value {}", static_cast<int16_t>(v));
+  }
+}
+
+template <>
+void MakeCheckOpValueString(std::ostream *os, const std::nullptr_t &v) {
+  (*os) << "nullptr";
+}
+
+}  // namespace logging
+}  // namespace ava
