@@ -7,7 +7,6 @@
 #include <iostream>
 #include <thread>
 
-#include "argument_parser.hpp"
 #include "flags.h"
 #include "manager_service.hpp"
 #include "manager_service.proto.h"
@@ -102,8 +101,10 @@ int main(int argc, const char *argv[]) {
     signal(SIGINT, SIG_DFL);
     std::quick_exit(EXIT_SUCCESS);
   });
-  manager = std::make_unique<LegacyManager>(arg_parser.manager_port, arg_parser.worker_port_base,
-                                            arg_parser.worker_path, arg_parser.worker_argv);
+  manager = std::make_unique<LegacyManager>(absl::GetFlag(FLAGS_manager_port),
+      absl::GetFlag(FLAGS_worker_port_base),
+      absl::GetFlag(FLAGS_worker_path),
+      worker_argv);
   manager->RunServer();
   return 0;
 }
