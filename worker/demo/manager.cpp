@@ -1,3 +1,5 @@
+#include <absl/flags/parse.h>
+
 #include <algorithm>
 #include <future>
 #include <iostream>
@@ -7,7 +9,6 @@
 #include "flags.h"
 #include "manager_service.hpp"
 #include "manager_service.proto.h"
-#include <absl/flags/parse.h>
 
 using ava_manager::ManagerServiceServerBase;
 
@@ -18,14 +19,12 @@ class DemoManager : public ManagerServiceServerBase {
 };
 
 int main(int argc, const char *argv[]) {
-  absl::ParseCommandLine(argc, const_cast<char**>(argv));
+  absl::ParseCommandLine(argc, const_cast<char **>(argv));
 
   ava_manager::setupSignalHandlers();
   auto worker_argv = absl::GetFlag(FLAGS_worker_argv);
-  DemoManager manager(absl::GetFlag(FLAGS_manager_port),
-      absl::GetFlag(FLAGS_worker_port_base),
-      absl::GetFlag(FLAGS_worker_path),
-      worker_argv);
+  DemoManager manager(absl::GetFlag(FLAGS_manager_port), absl::GetFlag(FLAGS_worker_port_base),
+                      absl::GetFlag(FLAGS_worker_path), worker_argv);
   manager.RunServer();
   return 0;
 }

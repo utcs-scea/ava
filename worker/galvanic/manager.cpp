@@ -30,9 +30,9 @@
 #include "common/socket.hpp"
 #include "daemon_service.grpc.fb.h"
 #include "daemon_service_generated.h"
+#include "flags.h"
 #include "manager_service.grpc.fb.h"
 #include "manager_service_generated.h"
-#include "flags.h"
 
 int listen_fd;
 
