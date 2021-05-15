@@ -117,6 +117,8 @@ include(ExternalProject)
 add_subdirectory(third_party/fmt)
 add_subdirectory(third_party/abseil-cpp)
 
+###### Build AvA manager ######
+
 add_subdirectory(worker)
 
 ###### Generate and build remoting stubs ######

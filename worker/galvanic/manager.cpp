@@ -356,7 +356,7 @@ void setupSignalHandler() {
 }
 
 int main(int argc, char *argv[]) {
-  absl::ParseCommandLine(argc, argv);
+  absl::ParseCommandLine(argc, const_cast<char **>(argv));
   config = getManagerConfig();
   config->Print();
 

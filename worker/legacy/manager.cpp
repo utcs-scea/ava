@@ -10,6 +10,7 @@
 #include "argument_parser.hpp"
 #include "manager_service.hpp"
 #include "manager_service.proto.h"
+#include "flags.h"
 
 using ava_manager::ManagerServiceServerBase;
 
@@ -88,10 +89,9 @@ std::unique_ptr<LegacyManager> manager;
 }
 
 int main(int argc, const char *argv[]) {
-  auto arg_parser = ArgumentParser(argc, argv);
-  arg_parser.init_and_parse_options();
-  cfgWorkerPoolDisabled = arg_parser.disable_worker_pool;
-  cfgWorkerPoolSize = arg_parser.worker_pool_size;
+  absl::ParseCommandLine(argc, const_cast<char **>(argv));
+  cfgWorkerPoolDisabled = absl::GetFlag(FLAGS_disable_worker_pool);
+  cfgWorkerPoolSize = absl::GetFlag(FLAGS_worker_pool_size);
 
   std::at_quick_exit([] {
     if (manager) {

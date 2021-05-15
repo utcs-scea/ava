@@ -60,18 +60,7 @@ target_link_libraries(galvanic-manager
   ${_PROTOBUF_LIBPROTOBUF}
   ${_FLATBUFFERS}
   Threads::Threads
-  absl::flags
-  absl::flags_commandlineflag
-  absl::flags_commandlineflag_internal
-  absl::flags_config
-  absl::flags_internal
-  absl::flags_marshalling
-  absl::flags_parse
-  absl::flags_private_handle_accessor
-  absl::flags_program_name
-  absl::flags_reflection
-  absl::flags_usage
-  absl::flags_usage_internal
+  ${absl_flags_libraries}
   ${NVML_LIB}
 )
 set_target_properties(galvanic-manager
