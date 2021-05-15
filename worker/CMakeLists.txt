@@ -8,6 +8,18 @@ install(DIRECTORY DESTINATION ${CMAKE_INSTALL_PREFIX})
 find_package(Threads REQUIRED)
 find_package(Boost 1.65 REQUIRED COMPONENTS system program_options)
 
+###### Configure compiler ######
+
+# generate compile_commands.json
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+add_compile_options(-Wall -Wextra -pedantic -Wno-write-strings -g)
+
 set(manager_service_libraries Threads::Threads
                               "${Boost_LIBRARIES}")
 

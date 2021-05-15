@@ -2,18 +2,6 @@ cmake_minimum_required(VERSION 3.13)
 
 project(galvanic-manager C CXX CUDA)
 
-###### Configure compiler ######
-
-# generate compile_commands.json
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-add_compile_options(-Wall -Wextra -Wno-write-strings -g)
-
 set(protobuf_MODULE_COMPATIBLE TRUE)
 find_package(Protobuf REQUIRED QUIET)
 set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
