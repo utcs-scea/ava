@@ -1,3 +1,4 @@
+#include <absl/flags/parse.h>
 #include <sys/wait.h>
 
 #include <algorithm>
@@ -8,7 +9,6 @@
 #include <thread>
 
 #include "flags.h"
-#include <absl/flags/parse.h>
 #include "manager_service.hpp"
 #include "manager_service.proto.h"
 
@@ -67,7 +67,7 @@ class LegacyManager : public ManagerServiceServerBase {
     return port;
   }
 
-  ava_proto::WorkerAssignReply HandleRequest(const ava_proto::WorkerAssignRequest & request) {
+  ava_proto::WorkerAssignReply HandleRequest(const ava_proto::WorkerAssignRequest &request) {
     ava_proto::WorkerAssignReply reply;
     uint32_t worker_port;
 
