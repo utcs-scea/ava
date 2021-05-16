@@ -1253,7 +1253,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasSetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t mode)
 {
     /* XXX seems ok for tensorflow but might be wrong ! FIXME */
-    assert(mode == 0);
+    assert(mode == CUBLAS_POINTER_MODE_HOST);
     return CUBLAS_STATUS_SUCCESS;
 }
 ava_end_replacement;
