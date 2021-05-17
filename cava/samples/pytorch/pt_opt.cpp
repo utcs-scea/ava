@@ -2,11 +2,10 @@ ava_name("CUDA Runtime for PyTorch");
 ava_version("10.1.0");
 ava_identifier(PT_OPT);
 ava_number(13);
-ava_cflags(-I/usr/local/cuda-10.1/include -I../headers -DAVA_PRELOAD_CUBIN);
 ava_cxxflags(-I/usr/local/cuda-10.1/include -I../headers -DAVA_PRELOAD_CUBIN);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
-ava_guestlib_srcs(../common/extensions/cudart_10.1_utilities.cpp extensions/cudnn_optimization.cpp extensions/tf_optimization.c extensions/cmd_batching.c);
-ava_worker_srcs(../common/extensions/cudart_10.1_utilities.cpp extensions/cudnn_optimization.cpp extensions/tf_optimization.c extensions/cmd_batching.c);
+ava_guestlib_srcs(../common/extensions/cudart_10.1_utilities.cpp extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/cmd_batching.cpp);
+ava_worker_srcs(../common/extensions/cudart_10.1_utilities.cpp extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/cmd_batching.cpp);
 ava_export_qualifier();
 
 /**
