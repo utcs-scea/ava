@@ -1580,6 +1580,26 @@ cublasStatus_t CUBLASWINAPI cublasGetVector (int n, int elemSize, const void *x,
     ava_unsupported;
 }
 
+cublasStatus_t CUBLASWINAPI
+cublasSetVectorAsync (int n, int elemSize,
+                      const void *hostPtr, int incx,
+                      void *devicePtr, int incy,
+                      cudaStream_t stream)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
+}
+
+cublasStatus_t CUBLASWINAPI
+cublasGetVectorAsync (int n, int elemSize,
+                      const void *devicePtr, int incx,
+                      void *hostPtr, int incy,
+                      cudaStream_t stream)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
+}
+
 CUBLASAPI cublasStatus_t  CUBLASWINAPI
 cublasGetMathMode(cublasHandle_t handle, cublasMath_t *mode)
 {
