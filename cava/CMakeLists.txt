@@ -9,6 +9,8 @@ foreach(var ${vars})
   endif()
 endforeach()
 
+set(AVA_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
+
 project(ava-spec)
 
 include(ExternalProject)
