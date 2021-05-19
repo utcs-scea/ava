@@ -44,9 +44,11 @@ ava_begin_utility;
 #include <cudnn.h>
 #include <curand.h>
 #include <cufft.h>
+#include <cufftXt.h>
 #include <cusparse.h>
 #include <cusolver_common.h>
 #include <cusolverDn.h>
+#include <cuda_profiler_api.h>
 #include <glib.h>
 
 #include "cudart_nw_internal.h"
@@ -2052,6 +2054,25 @@ cublasStatus_t CUBLASWINAPI cublasGetVector (int n, int elemSize, const void *x,
     ava_unsupported;
 }
 
+cublasStatus_t CUBLASWINAPI
+cublasSetVectorAsync (int n, int elemSize,
+                      const void *hostPtr, int incx,
+                      void *devicePtr, int incy,
+                      cudaStream_t stream)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
+}
+
+cublasStatus_t CUBLASWINAPI
+cublasGetVectorAsync (int n, int elemSize,
+                      const void *devicePtr, int incx,
+                      void *hostPtr, int incy,
+                      cudaStream_t stream)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
+}
 
 CUBLASAPI cublasStatus_t  CUBLASWINAPI
 cublasGetMathMode(cublasHandle_t handle, cublasMath_t *mode)
@@ -6161,7 +6182,6 @@ cudnnSetRNNDescriptor(cudnnHandle_t handle,
                       cudnnRNNAlgo_t algo,
                       cudnnDataType_t mathPrec)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6177,21 +6197,18 @@ cudnnGetRNNDescriptor(cudnnHandle_t handle,
                       cudnnRNNAlgo_t *algo,
                       cudnnDataType_t *mathPrec)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnSetRNNMatrixMathType(cudnnRNNDescriptor_t rnnDesc, cudnnMathType_t mType)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNMatrixMathType(cudnnRNNDescriptor_t rnnDesc, cudnnMathType_t *mType)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6203,7 +6220,6 @@ cudnnRNNSetClip(cudnnHandle_t handle,
                 double lclip,
                 double rclip)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6215,7 +6231,6 @@ cudnnRNNGetClip(cudnnHandle_t handle,
                 double *lclip,
                 double *rclip)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6225,7 +6240,6 @@ cudnnSetRNNProjectionLayers(cudnnHandle_t handle,
                             const int recProjSize,
                             const int outProjSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6235,7 +6249,6 @@ cudnnGetRNNProjectionLayers(cudnnHandle_t handle,
                             int *recProjSize,
                             int *outProjSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6246,21 +6259,18 @@ cudnnCreatePersistentRNNPlan(cudnnRNNDescriptor_t rnnDesc,
                              const cudnnDataType_t dataType,
                              cudnnPersistentRNNPlan_t *plan)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyPersistentRNNPlan(cudnnPersistentRNNPlan_t plan)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnSetPersistentRNNPlan(cudnnRNNDescriptor_t rnnDesc, cudnnPersistentRNNPlan_t plan)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6272,7 +6282,6 @@ cudnnGetRNNWorkspaceSize(cudnnHandle_t handle,
                          const cudnnTensorDescriptor_t *xDesc,
                          size_t *sizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6283,7 +6292,6 @@ cudnnGetRNNTrainingReserveSize(cudnnHandle_t handle,
                                const cudnnTensorDescriptor_t *xDesc,
                                size_t *sizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6294,7 +6302,6 @@ cudnnGetRNNParamsSize(cudnnHandle_t handle,
                       size_t *sizeInBytes,
                       cudnnDataType_t dataType)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6309,7 +6316,6 @@ cudnnGetRNNLinLayerMatrixParams(cudnnHandle_t handle,
                                 cudnnFilterDescriptor_t linLayerMatDesc,
                                 void **linLayerMat)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6324,7 +6330,6 @@ cudnnGetRNNLinLayerBiasParams(cudnnHandle_t handle,
                               cudnnFilterDescriptor_t linLayerBiasDesc,
                               void **linLayerBias)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6349,7 +6354,6 @@ cudnnRNNForwardInference(cudnnHandle_t handle,
                          void *workspace,
                          size_t workSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6376,7 +6380,6 @@ cudnnRNNForwardTraining(cudnnHandle_t handle,
                         void *reserveSpace,
                         size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6409,7 +6412,6 @@ cudnnRNNBackwardData(cudnnHandle_t handle,
                      void *reserveSpace,
                      size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6430,7 +6432,6 @@ cudnnRNNBackwardWeights(cudnnHandle_t handle,
                         const void *reserveSpace,
                         size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6439,28 +6440,24 @@ cudnnRNNBackwardWeights(cudnnHandle_t handle,
 cudnnStatus_t CUDNNWINAPI
 cudnnSetRNNPaddingMode(cudnnRNNDescriptor_t rnnDesc, cudnnRNNPaddingMode_t paddingMode)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNPaddingMode(cudnnRNNDescriptor_t rnnDesc, cudnnRNNPaddingMode_t *paddingMode)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateRNNDataDescriptor(cudnnRNNDataDescriptor_t *rnnDataDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyRNNDataDescriptor(cudnnRNNDataDescriptor_t rnnDataDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6474,7 +6471,6 @@ cudnnSetRNNDataDescriptor(cudnnRNNDataDescriptor_t rnnDataDesc,
                           const int seqLengthArray[], /* length of each sequence in the batch */
                           void *paddingFill)          /* symbol for filling padding position in output */
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6489,7 +6485,6 @@ cudnnGetRNNDataDescriptor(cudnnRNNDataDescriptor_t rnnDataDesc,
                           int seqLengthArray[],
                           void *paddingFill)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6523,7 +6518,6 @@ cudnnRNNForwardTrainingEx(cudnnHandle_t handle,
                           void *reserveSpace,
                           size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6555,7 +6549,6 @@ cudnnRNNForwardInferenceEx(cudnnHandle_t handle,
                            void *workSpace,
                            size_t workSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6591,7 +6584,6 @@ cudnnRNNBackwardDataEx(cudnnHandle_t handle,
                        void *reserveSpace,
                        size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6611,7 +6603,6 @@ cudnnRNNBackwardWeightsEx(cudnnHandle_t handle,
                           void *reserveSpace,
                           size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6620,14 +6611,12 @@ cudnnRNNBackwardWeightsEx(cudnnHandle_t handle,
 cudnnStatus_t CUDNNWINAPI
 cudnnSetRNNAlgorithmDescriptor(cudnnHandle_t handle, cudnnRNNDescriptor_t rnnDesc, cudnnAlgorithmDescriptor_t algoDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNForwardInferenceAlgorithmMaxCount(cudnnHandle_t handle, const cudnnRNNDescriptor_t rnnDesc, int *count)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6656,14 +6645,12 @@ cudnnFindRNNForwardInferenceAlgorithmEx(cudnnHandle_t handle,
                                         void *workspace,
                                         size_t workSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNForwardTrainingAlgorithmMaxCount(cudnnHandle_t handle, const cudnnRNNDescriptor_t rnnDesc, int *count)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6694,14 +6681,12 @@ cudnnFindRNNForwardTrainingAlgorithmEx(cudnnHandle_t handle,
                                        void *reserveSpace,
                                        size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNBackwardDataAlgorithmMaxCount(cudnnHandle_t handle, const cudnnRNNDescriptor_t rnnDesc, int *count)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6738,14 +6723,12 @@ cudnnFindRNNBackwardDataAlgorithmEx(cudnnHandle_t handle,
                                     void *reserveSpace,
                                     size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNBackwardWeightsAlgorithmMaxCount(cudnnHandle_t handle, const cudnnRNNDescriptor_t rnnDesc, int *count)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6770,7 +6753,6 @@ cudnnFindRNNBackwardWeightsAlgorithmEx(cudnnHandle_t handle,
                                        const void *reserveSpace,
                                        size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6791,7 +6773,6 @@ cudnnSetRNNDescriptor_v6(cudnnHandle_t handle,
                          cudnnRNNAlgo_t algo,
                          cudnnDataType_t mathPrec)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -6805,7 +6786,6 @@ cudnnSetRNNDescriptor_v5(cudnnRNNDescriptor_t rnnDesc,
                          cudnnRNNMode_t mode,
                          cudnnDataType_t mathPrec)
 {
-    fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
     ava_unsupported;
 }
 
@@ -21930,30 +21910,35 @@ __host__ cudaError_t CUDARTAPI cudaDeviceGetPCIBusId(char *pciBusId, int len, in
     ava_unsupported;
 }
 
-// __host__ cudaError_t CUDARTAPI cudaIpcGetEventHandle(cudaIpcEventHandle_t *handle, cudaEvent_t event)
-// {
-//     ava_unsupported;
-// }
-//
-// __host__ cudaError_t CUDARTAPI cudaIpcOpenEventHandle(cudaEvent_t *event, cudaIpcEventHandle_t handle)
-// {
-//     ava_unsupported;
-// }
-//
-// __host__ cudaError_t CUDARTAPI cudaIpcGetMemHandle(cudaIpcMemHandle_t *handle, void *devPtr)
-// {
-//     ava_unsupported;
-// }
+__host__ cudaError_t CUDARTAPI cudaIpcGetEventHandle(cudaIpcEventHandle_t *handle, cudaEvent_t event)
+{
+    ava_unsupported;
+}
 
-// __host__ cudaError_t CUDARTAPI cudaIpcOpenMemHandle(void **devPtr, cudaIpcMemHandle_t handle, unsigned int flags)
-// {
-//     ava_unsupported;
-// }
-//
-// __host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr)
-// {
-//     ava_unsupported;
-// }
+__host__ cudaError_t CUDARTAPI cudaIpcOpenEventHandle(cudaEvent_t *event, cudaIpcEventHandle_t handle)
+{
+    ava_unsupported;
+}
+
+__host__ cudaError_t CUDARTAPI cudaIpcGetMemHandle(cudaIpcMemHandle_t *handle, void *devPtr)
+{
+    ava_argument(devPtr) ava_opaque;
+    ava_argument(handle) {
+        ava_out; ava_buffer(1);
+    }
+}
+
+__host__ cudaError_t CUDARTAPI cudaIpcOpenMemHandle(void **devPtr, cudaIpcMemHandle_t handle, unsigned int flags)
+{
+    ava_argument(devPtr) {
+        ava_out; ava_buffer(1); ava_element ava_opaque;
+    }
+}
+
+__host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr)
+{
+  ava_argument(devPtr) ava_opaque;
+}
 
 ava_begin_replacement;
 EXPORTED __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaPeekAtLastError(void)
@@ -22753,6 +22738,104 @@ __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph)
 {
     ava_unsupported;
 }
+
+size_t CUDNNWINAPI
+cudnnGetVersion(void);
+
+size_t CUDNNWINAPI
+cudnnGetCudartVersion(void);
+
+cusparseStatus_t CUSPARSEAPI
+cusparseDcsrmm2(cusparseHandle_t         handle,
+                cusparseOperation_t      transA,
+                cusparseOperation_t      transB,
+                int                      m,
+                int                      n,
+                int                      k,
+                int                      nnz,
+                const double*            alpha,
+                const cusparseMatDescr_t descrA,
+                const double* csrSortedValA,
+                const int*    csrSortedRowPtrA,
+                const int*    csrSortedColIndA,
+                const double* B,
+                int           ldb,
+                const double* beta,
+                double*       C,
+                int           ldc)
+{
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExec(cufftHandle plan,
+                                 void *input,
+                                 void *output,
+                                 int direction)
+{
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtMakePlanMany(cufftHandle plan,
+                                         int rank,
+                                         long long int *n,
+                                         long long int *inembed,
+                                         long long int istride,
+                                         long long int idist,
+                                         cudaDataType inputtype,
+                                         long long int *onembed,
+                                         long long int ostride,
+                                         long long int odist,
+                                         cudaDataType outputtype,
+                                         long long int batch,
+                                         size_t *workSize,
+                                         cudaDataType executiontype)
+{
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI
+cusparseScsrmm2(cusparseHandle_t         handle,
+                cusparseOperation_t      transA,
+                cusparseOperation_t      transB,
+                int                      m,
+                int                      n,
+                int                      k,
+                int                      nnz,
+                const float*             alpha,
+                const cusparseMatDescr_t descrA,
+                const float*             csrSortedValA,
+                const int*               csrSortedRowPtrA,
+                const int*               csrSortedColIndA,
+                const float*             B,
+                int                      ldb,
+                const float*             beta,
+                float*                   C,
+                int                      ldc)
+{
+  ava_unsupported;
+}
+
+const char *CUDNNWINAPI
+cudnnGetErrorString(cudnnStatus_t status)
+{
+    const char *ret = reinterpret_cast<const char *>(ava_execute());
+    ava_return_value {
+        ava_out; ava_buffer(strlen(ret) + 1);
+        ava_lifetime_static;
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaProfilerInitialize(const char *configFile,
+                       const char *outputFile,
+                       cudaOutputMode_t outputMode)
+{
+  ava_unsupported;
+}
+
+__host__ cudaError_t CUDARTAPI cudaProfilerStart(void);
+
+__host__ cudaError_t CUDARTAPI cudaProfilerStop(void);
 
 /**
  * Initialization code in the generated code.
