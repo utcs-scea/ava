@@ -281,7 +281,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
 
     while (fgets(line, sizeof(line), fp_pipe) != NULL) {
         /* Search functions */
-        if (strncmp(line, ".nv.info._Z", 11) == 0) {
+        if (strncmp(line, ".nv.info.", 9) == 0) {
             sprintf(name, line + 9, strlen(line) - 10);
             assert(strlen(line) - 10 < MAX_KERNEL_NAME_LEN);
             name[strlen(line) - 10] = '\0';
