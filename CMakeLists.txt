@@ -103,7 +103,6 @@ find_library(Config++ NAMES libconfig++ config++ REQUIRED)
 message(STATUS "Using libconfig++ ${Config++}")
 
 # Check ClangLib
-
 find_package(LLVM 7.0 CONFIG REQUIRED)
 execute_process(
   COMMAND ${Python3_EXECUTABLE} -c "import glob; glob.glob(\"/usr/lib*/clang/7*/include\")[0]"
@@ -114,11 +113,25 @@ if (libclang-7_not_found)
   message(FATAL_ERROR "libclang-7-dev is required to run CAvA.")
 endif()
 
-###### Build dependent libraries ######
+###### Dependent libraries ######
 
 include(ExternalProject)
 
-###### Dependent libs ######
+# Customized LLVM
+set(LLVM_TARBALL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/llvm/build/ava-llvm-release-7.1.0.tar.gz")
+if(NOT EXISTS ${LLVM_TARBALL_PATH})
+  file(DOWNLOAD "https://github.com/utcs-scea/ava-llvm/releases/download/v7.1.0/ava-llvm-release-7.1.0.tar.gz"
+    ${LLVM_TARBALL_PATH}
+    SHOW_PROGRESS
+    EXPECTED_MD5 400832522ed255314d6a5848e8f7af6c
+  )
+  message(STATUS "ava-llvm downloaded to ${LLVM_TARBALL_PATH}")
+  file(ARCHIVE_EXTRACT INPUT ${LLVM_TARBALL_PATH} DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/llvm")
+  message(STATUS "ava-llvm unpacked to ${CMAKE_CURRENT_SOURCE_DIR}/llvm/build")
+else()
+  message(STATUS "ava-llvm ready exists at ${LLVM_TARBALL_PATH}")
+endif()
+
 add_subdirectory(third_party/fmt)
 add_subdirectory(third_party/abseil-cpp)
 
