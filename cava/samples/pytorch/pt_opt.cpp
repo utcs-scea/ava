@@ -1152,12 +1152,8 @@ cudaMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t off
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
 cudaMemcpyAsync(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream)
 {
-    /* TensorFlow always copies data between device memories */
     ava_async;
-    ava_argument(dst) ava_opaque;
-    ava_argument(src) ava_opaque;
 
-    /*
     ava_argument(dst) {
         if (kind == cudaMemcpyHostToDevice) {
             ava_opaque;
@@ -1175,7 +1171,6 @@ cudaMemcpyAsync(void *dst, const void *src, size_t count, enum cudaMemcpyKind ki
             ava_opaque;
         }
     }
-    */
 
     ava_argument(stream) ava_handle;
 
