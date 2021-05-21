@@ -39,9 +39,6 @@ void guestlib_tf_opt_init(void) {
 
   cu_event_pool = g_queue_new();
   idle_cu_event_pool = g_queue_new();
-
-  /* API batch */
-  nw_global_cmd_batch = cmd_batch_thread_init();
 }
 
 void guestlib_tf_opt_fini(void) {
@@ -55,8 +52,6 @@ void guestlib_tf_opt_fini(void) {
   free_cu_event_pool(idle_cu_event_pool);
   g_queue_free(cu_event_pool);
   g_queue_free(idle_cu_event_pool);
-
-  cmd_batch_thread_fini(nw_global_cmd_batch);
 }
 
 int free_cu_event_pool(GQueue *pool) {
