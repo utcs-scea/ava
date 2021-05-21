@@ -5,8 +5,11 @@ import hashlib
 import logging
 import os
 import pathlib
+import subprocess
 import sys
 import tarfile
+
+import pkgconfig
 import wget
 
 LLVM_DIR = os.path.dirname(os.path.realpath(sys.argv[0])) + "/llvm"
@@ -51,9 +54,39 @@ def download_llvm_lib():
         logger.info(f"ava-llvm already unpacked to {CLANG_LIB_DIR}")
 
 
+CAVA_DIR = os.path.dirname(os.path.realpath(sys.argv[0])) + "/cava"
+GLIB2_CFLAGS = pkgconfig.cflags("glib-2.0").split(" ")
+
+SPEC_LIST = {
+    "cudadrv": ("samples/cudadrv/cuda_driver.c", ["-I/usr/local/cuda-10.1/include"]),
+    "cudart": ("samples/cudart/cudart.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "tf_dump": ("samples/tensorflow/tf_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "tf_opt": ("samples/tensorflow/tf_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "onnx_dump": ("samples/tensorflow/onnx_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "onnx_opt": ("samples/tensorflow/onnx_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "pt_dump": ("samples/tensorflow/pt_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "pt_opt": ("samples/tensorflow/pt_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+}
+
+
+def generate_code(spec_name: str):
+    if spec_name not in SPEC_LIST:
+        logger.warning(f"Unsupported {spec_name} specification")
+        return
+
+    spec_file, spec_parameter = SPEC_LIST[spec_name]
+    print(spec_file)
+    print(["./nwcc", spec_file] + spec_parameter)
+    _ = subprocess.run(["./nwcc", spec_file] + spec_parameter, cwd=CAVA_DIR, check=True)
+    logger.info(f"Code generation for {spec_name} specification is done")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--specs", nargs="+", default=[])
     args = parser.parse_args()
 
     download_llvm_lib()
+
+    for spec in args.specs:
+        generate_code(spec)
