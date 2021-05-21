@@ -33,7 +33,7 @@ jobs:
     - name: Cache ava-llvm library
       uses: actions/cache@v2
       with:
-        key: ${{matrix.os}}-ava-llvm-${{hashFiles('cava/CMakeLists.txt')}}
+        key: ${{matrix.os}}-ava-llvm-${{hashFiles('generate.py')}}
         path: llvm/build
 
     ###
@@ -44,6 +44,14 @@ jobs:
       run: |
         tools/install_dependencies.sh
 
+    ###
+    # Download ava-llvm and generate codes
+    ###
+    - name: Download ava-llvm and generate codes
+      if: startsWith(matrix.os, 'ubuntu-')
+      run: |
+        python3 generate.py
+        
     ###
     # Standard CMake build process
     ###
