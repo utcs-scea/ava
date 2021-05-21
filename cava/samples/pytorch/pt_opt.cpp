@@ -38,6 +38,7 @@ ava_begin_utility;
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <driver_types.h>
+#include <texture_types.h>
 #include <fatbinary.h>
 #include <cublas_v2.h>
 #include <cublas_api.h>
@@ -967,6 +968,21 @@ __cudaPopCallConfiguration(dim3   *gridDim,
     *(CUstream *)stream = (CUstream)cc->stream;
     g_free(cc);
     return static_cast<cudaError_t>(CUDA_SUCCESS);
+}
+ava_end_replacement;
+
+ava_begin_replacement;
+EXPORTED void CUDARTAPI
+__cudaRegisterTexture  (void **fatCubinHandle,
+                        const void *hostVar,        // struct textureReference *hostVar
+                        const void **deviceAddress,
+                        const char *deviceName,
+                        int dim,
+                        int norm,
+                        int ext)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 ava_end_replacement;
 
@@ -22836,6 +22852,16 @@ cudaProfilerInitialize(const char *configFile,
 __host__ cudaError_t CUDARTAPI cudaProfilerStart(void);
 
 __host__ cudaError_t CUDARTAPI cudaProfilerStop(void);
+
+__host__ cudaError_t CUDARTAPI cudaThreadSynchronize (void)
+{
+}
+
+__host__ cudaError_t CUDARTAPI cudaGetExportTable (const void **ppExportTable, const cudaUUID_t *pExportTableId)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
+}
 
 /**
  * Initialization code in the generated code.
