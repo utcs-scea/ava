@@ -75,8 +75,6 @@ def generate_code(spec_name: str):
         return
 
     spec_file, spec_parameter = SPEC_LIST[spec_name]
-    print(spec_file)
-    print(["./nwcc", spec_file] + spec_parameter)
     _ = subprocess.run(["./nwcc", spec_file] + spec_parameter, cwd=CAVA_DIR, check=True)
     logger.info(f"Code generation for {spec_name} specification is done")
 

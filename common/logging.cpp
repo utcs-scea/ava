@@ -10,7 +10,7 @@ void ava_trace(const char *format, ...) {
 
   va_start(ap, format);
   int len = vasprintf(&str, format, ap);
-  std::static_cast<void>(len);
+  static_cast<void>(len);
   va_end(ap);
 
   AVA_TRACE << str;
@@ -23,7 +23,7 @@ void ava_debug(const char *format, ...) {
 
   va_start(ap, format);
   int len = vasprintf(&str, format, ap);
-  std::static_cast<void>(len);
+  static_cast<void>(len);
   va_end(ap);
 
   AVA_DEBUG << str;
@@ -36,7 +36,7 @@ void ava_info(const char *format, ...) {
 
   va_start(ap, format);
   int len = vasprintf(&str, format, ap);
-  std::static_cast<void>(len);
+  static_cast<void>(len);
   va_end(ap);
 
   AVA_INFO << str;
@@ -49,7 +49,7 @@ void ava_warning(const char *format, ...) {
 
   va_start(ap, format);
   int len = vasprintf(&str, format, ap);
-  std::static_cast<void>(len);
+  static_cast<void>(len);
   va_end(ap);
 
   AVA_DEBUG << str;
@@ -62,7 +62,7 @@ void ava_error(const char *format, ...) {
 
   va_start(ap, format);
   int len = vasprintf(&str, format, ap);
-  std::static_cast<void>(len);
+  static_cast<void>(len);
   va_end(ap);
 
   AVA_ERROR << str;

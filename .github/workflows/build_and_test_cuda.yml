@@ -70,7 +70,7 @@ jobs:
     - name: Download ava-llvm and generate codes
       if: startsWith(matrix.os, 'ubuntu-')
       run: |
-        python3 generate.py
+        python3 generate.py -s cudadrv cudart
 
     ###
     # Standard CMake build process

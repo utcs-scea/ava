@@ -54,7 +54,7 @@ endif()
 
 message(STATUS "Compile CUDA driver specification: ${AVA_GEN_CUDADRV_SPEC}")
 if(AVA_GEN_CUDADRV_SPEC)
-  include(samples/cudadrv/CMakeLists.txt)
+  add_subdirectory(cudadrv_nw)
 endif()
 
 message(STATUS "Compile CUDA runtime specification: ${AVA_GEN_CUDART_SPEC}")

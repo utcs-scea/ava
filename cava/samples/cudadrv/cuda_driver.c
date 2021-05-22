@@ -4,7 +4,7 @@ ava_identifier(CUDADRV);
 ava_number(3);
 ava_cflags(-I/usr/local/cuda-10.1/include);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcuda);
-ava_soname(cuda);
+ava_soname(libcuda.so libcuda.so.1);
 ava_export_qualifier();
 
 ava_non_transferable_types {
