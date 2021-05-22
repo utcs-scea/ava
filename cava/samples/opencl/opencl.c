@@ -1,8 +1,8 @@
 ava_name("OpenCL");
 ava_version("1.2");
-ava_identifier(CL);
+ava_identifier(OpenCL);
 ava_number(2);
-ava_soname(OpenCL);
+ava_soname(libOpenCL.so libOpenCL.so.1);
 //ava_cflags(-DAVA_PRINT_TIMESTAMP);
 //ava_cflags(-DAVA_RECORD_REPLAY);
 //ava_cflags(-DAVA_RECORD_REPLAY -DAVA_BENCHMARKING_MIGRATE);

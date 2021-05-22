@@ -5,6 +5,7 @@ ava_number(8);
 ava_libs(-L/home/hyu/Downloads/GTISDK-Linux_x86_64_v4.4.0.3/Lib/Linux/x86_64 -lGTILibrary-static -lgomp -lftd3xx-static);
 ava_cxxflags(-std=c++11);
 ava_export_qualifier(GTISDK_API);
+ava_soname(GTILibrary-static.so);
 
 ava_non_transferable_types {
     ava_handle;

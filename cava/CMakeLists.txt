@@ -4,6 +4,13 @@ project(ava-spec)
 
 ###### Common dependencies ######
 
+find_package(Threads REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GLIB2 REQUIRED IMPORTED_TARGET glib-2.0)
+
+find_package(Boost REQUIRED COMPONENTS system)
+find_library(Config++ NAMES libconfig++ config++ REQUIRED)
+
 include_directories(
   ${CMAKE_SOURCE_DIR}/common
   ${CMAKE_SOURCE_DIR}/guestlib
@@ -32,6 +39,16 @@ if(AVA_GEN_CUDART_SPEC)
   add_subdirectory(cudart_nw)
 endif()
 
+message(STATUS "Compile GTI specification: ${AVA_GEN_GTI_SPEC}")
+if(AVA_GEN_GTI_SPEC)
+  add_subdirectory(gti_nw)
+endif()
+
+message(STATUS "Compile NCSDK specification: ${AVA_GEN_NCSDK_SPEC}")
+if(AVA_GEN_NCSDK_SPEC)
+  add_subdirectory(mvnc_nw)
+endif()
+
 message(STATUS "Compile ONNXruntime dump specification: ${AVA_GEN_ONNXRT_DUMP_SPEC}")
 if(AVA_GEN_ONNXRT_DUMP_SPEC)
   add_subdirectory(onnx_dump_nw)
@@ -40,6 +57,11 @@ endif()
 message(STATUS "Compile ONNXruntime opt specification: ${AVA_GEN_ONNXRT_OPT_SPEC}")
 if(AVA_GEN_ONNXRT_OPT_SPEC)
   add_subdirectory(onnx_opt_nw)
+endif()
+
+message(STATUS "Compile OpenCL specification: ${AVA_GEN_OPENCL_SPEC}")
+if(AVA_GEN_OPENCL_SPEC)
+  add_subdirectory(opencl_nw)
 endif()
 
 message(STATUS "Compile PyTorch dump specification: ${AVA_GEN_PYTORCH_DUMP_SPEC}")
@@ -62,6 +84,11 @@ if(AVA_GEN_TENSORFLOW_OPT_SPEC)
   add_subdirectory(tf_opt_nw)
 endif()
 
+message(STATUS "Compile QuickAssist specification: ${AVA_GEN_QAT_SPEC}")
+if(AVA_GEN_QAT_SPEC)
+  add_subdirectory(qat_nw)
+endif()
+
 message(STATUS "Compile test specification: ${AVA_GEN_TEST_SPEC}")
 if(AVA_GEN_TEST_SPEC)
   execute_process(COMMAND make
@@ -74,44 +101,9 @@ if(AVA_GEN_TEST_SPEC)
   add_subdirectory(test_nw)
 endif()
 
-message(STATUS "Compile AmorphOS specification: ${AVA_GEN_AMORPHOS_SPEC}")
-if(AVA_GEN_AMORPHOS_SPEC)
-  include(samples/amorphos/CMakeLists.txt)
-endif()
-
-message(STATUS "Compile GTI specification: ${AVA_GEN_GTI_SPEC}")
-if(AVA_GEN_GTI_SPEC)
-  include(samples/gti/CMakeLists.txt)
-endif()
-
-message(STATUS "Compile NCSDK specification: ${AVA_GEN_NCSDK_SPEC}")
-if(AVA_GEN_NCSDK_SPEC)
-  include(samples/ncsdk/CMakeLists.txt)
-endif()
-
-message(STATUS "Compile QuickAssist specification: ${AVA_GEN_QAT_SPEC}")
-if(AVA_GEN_QAT_SPEC)
-  include(samples/quickassist/CMakeLists.txt)
-endif()
-
-message(STATUS "Compile OpenCL specification: ${AVA_GEN_OPENCL_SPEC}")
-if(AVA_GEN_OPENCL_SPEC)
-  include(samples/opencl/CMakeLists.txt)
-endif()
-
 message(STATUS "Compile TensorFlow (C) specification: ${AVA_GEN_TF_C_SPEC}")
 if(AVA_GEN_TF_C_SPEC)
-  include(samples/tensorflow_c/CMakeLists.txt)
-endif()
-
-message(STATUS "Compile HIP specification: ${AVA_GEN_HIP_SPEC}")
-if(AVA_GEN_HIP_SPEC)
-  include(samples/hip/CMakeLists.txt)
-endif()
-
-message(STATUS "Compile cuDNN specification: ${AVA_GEN_CUDNN_SPEC}")
-if(AVA_GEN_CUDNN_SPEC)
-  include(samples/cudnn/CMakeLists.txt)
+  add_subdirectory(tf_c_nw)
 endif()
 
 ###### Include your compilation below ######

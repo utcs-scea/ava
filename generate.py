@@ -60,14 +60,25 @@ GLIB2_CFLAGS = pkgconfig.cflags("glib-2.0").split(" ")
 SPEC_LIST = {
     "cudadrv": ("samples/cudadrv/cuda_driver.c", ["-I/usr/local/cuda-10.1/include"]),
     "cudart": ("samples/cudart/cudart.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
-    "tf_dump": ("samples/tensorflow/tf_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
-    "tf_opt": ("samples/tensorflow/tf_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "demo": ("samples/demo/demo.c", ["-Iheaders"]),
+    "gti": ("samples/gti/gti.c", []),
+    "ncsdk": ("samples/ncsdk/mvnc.c", []),
     "onnx_dump": ("samples/onnxruntime/onnx_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
     "onnx_opt": ("samples/onnxruntime/onnx_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "opencl": ("samples/opencl/opencl.c", []),
     "pt_dump": ("samples/pytorch/pt_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
     "pt_opt": ("samples/pytorch/pt_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
-    "demo": ("samples/demo/demo.c", ["-Iheaders"]),
+    "qat": (
+        "samples/quickassist/qat.c",
+        [
+            f"-I{os.getenv('ICP_ROOT')}/quickassist/include",
+            f"-I{os.getenv('ICP_ROOT')}/quickassist/lookaside/access_layer/include",
+        ],
+    ),
     "test": ("samples/test/libtrivial.c", ["-I../test"]),
+    "tf_c": ("samples/tensorflow_c/tf_c.c", []),
+    "tf_dump": ("samples/tensorflow/tf_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "tf_opt": ("samples/tensorflow/tf_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
 }
 
 

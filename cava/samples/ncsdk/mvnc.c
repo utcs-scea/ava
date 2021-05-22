@@ -4,6 +4,7 @@ ava_identifier(MVNC);
 ava_number(1);
 ava_libs(-lmvnc);
 ava_export_qualifier(dllexport);
+ava_soname(libmvnc.so libmvnc.so.0);
 
 ava_non_transferable_types {
     ava_handle;
