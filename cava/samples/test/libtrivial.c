@@ -1,10 +1,11 @@
 ava_name("Trivial Library");
 ava_version("0.1");
-ava_identifier(trivial);
+ava_identifier(test);
 ava_number(255);
-ava_cflags(-I../../test -I../libtrivial_files);
-ava_libs(-L../../test -L../libtrivial_files -ltrivial);
+ava_cflags(-I${CMAKE_SOURCE_DIR}/test);
+ava_libs(-L${CMAKE_SOURCE_DIR}/test -ltrivial);
 ava_export_qualifier();
+ava_soname(libtrivial.so);
 
 #include "libtrivial.h"
 

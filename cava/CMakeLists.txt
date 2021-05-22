@@ -74,12 +74,19 @@ endif()
 
 message(STATUS "Compile test specification: ${AVA_GEN_TEST_SPEC}")
 if(AVA_GEN_TEST_SPEC)
-  include(samples/test/CMakeLists.txt)
+  execute_process(COMMAND make
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../test
+    RESULT_VARIABLE libtrivial_build_result
+    OUTPUT_QUIET
+    COMMAND_ERROR_IS_FATAL ANY
+  )
+  message(STATUS "Built libtrivial: return code ${libtrivial_build_result}")
+  add_subdirectory(test_nw)
 endif()
 
 message(STATUS "Compile demo specification: ${AVA_GEN_DEMO_SPEC}")
 if(AVA_GEN_DEMO_SPEC)
-  include(samples/demo/CMakeLists.txt)
+  add_subdirectory(demo_nw)
 endif()
 
 message(STATUS "Compile cuDNN specification: ${AVA_GEN_CUDNN_SPEC}")

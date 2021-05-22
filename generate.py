@@ -66,6 +66,8 @@ SPEC_LIST = {
     "onnx_opt": ("samples/tensorflow/onnx_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
     "pt_dump": ("samples/tensorflow/pt_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
     "pt_opt": ("samples/tensorflow/pt_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "demo": ("samples/demo/demo.c", ["-Iheaders"]),
+    "test": ("samples/test/libtrivial.c", ["-I../test"]),
 }
 
 
