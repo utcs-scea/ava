@@ -62,10 +62,10 @@ SPEC_LIST = {
     "cudart": ("samples/cudart/cudart.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
     "tf_dump": ("samples/tensorflow/tf_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
     "tf_opt": ("samples/tensorflow/tf_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
-    "onnx_dump": ("samples/tensorflow/onnx_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
-    "onnx_opt": ("samples/tensorflow/onnx_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
-    "pt_dump": ("samples/tensorflow/pt_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
-    "pt_opt": ("samples/tensorflow/pt_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "onnx_dump": ("samples/onnxruntime/onnx_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "onnx_opt": ("samples/onnxruntime/onnx_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "pt_dump": ("samples/pytorch/pt_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "pt_opt": ("samples/pytorch/pt_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
     "demo": ("samples/demo/demo.c", ["-Iheaders"]),
     "test": ("samples/test/libtrivial.c", ["-I../test"]),
 }
@@ -83,7 +83,9 @@ def generate_code(spec_name: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "--specs", nargs="+", default=[])
+    parser.add_argument(
+        "-s", "--specs", nargs="+", default=[], choices=SPEC_LIST.keys(), help="Specification shortnames"
+    )
     args = parser.parse_args()
 
     download_llvm_lib()
