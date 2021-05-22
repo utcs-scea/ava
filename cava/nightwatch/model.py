@@ -558,6 +558,7 @@ class API(object):
         self.cxxflags = ""
         self.guestlib_srcs = ""
         self.worker_srcs = ""
+        self.common_utility_srcs = ""
         self.c_replacement_code = ""
         self.guestlib_init_prologue = ""
         self.guestlib_init_epilogue = ""

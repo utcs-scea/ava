@@ -1,28 +1,18 @@
 cmake_minimum_required(VERSION 3.13)
 
-get_cmake_property(vars CACHE_VARIABLES)
-foreach(var ${vars})
-  if (var MATCHES ".*_DIR$" OR
-      var MATCHES ".*_ROOT$" OR
-      var MATCHES "CMAKE_BUILD.*")
-    list(APPEND CL_ARGS "-D${var}=${${var}}")
-  endif()
-endforeach()
-
-set(AVA_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
-
 project(ava-spec)
 
-include(ExternalProject)
+###### Common dependencies ######
 
-###### Create dummy target ######
-
-ExternalProject_Add(cava
-  PREFIX ava-llvm
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  BUILD_COMMAND ""
-  CONFIGURE_COMMAND ""
-  INSTALL_COMMAND ""
+include_directories(
+  ${CMAKE_SOURCE_DIR}/common
+  ${CMAKE_SOURCE_DIR}/guestlib
+  ${CMAKE_SOURCE_DIR}/worker
+  ${CMAKE_SOURCE_DIR}/proto
+  ${GLIB2_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/third_party/plog/include
+  ${CMAKE_SOURCE_DIR}/third_party/fmt/include
 )
 
 ###### Compile specifications ######
@@ -69,7 +59,7 @@ endif()
 
 message(STATUS "Compile CUDA runtime specification: ${AVA_GEN_CUDART_SPEC}")
 if(AVA_GEN_CUDART_SPEC)
-  include(samples/cudart/CMakeLists.txt)
+  add_subdirectory(cudart_nw)
 endif()
 
 message(STATUS "Compile TensorFlow (C) specification: ${AVA_GEN_TF_C_SPEC}")
