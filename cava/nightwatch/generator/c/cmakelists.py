@@ -40,13 +40,6 @@ endif()
 
 ###### Required dependencies ######
 
-find_package(Threads REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GLIB2 REQUIRED IMPORTED_TARGET glib-2.0)
-
-find_package(Boost REQUIRED COMPONENTS system)
-find_library(Config++ NAMES libconfig++ config++ REQUIRED)
-
 ###### Compile ######
 
 add_definitions(-D_GNU_SOURCE)

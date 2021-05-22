@@ -5,6 +5,7 @@ ava_number(6);
 ava_cflags(-I$ENV{ICP_ROOT}/quickassist/include -I$ENV{ICP_ROOT}/quickassist/lookaside/access_layer/include);
 ava_libs(-lqat_s -lusdm_drv_s);
 ava_export_qualifier();
+ava_soname(libqat_s.so);
 
 ava_begin_utility;
 //#include <qae_mem.h>

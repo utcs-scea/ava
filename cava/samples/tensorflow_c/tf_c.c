@@ -4,6 +4,7 @@ ava_identifier(TF_C);
 ava_number(4);
 ava_libs(-ltensorflow);
 ava_export_qualifier(TF_CAPI_EXPORT);
+ava_soname(libtensorflow.so);
 
 ava_non_transferable_types {
     ava_handle;
