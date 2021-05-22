@@ -18,6 +18,7 @@ def source(api: API, errors: List[Any]) -> Tuple[str, str]:
 cmake_minimum_required(VERSION 3.13)
 
 project({api.identifier.lower()}_nw C CXX)
+set(SUBPROJECT_PREFIX "{api.identifier.lower()}")
 
 list(APPEND CMAKE_MODULE_PATH "${{CMAKE_CURRENT_BINARY_DIR}}/../..")
 
@@ -50,7 +51,7 @@ find_library(Config++ NAMES libconfig++ config++ REQUIRED)
 
 add_definitions(-D_GNU_SOURCE)
 
-add_executable(worker
+add_executable(${{SUBPROJECT_PREFIX}}_worker
   ${{CMAKE_SOURCE_DIR}}/worker/worker.cpp
   ${{CMAKE_SOURCE_DIR}}/worker/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/worker/provision_gpu.cpp
@@ -69,14 +70,15 @@ add_executable(worker
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel_socket_tcp.cpp
 )
-target_link_libraries(worker
+target_link_libraries(${{SUBPROJECT_PREFIX}}_worker
   ${{GLIB2_LIBRARIES}}
   ${{Boost_LIBRARIES}}
   Threads::Threads
   {api.libs}
 )
+set_target_properties(${{SUBPROJECT_PREFIX}}_worker PROPERTIES OUTPUT_NAME "worker")
 
-add_library(guestlib SHARED
+add_library(${{SUBPROJECT_PREFIX}}_guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/guestlib/init.cpp
   ${{CMAKE_SOURCE_DIR}}/guestlib/guest_config.cpp
   ${{CMAKE_SOURCE_DIR}}/guestlib/migration.cpp
@@ -97,19 +99,21 @@ add_library(guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/proto/manager_service.proto.cpp
 )
-target_link_libraries(guestlib
+target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
   ${{GLIB2_LIBRARIES}}
   ${{Boost_LIBRARIES}}
   Threads::Threads
   ${{Config++}}
 )
-target_compile_options(guestlib
+target_compile_options(${{SUBPROJECT_PREFIX}}_guestlib
   PUBLIC -fvisibility=hidden
 )
+set_target_properties(${{SUBPROJECT_PREFIX}}_guestlib PROPERTIES OUTPUT_NAME "guestlib")
+
 include(GNUInstallDirs)
-install(TARGETS worker
+install(TARGETS ${{SUBPROJECT_PREFIX}}_worker
         RUNTIME DESTINATION {api.identifier.lower()}/${{CMAKE_INSTALL_BINDIR}})
-install(TARGETS guestlib
+install(TARGETS ${{SUBPROJECT_PREFIX}}_guestlib
         LIBRARY DESTINATION {api.identifier.lower()}/${{CMAKE_INSTALL_LIBDIR}})
 if(CMAKE_HOST_UNIX)
 {''.join(so_link_code).strip()}
