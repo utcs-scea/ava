@@ -25,6 +25,7 @@ Clone AvA's base repository and initiailize it:
 git clone https://github.com/utcs-scea/ava.git
 cd ava
 git submodule update --init --recursive
+./generate.py -s demo
 cd ..
 mkdir build
 cd build
@@ -34,6 +35,14 @@ cmake ../ava
 The above commands initialize a cmake build directory with all flags turned
 `OFF`. AvA supports a handful of accelerators and APIs, and the merge of the
 old codes into the new build system (v2.0) is still ongoing.
+
+`generate.py` downloads the customized AvA-LLVM module and generates codes
+from the provided specifications. To see the supported specifications, please
+run:
+
+```shell
+./generate.py -h
+```
 
 | API framework    | Version | Status   |
 | ---------------- | ------- | -------- |
@@ -88,15 +97,16 @@ Build the demo system simply by:
 
 ```shell
 make -j`nproc`
+make install
 ```
 
 This generates the guestlib and API server codes in `ava/cava/demo_nw` and
-builds their binary files to `build/install/demo_nw`. The demo manager is
+installs their binary files to `build/install/demo`. The demo manager is
 compiled and installed into `build/install/bin`.
 
 ```shell
-ls install/demo_nw/bin
-ls install/demo_nw/lib
+ls install/demo/bin
+ls install/demo/lib
 ls install/bin
 ```
 
@@ -128,7 +138,7 @@ EOF
 Run the test program by
 
 ```shell
-LD_LIBRARY_PATH=install/demo_nw/lib ../ava/cava/samples/demo/test_program/test
+LD_LIBRARY_PATH=install/demo/lib ../ava/cava/samples/demo/test_program/test
 ```
 
 The demo spec implements and annotates an `int ava_test_api(int x)` API which

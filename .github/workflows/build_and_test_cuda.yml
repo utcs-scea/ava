@@ -35,7 +35,7 @@ jobs:
     - name: Cache ava-llvm library
       uses: actions/cache@v2
       with:
-        key: ${{matrix.os}}-ava-llvm-${{hashFiles('cava/CMakeLists.txt')}}
+        key: ${{matrix.os}}-ava-llvm-${{hashFiles('generate.py')}}
         path: llvm/build
 
     - name: Cache cuDNN tarball
@@ -63,6 +63,14 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu-') && startsWith(matrix.cuda, '10.1')
       run: |
         .github/workflows/install_cuda10.1_cudnn7.6.sh
+
+    ###
+    # Download ava-llvm and generate codes
+    ###
+    - name: Download ava-llvm and generate codes
+      if: startsWith(matrix.os, 'ubuntu-')
+      run: |
+        python3 generate.py -s cudadrv cudart
 
     ###
     # Standard CMake build process

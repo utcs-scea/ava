@@ -1,41 +1,77 @@
 cmake_minimum_required(VERSION 3.13)
 
-get_cmake_property(vars CACHE_VARIABLES)
-foreach(var ${vars})
-  if (var MATCHES ".*_DIR$" OR
-      var MATCHES ".*_ROOT$" OR
-      var MATCHES "CMAKE_BUILD.*")
-    list(APPEND CL_ARGS "-D${var}=${${var}}")
-  endif()
-endforeach()
-
 project(ava-spec)
 
-include(ExternalProject)
+###### Common dependencies ######
 
-###### Build customized LLVM ######
-
-ExternalProject_Add(cava
-  PREFIX ava-llvm
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../llvm/build
-  URL "https://github.com/utcs-scea/ava-llvm/releases/download/v7.1.0/ava-llvm-release-7.1.0.tar.gz"
-  URL_HASH MD5=400832522ed255314d6a5848e8f7af6c
-  BUILD_COMMAND ""
-  CONFIGURE_COMMAND ""
-  INSTALL_COMMAND ""
-  UPDATE_DISCONNECTED ON
+include_directories(
+  ${CMAKE_SOURCE_DIR}/common
+  ${CMAKE_SOURCE_DIR}/guestlib
+  ${CMAKE_SOURCE_DIR}/worker
+  ${CMAKE_SOURCE_DIR}/proto
+  ${GLIB2_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/third_party/plog/include
+  ${CMAKE_SOURCE_DIR}/third_party/fmt/include
 )
 
 ###### Compile specifications ######
 
-message(STATUS "Compile TensorFlow specification: ${AVA_GEN_TF_SPEC}")
-if(AVA_GEN_TF_SPEC)
-  include(samples/tensorflow/CMakeLists.txt)
+message(STATUS "Compile demo specification: ${AVA_GEN_DEMO_SPEC}")
+if(AVA_GEN_DEMO_SPEC)
+  add_subdirectory(demo_nw)
 endif()
 
-message(STATUS "Compile ONNXruntime specification: ${AVA_GEN_ONNXRT_SPEC}")
-if(AVA_GEN_ONNXRT_SPEC)
-  include(samples/onnxruntime/CMakeLists.txt)
+message(STATUS "Compile CUDA driver specification: ${AVA_GEN_CUDADRV_SPEC}")
+if(AVA_GEN_CUDADRV_SPEC)
+  add_subdirectory(cudadrv_nw)
+endif()
+
+message(STATUS "Compile CUDA runtime specification: ${AVA_GEN_CUDART_SPEC}")
+if(AVA_GEN_CUDART_SPEC)
+  add_subdirectory(cudart_nw)
+endif()
+
+message(STATUS "Compile ONNXruntime dump specification: ${AVA_GEN_ONNXRT_DUMP_SPEC}")
+if(AVA_GEN_ONNXRT_DUMP_SPEC)
+  add_subdirectory(onnx_dump_nw)
+endif()
+
+message(STATUS "Compile ONNXruntime opt specification: ${AVA_GEN_ONNXRT_OPT_SPEC}")
+if(AVA_GEN_ONNXRT_OPT_SPEC)
+  add_subdirectory(onnx_opt_nw)
+endif()
+
+message(STATUS "Compile PyTorch dump specification: ${AVA_GEN_PYTORCH_DUMP_SPEC}")
+if(AVA_GEN_PYTORCH_DUMP_SPEC)
+  add_subdirectory(pt_dump_nw)
+endif()
+
+message(STATUS "Compile PyTorch opt specification: ${AVA_GEN_PYTORCH_OPT_SPEC}")
+if(AVA_GEN_PYTORCH_OPT_SPEC)
+  add_subdirectory(pt_opt_nw)
+endif()
+
+message(STATUS "Compile TensorFlow dump specification: ${AVA_GEN_TENSORFLOW_DUMP_SPEC}")
+if(AVA_GEN_TENSORFLOW_DUMP_SPEC)
+  add_subdirectory(tf_dump_nw)
+endif()
+
+message(STATUS "Compile TensorFlow opt specification: ${AVA_GEN_TENSORFLOW_OPT_SPEC}")
+if(AVA_GEN_TENSORFLOW_OPT_SPEC)
+  add_subdirectory(tf_opt_nw)
+endif()
+
+message(STATUS "Compile test specification: ${AVA_GEN_TEST_SPEC}")
+if(AVA_GEN_TEST_SPEC)
+  execute_process(COMMAND make
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../test
+    RESULT_VARIABLE libtrivial_build_result
+    OUTPUT_QUIET
+    COMMAND_ERROR_IS_FATAL ANY
+  )
+  message(STATUS "Built libtrivial: return code ${libtrivial_build_result}")
+  add_subdirectory(test_nw)
 endif()
 
 message(STATUS "Compile AmorphOS specification: ${AVA_GEN_AMORPHOS_SPEC}")
@@ -63,16 +99,6 @@ if(AVA_GEN_OPENCL_SPEC)
   include(samples/opencl/CMakeLists.txt)
 endif()
 
-message(STATUS "Compile CUDA driver specification: ${AVA_GEN_CUDADRV_SPEC}")
-if(AVA_GEN_CUDADRV_SPEC)
-  include(samples/cudadrv/CMakeLists.txt)
-endif()
-
-message(STATUS "Compile CUDA runtime specification: ${AVA_GEN_CUDART_SPEC}")
-if(AVA_GEN_CUDART_SPEC)
-  include(samples/cudart/CMakeLists.txt)
-endif()
-
 message(STATUS "Compile TensorFlow (C) specification: ${AVA_GEN_TF_C_SPEC}")
 if(AVA_GEN_TF_C_SPEC)
   include(samples/tensorflow_c/CMakeLists.txt)
@@ -83,24 +109,9 @@ if(AVA_GEN_HIP_SPEC)
   include(samples/hip/CMakeLists.txt)
 endif()
 
-message(STATUS "Compile test specification: ${AVA_GEN_TEST_SPEC}")
-if(AVA_GEN_TEST_SPEC)
-  include(samples/test/CMakeLists.txt)
-endif()
-
-message(STATUS "Compile demo specification: ${AVA_GEN_DEMO_SPEC}")
-if(AVA_GEN_DEMO_SPEC)
-  include(samples/demo/CMakeLists.txt)
-endif()
-
 message(STATUS "Compile cuDNN specification: ${AVA_GEN_CUDNN_SPEC}")
 if(AVA_GEN_CUDNN_SPEC)
   include(samples/cudnn/CMakeLists.txt)
-endif()
-
-message(STATUS "Compile PyTorch specification: ${AVA_GEN_PYTORCH_SPEC}")
-if(AVA_GEN_PYTORCH_SPEC)
-  include(samples/pytorch/CMakeLists.txt)
 endif()
 
 ###### Include your compilation below ######

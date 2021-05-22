@@ -369,6 +369,7 @@ typedef void (*ava_replace_function)(void *obj, void *data, size_t length);
 
 #define ava_guestlib_srcs(n) const char *__AVA_NAME(guestlib_srcs) = __STRINGIFY(n)
 #define ava_worker_srcs(n) const char *__AVA_NAME(worker_srcs) = __STRINGIFY(n)
+#define ava_common_utility_srcs(n) const char *__AVA_NAME(common_utility_srcs) = __STRINGIFY(n)
 
 /// Mark a function or variable as a utility for the rest of the specification.
 /// These definitions will be passed through to the generated code without any changes.
