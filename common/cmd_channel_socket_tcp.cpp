@@ -20,9 +20,9 @@
 #include "cmd_channel_socket_utilities.hpp"
 #include "common/cmd_channel_impl.hpp"
 #include "common/cmd_handler.hpp"
-#include "common/debug.hpp"
 #include "common/devconf.h"
 #include "common/guest_mem.h"
+#include "common/logging.h"
 #include "manager_service.proto.h"
 
 using boost::asio::ip::tcp;
@@ -85,7 +85,7 @@ struct command_channel *command_channel_socket_tcp_migration_new(int worker_port
     chan->sock_fd = accept(chan->listen_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen);
 
     /* Get source address */
-#ifdef AVA_DEBUG_BUILD
+#ifndef NDEBUG
     struct sockaddr_storage source_addr;
     socklen_t source_addr_len = sizeof(struct sockaddr_storage);
     getpeername(chan->sock_fd, (struct sockaddr *)&source_addr, &source_addr_len);

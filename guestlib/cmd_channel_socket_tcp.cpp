@@ -1,5 +1,3 @@
-#include <plog/Log.h>
-
 #include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
 #include <chrono>
@@ -10,7 +8,7 @@
 #include "common/cmd_channel_impl.hpp"
 #include "common/cmd_channel_socket_utilities.hpp"
 #include "common/cmd_handler.hpp"
-#include "common/debug.hpp"
+#include "common/logging.h"
 #include "guest_config.h"
 #include "guestlib.h"
 #include "manager_service.proto.h"
@@ -65,7 +63,7 @@ std::vector<struct command_channel *> command_channel_socket_tcp_guest_new() {
     worker_address.push_back(wa);
   }
   if (worker_address.empty()) {
-    LOG_ERROR << "No API server is assigned";
+    AVA_ERROR << "No API server is assigned";
   }
 
   /* Connect API servers. */
@@ -85,7 +83,7 @@ std::vector<struct command_channel *> command_channel_socket_tcp_guest_new() {
     parseServerAddress(wa.c_str(), &worker_server_info, worker_name, &worker_port);
     assert(worker_server_info != NULL && "Unknown API server address");
     assert(worker_port > 0 && "Invalid API server port");
-    LOG_INFO << "Assigned worker at " << worker_name << ":" << worker_port;
+    AVA_INFO << "Assigned worker at " << worker_name << ":" << worker_port;
 
     chan->vm_id = nw_global_vm_id = 1;
     chan->listen_port = nw_worker_id = worker_port;

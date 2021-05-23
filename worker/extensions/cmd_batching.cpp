@@ -1,6 +1,5 @@
 #include "common/extensions/cmd_batching.h"
 
-#include "common/debug.hpp"
 #include "common/linkage.h"
 
 struct command_batch *nw_global_cmd_batch = NULL;  // always NULL
@@ -57,7 +56,7 @@ EXPORTED_WEAKLY void __handle_command_cudart_opt_single(struct command_channel *
 
   if (cmd) {
     assert(__chan && "Command channel has not been set");
-#ifdef AVA_DEBUG_BUILD
+#ifndef NDEBUG
     if (__print_command_onnx_opt)
       __print_command_onnx_opt(stderr, __chan, cmd);
     else if (__print_command_tf_opt)

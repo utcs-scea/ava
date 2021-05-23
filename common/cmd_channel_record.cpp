@@ -2,13 +2,12 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
-#include <plog/Log.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
 
 #include "common/cmd_channel_impl.hpp"
-#include "common/debug.hpp"
+#include "common/logging.h"
 
 #if _FILE_OFFSET_BITS != 64
 #warning "command_channel_log will fail for logs larger than 2GB. Set _FILE_OFFSET_BITS=64 at build time to fix this."

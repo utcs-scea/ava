@@ -9,7 +9,6 @@
 #include <stdio.h>
 
 #include "common/cmd_handler.hpp"
-#include "common/debug.hpp"
 #include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
 #include "common/logging.h"

@@ -9,9 +9,9 @@
 
 #include "common/cmd_channel_impl.hpp"
 #include "common/cmd_handler.hpp"
-#include "common/debug.hpp"
 #include "common/devconf.h"
 #include "common/guest_mem.h"
+#include "common/logging.h"
 
 namespace chansocketutil {
 
@@ -136,7 +136,7 @@ struct command_base *command_channel_socket_receive_command(struct command_chann
 
   ret = poll(&chan->pfd, 1, -1);
   if (ret < 0) {
-    fprintf(stderr, "failed to poll\n");
+    AVA_ERROR << "Failed to poll";
     exit(-1);
   }
 
@@ -144,7 +144,7 @@ struct command_base *command_channel_socket_receive_command(struct command_chann
 
   /* terminate guestlib when worker exits */
   if (chan->pfd.revents & POLLRDHUP) {
-    LOG_WARNING << "command_channel_socket shutdown";
+    AVA_WARNING << "command_channel_socket shutdown";
     close(chan->pfd.fd);
     exit(-1);
   }

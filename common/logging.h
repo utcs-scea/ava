@@ -8,6 +8,9 @@
 
 #define PLOG_CAPTURE_FILE
 
+// FIXME: CAvA cannot parse templates.
+#ifndef __CAVA__
+
 namespace ava {
 namespace logging {
 
@@ -93,6 +96,8 @@ T CheckNotNull(const char *file, int line, const char *exprtext, T &&t) {
 
 }  // namespace logging
 }  // namespace ava
+
+#endif  // __CAVA__
 
 #define TRACE plog::verbose
 #define DEBUG plog::debug

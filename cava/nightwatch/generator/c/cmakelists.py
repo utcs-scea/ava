@@ -35,7 +35,7 @@ add_compile_options(-Wall -D_FILE_OFFSET_BITS=64 -fPIC -rdynamic -fpermissive)
 
 string(TOUPPER "${{CMAKE_BUILD_TYPE}}" cmake_build_type_upper)
 if (cmake_build_type_upper MATCHES RELEASE)
-  add_compile_options(-DAVA_RELEASE -DNDEBUG -flto)
+  add_compile_options(-DNDEBUG -flto)
 endif()
 
 ###### Required dependencies ######
