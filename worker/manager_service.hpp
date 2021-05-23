@@ -22,7 +22,7 @@ class ManagerServiceServerBase {
    * @param worker_argv arguments to forward to exec
    */
   ManagerServiceServerBase(uint32_t manager_port, uint32_t worker_port_base, std::string worker_path,
-                           std::vector<std::string> &worker_argv);
+                           std::vector<std::string> &worker_argv, std::vector<std::string> &worker_env);
 
   void RunServer() {
     std::cerr << "Manager Service listening on ::" << manager_port_ << std::endl;
@@ -54,6 +54,7 @@ class ManagerServiceServerBase {
   std::atomic<uint32_t> worker_id_;
   std::string worker_path_;
   std::vector<std::string> worker_argv_;
+  std::vector<std::string> worker_env_;
   std::map<pid_t, std::shared_ptr<std::thread>> worker_monitor_map_;
 };
 
