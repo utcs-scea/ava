@@ -11,7 +11,8 @@ RUN apt-get update \
 RUN apt-get install -y cmake git build-essential python3 python3-pip libglib2.0-dev \
         clang-7 libclang-7-dev libboost-all-dev libconfig++-dev indent \
         gosu ccache clang-tidy-7 clang-format-7
-RUN python3 -m pip install setuptools pkgconfig wget \
+RUN python3 -m pip install setuptools pkgconfig
+RUN python3 -m pip install wget \
         toposort astor 'numpy==1.15.0' blessings
 
 RUN find /root -type f -print0 | xargs -0 chmod 666 \
