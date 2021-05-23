@@ -15,8 +15,13 @@ using boost::asio::ip::tcp;
 namespace ava_manager {
 
 ManagerServiceServerBase::ManagerServiceServerBase(uint32_t manager_port, uint32_t worker_port_base,
-                                                   std::string worker_path, std::vector<std::string> &worker_argv)
-    : manager_port_(manager_port), worker_port_base_(worker_port_base), worker_id_(0), worker_argv_(worker_argv) {
+                                                   std::string worker_path, std::vector<std::string> &worker_argv,
+                                                   std::vector<std::string> &worker_env)
+    : manager_port_(manager_port),
+      worker_port_base_(worker_port_base),
+      worker_id_(0),
+      worker_argv_(worker_argv),
+      worker_env_(worker_env) {
   // Validate API server path pointing to a regular file
   char *worker_path_abs = realpath(worker_path.c_str(), NULL);
   bool file_exist = false;
@@ -79,8 +84,10 @@ void ManagerServiceServerBase::HandleAccept(std::unique_ptr<tcp::socket> socket,
 ava_proto::WorkerAssignReply ManagerServiceServerBase::HandleRequest(const ava_proto::WorkerAssignRequest &request) {
   ava_proto::WorkerAssignReply reply;
 
+  // Start from input environment variables
+  std::vector<std::string> environments(worker_env_);
+
   // Let first N GPUs visible
-  std::vector<std::string> environments;
   if (request.gpu_count() > 0) {
     std::string visible_devices = "CUDA_VISIBLE_DEVICES=";
     for (uint32_t i = 0; i < request.gpu_count() - 1; ++i) {

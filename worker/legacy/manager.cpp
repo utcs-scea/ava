@@ -20,8 +20,8 @@ uint32_t cfgWorkerPoolSize = 3;
 class LegacyManager : public ManagerServiceServerBase {
  public:
   LegacyManager(uint32_t port, uint32_t worker_port_base, std::string worker_path,
-                std::vector<std::string> &worker_argv)
-      : ManagerServiceServerBase(port, worker_port_base, worker_path, worker_argv) {
+                std::vector<std::string> &worker_argv, std::vector<std::string> &worker_env)
+      : ManagerServiceServerBase(port, worker_port_base, worker_path, worker_argv, worker_env) {
     // Spawn worker pool with default environment variables
     if (!cfgWorkerPoolDisabled) {
       for (uint32_t i = 0; i < cfgWorkerPoolSize; i++) {
@@ -33,8 +33,10 @@ class LegacyManager : public ManagerServiceServerBase {
 
  private:
   uint32_t SpawnWorkerWrapper() {
+    // Start from input environment variables
+    std::vector<std::string> environments(worker_env_);
+
     // Let API server use TCP channel
-    std::vector<std::string> environments;
     environments.push_back("AVA_CHANNEL=TCP");
 
     // Pass port to API server
@@ -103,8 +105,9 @@ int main(int argc, const char *argv[]) {
     std::quick_exit(EXIT_SUCCESS);
   });
   auto worker_argv = absl::GetFlag(FLAGS_worker_argv);
+  auto worker_env = absl::GetFlag(FLAGS_worker_env);
   manager = std::make_unique<LegacyManager>(absl::GetFlag(FLAGS_manager_port), absl::GetFlag(FLAGS_worker_port_base),
-                                            absl::GetFlag(FLAGS_worker_path), worker_argv);
+                                            absl::GetFlag(FLAGS_worker_path), worker_argv, worker_env);
   manager->RunServer();
   return 0;
 }
