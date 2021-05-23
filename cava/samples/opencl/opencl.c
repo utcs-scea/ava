@@ -24,6 +24,10 @@ ava_non_transferable_types {
 
 #include <CL/cl.h>
 
+ava_begin_utility;
+#include "common/logging.h"
+ava_end_utility;
+
 ava_type(cl_int) {
     ava_success(CL_SUCCESS);
 }
@@ -369,7 +373,7 @@ clCreateKernel(cl_program   program,
         for (i = 0; i < arg_num; i++) {
             if (clGetKernelArgInfo(ret, i, CL_KERNEL_ARG_TYPE_NAME, sizeof(arg_type), arg_type, NULL) < 0) {
                 clGetKernelArgInfo(ret, i, CL_KERNEL_ARG_ADDRESS_QUALIFIER, sizeof(arg_addr), &arg_addr, NULL);
-                DEBUG_PRINT("arg#%d address qualifier=%X\n", i, arg_addr);
+                ava_debug("arg#%d address qualifier=%X\n", i, arg_addr);
                 if (arg_addr == CL_KERNEL_ARG_ADDRESS_PRIVATE)
                     ava_metadata(ret)->kernel_arg_is_handle[i] = 0;
                 else
@@ -377,7 +381,7 @@ clCreateKernel(cl_program   program,
             }
             else {
                 ava_metadata(ret)->kernel_arg_is_handle[i] = ((arg_type && *arg_type && arg_type[strlen(arg_type) - 1] == '*') ? 1 : 0);
-                DEBUG_PRINT("arg#%d has type=%s\n", i, arg_type);
+                ava_debug("arg#%d has type=%s\n", i, arg_type);
             }
         }
     }

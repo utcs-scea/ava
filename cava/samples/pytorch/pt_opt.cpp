@@ -51,6 +51,7 @@ ava_begin_utility;
 
 #include "cudart_nw_internal.h"
 #include "common/linkage.h"
+#include "common/logging.h"
 #include "common/extensions/tf_optimization.h"
 #include "common/extensions/cmd_batching.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
@@ -362,7 +363,7 @@ ava_utility void __helper_load_function_arg_info_guest(void)
     int fd, read_ret;
     char filename[50];
     sprintf(filename, "/cuda_dumps/function_arg-%d.ava", ava_metadata(NULL)->num_fatbins);
-    DEBUG_PRINT("loading %s\n", filename);
+    AVA_DEBUG << "Loading " << filename;
     fd = open(filename, O_RDONLY, 0666);
     if (fd == -1) {
         fprintf(stderr, "open [errno=%d, errstr=%s] at %s:%d",
@@ -398,7 +399,7 @@ ava_utility void __helper_load_function_arg_info_guest(void)
                 errno, strerror(errno), __FILE__, __LINE__);
             exit(EXIT_FAILURE);
         }
-        DEBUG_PRINT("function %d (%s) has argc = %d\n",
+        ava_debug("function %d (%s) has argc = %d",
                     fatbin_funcs->len - 1, func_name, func->argc);
         /* Insert into the function table */
         g_ptr_array_add(fatbin_funcs, (gpointer)func);
@@ -430,7 +431,7 @@ ava_utility GHashTable *__helper_load_function_arg_info(void) {
     int fd, read_ret;
     char filename[50];
     sprintf(filename, "/cuda_dumps/function_arg-%d.ava", ava_metadata(NULL)->num_fatbins);
-    DEBUG_PRINT("loading %s\n", filename);
+    AVA_DEBUG << "Loading " << filename;
     fd = open(filename, O_RDONLY, 0666);
     if (fd == -1) {
         fprintf(stderr, "open [errno=%d, errstr=%s] at %s:%d",
@@ -467,7 +468,7 @@ ava_utility GHashTable *__helper_load_function_arg_info(void) {
             exit(EXIT_FAILURE);
         }
 
-        DEBUG_PRINT("function %d (%s) has argc = %d\n",
+        ava_debug("function %d (%s) has argc = %d",
                     fatbin_funcs->len - 1, func_name, func->argc);
         /* Insert into the function table */
         g_ptr_array_add(fatbin_funcs, (gpointer)func);
@@ -494,7 +495,7 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     struct stat file_stat;
     char filename[50];
     sprintf(filename, "/cuda_dumps/fatbin-%d.ava", ava_metadata(NULL)->num_fatbins);
-    DEBUG_PRINT("loading %s\n", filename);
+    AVA_DEBUG << "Loading " << filename;
     fd = open(filename, O_RDONLY, 0666);
     if (fd == -1) {
         fprintf(stderr, "open [errno=%d, errstr=%s] at %s:%d",
@@ -525,7 +526,7 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     close(fd);
 
     struct fatBinaryHeader *fbh = (struct fatBinaryHeader *)fatbin;
-    DEBUG_PRINT("Read fatbin-%d.ava size = %lu, should be %llu\n",
+    ava_debug("Read fatbin-%d.ava size = %lu, should be %llu",
             ava_metadata(NULL)->num_fatbins,
             fatbin_size,
             fbh->headerSize + fbh->fatSize);
@@ -575,7 +576,7 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
             exit(EXIT_FAILURE);
         }
         if (size == 0) {      // Meet separator
-            DEBUG_PRINT("Finish reading functions for fatbin-%d.ava\n", ava_metadata(NULL)->num_fatbins - 1);
+            ava_debug("Finish reading functions for fatbin-%d.ava", ava_metadata(NULL)->num_fatbins - 1);
             break;
         }
         deviceFun = (char *)malloc(size);
@@ -727,7 +728,7 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
         else
             wSize = NULL;
 
-        DEBUG_PRINT("Register function deviceName = %s\n", deviceName);
+        AVA_DEBUG << "Register function deviceName = " << deviceName;
         func_id = (void *)g_hash_table_lookup(ht, deviceName);
         assert(func_id != NULL && "func_id should not be NULL");
         func = static_cast<struct fatbin_function *>(g_ptr_array_index(fatbin_funcs, (intptr_t)func_id));
@@ -842,20 +843,20 @@ ava_end_replacement;
 ava_utility void __helper_assosiate_function(void *local,
                                             const char *deviceName) {
     if (ava_metadata(local)->func != NULL) {
-        DEBUG_PRINT("Function (%s) metadata (%p) already exists, func_id = %p\n",
+        ava_debug("Function (%s) metadata (%p) already exists, func_id = %p",
                 deviceName, local, ava_metadata(local)->func_id);
         return;
     }
 
     void *func_id = (void *)g_hash_table_lookup(ava_metadata(NULL)->ht_name2idx, deviceName);
     if (func_id == NULL) {
-        DEBUG_PRINT("deviceName is %s\n", deviceName);
+        AVA_DEBUG << "DeviceName is " << deviceName;
         assert(0 && "func_id should not be null");
     }
     ava_metadata(local)->func_id = func_id;
     ava_metadata(local)->func = static_cast<struct fatbin_function *>(
         g_ptr_array_index(ava_metadata(NULL)->fatbin_funcs, (intptr_t)func_id));
-    DEBUG_PRINT("Function (%s) metadata (%p) is associated, func_id = %p\n",
+    ava_debug("Function (%s) metadata (%p) is associated, func_id = %p",
             deviceName, local, ava_metadata(local)->func_id);
 }
 
@@ -1196,7 +1197,6 @@ ava_utility gint gpu_address_search_func(gconstpointer a, gconstpointer b)
 {
     struct gpu_address_range *r =
         (struct gpu_address_range *)g_tree_lookup(gpu_address_set, a);
-    //DEBUG_PRINT("Check 0x%lx in [%lx, %lx), key=%lx\n", (uintptr_t)b, r->start, r->end, (uintptr_t)a);
     if (r->start > (uintptr_t)b) return -1;
     if (r->end <= (uintptr_t)b) return 1;
     return 0;
@@ -1214,14 +1214,12 @@ cudaPointerGetAttributes(struct cudaPointerAttributes *attributes, const void *p
     if (res) {
         attributes->type = cudaMemoryTypeDevice; // maybe cudaMemoryTypeManaged?
         attributes->memoryType = cudaMemoryTypeDevice;
-        //DEBUG_PRINT("Pointer 0x%lx is on device\n", (uintptr_t)ptr);
         return cudaSuccess;
     }
 
     attributes->type = cudaMemoryTypeUnregistered;
     attributes->memoryType = cudaMemoryTypeUnregistered;
     cuda_last_error = cudaErrorInvalidValue;
-    //DEBUG_PRINT("Pointer 0x%lx is on host\n", (uintptr_t)ptr);
     return cudaErrorInvalidValue;
 }
 ava_end_replacement;
@@ -1645,7 +1643,7 @@ ava_utility void __helper_save_gpu_address_range(CUdeviceptr *dptr, size_t bytes
             range->start = (uintptr_t)*dptr;
             range->end = (uintptr_t)*dptr + bytesize;
             g_tree_insert(gpu_address_set, (gpointer)range->start, (gpointer)range);
-            DEBUG_PRINT("Save GPU address range [%lx, %lx)\n", range->start, range->end);
+            ava_debug("Save GPU address range [%lx, %lx)", range->start, range->end);
         }
     }
 }
@@ -24186,12 +24184,12 @@ ava_utility void __helper_guestlib_init_prologue() {
             errno, strerror(errno), __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
-    DEBUG_PRINT("Fatbinary number = %d\\n", fatbin_num);
+    AVA_DEBUG << "Fatbinary number = " << fatbin_num;
     int i;
     ava_metadata(NULL)->num_fatbins = 0;
-    for (i = 0; i < fatbin_num; i++) {{
+    for (i = 0; i < fatbin_num; i++) {
         __helper_load_function_arg_info_guest();
-    }}
+    }
 #endif
     guestlib_tf_opt_init();
 }
@@ -24220,11 +24218,11 @@ ava_utility void __helper_worker_init_epilogue() {
             errno, strerror(errno), __FILE__, __LINE__);
         exit(EXIT_FAILURE);
     }
-    DEBUG_PRINT("Fatbinary number = %d\\n", fatbin_num);
+    AVA_DEBUG << "Fatbinary number = " << fatbin_num;
     int i;
     void *fatCubin;
     void **fatbin_handle;
-    for (i = 0; i < fatbin_num; i++) {{
+    for (i = 0; i < fatbin_num; i++) {
         fatCubin = malloc(sizeof(struct fatbin_wrapper));
         ret = read(fd, fatCubin, sizeof(struct fatbin_wrapper));
         if (ret == -1) {
@@ -24234,7 +24232,7 @@ ava_utility void __helper_worker_init_epilogue() {
         }
         fatbin_handle = __helper_load_and_register_fatbin(fatCubin);
         g_ptr_array_add(fatbin_handle_list, (gpointer) fatbin_handle);
-    }}
+    }
     close(fd);
 #endif
     worker_tf_opt_init();

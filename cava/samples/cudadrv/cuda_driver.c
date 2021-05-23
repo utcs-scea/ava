@@ -16,11 +16,13 @@ ava_functions {
 }
 
 #include <cuda.h>
+
 ava_begin_utility;
 #include <time.h>
 #include <stdio.h>
 #include <sys/time.h>
 #include <errno.h>
+#include "common/logging.h"
 ava_end_utility;
 
 typedef struct {
@@ -187,7 +189,7 @@ ava_utility void ava_parse_function_args(const char *name, int *func_argc,
     }
 
     for (i = 0; i < *func_argc; i++) {
-        DEBUG_PRINT("function arg#%d it is %sa handle\n", i, func_arg_is_handle[i]?"":"not ");
+        ava_debug("function arg#%d it is %sa handle\n", i, func_arg_is_handle[i]?"":"not ");
     }
 }
 

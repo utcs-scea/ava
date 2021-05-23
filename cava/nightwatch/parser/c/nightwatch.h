@@ -447,7 +447,6 @@ ava_nonconst_pointer_types ava_defaults {
 
 unsigned long int max(unsigned long int a, unsigned long int b);
 unsigned long int min(unsigned long int a, unsigned long int b);
-int DEBUG_PRINT(const char *fmt, ...);
 
 #include <ctype.h>
 #include <stdint.h>

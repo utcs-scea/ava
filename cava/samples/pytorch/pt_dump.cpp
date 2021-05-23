@@ -50,6 +50,7 @@ ava_begin_utility;
 #include <glib.h>
 #include "cudart_nw_internal.h"
 #include "common/linkage.h"
+#include "common/logging.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
 
 #if !defined(__dv)
@@ -187,7 +188,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
                 file_name, errno, strerror(errno), __FILE__, __LINE__);
             exit(EXIT_FAILURE);
         }
-        DEBUG_PRINT("Fatbinary counter = %d\n", fatbin_num);
+        AVA_DEBUG << "Fatbinary counter = " << fatbin_num;
         ret = write(fd, (const void *)&fatbin_num, sizeof(int));
         if (ret == -1) {
             fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
@@ -219,7 +220,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
                 fatbin_filename, errno, strerror(errno), __FILE__, __LINE__);
             exit(EXIT_FAILURE);
         }
-        DEBUG_PRINT("Dump fatbinary to %s\n", fatbin_filename);
+        AVA_DEBUG << "Dump fatbinary to " << fatbin_filename;
         ret = write(fd, (const void *)wp->ptr, fbh->headerSize + fbh->fatSize);
         if (ret == -1) {
             fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
@@ -274,7 +275,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
                 function_arg_filename, errno, strerror(errno), __FILE__, __LINE__);
             exit(EXIT_FAILURE);
         }
-        DEBUG_PRINT("Dump function argument info to %s\n", function_arg_filename);
+        AVA_DEBUG << "Dump function argument info to " << function_arg_filename;
     }
 
     while (fgets(line, sizeof(line), fp_pipe) != NULL) {
@@ -283,7 +284,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
             sprintf(name, line + 9, strlen(line) - 10);
             assert(strlen(line) - 10 < MAX_KERNEL_NAME_LEN);
             name[strlen(line) - 10] = '\0';
-            DEBUG_PRINT("[%d] %s@\n", *num_funcs, name);
+            ava_debug("[%d] %s@", *num_funcs, name);
 
             /* Create a new hash table entry */
             func = (struct fatbin_function *)g_malloc(sizeof(struct fatbin_function));
@@ -335,7 +336,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
                         sscanf(&line[i], "Size\t: 0x%lx", &size);
 
                         i = func->argc;
-                        //DEBUG_PRINT("ordinal=%d, size=%lx\n", ordinal, size);
+                        AVA_DEBUG << "ordinal=" << ordinal << ", size=" << size;
                         assert(ordinal < MAX_KERNEL_ARG);
                         func->args[ordinal].size = size;
                         ++(func->argc);
@@ -388,7 +389,7 @@ ava_utility void __helper_init_module(struct fatbin_wrapper *fatCubin, void **ha
     int ret;
     if (ava_metadata(NULL)->cuinit_called == 0) {
         ret = cuInit(0);
-        DEBUG_PRINT("ret=%d\n", ret);
+        AVA_DEBUG << "cuInit in " << __func__ << " ret=" << ret;
         assert(ret == CUDA_SUCCESS && "CUDA driver init failed");
         ava_metadata(NULL)->cuinit_called = 1;
     }
@@ -396,7 +397,6 @@ ava_utility void __helper_init_module(struct fatbin_wrapper *fatCubin, void **ha
     ava_metadata(NULL)->cur_module = NULL;
     ret = cuModuleLoadData(&ava_metadata(NULL)->cur_module, (void *)fatCubin->ptr);
     (void)ret;
-    DEBUG_PRINT("ret=%d, module=%lx\n", ret, (uintptr_t)ava_metadata(NULL)->cur_module);
     assert((ret == CUDA_SUCCESS || ret == CUDA_ERROR_NO_BINARY_FOR_GPU) && "Module load failed");
 }
 
@@ -595,7 +595,7 @@ __cudaRegisterFunction(
     if (ava_is_worker)
         __helper_dump_cuda_function(deviceFun, deviceName, thread_limit, tid, bid, bDim, gDim, wSize);
 
-    DEBUG_PRINT("register hostFun=%p, deviceFun=%s, deviceName=%s, thread_limit=%d, tid={%d,%d,%d}, bid={%d,%d,%d}, bDim={%d,%d,%d}, gDim={%d,%d,%d}\n",
+    ava_debug("Register hostFun=%p, deviceFun=%s, deviceName=%s, thread_limit=%d, tid={%d,%d,%d}, bid={%d,%d,%d}, bDim={%d,%d,%d}, gDim={%d,%d,%d}",
             (void *)hostFun, deviceFun, deviceName, thread_limit,
             tid?tid->x:0, tid?tid->y:0, tid?tid->z:0,
             bid?bid->x:0, bid?bid->y:0, bid?bid->z:0,

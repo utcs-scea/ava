@@ -25,7 +25,6 @@ ava_begin_utility;
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include <plog/Log.h>
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <driver_types.h>
@@ -36,6 +35,7 @@ ava_begin_utility;
 
 #include "cudart_nw_internal.h"
 #include "common/linkage.h"
+#include "common/logging.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
 #include "common/declaration.h"
 
@@ -139,7 +139,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
             sprintf(name, line + 9, strlen(line) - 10);
             assert(strlen(line) - 10 < MAX_KERNEL_NAME_LEN);
             name[strlen(line) - 10] = '\0';
-            LOG_DEBUG << "[" << *num_funcs << "] " << name;
+            AVA_DEBUG << "[" << *num_funcs << "] " << name;
 
             if (g_hash_table_lookup(*fatbin_funcs, name) != NULL)
                 continue;
@@ -275,7 +275,7 @@ __cudaRegisterFunction(
 {
     ava_disable_native_call;
 
-    LOG_DEBUG << "register hostFun=" << (void *)hostFun
+    AVA_DEBUG << "Register hostFun=" << (void *)hostFun
               << ", deviceFun=" << deviceFun
               << ", deviceName=" << deviceName
               << ", thread_limit=" << thread_limit
