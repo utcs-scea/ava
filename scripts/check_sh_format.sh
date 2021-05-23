@@ -18,7 +18,7 @@ if [ "$1" == "-fix" ]; then
 fi
 
 ROOTS="$*"
-PRUNE_PATHS="llvm test"
+PRUNE_PATHS="llvm test third_party"
 PRUNE_NAMES="build*"
 
 emit_prunes() {

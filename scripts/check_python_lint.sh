@@ -14,7 +14,7 @@ LINT=${PYLINT:-pylint}
 ARGS="-j 0 --rcfile=${GIT_ROOT}/.pylintrc --suggestion-mode=n"
 ROOTS=("$@")
 FAILED=
-PRUNE_PATHS="cava/nightwatch llvm"
+PRUNE_PATHS="cava/nightwatch llvm third_party"
 PRUNE_NAMES=".git build* nightwatch* third_party*"
 TEST_DIRS="${GIT_ROOT}/tests/"
 # lint warnings that are useless for tests since tests are run for ci anyway
