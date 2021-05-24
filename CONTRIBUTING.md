@@ -44,7 +44,7 @@ We categorize issues into four kinds:
 - The [`question` label](https://github.com/utcs-scea/ava/labels/question) is for any non-development questions such as for setting AvA up.
 - The [`bug` label](https://github.com/utcs-scea/ava/labels/bug) is for any bug that exists in the current AvA code or dependencies.
 - The [`enhancement` label](https://github.com/utcs-scea/ava/labels/enhancement) is for missing features that AvA may be good to have.
-- The [`refactor` label](https://github.com/utcs-scea/ava/labels/refactor) is for refactoring or reimplementing existing codebase.
+- The [`refactor` label](https://github.com/utcs-scea/ava/labels/refactor) is for refactoring or reimplementing existing codebase, or improving the documentations.
 
 An issue may be tagged with the following labels:
 - The [`duplicate` label](https://github.com/utcs-scea/ava/labels/duplicate) is for any duplicated questions or issues.
