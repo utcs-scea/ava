@@ -6,6 +6,8 @@
 #include <cuda_runtime_api.h>
 #include <glib.h>
 
+#include <algorithm>
+
 #define MAX_KERNEL_ARG 30
 #define MAX_KERNEL_NAME_LEN 1024
 #define MAX_ASYNC_BUFFER_NUM 16
@@ -13,6 +15,16 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif /* __cplusplus */
+
+int deference_int_pointer(int *p);
+
+#define cu_in_out_buffer(x, y)                                                \
+  ({                                                                          \
+    if (ava_is_in)                                                            \
+      ava_buffer(x);                                                          \
+    else                                                                      \
+      ava_buffer(std::min(x, y == (void *)0 ? x : deference_int_pointer(y))); \
+  })
 
 struct fatbin_wrapper {
   uint32_t magic;
