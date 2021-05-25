@@ -6,6 +6,13 @@
 
 #include <stdexcept>
 
+int deference_int_pointer(int *p) {
+  if (p)
+    return *p;
+  else
+    return 0;
+}
+
 size_t __helper_fatbin_size(const void *cubin) {
   struct fatBinaryHeader *fbh = (struct fatBinaryHeader *)cubin;
   return fbh->fatSize + fbh->headerSize;

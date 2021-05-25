@@ -5657,7 +5657,7 @@ cudnnGetConvolutionForwardAlgorithm_v7(cudnnHandle_t                       handl
         ava_out; ava_buffer(1);
     }
     ava_argument(perfResults) {
-        ava_out; ava_buffer(1);
+        ava_out; cu_in_out_buffer(requestedAlgoCount, returnedAlgoCount);
     }
 }
 

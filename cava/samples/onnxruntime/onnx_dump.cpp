@@ -5597,7 +5597,7 @@ cudnnGetConvolutionForwardAlgorithm_v7(cudnnHandle_t                       handl
         ava_out; ava_buffer(1);
     }
     ava_argument(perfResults) {
-        ava_out; ava_buffer(1);
+        ava_out; cu_in_out_buffer(requestedAlgoCount, returnedAlgoCount);
     }
 }
 
@@ -6977,8 +6977,6 @@ cudnnFindConvolutionForwardAlgorithm(cudnnHandle_t handle,
     fprintf(stderr, "%s is not implemented\n", __func__);
     abort();
 }
-
-#define cu_in_out_buffer(x, y) ({ if(ava_is_in) ava_buffer(x); else ava_buffer(std::min(x, y == (void*)0 ? x : *y)); })
 
 cudnnStatus_t CUDNNWINAPI
 cudnnFindConvolutionForwardAlgorithmEx(cudnnHandle_t handle,
