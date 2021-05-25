@@ -7404,7 +7404,17 @@ cudnnGetConvolutionBackwardFilterAlgorithm_v7(cudnnHandle_t handle,
                                               int *returnedAlgoCount,
                                               cudnnConvolutionBwdFilterAlgoPerf_t *perfResults)
 {
-    ava_unsupported;
+    ava_argument(handle) ava_handle;
+    ava_argument(srcDesc) ava_handle;
+    ava_argument(diffDesc) ava_handle;
+    ava_argument(convDesc) ava_handle;
+    ava_argument(gradDesc) ava_handle;
+    ava_argument(returnedAlgoCount) {
+        ava_out; ava_buffer(1);
+    }
+    ava_argument(perfResults) {
+        ava_out; cu_in_out_buffer(requestedAlgoCount, returnedAlgoCount);
+    }
 }
 
 /*
@@ -7528,7 +7538,17 @@ cudnnGetConvolutionBackwardDataAlgorithm_v7(cudnnHandle_t handle,
                                             int *returnedAlgoCount,
                                             cudnnConvolutionBwdDataAlgoPerf_t *perfResults)
 {
-    ava_unsupported;
+    ava_argument(handle) ava_handle;
+    ava_argument(filterDesc) ava_handle;
+    ava_argument(diffDesc) ava_handle;
+    ava_argument(convDesc) ava_handle;
+    ava_argument(gradDesc) ava_handle;
+    ava_argument(returnedAlgoCount) {
+        ava_out; ava_buffer(1);
+    }
+    ava_argument(perfResults) {
+        ava_out; cu_in_out_buffer(requestedAlgoCount, returnedAlgoCount);
+    }
 }
 
 /* Helper function to return the minimum size of the workspace to be passed to the convolution given an algo*/
@@ -22392,7 +22412,8 @@ __host__ cudaError_t CUDARTAPI cudaMemset3D(struct cudaPitchedPtr pitchedDevPtr,
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemsetAsync(void *devPtr, int value, size_t count, cudaStream_t stream __dv(0))
 {
-    ava_unsupported;
+    ava_argument(devPtr) ava_opaque;
+    ava_argument(stream) ava_handle;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemset2DAsync(void *devPtr, size_t pitch, int value, size_t width, size_t height, cudaStream_t stream __dv(0))
