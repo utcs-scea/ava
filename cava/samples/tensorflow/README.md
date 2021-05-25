@@ -8,11 +8,17 @@ instructions.
 Build specification
 ===================
 
+Generate TensorFlow specifications in `~/ava` with
+
+```shell
+./generate.py -s tf_dump tf_opt
+```
+
 Configure AvA in `~/ava-build` with
 
 ```shell
-cmake -DAVA_GEN_TF_SPEC=ON -DAVA_MANAGER_LEGACY=ON ../ava
-make
+cmake -DAVA_GEN_TENSORFLOW_DUMP_SPEC=ON -DAVA_GEN_TENSORFLOW_OPT_SPEC=ON -DAVA_MANAGER_LEGACY=ON ../ava
+make -j`nproc`
 ```
 
 Run benchmark
