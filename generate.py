@@ -55,19 +55,44 @@ def download_llvm_lib():
 
 
 CAVA_DIR = os.path.dirname(os.path.realpath(sys.argv[0])) + "/cava"
+CUDA_10_1_CFLAGS = "-I/usr/local/cuda-10.1/include".split(" ")
 GLIB2_CFLAGS = pkgconfig.cflags("glib-2.0").split(" ")
 
+
+def check_cflags(force_build: bool = False):
+    any_warning = False
+
+    def include_dir_exists(cflag: str) -> bool:
+        assert cflag.startswith("-I"), "Invalid header include flag"
+        if not os.path.exists(cflag[2:]):
+            logger.warning(f"Include directory not found: {cflag[2:]}")
+            return False
+        return True
+
+    if not GLIB2_CFLAGS:
+        logger.warning("GLIB2_CFLAGS is empty. Are you running in a virtual environment?")
+        any_warning = True
+
+    for cflag in CUDA_10_1_CFLAGS + GLIB2_CFLAGS:
+        if cflag.startswith("-I"):
+            if not include_dir_exists(cflag):
+                any_warning = True
+
+    if any_warning and not force_build:
+        input("Press Enter to continue...")
+
+
 SPEC_LIST = {
-    "cudadrv": ("samples/cudadrv/cuda_driver.c", ["-I/usr/local/cuda-10.1/include"]),
-    "cudart": ("samples/cudart/cudart.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "cudadrv": ("samples/cudadrv/cuda_driver.c", [] + CUDA_10_1_CFLAGS),
+    "cudart": ("samples/cudart/cudart.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS),
     "demo": ("samples/demo/demo.c", ["-Iheaders"]),
     "gti": ("samples/gti/gti.c", []),
     "ncsdk": ("samples/ncsdk/mvnc.c", []),
-    "onnx_dump": ("samples/onnxruntime/onnx_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
-    "onnx_opt": ("samples/onnxruntime/onnx_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "onnx_dump": ("samples/onnxruntime/onnx_dump.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS),
+    "onnx_opt": ("samples/onnxruntime/onnx_opt.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS),
     "opencl": ("samples/opencl/opencl.c", []),
-    "pt_dump": ("samples/pytorch/pt_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
-    "pt_opt": ("samples/pytorch/pt_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "pt_dump": ("samples/pytorch/pt_dump.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS),
+    "pt_opt": ("samples/pytorch/pt_opt.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS),
     "qat": (
         "samples/quickassist/qat.c",
         [
@@ -77,8 +102,8 @@ SPEC_LIST = {
     ),
     "test": ("samples/test/libtrivial.c", ["-I../test"]),
     "tf_c": ("samples/tensorflow_c/tf_c.c", []),
-    "tf_dump": ("samples/tensorflow/tf_dump.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
-    "tf_opt": ("samples/tensorflow/tf_opt.cpp", ["-I/usr/local/cuda-10.1/include", "-Iheaders"] + GLIB2_CFLAGS),
+    "tf_dump": ("samples/tensorflow/tf_dump.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS),
+    "tf_opt": ("samples/tensorflow/tf_opt.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS),
 }
 
 
@@ -97,9 +122,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "-s", "--specs", nargs="+", default=[], choices=SPEC_LIST.keys(), help="Specification shortnames"
     )
+    parser.add_argument("-f", "--force", action="store_true", help="Build specifications regardless any warnings")
     args = parser.parse_args()
 
     download_llvm_lib()
+
+    check_cflags(args.force)
 
     for spec in args.specs:
         generate_code(spec)

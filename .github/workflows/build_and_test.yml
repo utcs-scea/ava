@@ -50,7 +50,7 @@ jobs:
     - name: Download ava-llvm and generate codes
       if: startsWith(matrix.os, 'ubuntu-')
       run: |
-        python3 generate.py -s demo test
+        python3 generate.py -f -s demo test
 
     ###
     # Standard CMake build process

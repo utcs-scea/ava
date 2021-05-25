@@ -67,6 +67,7 @@ target_link_libraries(${{SUBPROJECT_PREFIX}}_worker
   ${{GLIB2_LIBRARIES}}
   ${{Boost_LIBRARIES}}
   Threads::Threads
+  fmt::fmt
   {api.libs}
 )
 set_target_properties(${{SUBPROJECT_PREFIX}}_worker PROPERTIES OUTPUT_NAME "worker")
@@ -96,6 +97,7 @@ target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
   ${{GLIB2_LIBRARIES}}
   ${{Boost_LIBRARIES}}
   Threads::Threads
+  fmt::fmt
   ${{Config++}}
 )
 target_compile_options(${{SUBPROJECT_PREFIX}}_guestlib
