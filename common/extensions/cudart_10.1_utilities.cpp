@@ -1,5 +1,6 @@
 #include "cudart_10.1_utilities.hpp"
 
+#include <cuda_runtime_api.h>
 #include <fatbinary.h>
 #include <plog/Log.h>
 #include <stdlib.h>
@@ -74,7 +75,7 @@ void __helper_print_fatcubin_info(void *fatCubin, void **ret) {
   for (j = i; j < i + 32; j++) printf("%.2X ", fatBinaryEnd[j] & 0xFF);
   printf("\n");
 
-  printf("ret=%p\n", ret);
+  printf("ret=%p\n", (void *)ret);
   printf("fatCubin=%p, *ret=%p\n", (void *)fatCubin, *ret);
 }
 
@@ -86,7 +87,7 @@ void __helper_unregister_fatbin(void **fatCubinHandle) {
 void __helper_parse_function_args(const char *name, struct kernel_arg *args) {
   unsigned i = 0, skip = 0;
 
-  int argc = 0;
+  unsigned int argc = 0;
   if (strncmp(name, "_Z", 2)) abort();
   LOG_DEBUG << "Parse CUDA kernel " << name;
 
@@ -355,11 +356,19 @@ cudaError_t __helper_occupancy_max_active_blocks_per_multiprocessor_with_flags(i
 
 void __helper_print_pointer_attributes(const struct cudaPointerAttributes *attributes, const void *ptr) {
   LOG_DEBUG << "Pointer " << std::hex << (uintptr_t)ptr << " attributes = {" << std::endl
+#if (CUDART_VERSION >= 1000)
+            << "    memoryType = " << std::dec << attributes->type << "," << std::endl
+#else
             << "    memoryType = " << std::dec << attributes->memoryType << "," << std::endl
+#endif
             << "    type = " << attributes->type << "," << std::endl
             << "    device = " << attributes->device << "," << std::endl
             << "    devicePointer = " << std::hex << attributes->devicePointer << "," << std::endl
             << "    hostPointer = " << attributes->hostPointer << "," << std::endl
+#if (CUDART_VERSION >= 1000)
+            << "    isManaged = " << std::dec << (attributes->type == cudaMemoryTypeManaged) << "," << std::endl
+#else
             << "    isManaged = " << std::dec << attributes->isManaged << "," << std::endl
+#endif
             << "}";
 }

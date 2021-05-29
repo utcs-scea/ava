@@ -136,10 +136,9 @@ ssize_t command_channel_log_transfer_command(struct command_channel_log *c, cons
   struct command_channel_log *chan = (struct command_channel_log *)c;
   ssize_t pos = lseek(chan->fd, 0, SEEK_END);  // Seek to end.
   void *cmd_data_region = command_channel_get_data_region(source, cmd);
-  struct record_command_metadata metadata = {
-      .size = cmd->command_size + cmd->region_size,
-      .flags = 0,
-  };
+  struct record_command_metadata metadata = {};
+  metadata.size = cmd->command_size + cmd->region_size;
+  metadata.flags = 0;
 
   LOG_DEBUG << "record command " << cmd->command_id << " size " << std::hex << metadata.size;
   ssize_t ret;
@@ -244,18 +243,18 @@ void command_channel_log_free(struct command_channel *c) {
 //! Constructor
 
 static struct command_channel_vtable command_channel_log_vtable = {
-  command_channel_buffer_size : command_channel_log_buffer_size,
-  command_channel_new_command : command_channel_log_new_command,
-  command_channel_attach_buffer : command_channel_log_attach_buffer,
-  command_channel_send_command : command_channel_log_send_command,
-  command_channel_transfer_command : (void (*)(struct command_channel *, const struct command_channel *,
-                                               const struct command_base *))command_channel_log_transfer_command,
-  command_channel_receive_command : command_channel_load_next_command,
-  command_channel_get_buffer : command_channel_load_get_buffer,
-  command_channel_get_data_region : command_channel_load_get_data_region,
-  command_channel_free_command : command_channel_load_free_command,
-  command_channel_free : command_channel_log_free,
-  command_channel_print_command : command_channel_simple_print_command
+    command_channel_log_buffer_size,    // command_channel_buffer_size
+    command_channel_log_new_command,    // command_channel_new_command
+    command_channel_log_attach_buffer,  // command_channel_attach_buffer
+    command_channel_log_send_command,   // command_channel_send_command
+    (void (*)(struct command_channel *, const struct command_channel *,
+              const struct command_base *))command_channel_log_transfer_command,  // command_channel_transfer_command
+    command_channel_load_next_command,                                            // command_channel_receive_command,
+    command_channel_load_get_buffer,                                              // command_channel_get_buffer
+    command_channel_load_get_data_region,                                         // command_channel_get_data_region
+    command_channel_load_free_command,                                            // command_channel_free_command
+    command_channel_log_free,                                                     // command_channel_free
+    command_channel_simple_print_command,                                         // command_channel_print_command
 };
 
 struct command_channel_log *command_channel_log_new(int worker_port) {
