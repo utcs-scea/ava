@@ -118,7 +118,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
     /* Execute cuobjdump and construct function information table */
     FILE *fp_pipe;
     char line[2048];
-    int ordinal;
+    unsigned int ordinal;
     size_t i;
     size_t size;
     char name[MAX_KERNEL_NAME_LEN]; /* mangled name */
