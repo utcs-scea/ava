@@ -8,6 +8,7 @@
 #include <atomic>
 #include <cstdint>
 
+#include "common/declaration.h"
 #include "common/shadow_thread_pool.hpp"
 
 struct ava_endpoint __ava_endpoint;
@@ -249,7 +250,7 @@ static void _ava_transfer_command(struct command_channel *output_chan, struct co
   command_channel_free_command((struct command_channel *)log_chan, msg);
 }
 
-static void _ava_extract_explicit(gpointer obj, gpointer value, struct ava_extraction_state_t *state) {
+static void _ava_extract_explicit(gpointer obj, gpointer AVA_UNUSED(value), struct ava_extraction_state_t *state) {
   struct ava_metadata_base *metadata = (struct ava_metadata_base *)g_hash_table_lookup(state->metadata_map, obj);
   if (metadata == NULL) return;
   if (!metadata->extract) return;
@@ -440,7 +441,7 @@ struct ava_metadata_base *ava_internal_metadata(struct ava_endpoint *endpoint, c
   return ret;
 }
 
-struct ava_metadata_base *ava_internal_metadata_no_create(struct ava_endpoint *endpoint, const void *ptr) {
+struct ava_metadata_base *ava_internal_metadata_no_create(struct ava_endpoint *AVA_UNUSED(endpoint), const void *ptr) {
   pthread_mutex_lock(&metadata_map_mutex);
   struct ava_metadata_base *ret = (struct ava_metadata_base *)g_hash_table_lookup(metadata_map, ptr);
   pthread_mutex_unlock(&metadata_map_mutex);
@@ -744,7 +745,8 @@ void *ava_shadow_buffer_new_shadow_unlocked(struct ava_endpoint *endpoint, void 
 }
 
 void ava_shadow_buffer_new_solid_unlocked(struct ava_endpoint *endpoint, void *local, size_t size,
-                                          enum ava_lifetime_t lifetime, ava_allocator alloc, ava_deallocator dealloc) {
+                                          enum ava_lifetime_t AVA_UNUSED(lifetime), ava_allocator AVA_UNUSED(alloc),
+                                          ava_deallocator AVA_UNUSED(dealloc)) {
   // TODO: remove alloc and dealloc parameters.
   assert(dealloc == NULL);
 
@@ -804,8 +806,9 @@ void *ava_shadow_buffer_attach_buffer(struct ava_endpoint *endpoint, struct comm
 }
 
 void *ava_shadow_buffer_attach_buffer_without_data(struct ava_endpoint *endpoint, struct command_channel *chan,
-                                                   struct command_base *cmd, const void *local, const void *data_buffer,
-                                                   size_t size, enum ava_lifetime_t lifetime, ava_allocator alloc,
+                                                   struct command_base *cmd, const void *local,
+                                                   const void *AVA_UNUSED(data_buffer), size_t size,
+                                                   enum ava_lifetime_t lifetime, ava_allocator alloc,
                                                    ava_deallocator dealloc, struct ava_buffer_header_t *header) {
   ava_shadow_buffer_new_solid(endpoint, (void *)local, size, lifetime, alloc, dealloc);
   struct ava_metadata_base *metadata = ava_internal_metadata(endpoint, local);
@@ -857,7 +860,7 @@ void *ava_shadow_buffer_new_shadow(struct ava_endpoint *endpoint, void *id, size
 }
 
 void ava_shadow_buffer_new_solid(struct ava_endpoint *endpoint, void *local, size_t size, enum ava_lifetime_t lifetime,
-                                 ava_allocator alloc, ava_deallocator dealloc) {
+                                 ava_allocator AVA_UNUSED(alloc), ava_deallocator AVA_UNUSED(dealloc)) {
   pthread_mutex_lock(&endpoint->shadow_buffers.mutex);
   ava_shadow_buffer_new_solid_unlocked(endpoint, local, size, lifetime, NULL, NULL);
   pthread_mutex_unlock(&endpoint->shadow_buffers.mutex);

@@ -20,7 +20,7 @@ struct shadow_thread_pool_t {
 };
 
 struct shadow_thread_t {
-  intptr_t ava_id;
+  uintptr_t ava_id;
   GAsyncQueue *queue;
   pthread_t thread;
   struct shadow_thread_pool_t *pool;
@@ -33,17 +33,17 @@ struct shadow_thread_command_t {
 
 static void *shadow_thread_loop(void *arg);
 
-struct shadow_thread_t *shadow_thread_new(struct shadow_thread_pool_t *pool, intptr_t ava_id) {
-  assert(g_hash_table_lookup(pool->threads, (gpointer)ava_id) == NULL);
+struct shadow_thread_t *shadow_thread_new(struct shadow_thread_pool_t *pool, uintptr_t ava_id) {
+  assert(g_hash_table_lookup(pool->threads, static_cast<gpointer>(ava_id)) == NULL);
   AVA_DEBUG << "Creating shadow thread id = " << ava_id;
-  struct shadow_thread_t *t = (struct shadow_thread_t *)malloc(sizeof(struct shadow_thread_t));
+  struct shadow_thread_t *t = static_cast<struct shadow_thread_t *>(malloc(sizeof(struct shadow_thread_t)));
   t->ava_id = ava_id;
   t->queue = g_async_queue_new_full(NULL);
   t->pool = pool;
   int r = pthread_create(&t->thread, NULL, shadow_thread_loop, t);
   assert(r == 0);
   assert(t->thread != ava_id);  // TODO: This may spuriously fail.
-  r = g_hash_table_insert(pool->threads, (gpointer)ava_id, t);
+  r = g_hash_table_insert(pool->threads, reinterpret_cast<gpointer>(ava_id), t);
   assert(r);
   (void)r;
   return t;
@@ -53,7 +53,7 @@ struct shadow_thread_t *shadow_thread_self(struct shadow_thread_pool_t *pool) {
   struct shadow_thread_t *t = (struct shadow_thread_t *)pthread_getspecific(pool->key);
   if (t == NULL) {
     t = (struct shadow_thread_t *)malloc(sizeof(struct shadow_thread_t));
-    intptr_t ava_id = (intptr_t)pthread_self();  // TODO: This may not work correctly on non-Linux
+    uintptr_t ava_id = static_cast<uintptr_t>(pthread_self());  // TODO: This may not work correctly on non-Linux
     assert(g_hash_table_lookup(pool->threads, (gpointer)ava_id) == NULL);
     t->ava_id = ava_id;
     t->queue = g_async_queue_new_full(NULL);

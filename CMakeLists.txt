@@ -108,9 +108,20 @@ if (libclang-7_not_found)
 endif()
 
 ###### Dependent libraries ######
+include(FetchContent)
 
 add_subdirectory(third_party/fmt)
 add_subdirectory(third_party/abseil-cpp)
+
+FetchContent_Declare(gsl
+  GIT_REPOSITORY "https://github.com/microsoft/GSL"
+  GIT_TAG "v3.1.0"
+)
+FetchContent_GetProperties(gsl)
+if(NOT GSL_POPULATED)
+  FetchContent_Populate(gsl)
+  add_subdirectory(${gsl_SOURCE_DIR} ${gsl_BINARY_DIR})
+endif()
 
 ###### Build AvA manager ######
 

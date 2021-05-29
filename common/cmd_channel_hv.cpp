@@ -3,6 +3,7 @@
 
 #include "common/cmd_channel.hpp"
 #include "common/cmd_handler.hpp"
+#include "common/declaration.h"
 #include "common/devconf.h"
 #include "common/socket.hpp"
 
@@ -16,8 +17,9 @@ struct command_channel_hv {
 
 //! Utilities
 
-void command_channel_hv_report_storage_resource_allocation(struct command_channel *c, const char *const name,
-                                                           ssize_t amount) {
+void command_channel_hv_report_storage_resource_allocation(struct command_channel *AVA_UNUSED(c),
+                                                           const char *const AVA_UNUSED(name),
+                                                           ssize_t AVA_UNUSED(amount)) {
 #if ENABLE_SWAP
   struct command_channel_hv *chan = (struct command_channel_hv *)c;
   struct command_base *raw_msg = (struct command_base *)NLMSG_DATA(chan->nlh);

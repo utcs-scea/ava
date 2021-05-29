@@ -14,6 +14,7 @@ target_link_libraries(demo-manager
 set_target_properties(demo-manager
   PROPERTIES OUTPUT_NAME manager
 )
+add_compile_options(-Wall -Wextra -pedantic -Werror -Wno-write-strings)
 
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/manager
   TYPE BIN

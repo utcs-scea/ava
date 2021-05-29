@@ -53,6 +53,7 @@ void command_channel_print_command(const struct command_channel *chan, const str
   return ((struct command_channel_base *)chan)->vtable->command_channel_print_command(chan, cmd);
 }
 
-void command_channel_simple_print_command(const struct command_channel *chan, const struct command_base *cmd) {
+void command_channel_simple_print_command(const struct command_channel *AVA_UNUSED(chan),
+                                          const struct command_base *AVA_UNUSED(cmd)) {
   DEBUG_PRINT_COMMAND(chan, cmd);
 }

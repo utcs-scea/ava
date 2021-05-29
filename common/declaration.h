@@ -50,13 +50,21 @@
   DISALLOW_COPY_AND_ASSIGN(TypeName);        \
   DEFAULT_MOVE_AND_ASSIGN(TypeName)
 
-#define AVA_UNUSED(x) (void)x
 #define __AVA_PREDICT_FALSE(x) __builtin_expect(x, 0)
 #define __AVA_PREDICT_TRUE(x) __builtin_expect(false || (x), true)
 
 #define AVA_NORETURN __attribute__((noreturn))
 #define AVA_PREFETCH(addr) __builtin_prefetch(addr)
 #define AVA_MUST_USE_RESULT __attribute__((warn_unused_result))
+
+#if defined(__clang__)
+// Only clang supports warn_unused_result as a type annotation.
+#define AVA_MUST_USE_TYPE AVA_MUST_USE_RESULT
+#else
+#define AVA_MUST_USE_TYPE
+#endif
+
+#define AVA_UNUSED(NAME) NAME [[maybe_unused]]
 
 #ifndef __AVA_FILE_CREAT_MODE
 #define __AVA_FILE_CREAT_MODE 0664

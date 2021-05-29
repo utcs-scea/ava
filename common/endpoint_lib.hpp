@@ -22,6 +22,7 @@ using namespace std;
 
 #include "common/cmd_channel.hpp"
 #include "common/cmd_handler.hpp"
+#include "common/declaration.h"
 #include "common/murmur3.h"
 #include "common/shadow_thread_pool.hpp"
 
@@ -409,15 +410,14 @@ struct ava_buffer_header_t {
   size_t size;
 };
 
-__attribute__((pure)) static inline size_t ava_shadow_buffer_size(struct ava_endpoint *endpoint,
+__attribute__((pure)) static inline size_t ava_shadow_buffer_size(struct ava_endpoint *AVA_UNUSED(endpoint),
                                                                   struct command_channel *chan, size_t size) {
   return command_channel_buffer_size(chan, sizeof(struct ava_buffer_header_t)) +
          command_channel_buffer_size(chan, size);
 }
 
-__attribute__((pure)) static inline size_t ava_shadow_buffer_size_without_data(struct ava_endpoint *endpoint,
-                                                                               struct command_channel *chan,
-                                                                               size_t size) {
+__attribute__((pure)) static inline size_t ava_shadow_buffer_size_without_data(
+    struct ava_endpoint *AVA_UNUSED(endpoint), struct command_channel *chan, size_t AVA_UNUSED(size)) {
   return command_channel_buffer_size(chan, sizeof(struct ava_buffer_header_t));
 }
 

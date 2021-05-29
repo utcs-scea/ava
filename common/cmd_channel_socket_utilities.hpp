@@ -43,6 +43,6 @@ void *command_channel_socket_get_buffer(const struct command_channel *chan, cons
 void *command_channel_socket_get_data_region(const struct command_channel *c, const struct command_base *cmd);
 void command_channel_socket_free_command(struct command_channel *c, struct command_base *cmd);
 
-};  // namespace chansocketutil
+}  // namespace chansocketutil
 
 #endif  // AVA_COMMON_CMD_CHANNEL_SOCKET_UTILITIES_H_

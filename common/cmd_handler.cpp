@@ -159,8 +159,8 @@ static void replay_command(struct command_channel *chan, struct nw_handle_pool *
 // guestlib/src/init.c:102
 EXPORTED_WEAKLY int nw_end_migration_flag = 0;
 
-void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *handle_pool, struct command_channel *log,
-                          const struct command_base *cmd) {
+void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *handle_pool,
+                          struct command_channel *AVA_UNUSED(log), const struct command_base *cmd) {
   assert(cmd->api_id == COMMAND_HANDLER_API);
 
   struct command_channel *transfer_chan;

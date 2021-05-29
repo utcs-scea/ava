@@ -6,7 +6,10 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <gsl/gsl>
+
 #include "common/cmd_channel_impl.hpp"
+#include "common/declaration.h"
 #include "common/logging.h"
 
 #if _FILE_OFFSET_BITS != 64
@@ -32,7 +35,7 @@ struct command_private {
 
 //!-- Record APIs
 
-size_t command_channel_log_buffer_size(const struct command_channel *chan, size_t size) { return size; }
+size_t command_channel_log_buffer_size(const struct command_channel *AVA_UNUSED(chan), size_t size) { return size; }
 
 // TODO: Currently this implementation can only write to files because it uses
 // seek a lot.
@@ -201,7 +204,7 @@ struct command_base *command_channel_log_load_command(struct command_channel_log
   // PERFORMANCE: If this read turns out to be huge and a problem we could mmap
   // instead.
   size = read(chan->fd, cmd, metadata.size);
-  if (size != metadata.size) {
+  if (size != -1 && gsl::narrow_cast<size_t>(size) != metadata.size) {
     free(cmd);
     return NULL;
   }
@@ -216,19 +219,20 @@ struct command_base *command_channel_load_next_command(struct command_channel *c
 /**
  * Free the loaded command.
  */
-void command_channel_load_free_command(struct command_channel *c, struct command_base *cmd) { free(cmd); }
+void command_channel_load_free_command(struct command_channel *AVA_UNUSED(c), struct command_base *cmd) { free(cmd); }
 
 /**
  * Translate a buffer_id in the recorded command into a data pointer.
  * The returned pointer will be valid until `command_channel_load_free_command`
  * is called on `cmd`.
  */
-void *command_channel_load_get_buffer(const struct command_channel *chan, const struct command_base *cmd,
+void *command_channel_load_get_buffer(const struct command_channel *AVA_UNUSED(chan), const struct command_base *cmd,
                                       void *buffer_id) {
   return (void *)((uintptr_t)cmd + buffer_id);
 }
 
-void *command_channel_load_get_data_region(const struct command_channel *c, const struct command_base *cmd) {
+void *command_channel_load_get_data_region(const struct command_channel *AVA_UNUSED(c),
+                                           const struct command_base *cmd) {
   return (void *)((uintptr_t)cmd + cmd->command_size);
 }
 
