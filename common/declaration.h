@@ -64,7 +64,11 @@
 #define AVA_MUST_USE_TYPE
 #endif
 
+#ifdef __cplusplus
 #define AVA_UNUSED(NAME) NAME [[maybe_unused]]
+#else
+#define AVA_UNUSED(NAME) NAME __attribute__((unused))
+#endif
 
 #ifndef __AVA_FILE_CREAT_MODE
 #define __AVA_FILE_CREAT_MODE 0664
