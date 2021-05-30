@@ -18,7 +18,8 @@ namespace chansocketutil {
 /**
  * Print a command for debugging.
  */
-void command_channel_socket_print_command(const struct command_channel *chan, const struct command_base *cmd) {
+void command_channel_socket_print_command(const struct command_channel *AVA_UNUSED(chan),
+                                          const struct command_base *AVA_UNUSED(cmd)) {
   DEBUG_PRINT_COMMAND(chan, cmd);
 }
 
@@ -44,7 +45,7 @@ void command_channel_socket_free(struct command_channel *c) {
  * to a cache line, so as to maintain the alignment of buffers when
  * they are concatinated into the data region.
  */
-size_t command_channel_socket_buffer_size(const struct command_channel *c, size_t size) { return size; }
+size_t command_channel_socket_buffer_size(const struct command_channel *AVA_UNUSED(c), size_t size) { return size; }
 
 /**
  * Allocate a new command struct with size `command_struct_size` and
@@ -79,8 +80,8 @@ struct command_base *command_channel_socket_new_command(struct command_channel *
  * The combined attached buffers must fit within the initially
  * provided `data_region_size` (to `command_channel_new_command`).
  */
-void *command_channel_socket_attach_buffer(struct command_channel *c, struct command_base *cmd, void *buffer,
-                                           size_t size) {
+void *command_channel_socket_attach_buffer(struct command_channel *AVA_UNUSED(c), struct command_base *cmd,
+                                           void *buffer, size_t size) {
   assert(buffer && size != 0);
 
   struct block_seeker *seeker = (struct block_seeker *)cmd->reserved_area;
@@ -173,7 +174,7 @@ struct command_base *command_channel_socket_receive_command(struct command_chann
  * The returned pointer will be valid until
  * `command_channel_free_command` is called on `cmd`.
  */
-void *command_channel_socket_get_buffer(const struct command_channel *chan, const struct command_base *cmd,
+void *command_channel_socket_get_buffer(const struct command_channel *AVA_UNUSED(chan), const struct command_base *cmd,
                                         void *buffer_id) {
   return (void *)((uintptr_t)cmd + buffer_id);
 }
@@ -182,13 +183,14 @@ void *command_channel_socket_get_buffer(const struct command_channel *chan, cons
  * Returns the pointer to data region. The returned pointer is mainly
  * used for data extraction for migration.
  */
-void *command_channel_socket_get_data_region(const struct command_channel *c, const struct command_base *cmd) {
+void *command_channel_socket_get_data_region(const struct command_channel *AVA_UNUSED(c),
+                                             const struct command_base *cmd) {
   return (void *)((uintptr_t)cmd + cmd->command_size);
 }
 
 /**
  * Free a command returned by `command_channel_receive_command`.
  */
-void command_channel_socket_free_command(struct command_channel *c, struct command_base *cmd) { free(cmd); }
+void command_channel_socket_free_command(struct command_channel *AVA_UNUSED(c), struct command_base *cmd) { free(cmd); }
 
-};  // namespace chansocketutil
+}  // namespace chansocketutil

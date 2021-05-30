@@ -118,7 +118,8 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
     /* Execute cuobjdump and construct function information table */
     FILE *fp_pipe;
     char line[2048];
-    int i, ordinal;
+    unsigned int ordinal;
+    size_t i;
     size_t size;
     char name[MAX_KERNEL_NAME_LEN]; /* mangled name */
     struct fatbin_function *func;
@@ -155,9 +156,13 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
             func->argc = 0;
             while (fgets(line, sizeof(line), fp_pipe) != NULL) {
                 i = 0;
-                while (i < strlen(line) && isspace(line[i])) i++;
+                while (i < strlen(line) && isspace(line[i])) {
+                  i++;
+                }
                 /* Empty line means reaching the end of the function info */
-                if (i == strlen(line)) break;
+                if (i == strlen(line)) {
+                  break;
+                }
 
                 if (strncmp(&line[i], "Attribute:", 10) == 0) {
                     i += 10;
@@ -166,7 +171,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
                         /* Skip the format line */
                         char* s = fgets(line, sizeof(line), fp_pipe);
                         s = fgets(line, sizeof(line), fp_pipe);
-                        AVA_UNUSED(s);
+                        (void)s;
 
                         /* Get ordinal and size */
                         i = 0;
@@ -332,19 +337,19 @@ __cudaRegisterFunction(
 ava_begin_replacement;
 void CUDARTAPI
 __cudaRegisterVar(
-        void **fatCubinHandle,
-        char  *hostVar,
-        char  *deviceAddress,
-  const char  *deviceName,
-        int    ext,
-        size_t size,
-        int    constant,
-        int    global)
+        void ** AVA_UNUSED(fatCubinHandle),
+        char  * AVA_UNUSED(hostVar),
+        char  * AVA_UNUSED(deviceAddress),
+  const char  * AVA_UNUSED(deviceName),
+        int    AVA_UNUSED(ext),
+        size_t AVA_UNUSED(size),
+        int    AVA_UNUSED(constant),
+        int    AVA_UNUSED(global))
 {
 }
 
 EXPORTED void CUDARTAPI
-__cudaRegisterFatBinaryEnd(void **fatCubinHandle)
+__cudaRegisterFatBinaryEnd(void ** AVA_UNUSED(fatCubinHandle))
 {
 #warning This API is called for CUDA 10.1 and 10.2, but it seems to be able to be ignored.
 }
@@ -477,13 +482,13 @@ cudaFree(void *devPtr)
 /* Rich set of APIs */
 
 cudaError_t CUDARTAPI
-cudaLaunch(const void *func)
+cudaLaunch(const void * AVA_UNUSED(func))
 {
     ava_unsupported;
 }
 
 cudaError_t CUDARTAPI
-cudaSetupArgument(const void *arg, size_t size, size_t offset)
+cudaSetupArgument(const void * AVA_UNUSED(arg), size_t AVA_UNUSED(size), size_t AVA_UNUSED(offset))
 {
     ava_unsupported;
 }
@@ -628,8 +633,9 @@ cudaEventSynchronize(cudaEvent_t event)
 }
 
 __host__ cudaError_t CUDARTAPI
-cudaStreamAddCallback(cudaStream_t stream,
-        cudaStreamCallback_t callback, void *userData, unsigned int flags)
+cudaStreamAddCallback(cudaStream_t AVA_UNUSED(stream),
+        cudaStreamCallback_t AVA_UNUSED(callback),
+        void * AVA_UNUSED(userData), unsigned int AVA_UNUSED(flags))
 {
     ava_unsupported;
 }
@@ -701,7 +707,7 @@ cuModuleLoadData(CUmodule *module, const void *image)
 }
 
 CUresult CUDAAPI
-cuModuleLoadFatBinary(CUmodule *module, const void *fatCubin)
+cuModuleLoadFatBinary(CUmodule * AVA_UNUSED(module), const void * AVA_UNUSED(fatCubin))
 {
     ava_unsupported;
 }
@@ -873,19 +879,20 @@ cuCtxPopCurrent(CUcontext *pctx)
 }
 
 CUresult CUDAAPI
-cuFuncGetAttribute(int *pi, CUfunction_attribute attrib, CUfunction hfunc)
+cuFuncGetAttribute(int * AVA_UNUSED(pi), CUfunction_attribute AVA_UNUSED(attrib),
+    CUfunction AVA_UNUSED(hfunc))
 {
     ava_unsupported;
 }
 
 CUresult CUDAAPI
-cuFuncSetCacheConfig(CUfunction hfunc, CUfunc_cache config)
+cuFuncSetCacheConfig(CUfunction AVA_UNUSED(hfunc), CUfunc_cache AVA_UNUSED(config))
 {
     ava_unsupported;
 }
 
 CUresult CUDAAPI
-cuCtxGetSharedMemConfig(CUsharedconfig *pConfig)
+cuCtxGetSharedMemConfig(CUsharedconfig * AVA_UNUSED(pConfig))
 {
     ava_unsupported;
 }
@@ -911,7 +918,7 @@ cuStreamGetCtx(CUstream hStream, CUcontext *pctx)
 }
 
 CUresult CUDAAPI
-cuStreamAddCallback(CUstream hStream, CUstreamCallback callback, void *userData, unsigned int flags)
+cuStreamAddCallback(CUstream AVA_UNUSED(hStream), CUstreamCallback AVA_UNUSED(callback), void * AVA_UNUSED(userData), unsigned int AVA_UNUSED(flags))
 {
     ava_unsupported;
 }
@@ -1073,7 +1080,7 @@ cuDriverGetVersion(int *driverVersion)
 }
 
 CUresult CUDAAPI
-cuDeviceGetProperties(CUdevprop *prop, CUdevice dev)
+cuDeviceGetProperties(CUdevprop * AVA_UNUSED(prop), CUdevice AVA_UNUSED(dev))
 {
     ava_unsupported;
 }
@@ -1185,8 +1192,10 @@ cuStreamWaitEvent(CUstream hStream, CUevent hEvent, unsigned int Flags)
 }
 
 CUresult
-cuGetExportTable(const void **ppExportTable, const CUuuid * pExportTableId)
+cuGetExportTable(const void ** AVA_UNUSED(ppExportTable), const CUuuid * AVA_UNUSED(pExportTableId))
 {
+    (void) ppExportTable;
+    (void) pExportTableId;
     ava_unsupported;
 }
 
@@ -1242,7 +1251,7 @@ cublasGetMatrix(int rows, int cols, int elemSize,
 
 ava_begin_replacement;
 CUBLASAPI cublasStatus_t CUBLASWINAPI
-cublasGetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t *mode)
+cublasGetPointerMode_v2(cublasHandle_t AVA_UNUSED(handle), cublasPointerMode_t *mode)
 {
     /* XXX seems ok for tensorflow but might be wrong !FIXME */
     *mode = CUBLAS_POINTER_MODE_HOST;
@@ -1250,7 +1259,7 @@ cublasGetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t *mode)
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI
-cublasSetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t mode)
+cublasSetPointerMode_v2(cublasHandle_t AVA_UNUSED(handle), cublasPointerMode_t AVA_UNUSED(mode))
 {
     /* XXX seems ok for tensorflow but might be wrong ! FIXME */
     assert(mode == CUBLAS_POINTER_MODE_HOST);

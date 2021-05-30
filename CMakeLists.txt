@@ -108,9 +108,9 @@ if (libclang-7_not_found)
 endif()
 
 ###### Dependent libraries ######
-
 add_subdirectory(third_party/fmt)
 add_subdirectory(third_party/abseil-cpp)
+add_subdirectory(third_party/GSL)
 
 ###### Build AvA manager ######
 

@@ -112,7 +112,7 @@ struct command_channel_vtable command_channel_socket_tcp_vtable = {
     chansocketutil::command_channel_socket_get_buffer,       chansocketutil::command_channel_socket_get_data_region,
     chansocketutil::command_channel_socket_free_command,     chansocketutil::command_channel_socket_free,
     chansocketutil::command_channel_socket_print_command};
-};
+}
 
 // warning TODO: Does there need to be a separate socket specific function which
 // handles listening/accepting instead of connecting?
