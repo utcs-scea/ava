@@ -133,6 +133,10 @@ manager_address = "0.0.0.0:3333";
 gpu_memory = [1024L];
 EOF
 ```
+The guestlib assumes by default the configuration file is at `/etc/ava/guest.conf`,
+but any path can be used as long as the environment variable `AVA_CONFIG_FILE_PATH`
+is exported and contains the absolute path to the configuration file.
+
 
 Run the test program by
 
