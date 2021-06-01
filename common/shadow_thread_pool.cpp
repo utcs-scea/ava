@@ -34,7 +34,7 @@ struct shadow_thread_command_t {
 static void *shadow_thread_loop(void *arg);
 
 struct shadow_thread_t *shadow_thread_new(struct shadow_thread_pool_t *pool, uintptr_t ava_id) {
-  assert(g_hash_table_lookup(pool->threads, static_cast<gpointer>(ava_id)) == NULL);
+  assert(g_hash_table_lookup(pool->threads, reinterpret_cast<gpointer>(ava_id)) == NULL);
   AVA_DEBUG << "Creating shadow thread id = " << ava_id;
   struct shadow_thread_t *t = static_cast<struct shadow_thread_t *>(malloc(sizeof(struct shadow_thread_t)));
   t->ava_id = ava_id;
