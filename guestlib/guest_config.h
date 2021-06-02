@@ -49,8 +49,7 @@ class GuestConfig {
   plog::Severity logger_severity_;
 };
 
-
-char* getConfigFilePath();
+char *getConfigFilePath();
 
 std::shared_ptr<GuestConfig> readGuestConfig();
 

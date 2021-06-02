@@ -48,8 +48,8 @@ EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id) {
     // } else if (guestconfig::config->channel_ == "VSOCK") {
     //   chan = command_channel_socket_new();
   } else {
-    std::cerr << "Unsupported channel specified in " << guestconfig::getConfigFilePath() << ", expect channel = [\"TCP\"]"
-              << std::endl;
+    std::cerr << "Unsupported channel specified in " << guestconfig::getConfigFilePath()
+              << ", expect channel = [\"TCP\"]" << std::endl;
     exit(0);
   }
   if (!chan) {

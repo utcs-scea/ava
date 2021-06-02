@@ -6,8 +6,8 @@ namespace guestconfig {
 
 std::shared_ptr<GuestConfig> config;
 
-char* getConfigFilePath() {
-  return std::getenv("AVA_CONFIG_FILE_PATH") ? std::getenv("AVA_CONFIG_FILE_PATH") : (char*)kDefaultConfigFilePath;
+char *getConfigFilePath() {
+  return std::getenv("AVA_CONFIG_FILE_PATH") ? std::getenv("AVA_CONFIG_FILE_PATH") : (char *)kDefaultConfigFilePath;
 }
 
 std::shared_ptr<GuestConfig> readGuestConfig() {
