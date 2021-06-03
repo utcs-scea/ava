@@ -98,7 +98,7 @@ make -j`nproc`
 make install
 ```
 
-This generates the guestlib and API server codes in `ava/cava/demo` and
+This generates the guestlib and API server codes in `ava/cava/demo_nw` and
 installs their binary files to `build/install/demo`. The demo manager is
 compiled and installed into `build/install/bin`.
 
