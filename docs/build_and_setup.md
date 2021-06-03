@@ -108,7 +108,8 @@ ls install/demo/lib
 ls install/bin
 ```
 
-AvA's base repository includes a tiny standalone demo program.
+AvA's base repository includes a tiny standalone demo program. If compilation fails,
+make sure the Makefile has the correct path to the `build` folder.
 
 ```shell
 pushd .
@@ -120,7 +121,7 @@ popd
 Start the demo manager by
 
 ```shell
-./install/bin/demo_manager --worker_path install/demo_nw/bin/worker
+./install/bin/demo_manager --worker_path install/demo/bin/worker
 ```
 
 Add AvA configuration file:
@@ -132,6 +133,10 @@ manager_address = "0.0.0.0:3333";
 gpu_memory = [1024L];
 EOF
 ```
+The guestlib assumes by default the configuration file is at `/etc/ava/guest.conf`,
+but any path can be used as long as the environment variable `AVA_CONFIG_FILE_PATH`
+is exported and contains the absolute path to the configuration file.
+
 
 Run the test program by
 

@@ -11,7 +11,7 @@
 
 namespace guestconfig {
 
-constexpr char kConfigFilePath[] = "/etc/ava/guest.conf";
+constexpr char kDefaultConfigFilePath[] = "/etc/ava/guest.conf";
 constexpr char kDefaultChannel[] = "TCP";
 constexpr uint64_t kDefaultConnectTimeout = 5000;
 constexpr char kDefaultManagerAddress[] = "0.0.0.0:3334";
@@ -48,6 +48,8 @@ class GuestConfig {
   std::vector<uint64_t> gpu_memory_;
   plog::Severity logger_severity_;
 };
+
+char *getConfigFilePath();
 
 std::shared_ptr<GuestConfig> readGuestConfig();
 

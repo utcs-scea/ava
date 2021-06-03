@@ -4,7 +4,7 @@ project(ava)
 
 ###### Options ######
 
-set(CMAKE_BUILD_TYPE Release CACHE STRING "Build configuration (Relase/Debug)")
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Build configuration (Release/Debug)")
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)

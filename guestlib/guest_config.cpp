@@ -6,13 +6,17 @@ namespace guestconfig {
 
 std::shared_ptr<GuestConfig> config;
 
+char *getConfigFilePath() {
+  return std::getenv("AVA_CONFIG_FILE_PATH") ? std::getenv("AVA_CONFIG_FILE_PATH") : (char *)kDefaultConfigFilePath;
+}
+
 std::shared_ptr<GuestConfig> readGuestConfig() {
   libconfig::Config cfg;
 
   try {
-    cfg.readFile(guestconfig::kConfigFilePath);
+    cfg.readFile(guestconfig::getConfigFilePath());
   } catch (const libconfig::FileIOException &fioex) {
-    std::cerr << "I/O error when reading " << guestconfig::kConfigFilePath << std::endl;
+    std::cerr << "I/O error when reading " << guestconfig::getConfigFilePath() << std::endl;
     return nullptr;
   } catch (const libconfig::ParseException &pex) {
     std::cerr << "Parse error at " << pex.getFile() << ":" << pex.getLine() << " - " << pex.getError() << std::endl;

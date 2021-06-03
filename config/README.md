@@ -2,7 +2,9 @@ Configuration Files
 ===================
 
 Configuration files are replacing environment variables for AvA's settings.
-Guestlib reads `/etc/ava/guest.conf` for user-defined configurations.
+The guestlib reads `/etc/ava/guest.conf` by default for user-defined configurations,
+this can be changed by setting the environment variable `AVA_CONFIG_FILE_PATH`
+to the absolute path to a configuration file.
 
 Run `setup.sh` to install an example configuration.
 
