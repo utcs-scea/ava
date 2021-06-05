@@ -17,7 +17,7 @@ void guestlib_tf_opt_fini(void) {}
 void worker_tf_opt_init(void) { worker_cudnn_opt_init(); }
 
 CUresult __pool_cuEventCreate(CUevent *phEvent, size_t count) {
-  int i;
+  size_t i;
   CUevent *desc;
   CUresult res = CUDA_SUCCESS;
 
@@ -31,7 +31,7 @@ CUresult __pool_cuEventCreate(CUevent *phEvent, size_t count) {
 }
 
 CUresult __pool_cuEventDestroy(CUevent *hEvent, size_t count) {
-  int i;
+  size_t i;
   CUresult res;
 
   for (i = 0; i < count; i++) {

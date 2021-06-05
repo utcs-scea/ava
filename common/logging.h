@@ -4,6 +4,8 @@
 #ifdef __cplusplus
 #include <plog/Log.h>
 
+#include <memory>
+
 #include "declaration.h"
 
 #define PLOG_CAPTURE_FILE

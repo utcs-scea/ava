@@ -34,7 +34,9 @@ cudaError_t __helper_launch_kernel(struct fatbin_function *func, const void *hos
                                    void **args, size_t sharedMem, cudaStream_t stream) {
   cudaError_t ret = (cudaError_t)CUDA_ERROR_PROFILER_ALREADY_STOPPED;
 
-  if (func == NULL) return (cudaError_t)CUDA_ERROR_INVALID_PTX;
+  if (func == NULL) {
+    return (cudaError_t)CUDA_ERROR_INVALID_PTX;
+  }
 
   if (func->hostfunc != hostFun) {
     LOG_ERROR << "search host func " << hostFun << " -> stored " << (void *)func->hostfunc << " (device func "
