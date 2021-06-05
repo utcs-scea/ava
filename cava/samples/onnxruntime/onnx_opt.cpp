@@ -1108,14 +1108,12 @@ cudaFree(void *devPtr)
 cudaError_t CUDARTAPI
 cudaLaunch(const void *func)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
     ava_unsupported;
 }
 
 cudaError_t CUDARTAPI
 cudaSetupArgument(const void *arg, size_t size, size_t offset)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
     ava_unsupported;
 }
 
@@ -1406,7 +1404,6 @@ cuModuleLoadData(CUmodule *module, const void *image)
 CUresult CUDAAPI
 cuModuleLoadFatBinary(CUmodule *module, const void *fatCubin)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
     ava_unsupported;
 }
 
@@ -1607,21 +1604,18 @@ cuCtxPopCurrent(CUcontext *pctx)
 CUresult CUDAAPI
 cuFuncGetAttribute(int *pi, CUfunction_attribute attrib, CUfunction hfunc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
     ava_unsupported;
 }
 
 CUresult CUDAAPI
 cuFuncSetCacheConfig(CUfunction hfunc, CUfunc_cache config)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
     ava_unsupported;
 }
 
 CUresult CUDAAPI
 cuCtxGetSharedMemConfig(CUsharedconfig *pConfig)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
     ava_unsupported;
 }
 
@@ -1648,7 +1642,6 @@ cuStreamGetCtx(CUstream hStream, CUcontext *pctx)
 CUresult CUDAAPI
 cuStreamAddCallback(CUstream hStream, CUstreamCallback callback, void *userData, unsigned int flags)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
     ava_unsupported;
 }
 
@@ -1853,7 +1846,6 @@ cuDriverGetVersion(int *driverVersion)
 CUresult CUDAAPI
 cuDeviceGetProperties(CUdevprop *prop, CUdevice dev)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
     ava_unsupported;
 }
 
@@ -2006,7 +1998,6 @@ cuStreamWaitEvent(CUstream hStream, CUevent hEvent, unsigned int Flags)
 CUresult
 cuGetExportTable(const void **ppExportTable, const CUuuid * pExportTableId)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
     ava_unsupported;
 }
 
@@ -2029,8 +2020,7 @@ CUresult CUDAAPI cuOccupancyMaxActiveBlocksPerMultiprocessor(int *numBlocks,
         ava_out; ava_buffer(1);
     }
 
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUresult CUDAAPI cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(int *numBlocks,
@@ -2040,41 +2030,35 @@ CUresult CUDAAPI cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(int *numBl
         ava_out; ava_buffer(1);
     }
 
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* CUDABLAS API */
 
 CUBLASAPI cublasStatus_t  CUBLASWINAPI cublasGetAtomicsMode(cublasHandle_t handle, cublasAtomicsMode_t *mode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t  CUBLASWINAPI cublasSetAtomicsMode(cublasHandle_t handle, cublasAtomicsMode_t mode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasLoggerConfigure(int logIsOn, int logToStdOut, int logToStdErr, const char* logFileName)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSetLoggerCallback(cublasLogCallback userCallback)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetLoggerCallback(cublasLogCallback* userCallback)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -2082,30 +2066,26 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetLoggerCallback(cublasLogCallback*
 cublasStatus_t CUBLASWINAPI cublasSetVector (int n, int elemSize, const void *x,
                                              int incx, void *devicePtr, int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cublasStatus_t CUBLASWINAPI cublasGetVector (int n, int elemSize, const void *x,
                                              int incx, void *y, int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 CUBLASAPI cublasStatus_t  CUBLASWINAPI
 cublasGetMathMode(cublasHandle_t handle, cublasMath_t *mode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t  CUBLASWINAPI
 cublasSetMathMode(cublasHandle_t handle, cublasMath_t mode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cublasStatus_t CUBLASWINAPI
@@ -2158,8 +2138,7 @@ cublasStatus_t CUBLASWINAPI cublasSetMatrixAsync (int rows, int cols, int elemSi
                                                   const void *A, int lda, void *B,
                                                   int ldb, cudaStream_t stream)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -2167,8 +2146,7 @@ cublasStatus_t CUBLASWINAPI cublasGetMatrixAsync (int rows, int cols, int elemSi
                                                   const void *A, int lda, void *B,
                                                   int ldb, cudaStream_t stream)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* ---------------- CUBLAS BLAS1 functions ---------------- */
@@ -2181,8 +2159,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasNrm2Ex(cublasHandle_t handle,
                                                    cudaDataType resultType,
                                                    cudaDataType executionType) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSnrm2_v2(cublasHandle_t handle,
@@ -2191,8 +2168,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSnrm2_v2(cublasHandle_t handle,
                                                      int incx,
                                                      float *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDnrm2_v2(cublasHandle_t handle,
@@ -2201,8 +2177,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDnrm2_v2(cublasHandle_t handle,
                                                      int incx,
                                                      double *result)  /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasScnrm2_v2(cublasHandle_t handle,
@@ -2211,8 +2186,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasScnrm2_v2(cublasHandle_t handle,
                                                       int incx,
                                                       float *result)  /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDznrm2_v2(cublasHandle_t handle,
@@ -2221,8 +2195,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDznrm2_v2(cublasHandle_t handle,
                                                       int incx,
                                                       double *result)  /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDotEx (cublasHandle_t handle,
@@ -2237,8 +2210,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDotEx (cublasHandle_t handle,
                                                    cudaDataType resultType,
                                                    cudaDataType executionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDotcEx (cublasHandle_t handle,
@@ -2253,8 +2225,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDotcEx (cublasHandle_t handle,
                                                     cudaDataType resultType,
                                                     cudaDataType executionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSdot_v2 (cublasHandle_t handle,
@@ -2265,8 +2236,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSdot_v2 (cublasHandle_t handle,
                                                      int incy,
                                                      float *result)  /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDdot_v2 (cublasHandle_t handle,
@@ -2277,8 +2247,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDdot_v2 (cublasHandle_t handle,
                                                      int incy,
                                                      double *result)  /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCdotu_v2 (cublasHandle_t handle,
@@ -2289,8 +2258,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCdotu_v2 (cublasHandle_t handle,
                                                       int incy,
                                                       cuComplex *result)  /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCdotc_v2 (cublasHandle_t handle,
@@ -2301,8 +2269,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCdotc_v2 (cublasHandle_t handle,
                                                       int incy,
                                                       cuComplex *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZdotu_v2 (cublasHandle_t handle,
@@ -2313,8 +2280,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZdotu_v2 (cublasHandle_t handle,
                                                       int incy,
                                                       cuDoubleComplex *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZdotc_v2 (cublasHandle_t handle,
@@ -2325,8 +2291,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZdotc_v2 (cublasHandle_t handle,
                                                       int incy,
                                                       cuDoubleComplex *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasScalEx(cublasHandle_t handle,
@@ -2338,8 +2303,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasScalEx(cublasHandle_t handle,
                                                    int incx,
                                                    cudaDataType executionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDscal_v2(cublasHandle_t handle,
@@ -2348,8 +2312,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDscal_v2(cublasHandle_t handle,
                                                      double *x,
                                                      int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCscal_v2(cublasHandle_t handle,
@@ -2358,8 +2321,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCscal_v2(cublasHandle_t handle,
                                                      cuComplex *x,
                                                      int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsscal_v2(cublasHandle_t handle,
@@ -2368,8 +2330,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsscal_v2(cublasHandle_t handle,
                                                       cuComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZscal_v2(cublasHandle_t handle,
@@ -2378,8 +2339,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZscal_v2(cublasHandle_t handle,
                                                      cuDoubleComplex *x,
                                                      int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZdscal_v2(cublasHandle_t handle,
@@ -2388,8 +2348,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZdscal_v2(cublasHandle_t handle,
                                                       cuDoubleComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasAxpyEx (cublasHandle_t handle,
@@ -2404,8 +2363,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasAxpyEx (cublasHandle_t handle,
                                                     int incy,
                                                     cudaDataType executiontype)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSaxpy_v2 (cublasHandle_t handle,
@@ -2416,8 +2374,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSaxpy_v2 (cublasHandle_t handle,
                                                       float *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDaxpy_v2 (cublasHandle_t handle,
@@ -2428,8 +2385,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDaxpy_v2 (cublasHandle_t handle,
                                                       double *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCaxpy_v2 (cublasHandle_t handle,
@@ -2440,8 +2396,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCaxpy_v2 (cublasHandle_t handle,
                                                       cuComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZaxpy_v2 (cublasHandle_t handle,
@@ -2452,8 +2407,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZaxpy_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCopyEx (cublasHandle_t handle,
@@ -2465,8 +2419,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCopyEx (cublasHandle_t handle,
                                                     cudaDataType yType,
                                                     int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasScopy_v2 (cublasHandle_t handle,
@@ -2476,8 +2429,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasScopy_v2 (cublasHandle_t handle,
                                                       float *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDcopy_v2 (cublasHandle_t handle,
@@ -2487,8 +2439,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDcopy_v2 (cublasHandle_t handle,
                                                       double *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCcopy_v2 (cublasHandle_t handle,
@@ -2498,8 +2449,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCcopy_v2 (cublasHandle_t handle,
                                                       cuComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZcopy_v2 (cublasHandle_t handle,
@@ -2509,8 +2459,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZcopy_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSswap_v2 (cublasHandle_t handle,
@@ -2520,8 +2469,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSswap_v2 (cublasHandle_t handle,
                                                       float *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDswap_v2 (cublasHandle_t handle,
@@ -2531,8 +2479,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDswap_v2 (cublasHandle_t handle,
                                                       double *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCswap_v2 (cublasHandle_t handle,
@@ -2542,8 +2489,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCswap_v2 (cublasHandle_t handle,
                                                       cuComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZswap_v2 (cublasHandle_t handle,
@@ -2553,8 +2499,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZswap_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSwapEx (cublasHandle_t handle,
@@ -2566,8 +2511,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSwapEx (cublasHandle_t handle,
                                                     cudaDataType yType,
                                                     int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIsamax_v2(cublasHandle_t handle,
@@ -2576,8 +2520,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIsamax_v2(cublasHandle_t handle,
                                                       int incx,
                                                       int *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIdamax_v2(cublasHandle_t handle,
@@ -2586,8 +2529,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIdamax_v2(cublasHandle_t handle,
                                                       int incx,
                                                       int *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIcamax_v2(cublasHandle_t handle,
@@ -2597,8 +2539,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIcamax_v2(cublasHandle_t handle,
                                                       int *result) /* host or device pointer */
 
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIzamax_v2(cublasHandle_t handle,
                                                       int n,
@@ -2606,8 +2547,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIzamax_v2(cublasHandle_t handle,
                                                       int incx,
                                                       int *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIamaxEx(cublasHandle_t handle,
@@ -2617,8 +2557,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIamaxEx(cublasHandle_t handle,
                                                     int *result  /* host or device pointer */
                                                     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -2628,8 +2567,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIsamin_v2(cublasHandle_t handle,
                                                       int incx,
                                                       int *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIdamin_v2(cublasHandle_t handle,
@@ -2638,8 +2576,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIdamin_v2(cublasHandle_t handle,
                                                       int incx,
                                                       int *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIcamin_v2(cublasHandle_t handle,
@@ -2648,8 +2585,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIcamin_v2(cublasHandle_t handle,
                                                       int incx,
                                                       int *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIzamin_v2(cublasHandle_t handle,
@@ -2658,8 +2594,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIzamin_v2(cublasHandle_t handle,
                                                       int incx,
                                                       int *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIaminEx(cublasHandle_t handle,
@@ -2669,8 +2604,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasIaminEx(cublasHandle_t handle,
                                                       int *result /* host or device pointer */
                                                     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasAsumEx(cublasHandle_t handle,
@@ -2683,8 +2617,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasAsumEx(cublasHandle_t handle,
                                                    cudaDataType executiontype
                                                   )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSasum_v2(cublasHandle_t handle,
@@ -2693,8 +2626,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSasum_v2(cublasHandle_t handle,
                                                      int incx,
                                                      float *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDasum_v2(cublasHandle_t handle,
@@ -2703,8 +2635,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDasum_v2(cublasHandle_t handle,
                                                      int incx,
                                                      double *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasScasum_v2(cublasHandle_t handle,
@@ -2713,8 +2644,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasScasum_v2(cublasHandle_t handle,
                                                       int incx,
                                                       float *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDzasum_v2(cublasHandle_t handle,
@@ -2723,8 +2653,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDzasum_v2(cublasHandle_t handle,
                                                       int incx,
                                                       double *result) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSrot_v2 (cublasHandle_t handle,
@@ -2736,8 +2665,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSrot_v2 (cublasHandle_t handle,
                                                      const float *c,  /* host or device pointer */
                                                      const float *s) /* host or device pointer */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDrot_v2 (cublasHandle_t handle,
@@ -2749,8 +2677,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDrot_v2 (cublasHandle_t handle,
                                                      const double *c,  /* host or device pointer */
                                                      const double *s)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCrot_v2 (cublasHandle_t handle,
@@ -2762,8 +2689,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCrot_v2 (cublasHandle_t handle,
                                                      const float *c,      /* host or device pointer */
                                                      const cuComplex *s)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsrot_v2(cublasHandle_t handle,
@@ -2775,8 +2701,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsrot_v2(cublasHandle_t handle,
                                                      const float *c,  /* host or device pointer */
                                                      const float *s)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZrot_v2 (cublasHandle_t handle,
@@ -2788,8 +2713,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZrot_v2 (cublasHandle_t handle,
                                                      const double *c,            /* host or device pointer */
                                                      const cuDoubleComplex *s)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }  /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZdrot_v2(cublasHandle_t handle,
@@ -2801,8 +2725,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZdrot_v2(cublasHandle_t handle,
                                                      const double *c,  /* host or device pointer */
                                                      const double *s)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasRotEx (cublasHandle_t handle,
@@ -2818,8 +2741,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasRotEx (cublasHandle_t handle,
                                                      cudaDataType csType,
                                                      cudaDataType executiontype)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -2829,8 +2751,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSrotg_v2(cublasHandle_t handle,
                                                      float *c,   /* host or device pointer */
                                                      float *s)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }  /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDrotg_v2(cublasHandle_t handle,
@@ -2839,8 +2760,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDrotg_v2(cublasHandle_t handle,
                                                      double *c,  /* host or device pointer */
                                                      double *s)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCrotg_v2(cublasHandle_t handle,
@@ -2849,8 +2769,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCrotg_v2(cublasHandle_t handle,
                                                      float *c,      /* host or device pointer */
                                                      cuComplex *s)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZrotg_v2(cublasHandle_t handle,
@@ -2859,8 +2778,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZrotg_v2(cublasHandle_t handle,
                                                      double *c,           /* host or device pointer */
                                                      cuDoubleComplex *s)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasRotgEx(cublasHandle_t handle,
@@ -2872,8 +2790,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasRotgEx(cublasHandle_t handle,
                                                      cudaDataType csType,
                                                      cudaDataType executiontype)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSrotm_v2(cublasHandle_t handle,
@@ -2884,8 +2801,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSrotm_v2(cublasHandle_t handle,
                                                      int incy,
                                                      const float* param)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }  /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDrotm_v2(cublasHandle_t handle,
@@ -2896,8 +2812,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDrotm_v2(cublasHandle_t handle,
                                                      int incy,
                                                      const double* param)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }  /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasRotmEx(cublasHandle_t handle,
@@ -2912,8 +2827,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasRotmEx(cublasHandle_t handle,
                                                      cudaDataType paramType,
                                                      cudaDataType executiontype)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSrotmg_v2(cublasHandle_t handle,
@@ -2923,8 +2837,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSrotmg_v2(cublasHandle_t handle,
                                                       const float *y1,  /* host or device pointer */
                                                       float *param)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }    /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDrotmg_v2(cublasHandle_t handle,
@@ -2934,8 +2847,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDrotmg_v2(cublasHandle_t handle,
                                                       const double *y1,  /* host or device pointer */
                                                       double *param)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }    /* host or device pointer */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasRotmgEx(cublasHandle_t handle,
@@ -2952,8 +2864,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasRotmgEx(cublasHandle_t handle,
                                                     cudaDataType executiontype
                                                     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /* --------------- CUBLAS BLAS2 functions  ---------------- */
 
@@ -2971,8 +2882,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgemv_v2 (cublasHandle_t handle,
                                                       float *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgemv_v2 (cublasHandle_t handle,
@@ -2988,8 +2898,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgemv_v2 (cublasHandle_t handle,
                                                       double *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemv_v2 (cublasHandle_t handle,
@@ -3005,8 +2914,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemv_v2 (cublasHandle_t handle,
                                                       cuComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemv_v2 (cublasHandle_t handle,
@@ -3022,8 +2930,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /* GBMV */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgbmv_v2 (cublasHandle_t handle,
@@ -3041,8 +2948,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgbmv_v2 (cublasHandle_t handle,
                                                       float *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgbmv_v2 (cublasHandle_t handle,
@@ -3060,8 +2966,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgbmv_v2 (cublasHandle_t handle,
                                                       double *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgbmv_v2 (cublasHandle_t handle,
@@ -3079,8 +2984,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgbmv_v2 (cublasHandle_t handle,
                                                       cuComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgbmv_v2 (cublasHandle_t handle,
@@ -3098,8 +3002,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgbmv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* TRMV */
@@ -3113,8 +3016,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStrmv_v2 (cublasHandle_t handle,
                                                       float *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtrmv_v2 (cublasHandle_t handle,
@@ -3127,8 +3029,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtrmv_v2 (cublasHandle_t handle,
                                                       double *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrmv_v2 (cublasHandle_t handle,
@@ -3141,8 +3042,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrmv_v2 (cublasHandle_t handle,
                                                       cuComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrmv_v2 (cublasHandle_t handle,
@@ -3155,8 +3055,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrmv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* TBMV */
@@ -3171,8 +3070,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStbmv_v2 (cublasHandle_t handle,
                                                       float *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtbmv_v2 (cublasHandle_t handle,
@@ -3186,8 +3084,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtbmv_v2 (cublasHandle_t handle,
                                                       double *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtbmv_v2 (cublasHandle_t handle,
@@ -3201,8 +3098,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtbmv_v2 (cublasHandle_t handle,
                                                       cuComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtbmv_v2 (cublasHandle_t handle,
@@ -3216,8 +3112,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtbmv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* TPMV */
@@ -3230,8 +3125,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStpmv_v2 (cublasHandle_t handle,
                                                       float *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtpmv_v2 (cublasHandle_t handle,
@@ -3243,8 +3137,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtpmv_v2 (cublasHandle_t handle,
                                                       double *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtpmv_v2 (cublasHandle_t handle,
@@ -3256,8 +3149,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtpmv_v2 (cublasHandle_t handle,
                                                       cuComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtpmv_v2 (cublasHandle_t handle,
@@ -3269,8 +3161,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtpmv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* TRSV */
@@ -3284,8 +3175,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStrsv_v2 (cublasHandle_t handle,
                                                       float *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtrsv_v2 (cublasHandle_t handle,
@@ -3298,8 +3188,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtrsv_v2 (cublasHandle_t handle,
                                                       double *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrsv_v2 (cublasHandle_t handle,
@@ -3312,8 +3201,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrsv_v2 (cublasHandle_t handle,
                                                       cuComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrsv_v2 (cublasHandle_t handle,
@@ -3326,8 +3214,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrsv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* TPSV */
@@ -3340,8 +3227,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStpsv_v2 (cublasHandle_t handle,
                                                       float *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtpsv_v2 (cublasHandle_t handle,
@@ -3353,8 +3239,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtpsv_v2 (cublasHandle_t handle,
                                                       double *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtpsv_v2 (cublasHandle_t handle,
@@ -3366,8 +3251,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtpsv_v2 (cublasHandle_t handle,
                                                       cuComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtpsv_v2 (cublasHandle_t handle,
@@ -3379,8 +3263,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtpsv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /* TBSV */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStbsv_v2 (cublasHandle_t handle,
@@ -3394,8 +3277,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStbsv_v2 (cublasHandle_t handle,
                                                       float *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtbsv_v2 (cublasHandle_t handle,
@@ -3409,8 +3291,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtbsv_v2 (cublasHandle_t handle,
                                                       double *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtbsv_v2 (cublasHandle_t handle,
@@ -3424,8 +3305,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtbsv_v2 (cublasHandle_t handle,
                                                       cuComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtbsv_v2 (cublasHandle_t handle,
@@ -3439,8 +3319,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtbsv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *x,
                                                       int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* SYMV/HEMV */
@@ -3456,8 +3335,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSsymv_v2 (cublasHandle_t handle,
                                                       float *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsymv_v2 (cublasHandle_t handle,
@@ -3472,8 +3350,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsymv_v2 (cublasHandle_t handle,
                                                       double *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsymv_v2 (cublasHandle_t handle,
@@ -3488,8 +3365,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsymv_v2 (cublasHandle_t handle,
                                                       cuComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsymv_v2 (cublasHandle_t handle,
@@ -3504,8 +3380,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsymv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasChemv_v2 (cublasHandle_t handle,
@@ -3520,8 +3395,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasChemv_v2 (cublasHandle_t handle,
                                                       cuComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhemv_v2 (cublasHandle_t handle,
@@ -3536,8 +3410,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhemv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* SBMV/HBMV */
@@ -3554,8 +3427,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSsbmv_v2 (cublasHandle_t handle,
                                                       float *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsbmv_v2 (cublasHandle_t handle,
@@ -3571,8 +3443,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsbmv_v2 (cublasHandle_t handle,
                                                       double *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasChbmv_v2 (cublasHandle_t handle,
@@ -3588,8 +3459,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasChbmv_v2 (cublasHandle_t handle,
                                                       cuComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhbmv_v2 (cublasHandle_t handle,
@@ -3605,8 +3475,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhbmv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* SPMV/HPMV */
@@ -3621,8 +3490,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSspmv_v2 (cublasHandle_t handle,
                                                       float *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDspmv_v2 (cublasHandle_t handle,
@@ -3636,8 +3504,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDspmv_v2 (cublasHandle_t handle,
                                                       double *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasChpmv_v2 (cublasHandle_t handle,
@@ -3651,8 +3518,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasChpmv_v2 (cublasHandle_t handle,
                                                       cuComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhpmv_v2 (cublasHandle_t handle,
@@ -3666,8 +3532,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhpmv_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *y,
                                                       int incy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* GER */
@@ -3682,8 +3547,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSger_v2 (cublasHandle_t handle,
                                                      float *A,
                                                      int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDger_v2 (cublasHandle_t handle,
@@ -3697,8 +3561,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDger_v2 (cublasHandle_t handle,
                                                      double *A,
                                                      int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgeru_v2 (cublasHandle_t handle,
@@ -3712,8 +3575,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgeru_v2 (cublasHandle_t handle,
                                                       cuComplex *A,
                                                       int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgerc_v2 (cublasHandle_t handle,
@@ -3727,8 +3589,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgerc_v2 (cublasHandle_t handle,
                                                       cuComplex *A,
                                                       int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgeru_v2 (cublasHandle_t handle,
@@ -3742,8 +3603,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgeru_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *A,
                                                       int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgerc_v2 (cublasHandle_t handle,
@@ -3757,8 +3617,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgerc_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *A,
                                                       int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* SYR/HER */
@@ -3771,8 +3630,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSsyr_v2 (cublasHandle_t handle,
                                                      float *A,
                                                      int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsyr_v2 (cublasHandle_t handle,
@@ -3784,8 +3642,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsyr_v2 (cublasHandle_t handle,
                                                      double *A,
                                                      int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyr_v2 (cublasHandle_t handle,
@@ -3797,8 +3654,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyr_v2 (cublasHandle_t handle,
                                                      cuComplex *A,
                                                      int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsyr_v2 (cublasHandle_t handle,
@@ -3810,8 +3666,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsyr_v2 (cublasHandle_t handle,
                                                      cuDoubleComplex *A,
                                                      int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCher_v2 (cublasHandle_t handle,
@@ -3823,8 +3678,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCher_v2 (cublasHandle_t handle,
                                                      cuComplex *A,
                                                      int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZher_v2 (cublasHandle_t handle,
@@ -3836,8 +3690,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZher_v2 (cublasHandle_t handle,
                                                      cuDoubleComplex *A,
                                                      int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* SPR/HPR */
@@ -3849,8 +3702,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSspr_v2 (cublasHandle_t handle,
                                                      int incx,
                                                      float *AP)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDspr_v2 (cublasHandle_t handle,
@@ -3861,8 +3713,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDspr_v2 (cublasHandle_t handle,
                                                      int incx,
                                                      double *AP)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasChpr_v2 (cublasHandle_t handle,
@@ -3873,8 +3724,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasChpr_v2 (cublasHandle_t handle,
                                                      int incx,
                                                      cuComplex *AP)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhpr_v2 (cublasHandle_t handle,
@@ -3885,8 +3735,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhpr_v2 (cublasHandle_t handle,
                                                      int incx,
                                                      cuDoubleComplex *AP)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* SYR2/HER2 */
@@ -3901,8 +3750,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSsyr2_v2 (cublasHandle_t handle,
                                                       float *A,
                                                       int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsyr2_v2 (cublasHandle_t handle,
@@ -3916,8 +3764,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsyr2_v2 (cublasHandle_t handle,
                                                       double *A,
                                                       int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyr2_v2 (cublasHandle_t handle,
@@ -3930,8 +3777,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyr2_v2 (cublasHandle_t handle,
                                                       cuComplex *A,
                                                       int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsyr2_v2 (cublasHandle_t handle,
@@ -3945,8 +3791,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsyr2_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *A,
                                                       int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -3960,8 +3805,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCher2_v2 (cublasHandle_t handle,
                                                       cuComplex *A,
                                                       int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZher2_v2 (cublasHandle_t handle,
@@ -3975,8 +3819,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZher2_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *A,
                                                       int lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* SPR2/HPR2 */
@@ -3990,8 +3833,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSspr2_v2 (cublasHandle_t handle,
                                                       int incy,
                                                       float *AP)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDspr2_v2 (cublasHandle_t handle,
@@ -4004,8 +3846,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDspr2_v2 (cublasHandle_t handle,
                                                       int incy,
                                                       double *AP)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -4019,8 +3860,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasChpr2_v2 (cublasHandle_t handle,
                                                       int incy,
                                                       cuComplex *AP)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhpr2_v2 (cublasHandle_t handle,
@@ -4033,8 +3873,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhpr2_v2 (cublasHandle_t handle,
                                                       int incy,
                                                       cuDoubleComplex *AP)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* ---------------- CUBLAS BLAS3 functions ---------------- */
@@ -4086,8 +3925,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgemm_v2 (cublasHandle_t handle,
                                                       double *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemm_v2 (cublasHandle_t handle,
@@ -4105,8 +3943,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemm_v2 (cublasHandle_t handle,
                                                       cuComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemm3m  (cublasHandle_t handle,
@@ -4124,8 +3961,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemm3m  (cublasHandle_t handle,
                                                       cuComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
  CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemm3mEx (cublasHandle_t handle,
                                                      cublasOperation_t transa, cublasOperation_t transb,
@@ -4142,8 +3978,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemm3m  (cublasHandle_t handle,
                                                      cudaDataType Ctype,
                                                      int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -4162,8 +3997,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemm_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemm3m  (cublasHandle_t handle,
@@ -4181,8 +4015,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemm3m  (cublasHandle_t handle,
                                                       cuDoubleComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemm    (cublasHandle_t handle,
@@ -4200,8 +4033,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemm    (cublasHandle_t handle,
                                                       __half *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* IO in FP16/FP32, computation in float */
@@ -4223,8 +4055,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgemmEx  (cublasHandle_t handle,
                                                       cudaDataType Ctype,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGemmEx  (cublasHandle_t handle,
@@ -4247,8 +4078,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGemmEx  (cublasHandle_t handle,
                                                       cudaDataType computeType,
                                                       cublasGemmAlgo_t algo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* IO in Int8 complex/cuComplex, computation in cuComplex */
@@ -4267,8 +4097,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemmEx (cublasHandle_t handle,
                                                      cudaDataType Ctype,
                                                      int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasUint8gemmBias (cublasHandle_t handle,
@@ -4279,8 +4108,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasUint8gemmBias (cublasHandle_t handle
                                                                  unsigned char *C, int C_bias, int ldc,
                                                            int C_mult, int C_shift)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* SYRK */
@@ -4296,8 +4124,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSsyrk_v2 (cublasHandle_t handle,
                                                       float *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsyrk_v2 (cublasHandle_t handle,
@@ -4312,8 +4139,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsyrk_v2 (cublasHandle_t handle,
                                                       double *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyrk_v2 (cublasHandle_t handle,
@@ -4328,8 +4154,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyrk_v2 (cublasHandle_t handle,
                                                       cuComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsyrk_v2 (cublasHandle_t handle,
@@ -4344,8 +4169,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsyrk_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /* IO in Int8 complex/cuComplex, computation in cuComplex */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyrkEx ( cublasHandle_t handle,
@@ -4362,8 +4186,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyrkEx ( cublasHandle_t handle,
                                                       cudaDataType Ctype,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* IO in Int8 complex/cuComplex, computation in cuComplex, Gaussian math */
@@ -4381,8 +4204,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyrk3mEx(cublasHandle_t handle,
                                                       cudaDataType Ctype,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* HERK */
@@ -4398,8 +4220,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCherk_v2 (cublasHandle_t handle,
                                                       cuComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZherk_v2 (cublasHandle_t handle,
@@ -4414,8 +4235,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZherk_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* IO in Int8 complex/cuComplex, computation in cuComplex */
@@ -4433,8 +4253,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCherkEx  (cublasHandle_t handle,
                                                       cudaDataType Ctype,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* IO in Int8 complex/cuComplex, computation in cuComplex, Gaussian math */
@@ -4451,8 +4270,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCherk3mEx (cublasHandle_t handle,
                                                        cudaDataType Ctype,
                                                        int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -4472,8 +4290,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSsyr2k_v2 (cublasHandle_t handle,
                                                        float *C,
                                                        int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsyr2k_v2 (cublasHandle_t handle,
@@ -4490,8 +4307,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsyr2k_v2 (cublasHandle_t handle,
                                                        double *C,
                                                        int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyr2k_v2 (cublasHandle_t handle,
@@ -4508,8 +4324,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyr2k_v2 (cublasHandle_t handle,
                                                        cuComplex *C,
                                                        int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsyr2k_v2 (cublasHandle_t handle,
@@ -4526,8 +4341,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsyr2k_v2 (cublasHandle_t handle,
                                                        cuDoubleComplex *C,
                                                        int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /* HER2K */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCher2k_v2 (cublasHandle_t handle,
@@ -4544,8 +4358,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCher2k_v2 (cublasHandle_t handle,
                                                        cuComplex *C,
                                                        int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZher2k_v2 (cublasHandle_t handle,
@@ -4562,8 +4375,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZher2k_v2 (cublasHandle_t handle,
                                                        cuDoubleComplex *C,
                                                        int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /* SYRKX : eXtended SYRK*/
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSsyrkx (cublasHandle_t handle,
@@ -4580,8 +4392,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSsyrkx (cublasHandle_t handle,
                                                     float *C,
                                                     int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsyrkx (cublasHandle_t handle,
@@ -4598,8 +4409,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsyrkx (cublasHandle_t handle,
                                                     double *C,
                                                     int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyrkx (cublasHandle_t handle,
@@ -4616,8 +4426,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsyrkx (cublasHandle_t handle,
                                                     cuComplex *C,
                                                     int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsyrkx (cublasHandle_t handle,
@@ -4634,8 +4443,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsyrkx (cublasHandle_t handle,
                                                     cuDoubleComplex *C,
                                                     int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /* HERKX : eXtended HERK */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCherkx (cublasHandle_t handle,
@@ -4652,8 +4460,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCherkx (cublasHandle_t handle,
                                                     cuComplex *C,
                                                     int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZherkx (cublasHandle_t handle,
@@ -4670,8 +4477,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZherkx (cublasHandle_t handle,
                                                     cuDoubleComplex *C,
                                                     int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /* SYMM */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSsymm_v2 (cublasHandle_t handle,
@@ -4688,8 +4494,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSsymm_v2 (cublasHandle_t handle,
                                                       float *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsymm_v2 (cublasHandle_t handle,
@@ -4706,8 +4511,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDsymm_v2 (cublasHandle_t handle,
                                                       double *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsymm_v2 (cublasHandle_t handle,
@@ -4724,8 +4528,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCsymm_v2 (cublasHandle_t handle,
                                                       cuComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsymm_v2 (cublasHandle_t handle,
@@ -4742,8 +4545,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZsymm_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* HEMM */
@@ -4761,8 +4563,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasChemm_v2 (cublasHandle_t handle,
                                                       cuComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhemm_v2 (cublasHandle_t handle,
@@ -4779,8 +4580,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZhemm_v2 (cublasHandle_t handle,
                                                       cuDoubleComplex *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* TRSM */
@@ -4797,8 +4597,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStrsm_v2 (cublasHandle_t handle,
                                                       float *B,
                                                       int ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -4815,8 +4614,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtrsm_v2 (cublasHandle_t handle,
                                                       double *B,
                                                       int ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrsm_v2(cublasHandle_t handle,
@@ -4832,8 +4630,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrsm_v2(cublasHandle_t handle,
                                                      cuComplex *B,
                                                      int ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrsm_v2(cublasHandle_t handle,
@@ -4849,8 +4646,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrsm_v2(cublasHandle_t handle,
                                                      cuDoubleComplex *B,
                                                      int ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
  /* TRMM */
@@ -4869,8 +4665,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStrmm_v2 (cublasHandle_t handle,
                                                       float *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtrmm_v2 (cublasHandle_t handle,
@@ -4888,8 +4683,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtrmm_v2 (cublasHandle_t handle,
                                                       double *C,
                                                       int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrmm_v2(cublasHandle_t handle,
@@ -4907,8 +4701,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrmm_v2(cublasHandle_t handle,
                                                      cuComplex *C,
                                                      int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrmm_v2(cublasHandle_t handle, cublasSideMode_t side,
@@ -4925,8 +4718,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrmm_v2(cublasHandle_t handle, cubl
                                                      cuDoubleComplex *C,
                                                      int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /* BATCH GEMM */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgemmBatched (cublasHandle_t handle,
@@ -4945,8 +4737,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgemmBatched (cublasHandle_t handle,
                                                           int ldc,
                                                           int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgemmBatched (cublasHandle_t handle,
@@ -4965,8 +4756,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgemmBatched (cublasHandle_t handle,
                                                           int ldc,
                                                           int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemmBatched (cublasHandle_t handle,
@@ -4985,8 +4775,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemmBatched (cublasHandle_t handle,
                                                           int ldc,
                                                           int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemm3mBatched (cublasHandle_t handle,
@@ -5005,8 +4794,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemm3mBatched (cublasHandle_t handl
                                                           int ldc,
                                                           int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemmBatched (cublasHandle_t handle,
@@ -5025,8 +4813,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemmBatched (cublasHandle_t handle,
                                                           int ldc,
                                                           int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGemmBatchedEx(cublasHandle_t handle,
@@ -5108,8 +4895,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGemmStridedBatchedEx (cublasHandle_t
                                                                   cudaDataType computeType,
                                                                   cublasGemmAlgo_t algo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgemmStridedBatched (cublasHandle_t handle,
@@ -5131,8 +4917,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgemmStridedBatched (cublasHandle_t 
                                                                  long long int strideC,
                                                                  int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgemmStridedBatched (cublasHandle_t handle,
@@ -5154,8 +4939,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgemmStridedBatched (cublasHandle_t 
                                                                  long long int strideC,
                                                                  int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemmStridedBatched (cublasHandle_t handle,
@@ -5177,8 +4961,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemmStridedBatched (cublasHandle_t 
                                                                  long long int strideC,
                                                                  int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemm3mStridedBatched (cublasHandle_t handle,
@@ -5200,8 +4983,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgemm3mStridedBatched (cublasHandle_
                                                                  long long int strideC,
                                                                  int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -5224,8 +5006,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemmStridedBatched (cublasHandle_t 
                                                                  long long int strideC,
                                                                  int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* ---------------- CUBLAS BLAS-like extension ---------------- */
@@ -5266,8 +5047,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgeam(cublasHandle_t handle,
                                                   double *C,
                                                   int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgeam(cublasHandle_t handle,
@@ -5284,8 +5064,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgeam(cublasHandle_t handle,
                                                   cuComplex *C,
                                                   int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgeam(cublasHandle_t handle,
@@ -5302,8 +5081,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgeam(cublasHandle_t handle,
                                                   cuDoubleComplex *C,
                                                   int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Batched LU - GETRF*/
@@ -5315,8 +5093,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgetrfBatched(cublasHandle_t handle,
                                                   int *info,                       /*Device Pointer*/
                                                   int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgetrfBatched(cublasHandle_t handle,
@@ -5327,8 +5104,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgetrfBatched(cublasHandle_t handle,
                                                   int *info,                       /*Device Pointer*/
                                                   int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgetrfBatched(cublasHandle_t handle,
@@ -5339,8 +5115,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgetrfBatched(cublasHandle_t handle,
                                                   int *info,                      /*Device Pointer*/
                                                   int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgetrfBatched(cublasHandle_t handle,
@@ -5351,8 +5126,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgetrfBatched(cublasHandle_t handle,
                                                   int *info,                      /*Device Pointer*/
                                                   int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Batched inversion based on LU factorization from getrf */
@@ -5366,8 +5140,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgetriBatched(cublasHandle_t handle,
                                                   int *info,
                                                   int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgetriBatched(cublasHandle_t handle,
@@ -5380,8 +5153,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgetriBatched(cublasHandle_t handle,
                                                   int *info,
                                                   int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgetriBatched(cublasHandle_t handle,
@@ -5394,8 +5166,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCgetriBatched(cublasHandle_t handle,
                                                   int *info,
                                                   int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgetriBatched(cublasHandle_t handle,
@@ -5408,8 +5179,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgetriBatched(cublasHandle_t handle,
                                                   int *info,
                                                   int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Batched solver based on LU factorization from getrf */
@@ -5426,8 +5196,7 @@ CUBLASAPI cublasStatus_t  CUBLASWINAPI cublasSgetrsBatched( cublasHandle_t handl
                                                             int *info,
                                                             int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgetrsBatched( cublasHandle_t handle,
@@ -5442,8 +5211,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgetrsBatched( cublasHandle_t handle
                                                            int *info,
                                                            int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t  CUBLASWINAPI cublasCgetrsBatched( cublasHandle_t handle,
@@ -5458,8 +5226,7 @@ CUBLASAPI cublasStatus_t  CUBLASWINAPI cublasCgetrsBatched( cublasHandle_t handl
                                                             int *info,
                                                             int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -5475,8 +5242,7 @@ CUBLASAPI cublasStatus_t  CUBLASWINAPI cublasZgetrsBatched( cublasHandle_t handl
                                                             int *info,
                                                             int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -5496,8 +5262,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStrsmBatched( cublasHandle_t    hand
                                                           int ldb,
                                                           int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtrsmBatched( cublasHandle_t    handle,
@@ -5514,8 +5279,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtrsmBatched( cublasHandle_t    hand
                                                           int ldb,
                                                           int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrsmBatched( cublasHandle_t    handle,
@@ -5532,8 +5296,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrsmBatched( cublasHandle_t    hand
                                                           int ldb,
                                                           int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrsmBatched( cublasHandle_t    handle,
@@ -5550,8 +5313,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrsmBatched( cublasHandle_t    hand
                                                           int ldb,
                                                           int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Batched - MATINV*/
@@ -5564,8 +5326,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSmatinvBatched(cublasHandle_t handle
                                                           int *info,                   /*Device Pointer*/
                                                           int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDmatinvBatched(cublasHandle_t handle,
@@ -5577,8 +5338,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDmatinvBatched(cublasHandle_t handle
                                                           int *info,                   /*Device Pointer*/
                                                           int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCmatinvBatched(cublasHandle_t handle,
@@ -5590,8 +5350,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCmatinvBatched(cublasHandle_t handle
                                                           int *info,                   /*Device Pointer*/
                                                           int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZmatinvBatched(cublasHandle_t handle,
@@ -5603,8 +5362,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZmatinvBatched(cublasHandle_t handle
                                                           int *info,                        /*Device Pointer*/
                                                           int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Batch QR Factorization */
@@ -5617,8 +5375,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgeqrfBatched( cublasHandle_t handle
                                                            int *info,
                                                            int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasDgeqrfBatched( cublasHandle_t handle,
@@ -5630,8 +5387,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasDgeqrfBatched( cublasHandle_t handl
                                                             int *info,
                                                             int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasCgeqrfBatched( cublasHandle_t handle,
@@ -5643,8 +5399,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasCgeqrfBatched( cublasHandle_t handl
                                                             int *info,
                                                             int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasZgeqrfBatched( cublasHandle_t handle,
@@ -5656,8 +5411,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasZgeqrfBatched( cublasHandle_t handl
                                                             int *info,
                                                             int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /* Least Square Min only m >= n and Non-transpose supported */
 CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasSgelsBatched( cublasHandle_t handle,
@@ -5673,8 +5427,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasSgelsBatched( cublasHandle_t handle
                                                            int *devInfoArray,          /*Device pointer*/
                                                            int batchSize )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasDgelsBatched( cublasHandle_t handle,
@@ -5690,8 +5443,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasDgelsBatched( cublasHandle_t handle
                                                            int *devInfoArray,          /*Device pointer*/
                                                            int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasCgelsBatched( cublasHandle_t handle,
@@ -5707,8 +5459,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasCgelsBatched( cublasHandle_t handle
                                                            int *devInfoArray,
                                                            int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasZgelsBatched( cublasHandle_t handle,
@@ -5724,8 +5475,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI  cublasZgelsBatched( cublasHandle_t handle
                                                            int *devInfoArray,
                                                            int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /* DGMM */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSdgmm(cublasHandle_t handle,
@@ -5739,8 +5489,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSdgmm(cublasHandle_t handle,
                                                   float *C,
                                                   int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDdgmm(cublasHandle_t handle,
@@ -5754,8 +5503,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDdgmm(cublasHandle_t handle,
                                                   double *C,
                                                   int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCdgmm(cublasHandle_t handle,
@@ -5769,8 +5517,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCdgmm(cublasHandle_t handle,
                                                   cuComplex *C,
                                                   int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZdgmm(cublasHandle_t handle,
@@ -5784,8 +5531,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZdgmm(cublasHandle_t handle,
                                                   cuDoubleComplex *C,
                                                   int ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* TPTTR : Triangular Pack format to Triangular format */
@@ -5796,8 +5542,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStpttr ( cublasHandle_t handle,
                                                      float *A,
                                                      int lda )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtpttr ( cublasHandle_t handle,
@@ -5807,8 +5552,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtpttr ( cublasHandle_t handle,
                                                      double *A,
                                                      int lda )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtpttr ( cublasHandle_t handle,
@@ -5818,8 +5562,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtpttr ( cublasHandle_t handle,
                                                      cuComplex *A,
                                                      int lda )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtpttr ( cublasHandle_t handle,
@@ -5829,8 +5572,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtpttr ( cublasHandle_t handle,
                                                      cuDoubleComplex *A,
                                                      int lda )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
  /* TRTTP : Triangular format to Triangular Pack format */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStrttp ( cublasHandle_t handle,
@@ -5840,8 +5582,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasStrttp ( cublasHandle_t handle,
                                                      int lda,
                                                      float *AP )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtrttp ( cublasHandle_t handle,
@@ -5851,8 +5592,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDtrttp ( cublasHandle_t handle,
                                                      int lda,
                                                      double *AP )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrttp ( cublasHandle_t handle,
@@ -5862,8 +5602,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCtrttp ( cublasHandle_t handle,
                                                      int lda,
                                                      cuComplex *AP )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrttp ( cublasHandle_t handle,
@@ -5873,8 +5612,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrttp ( cublasHandle_t handle,
                                                      int lda,
                                                      cuDoubleComplex *AP )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -6403,7 +6141,7 @@ cudnnSetRNNDescriptor(cudnnHandle_t handle,
                       cudnnDataType_t mathPrec)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6419,21 +6157,21 @@ cudnnGetRNNDescriptor(cudnnHandle_t handle,
                       cudnnDataType_t *mathPrec)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnSetRNNMatrixMathType(cudnnRNNDescriptor_t rnnDesc, cudnnMathType_t mType)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNMatrixMathType(cudnnRNNDescriptor_t rnnDesc, cudnnMathType_t *mType)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6445,7 +6183,7 @@ cudnnRNNSetClip(cudnnHandle_t handle,
                 double rclip)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6457,7 +6195,7 @@ cudnnRNNGetClip(cudnnHandle_t handle,
                 double *rclip)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6467,7 +6205,7 @@ cudnnSetRNNProjectionLayers(cudnnHandle_t handle,
                             const int outProjSize)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6477,7 +6215,7 @@ cudnnGetRNNProjectionLayers(cudnnHandle_t handle,
                             int *outProjSize)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 /* Expensive. Creates the plan for the specific settings. */
@@ -6488,21 +6226,21 @@ cudnnCreatePersistentRNNPlan(cudnnRNNDescriptor_t rnnDesc,
                              cudnnPersistentRNNPlan_t *plan)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyPersistentRNNPlan(cudnnPersistentRNNPlan_t plan)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnSetPersistentRNNPlan(cudnnRNNDescriptor_t rnnDesc, cudnnPersistentRNNPlan_t plan)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 /* dataType in weight descriptors and input descriptors is used to describe storage */
@@ -6514,7 +6252,7 @@ cudnnGetRNNWorkspaceSize(cudnnHandle_t handle,
                          size_t *sizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6525,7 +6263,7 @@ cudnnGetRNNTrainingReserveSize(cudnnHandle_t handle,
                                size_t *sizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6536,7 +6274,7 @@ cudnnGetRNNParamsSize(cudnnHandle_t handle,
                       cudnnDataType_t dataType)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6551,7 +6289,7 @@ cudnnGetRNNLinLayerMatrixParams(cudnnHandle_t handle,
                                 void **linLayerMat)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6566,7 +6304,7 @@ cudnnGetRNNLinLayerBiasParams(cudnnHandle_t handle,
                               void **linLayerBias)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6591,7 +6329,7 @@ cudnnRNNForwardInference(cudnnHandle_t handle,
                          size_t workSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6618,7 +6356,7 @@ cudnnRNNForwardTraining(cudnnHandle_t handle,
                         size_t reserveSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6651,7 +6389,7 @@ cudnnRNNBackwardData(cudnnHandle_t handle,
                      size_t reserveSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6672,7 +6410,7 @@ cudnnRNNBackwardWeights(cudnnHandle_t handle,
                         size_t reserveSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 /* RNN EX API */
@@ -6681,28 +6419,28 @@ cudnnStatus_t CUDNNWINAPI
 cudnnSetRNNPaddingMode(cudnnRNNDescriptor_t rnnDesc, cudnnRNNPaddingMode_t paddingMode)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNPaddingMode(cudnnRNNDescriptor_t rnnDesc, cudnnRNNPaddingMode_t *paddingMode)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateRNNDataDescriptor(cudnnRNNDataDescriptor_t *rnnDataDesc)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyRNNDataDescriptor(cudnnRNNDataDescriptor_t rnnDataDesc)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6716,7 +6454,7 @@ cudnnSetRNNDataDescriptor(cudnnRNNDataDescriptor_t rnnDataDesc,
                           void *paddingFill)          /* symbol for filling padding position in output */
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6731,7 +6469,7 @@ cudnnGetRNNDataDescriptor(cudnnRNNDataDescriptor_t rnnDataDesc,
                           void *paddingFill)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6765,7 +6503,7 @@ cudnnRNNForwardTrainingEx(cudnnHandle_t handle,
                           size_t reserveSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6797,7 +6535,7 @@ cudnnRNNForwardInferenceEx(cudnnHandle_t handle,
                            size_t workSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6833,7 +6571,7 @@ cudnnRNNBackwardDataEx(cudnnHandle_t handle,
                        size_t reserveSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6853,7 +6591,7 @@ cudnnRNNBackwardWeightsEx(cudnnHandle_t handle,
                           size_t reserveSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 /* RNN FIND API */
@@ -6862,14 +6600,14 @@ cudnnStatus_t CUDNNWINAPI
 cudnnSetRNNAlgorithmDescriptor(cudnnHandle_t handle, cudnnRNNDescriptor_t rnnDesc, cudnnAlgorithmDescriptor_t algoDesc)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNForwardInferenceAlgorithmMaxCount(cudnnHandle_t handle, const cudnnRNNDescriptor_t rnnDesc, int *count)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6898,14 +6636,14 @@ cudnnFindRNNForwardInferenceAlgorithmEx(cudnnHandle_t handle,
                                         size_t workSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNForwardTrainingAlgorithmMaxCount(cudnnHandle_t handle, const cudnnRNNDescriptor_t rnnDesc, int *count)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6936,14 +6674,14 @@ cudnnFindRNNForwardTrainingAlgorithmEx(cudnnHandle_t handle,
                                        size_t reserveSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNBackwardDataAlgorithmMaxCount(cudnnHandle_t handle, const cudnnRNNDescriptor_t rnnDesc, int *count)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -6980,14 +6718,14 @@ cudnnFindRNNBackwardDataAlgorithmEx(cudnnHandle_t handle,
                                     size_t reserveSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNBackwardWeightsAlgorithmMaxCount(cudnnHandle_t handle, const cudnnRNNDescriptor_t rnnDesc, int *count)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7012,7 +6750,7 @@ cudnnFindRNNBackwardWeightsAlgorithmEx(cudnnHandle_t handle,
                                        size_t reserveSpaceSizeInBytes)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 /* DEPRECATED routines to be removed next release :
@@ -7033,7 +6771,7 @@ cudnnSetRNNDescriptor_v6(cudnnHandle_t handle,
                          cudnnDataType_t mathPrec)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7047,7 +6785,7 @@ cudnnSetRNNDescriptor_v5(cudnnRNNDescriptor_t rnnDesc,
                          cudnnDataType_t mathPrec)
 {
     fprintf(stderr, "%s is not implemented\n", __PRETTY_FUNCTION__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7059,8 +6797,7 @@ cudnnSetTensor4dDescriptor(cudnnTensorDescriptor_t tensorDesc,
                            int h,                    /* height of input section */
                            int w)                    /* width of input section */
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7075,8 +6812,7 @@ cudnnSetTensor4dDescriptorEx(cudnnTensorDescriptor_t tensorDesc,
                              int hStride,
                              int wStride)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7091,8 +6827,7 @@ cudnnGetTensor4dDescriptor(const cudnnTensorDescriptor_t tensorDesc,
                            int *hStride,
                            int *wStride)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7103,15 +6838,13 @@ cudnnGetTensorNdDescriptor(const cudnnTensorDescriptor_t tensorDesc,
                            int dimA[],
                            int strideA[])
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetTensorSizeInBytes(const cudnnTensorDescriptor_t tensorDesc, size_t *size)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /** Create a destination descriptor for cudnnTransformTensor */
@@ -7121,16 +6854,14 @@ cudnnInitTransformDest(const cudnnTensorTransformDescriptor_t transformDesc,
                        cudnnTensorDescriptor_t destDesc,
                        size_t *destSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /** Create an empty tensor transform descriptor */
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateTensorTransformDescriptor(cudnnTensorTransformDescriptor_t *transformDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /** Initialize a previously created tensor transform descriptor. */
@@ -7143,8 +6874,7 @@ cudnnSetTensorTransformDescriptor(cudnnTensorTransformDescriptor_t transformDesc
                                   const uint32_t foldA[],
                                   const cudnnFoldingDirection_t direction)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /**
@@ -7160,8 +6890,7 @@ cudnnGetTensorTransformDescriptor(cudnnTensorTransformDescriptor_t transformDesc
                                   uint32_t foldA[],
                                   cudnnFoldingDirection_t *direction)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /**
@@ -7170,8 +6899,7 @@ cudnnGetTensorTransformDescriptor(cudnnTensorTransformDescriptor_t transformDesc
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyTensorTransformDescriptor(cudnnTensorTransformDescriptor_t transformDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Tensor layout conversion helper (y = alpha * x + beta * y) */
@@ -7184,8 +6912,7 @@ cudnnTransformTensor(cudnnHandle_t handle,
                      const cudnnTensorDescriptor_t yDesc,
                      void *y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7198,8 +6925,7 @@ cudnnTransformTensorEx(cudnnHandle_t handle,
                        const cudnnTensorDescriptor_t destDesc,
                        void *destData)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Helper function to calculate folding descriptors  for dgrad */
@@ -7219,8 +6945,7 @@ cudnnGetFoldedConvBackwardDataDescriptors(const cudnnHandle_t handle,
                                           cudnnTensorTransformDescriptor_t gradFoldTransDesc,
                                           cudnnTensorTransformDescriptor_t gradUnfoldTransDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Tensor Bias addition : C = alpha * A + beta * C  */
@@ -7252,8 +6977,7 @@ cudnnAddTensor(cudnnHandle_t handle,
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateOpTensorDescriptor(cudnnOpTensorDescriptor_t *opTensorDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7262,8 +6986,7 @@ cudnnSetOpTensorDescriptor(cudnnOpTensorDescriptor_t opTensorDesc,
                            cudnnDataType_t opTensorCompType,
                            cudnnNanPropagation_t opTensorNanOpt)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7272,15 +6995,13 @@ cudnnGetOpTensorDescriptor(const cudnnOpTensorDescriptor_t opTensorDesc,
                            cudnnDataType_t *opTensorCompType,
                            cudnnNanPropagation_t *opTensorNanOpt)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyOpTensorDescriptor(cudnnOpTensorDescriptor_t opTensorDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Tensor operation : C = op( alpha1 * A, alpha2 * B ) + beta * C */
@@ -7298,15 +7019,13 @@ cudnnOpTensor(cudnnHandle_t handle,
               const cudnnTensorDescriptor_t cDesc,
               void *C)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateReduceTensorDescriptor(cudnnReduceTensorDescriptor_t *reduceTensorDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7317,8 +7036,7 @@ cudnnSetReduceTensorDescriptor(cudnnReduceTensorDescriptor_t reduceTensorDesc,
                                cudnnReduceTensorIndices_t reduceTensorIndices,
                                cudnnIndicesType_t reduceTensorIndicesType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7329,15 +7047,13 @@ cudnnGetReduceTensorDescriptor(const cudnnReduceTensorDescriptor_t reduceTensorD
                                cudnnReduceTensorIndices_t *reduceTensorIndices,
                                cudnnIndicesType_t *reduceTensorIndicesType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyReduceTensorDescriptor(cudnnReduceTensorDescriptor_t reduceTensorDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Helper function to return the minimum size of the index space to be passed to the reduction given the input and
@@ -7349,8 +7065,7 @@ cudnnGetReductionIndicesSize(cudnnHandle_t handle,
                              const cudnnTensorDescriptor_t cDesc,
                              size_t *sizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Helper function to return the minimum size of the workspace to be passed to the reduction given the input and output
@@ -7362,8 +7077,7 @@ cudnnGetReductionWorkspaceSize(cudnnHandle_t handle,
                                const cudnnTensorDescriptor_t cDesc,
                                size_t *sizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Tensor operation : C = reduce op( alpha * A ) + beta * C */
@@ -7383,24 +7097,21 @@ cudnnReduceTensor(cudnnHandle_t handle,
                   const cudnnTensorDescriptor_t cDesc,
                   void *C)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Set all values of a tensor to a given value : y[i] = value[0] */
 cudnnStatus_t CUDNNWINAPI
 cudnnSetTensor(cudnnHandle_t handle, const cudnnTensorDescriptor_t yDesc, void *y, const void *valuePtr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Scale all values of a tensor by a given factor : y[i] = alpha * y[i] */
 cudnnStatus_t CUDNNWINAPI
 cudnnScaleTensor(cudnnHandle_t handle, const cudnnTensorDescriptor_t yDesc, void *y, const void *alpha)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7412,8 +7123,7 @@ cudnnSetFilter4dDescriptor(cudnnFilterDescriptor_t filterDesc,
                            int h,  /* height of each input filter */
                            int w)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* width of  each input filter */
 
 cudnnStatus_t CUDNNWINAPI
@@ -7425,8 +7135,7 @@ cudnnGetFilter4dDescriptor(const cudnnFilterDescriptor_t filterDesc,
                            int *h,  /* height of each input filter */
                            int *w)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* width of  each input filter */
 
 cudnnStatus_t CUDNNWINAPI
@@ -7437,14 +7146,12 @@ cudnnGetFilterNdDescriptor(const cudnnFilterDescriptor_t filterDesc,
                            int *nbDims,
                            int filterDimA[])
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 cudnnStatus_t CUDNNWINAPI
 cudnnGetFilterSizeInBytes(const cudnnFilterDescriptor_t filterDesc, size_t *size)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7457,8 +7164,7 @@ cudnnTransformFilter(cudnnHandle_t handle,
                      const cudnnFilterDescriptor_t destDesc,
                      void *destData)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7471,36 +7177,31 @@ cudnnReorderFilterAndBias(cudnnHandle_t handle,
                           const void *biasData,
                           void *reorderedBiasData)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetConvolutionMathType(cudnnConvolutionDescriptor_t convDesc, cudnnMathType_t *mathType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetConvolutionGroupCount(cudnnConvolutionDescriptor_t convDesc, int *groupCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnSetConvolutionReorderType(cudnnConvolutionDescriptor_t convDesc, cudnnReorderType_t reorderType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetConvolutionReorderType(cudnnConvolutionDescriptor_t convDesc, cudnnReorderType_t *reorderType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7514,8 +7215,7 @@ cudnnSetConvolution2dDescriptor(cudnnConvolutionDescriptor_t convDesc,
                                 cudnnConvolutionMode_t mode,
                                 cudnnDataType_t computeType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7529,8 +7229,7 @@ cudnnGetConvolution2dDescriptor(const cudnnConvolutionDescriptor_t convDesc,
                                 cudnnConvolutionMode_t *mode,
                                 cudnnDataType_t *computeType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Helper function to return the dimensions of the output tensor given a convolution descriptor */
@@ -7543,8 +7242,7 @@ cudnnGetConvolution2dForwardOutputDim(const cudnnConvolutionDescriptor_t convDes
                                       int *h,
                                       int *w)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7557,8 +7255,7 @@ cudnnGetConvolutionNdDescriptor(const cudnnConvolutionDescriptor_t convDesc,
                                 cudnnConvolutionMode_t *mode,
                                 cudnnDataType_t *computeType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* convolution data type */
 
 /* Helper function to return the dimensions of the output tensor given a convolution descriptor */
@@ -7569,15 +7266,13 @@ cudnnGetConvolutionNdForwardOutputDim(const cudnnConvolutionDescriptor_t convDes
                                       int nbDims,
                                       int tensorOuputDimA[])
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetConvolutionForwardAlgorithmMaxCount(cudnnHandle_t handle, int *count)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7590,8 +7285,7 @@ cudnnFindConvolutionForwardAlgorithm(cudnnHandle_t handle,
                                      int *returnedAlgoCount,
                                      cudnnConvolutionFwdAlgoPerf_t *perfResults)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7649,8 +7343,7 @@ cudnnConvolutionBiasActivationForward(cudnnHandle_t handle,
                                       const cudnnTensorDescriptor_t yDesc,
                                       void *y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Function to compute the bias gradient for batch convolution */
@@ -7663,15 +7356,13 @@ cudnnConvolutionBackwardBias(cudnnHandle_t handle,
                              const cudnnTensorDescriptor_t dbDesc,
                              void *db)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetConvolutionBackwardFilterAlgorithmMaxCount(cudnnHandle_t handle, int *count)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7684,8 +7375,7 @@ cudnnFindConvolutionBackwardFilterAlgorithm(cudnnHandle_t handle,
                                             int *returnedAlgoCount,
                                             cudnnConvolutionBwdFilterAlgoPerf_t *perfResults)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7703,8 +7393,7 @@ cudnnFindConvolutionBackwardFilterAlgorithmEx(cudnnHandle_t handle,
                                               void *workSpace,
                                               size_t workSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7717,8 +7406,7 @@ cudnnGetConvolutionBackwardFilterAlgorithm(cudnnHandle_t handle,
                                            size_t memoryLimitInBytes,
                                            cudnnConvolutionBwdFilterAlgo_t *algo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7731,8 +7419,7 @@ cudnnGetConvolutionBackwardFilterAlgorithm_v7(cudnnHandle_t handle,
                                               int *returnedAlgoCount,
                                               cudnnConvolutionBwdFilterAlgoPerf_t *perfResults)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /*
@@ -7799,8 +7486,7 @@ cudnnConvolutionBackwardFilter(cudnnHandle_t handle,
 cudnnStatus_t CUDNNWINAPI
 cudnnGetConvolutionBackwardDataAlgorithmMaxCount(cudnnHandle_t handle, int *count)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7813,8 +7499,7 @@ cudnnFindConvolutionBackwardDataAlgorithm(cudnnHandle_t handle,
                                           int *returnedAlgoCount,
                                           cudnnConvolutionBwdDataAlgoPerf_t *perfResults)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7832,8 +7517,7 @@ cudnnFindConvolutionBackwardDataAlgorithmEx(cudnnHandle_t handle,
                                             void *workSpace,
                                             size_t workSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7846,8 +7530,7 @@ cudnnGetConvolutionBackwardDataAlgorithm(cudnnHandle_t handle,
                                          size_t memoryLimitInBytes,
                                          cudnnConvolutionBwdDataAlgo_t *algo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7860,8 +7543,7 @@ cudnnGetConvolutionBackwardDataAlgorithm_v7(cudnnHandle_t handle,
                                             int *returnedAlgoCount,
                                             cudnnConvolutionBwdDataAlgoPerf_t *perfResults)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Helper function to return the minimum size of the workspace to be passed to the convolution given an algo*/
@@ -7926,8 +7608,7 @@ cudnnIm2Col(cudnnHandle_t handle,
             const cudnnConvolutionDescriptor_t convDesc,
             void *colBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Function to perform forward softmax */
@@ -7942,8 +7623,7 @@ cudnnSoftmaxForward(cudnnHandle_t handle,
                     const cudnnTensorDescriptor_t yDesc,
                     void *y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Function to perform backward softmax */
@@ -7960,8 +7640,7 @@ cudnnSoftmaxBackward(cudnnHandle_t handle,
                      const cudnnTensorDescriptor_t dxDesc,
                      void *dx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7975,8 +7654,7 @@ cudnnSetPooling2dDescriptor(cudnnPoolingDescriptor_t poolingDesc,
                             int verticalStride,
                             int horizontalStride)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -7990,8 +7668,7 @@ cudnnGetPooling2dDescriptor(const cudnnPoolingDescriptor_t poolingDesc,
                             int *verticalStride,
                             int *horizontalStride)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8004,8 +7681,7 @@ cudnnGetPoolingNdDescriptor(const cudnnPoolingDescriptor_t poolingDesc,
                             int paddingA[],
                             int strideA[])
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8014,8 +7690,7 @@ cudnnGetPoolingNdForwardOutputDim(const cudnnPoolingDescriptor_t poolingDesc,
                                   int nbDims,
                                   int outputTensorDimA[])
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8026,8 +7701,7 @@ cudnnGetPooling2dForwardOutputDim(const cudnnPoolingDescriptor_t poolingDesc,
                                   int *h,
                                   int *w)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Pooling functions: All of the form "output = alpha * Op(inputs) + beta * output" */
@@ -8036,8 +7710,7 @@ cudnnGetPooling2dForwardOutputDim(const cudnnPoolingDescriptor_t poolingDesc,
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateActivationDescriptor(cudnnActivationDescriptor_t *activationDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8046,8 +7719,7 @@ cudnnSetActivationDescriptor(cudnnActivationDescriptor_t activationDesc,
                              cudnnNanPropagation_t reluNanOpt,
                              double coef)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* ceiling for clipped RELU, alpha for ELU */
 
 cudnnStatus_t CUDNNWINAPI
@@ -8056,15 +7728,13 @@ cudnnGetActivationDescriptor(const cudnnActivationDescriptor_t activationDesc,
                              cudnnNanPropagation_t *reluNanOpt,
                              double *coef)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* ceiling for clipped RELU, alpha for ELU */
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyActivationDescriptor(cudnnActivationDescriptor_t activationDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Function to perform forward activation  */
@@ -8078,8 +7748,7 @@ cudnnActivationForward(cudnnHandle_t handle,
                        const cudnnTensorDescriptor_t yDesc,
                        void *y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Function to perform backward activation  */
@@ -8097,8 +7766,7 @@ cudnnActivationBackward(cudnnHandle_t handle,
                         const cudnnTensorDescriptor_t dxDesc,
                         void *dx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /*
@@ -8108,8 +7776,7 @@ cudnnActivationBackward(cudnnHandle_t handle,
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateLRNDescriptor(cudnnLRNDescriptor_t *normDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /*
@@ -8120,8 +7787,7 @@ cudnnCreateLRNDescriptor(cudnnLRNDescriptor_t *normDesc)
 cudnnStatus_t CUDNNWINAPI
 cudnnSetLRNDescriptor(cudnnLRNDescriptor_t normDesc, unsigned lrnN, double lrnAlpha, double lrnBeta, double lrnK)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 /*
 * Retrieve the settings currently stored in an LRN layer descriptor
@@ -8130,16 +7796,14 @@ cudnnSetLRNDescriptor(cudnnLRNDescriptor_t normDesc, unsigned lrnN, double lrnAl
 cudnnStatus_t CUDNNWINAPI
 cudnnGetLRNDescriptor(cudnnLRNDescriptor_t normDesc, unsigned *lrnN, double *lrnAlpha, double *lrnBeta, double *lrnK)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Destroy an instance of LRN descriptor */
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyLRNDescriptor(cudnnLRNDescriptor_t lrnDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* LRN functions: output = alpha * normalize(x) + beta * old_y */
@@ -8156,8 +7820,7 @@ cudnnLRNCrossChannelForward(cudnnHandle_t handle,
                             const cudnnTensorDescriptor_t yDesc,
                             void *y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* LRN cross-channel backward computation. Double parameters cast to tensor data type */
@@ -8176,8 +7839,7 @@ cudnnLRNCrossChannelBackward(cudnnHandle_t handle,
                              const cudnnTensorDescriptor_t dxDesc,
                              void *dx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* LCN/divisive normalization functions: y = alpha * normalize(x) + beta * y */
@@ -8195,8 +7857,7 @@ cudnnDivisiveNormalizationForward(cudnnHandle_t handle,
                                   const cudnnTensorDescriptor_t yDesc,
                                   void *y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8215,8 +7876,7 @@ cudnnDivisiveNormalizationBackward(cudnnHandle_t handle,
                                    void *dx,                                   /* output x differential */
                                    void *dMeans)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* output means differential, can be NULL */
 
 
@@ -8248,8 +7908,7 @@ cudnnGetBatchNormalizationBackwardExWorkspaceSize(cudnnHandle_t handle,
                                                   const cudnnActivationDescriptor_t activationDesc,
                                                   size_t *sizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8260,8 +7919,7 @@ cudnnGetBatchNormalizationTrainingExReserveSpaceSize(cudnnHandle_t handle,
                                                      const cudnnTensorDescriptor_t xDesc,
                                                      size_t *sizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Computes y = BN(x). Also accumulates moving averages of mean and inverse variances */
@@ -8554,8 +8212,7 @@ cudnnBatchNormalizationBackwardEx(cudnnHandle_t handle,
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateSpatialTransformerDescriptor(cudnnSpatialTransformerDescriptor_t *stDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8565,15 +8222,13 @@ cudnnSetSpatialTransformerNdDescriptor(cudnnSpatialTransformerDescriptor_t stDes
                                        const int nbDims,
                                        const int dimA[])
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroySpatialTransformerDescriptor(cudnnSpatialTransformerDescriptor_t stDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8582,8 +8237,7 @@ cudnnSpatialTfGridGeneratorForward(cudnnHandle_t handle,
                                    const void *theta,
                                    void *grid)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8592,8 +8246,7 @@ cudnnSpatialTfGridGeneratorBackward(cudnnHandle_t handle,
                                     const void *dgrid,
                                     void *dtheta)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8607,8 +8260,7 @@ cudnnSpatialTfSamplerForward(cudnnHandle_t handle,
                              cudnnTensorDescriptor_t yDesc,
                              void *y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8627,39 +8279,34 @@ cudnnSpatialTfSamplerBackward(cudnnHandle_t handle,
                               const void *betaDgrid,
                               void *dgrid)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateDropoutDescriptor(cudnnDropoutDescriptor_t *dropoutDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyDropoutDescriptor(cudnnDropoutDescriptor_t dropoutDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /*helper function to determine size of the states to be passed to cudnnSetDropoutDescriptor */
 cudnnStatus_t CUDNNWINAPI
 cudnnDropoutGetStatesSize(cudnnHandle_t handle, size_t *sizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /*helper function to determine size of the reserve space to be passed to dropout forward/backward calls */
 cudnnStatus_t CUDNNWINAPI
 cudnnDropoutGetReserveSpaceSize(cudnnTensorDescriptor_t xdesc, size_t *sizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8670,8 +8317,7 @@ cudnnSetDropoutDescriptor(cudnnDropoutDescriptor_t dropoutDesc,
                           size_t stateSizeInBytes,
                           unsigned long long seed)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Restores the dropout descriptor to a previously saved-off state */
@@ -8683,8 +8329,7 @@ cudnnRestoreDropoutDescriptor(cudnnDropoutDescriptor_t dropoutDesc,
                               size_t stateSizeInBytes,
                               unsigned long long seed)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8694,8 +8339,7 @@ cudnnGetDropoutDescriptor(cudnnDropoutDescriptor_t dropoutDesc,
                           void **states,
                           unsigned long long *seed)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8708,8 +8352,7 @@ cudnnDropoutForward(cudnnHandle_t handle,
                     void *reserveSpace,
                     size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8722,22 +8365,19 @@ cudnnDropoutBackward(cudnnHandle_t handle,
                      void *reserveSpace,
                      size_t reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnSetRNNBiasMode(cudnnRNNDescriptor_t rnnDesc, cudnnRNNBiasMode_t biasMode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetRNNBiasMode(cudnnRNNDescriptor_t rnnDesc, cudnnRNNBiasMode_t *biasMode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Sequence data descriptor */
@@ -8745,15 +8385,13 @@ cudnnGetRNNBiasMode(cudnnRNNDescriptor_t rnnDesc, cudnnRNNBiasMode_t *biasMode)
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateSeqDataDescriptor(cudnnSeqDataDescriptor_t *seqDataDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroySeqDataDescriptor(cudnnSeqDataDescriptor_t seqDataDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8766,8 +8404,7 @@ cudnnSetSeqDataDescriptor(cudnnSeqDataDescriptor_t seqDataDesc,
                           const int seqLengthArray[],
                           void *paddingFill)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8782,8 +8419,7 @@ cudnnGetSeqDataDescriptor(const cudnnSeqDataDescriptor_t seqDataDesc,
                           int seqLengthArray[],
                           void *paddingFill)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* Multihead Attention */
@@ -8793,15 +8429,13 @@ cudnnGetSeqDataDescriptor(const cudnnSeqDataDescriptor_t seqDataDesc,
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateAttnDescriptor(cudnnAttnDescriptor_t *attnDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyAttnDescriptor(cudnnAttnDescriptor_t attnDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8826,8 +8460,7 @@ cudnnSetAttnDescriptor(cudnnAttnDescriptor_t attnDesc,
                        int maxBatchSize,
                        int maxBeamSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8852,8 +8485,7 @@ cudnnGetAttnDescriptor(cudnnAttnDescriptor_t attnDesc,
                        int *maxBatchSize,
                        int *maxBeamSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8863,8 +8495,7 @@ cudnnGetMultiHeadAttnBuffers(cudnnHandle_t handle,
                              size_t *workSpaceSizeInBytes,
                              size_t *reserveSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8876,8 +8507,7 @@ cudnnGetMultiHeadAttnWeights(cudnnHandle_t handle,
                              cudnnTensorDescriptor_t wDesc,
                              void **wAddr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8904,8 +8534,7 @@ cudnnMultiHeadAttnForward(cudnnHandle_t handle,
                           size_t reserveSpaceSizeInBytes,
                           void *reserveSpace)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8933,8 +8562,7 @@ cudnnMultiHeadAttnBackwardData(cudnnHandle_t handle,
                                size_t reserveSpaceSizeInBytes,
                                void *reserveSpace)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8957,8 +8585,7 @@ cudnnMultiHeadAttnBackwardWeights(cudnnHandle_t handle,
                                   size_t reserveSpaceSizeInBytes,
                                   void *reserveSpace)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -8968,15 +8595,13 @@ cudnnMultiHeadAttnBackwardWeights(cudnnHandle_t handle,
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateCTCLossDescriptor(cudnnCTCLossDescriptor_t *ctcLossDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnSetCTCLossDescriptor(cudnnCTCLossDescriptor_t ctcLossDesc, cudnnDataType_t compType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -8985,15 +8610,13 @@ cudnnSetCTCLossDescriptorEx(cudnnCTCLossDescriptor_t ctcLossDesc,
                             cudnnLossNormalizationMode_t normMode,
                             cudnnNanPropagation_t gradMode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetCTCLossDescriptor(cudnnCTCLossDescriptor_t ctcLossDesc, cudnnDataType_t *compType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -9002,15 +8625,13 @@ cudnnGetCTCLossDescriptorEx(cudnnCTCLossDescriptor_t ctcLossDesc,
                             cudnnLossNormalizationMode_t *normMode,
                             cudnnNanPropagation_t *gradMode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyCTCLossDescriptor(cudnnCTCLossDescriptor_t ctcLossDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* return the ctc costs and gradients, given the probabilities and labels */
@@ -9032,8 +8653,7 @@ cudnnCTCLoss(
     void *workspace,              /* pointer to the workspace, in GPU memory */
     size_t workSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* size of the workspace */
 
 /* return the workspace size needed for ctc */
@@ -9052,50 +8672,43 @@ cudnnGetCTCLossWorkspaceSize(
     cudnnCTCLossDescriptor_t ctcLossDesc,
     size_t *sizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 } /* pointer to the returned workspace size */
 
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateAlgorithmDescriptor(cudnnAlgorithmDescriptor_t *algoDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnSetAlgorithmDescriptor(cudnnAlgorithmDescriptor_t algoDesc, cudnnAlgorithm_t algorithm)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetAlgorithmDescriptor(const cudnnAlgorithmDescriptor_t algoDesc, cudnnAlgorithm_t *algorithm)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnCopyAlgorithmDescriptor(const cudnnAlgorithmDescriptor_t src, cudnnAlgorithmDescriptor_t dest)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyAlgorithmDescriptor(cudnnAlgorithmDescriptor_t algoDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateAlgorithmPerformance(cudnnAlgorithmPerformance_t *algoPerf, int numberToCreate)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -9105,8 +8718,7 @@ cudnnSetAlgorithmPerformance(cudnnAlgorithmPerformance_t algoPerf,
                              float time,
                              size_t memory)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -9116,22 +8728,19 @@ cudnnGetAlgorithmPerformance(const cudnnAlgorithmPerformance_t algoPerf,
                              float *time,
                              size_t *memory)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyAlgorithmPerformance(cudnnAlgorithmPerformance_t *algoPerf, int numberToDestroy)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetAlgorithmSpaceSize(cudnnHandle_t handle, cudnnAlgorithmDescriptor_t algoDesc, size_t *algoSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -9140,8 +8749,7 @@ cudnnSaveAlgorithm(cudnnHandle_t handle,
                    void *algoSpace,
                    size_t algoSpaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -9150,36 +8758,31 @@ cudnnRestoreAlgorithm(cudnnHandle_t handle,
                       size_t algoSpaceSizeInBytes,
                       cudnnAlgorithmDescriptor_t algoDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnSetCallback(unsigned mask, void *udata, cudnnCallback_t fptr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnGetCallback(unsigned *mask, void **udata, cudnnCallback_t *fptr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateFusedOpsConstParamPack(cudnnFusedOpsConstParamPack_t *constPack, cudnnFusedOps_t ops)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyFusedOpsConstParamPack(cudnnFusedOpsConstParamPack_t constPack)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -9187,8 +8790,7 @@ cudnnSetFusedOpsConstParamPackAttribute(cudnnFusedOpsConstParamPack_t constPack,
                                         cudnnFusedOpsConstParamLabel_t paramLabel,
                                         const void *param)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -9197,22 +8799,19 @@ cudnnGetFusedOpsConstParamPackAttribute(const cudnnFusedOpsConstParamPack_t cons
                                         void *param,
                                         int *isNULL)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateFusedOpsVariantParamPack(cudnnFusedOpsVariantParamPack_t *varPack, cudnnFusedOps_t ops)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyFusedOpsVariantParamPack(cudnnFusedOpsVariantParamPack_t varPack)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -9220,8 +8819,7 @@ cudnnSetFusedOpsVariantParamPackAttribute(cudnnFusedOpsVariantParamPack_t varPac
                                           cudnnFusedOpsVariantParamLabel_t paramLabel,
                                           void *ptr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -9229,22 +8827,19 @@ cudnnGetFusedOpsVariantParamPackAttribute(const cudnnFusedOpsVariantParamPack_t 
                                           cudnnFusedOpsVariantParamLabel_t paramLabel,
                                           void *ptr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnCreateFusedOpsPlan(cudnnFusedOpsPlan_t *plan, cudnnFusedOps_t ops)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnDestroyFusedOpsPlan(cudnnFusedOpsPlan_t plan)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
@@ -9253,15 +8848,13 @@ cudnnMakeFusedOpsPlan(cudnnHandle_t handle,
                       const cudnnFusedOpsConstParamPack_t constPack,
                       size_t *workspaceSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cudnnStatus_t CUDNNWINAPI
 cudnnFusedOpsExecute(cudnnHandle_t handle, const cudnnFusedOpsPlan_t plan, cudnnFusedOpsVariantParamPack_t varPack)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /******** curand *********/
@@ -9277,8 +8870,7 @@ curandCreateGenerator(curandGenerator_t *generator, curandRngType_t rng_type)
 curandStatus_t CURANDAPI
 curandCreateGeneratorHost(curandGenerator_t *generator, curandRngType_t rng_type)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
@@ -9291,126 +8883,109 @@ curandDestroyGenerator(curandGenerator_t generator)
 curandStatus_t CURANDAPI
 curandGetVersion(int *version)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandGetProperty(libraryPropertyType type, int *value)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 curandStatus_t CURANDAPI
 curandSetStream(curandGenerator_t generator, cudaStream_t stream)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandSetPseudoRandomGeneratorSeed(curandGenerator_t generator, unsigned long long seed)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandSetGeneratorOffset(curandGenerator_t generator, unsigned long long offset)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandSetGeneratorOrdering(curandGenerator_t generator, curandOrdering_t order)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandSetQuasiRandomGeneratorDimensions(curandGenerator_t generator, unsigned int num_dimensions)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandGenerate(curandGenerator_t generator, unsigned int *outputPtr, size_t num)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandGenerateLongLong(curandGenerator_t generator, unsigned long long *outputPtr, size_t num)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandGenerateUniform(curandGenerator_t generator, float *outputPtr, size_t num)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandGenerateUniformDouble(curandGenerator_t generator, double *outputPtr, size_t num)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandGenerateNormal(curandGenerator_t generator, float *outputPtr,
                      size_t n, float mean, float stddev)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandGenerateNormalDouble(curandGenerator_t generator, double *outputPtr,
                      size_t n, double mean, double stddev)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandGenerateLogNormal(curandGenerator_t generator, float *outputPtr,
                      size_t n, float mean, float stddev)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandGenerateLogNormalDouble(curandGenerator_t generator, double *outputPtr,
                      size_t n, double mean, double stddev)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 curandStatus_t CURANDAPI
 curandCreatePoissonDistribution(double lambda, curandDiscreteDistribution_t *discrete_distribution)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 curandStatus_t CURANDAPI
 curandDestroyDistribution(curandDiscreteDistribution_t discrete_distribution)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9418,8 +8993,7 @@ curandStatus_t CURANDAPI
 curandGeneratePoisson(curandGenerator_t generator, unsigned int *outputPtr,
                      size_t n, double lambda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 // just for internal usage
@@ -9427,8 +9001,7 @@ curandStatus_t CURANDAPI
 curandGeneratePoissonMethod(curandGenerator_t generator, unsigned int *outputPtr,
                      size_t n, double lambda, curandMethod_t method)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9436,8 +9009,7 @@ curandStatus_t CURANDAPI
 curandGenerateBinomial(curandGenerator_t generator, unsigned int *outputPtr,
                        size_t num, unsigned int n, double p)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 // just for internal usage
 curandStatus_t CURANDAPI
@@ -9446,44 +9018,38 @@ curandGenerateBinomialMethod(curandGenerator_t generator,
                              size_t num, unsigned int n, double p,
                              curandMethod_t method)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 curandStatus_t CURANDAPI
 curandGenerateSeeds(curandGenerator_t generator)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 // curandStatus_t CURANDAPI
 // curandGetDirectionVectors32( unsigned int (*vectors[32])[], curandDirectionVectorSet_t set)
 // {
-//     fprintf(stderr, "%s is not implemented\n", __func__);
-//     abort();
+//     ava_unsupported;
 // }
 
 curandStatus_t CURANDAPI
 curandGetScrambleConstants32(unsigned int ** constants)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 // curandStatus_t CURANDAPI
 // curandGetDirectionVectors64(unsigned long long (*vectors[64])[], curandDirectionVectorSet_t set)
 // {
-//     fprintf(stderr, "%s is not implemented\n", __func__);
-//     abort();
+//     ava_unsupported;
 // }
 
 curandStatus_t CURANDAPI
 curandGetScrambleConstants64(unsigned long long * * constants)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /******** cufft *********/
@@ -9492,24 +9058,21 @@ cufftResult CUFFTAPI cufftPlan1d(cufftHandle *plan,
                                  cufftType type,
                                  int batch)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftPlan2d(cufftHandle *plan,
                                  int nx, int ny,
                                  cufftType type)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftPlan3d(cufftHandle *plan,
                                  int nx, int ny, int nz,
                                  cufftType type)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftPlanMany(cufftHandle *plan,
@@ -9520,8 +9083,7 @@ cufftResult CUFFTAPI cufftPlanMany(cufftHandle *plan,
                                    cufftType type,
                                    int batch)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftMakePlan1d(cufftHandle plan,
@@ -9530,8 +9092,7 @@ cufftResult CUFFTAPI cufftMakePlan1d(cufftHandle plan,
                                      int batch,
                                      size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftMakePlan2d(cufftHandle plan,
@@ -9539,8 +9100,7 @@ cufftResult CUFFTAPI cufftMakePlan2d(cufftHandle plan,
                                      cufftType type,
                                      size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftMakePlan3d(cufftHandle plan,
@@ -9548,8 +9108,7 @@ cufftResult CUFFTAPI cufftMakePlan3d(cufftHandle plan,
                                      cufftType type,
                                      size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftMakePlanMany(cufftHandle plan,
@@ -9561,8 +9120,7 @@ cufftResult CUFFTAPI cufftMakePlanMany(cufftHandle plan,
                                        int batch,
                                        size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftMakePlanMany64(cufftHandle plan,
@@ -9577,8 +9135,7 @@ cufftResult CUFFTAPI cufftMakePlanMany64(cufftHandle plan,
                                          long long int batch,
                                          size_t * workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftGetSizeMany64(cufftHandle plan,
@@ -9592,8 +9149,7 @@ cufftResult CUFFTAPI cufftGetSizeMany64(cufftHandle plan,
                                         long long int batch,
                                         size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftEstimate1d(int nx,
@@ -9601,24 +9157,21 @@ cufftResult CUFFTAPI cufftEstimate1d(int nx,
                                      int batch,
                                      size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftEstimate2d(int nx, int ny,
                                      cufftType type,
                                      size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftEstimate3d(int nx, int ny, int nz,
                                      cufftType type,
                                      size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftEstimateMany(int rank,
@@ -9629,14 +9182,12 @@ cufftResult CUFFTAPI cufftEstimateMany(int rank,
                                        int batch,
                                        size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftCreate(cufftHandle * handle)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftGetSize1d(cufftHandle handle,
@@ -9645,8 +9196,7 @@ cufftResult CUFFTAPI cufftGetSize1d(cufftHandle handle,
                                     int batch,
                                     size_t *workSize )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftGetSize2d(cufftHandle handle,
@@ -9654,8 +9204,7 @@ cufftResult CUFFTAPI cufftGetSize2d(cufftHandle handle,
                                     cufftType type,
                                     size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftGetSize3d(cufftHandle handle,
@@ -9663,8 +9212,7 @@ cufftResult CUFFTAPI cufftGetSize3d(cufftHandle handle,
                                     cufftType type,
                                     size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftGetSizeMany(cufftHandle handle,
@@ -9673,26 +9221,22 @@ cufftResult CUFFTAPI cufftGetSizeMany(cufftHandle handle,
                                       int *onembed, int ostride, int odist,
                                       cufftType type, int batch, size_t *workArea)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftGetSize(cufftHandle handle, size_t *workSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftSetWorkArea(cufftHandle plan, void *workArea)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftSetAutoAllocation(cufftHandle plan, int autoAllocate)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftExecC2C(cufftHandle plan,
@@ -9700,24 +9244,21 @@ cufftResult CUFFTAPI cufftExecC2C(cufftHandle plan,
                                   cufftComplex *odata,
                                   int direction)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftExecR2C(cufftHandle plan,
                                   cufftReal *idata,
                                   cufftComplex *odata)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftExecC2R(cufftHandle plan,
                                   cufftComplex *idata,
                                   cufftReal *odata)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftExecZ2Z(cufftHandle plan,
@@ -9725,24 +9266,21 @@ cufftResult CUFFTAPI cufftExecZ2Z(cufftHandle plan,
                                   cufftDoubleComplex *odata,
                                   int direction)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftExecD2Z(cufftHandle plan,
                                   cufftDoubleReal *idata,
                                   cufftDoubleComplex *odata)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftExecZ2D(cufftHandle plan,
                                   cufftDoubleComplex *idata,
                                   cufftDoubleReal *odata)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9750,52 +9288,44 @@ cufftResult CUFFTAPI cufftExecZ2D(cufftHandle plan,
 cufftResult CUFFTAPI cufftSetStream(cufftHandle plan,
                                     cudaStream_t stream)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftDestroy(cufftHandle plan)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftGetVersion(int *version)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cufftResult CUFFTAPI cufftGetProperty(libraryPropertyType type,
                                       int *value)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /******* cusolver *********/
 cusolverStatus_t CUSOLVERAPI cusolverDnCreate(cusolverDnHandle_t *handle)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusolverStatus_t CUSOLVERAPI cusolverDnDestroy(cusolverDnHandle_t handle)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusolverStatus_t CUSOLVERAPI cusolverDnSetStream (cusolverDnHandle_t handle, cudaStream_t streamId)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusolverStatus_t CUSOLVERAPI cusolverDnGetStream(cusolverDnHandle_t handle, cudaStream_t *streamId)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9809,8 +9339,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSpotrf_bufferSize(
     int lda,
     int *Lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9822,8 +9351,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDpotrf_bufferSize(
     int lda,
     int *Lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9835,8 +9363,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCpotrf_bufferSize(
     int lda,
     int *Lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9848,8 +9375,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZpotrf_bufferSize(
     int lda,
     int *Lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9863,8 +9389,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSpotrf(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9878,8 +9403,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDpotrf(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9895,8 +9419,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCpotrf(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9910,8 +9433,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZpotrf(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9927,8 +9449,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSpotrs(
     int ldb,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9943,8 +9464,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDpotrs(
     int ldb,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9959,8 +9479,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCpotrs(
     int ldb,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9975,8 +9494,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZpotrs(
     int ldb,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -9990,8 +9508,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSpotrfBatched(
     int *infoArray,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10004,8 +9521,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDpotrfBatched(
     int *infoArray,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10018,8 +9534,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCpotrfBatched(
     int *infoArray,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10032,8 +9547,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZpotrfBatched(
     int *infoArray,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10049,8 +9563,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSpotrsBatched(
     int *d_info,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10066,8 +9579,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDpotrsBatched(
     int *d_info,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10083,8 +9595,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCpotrsBatched(
     int *d_info,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10100,8 +9611,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZpotrsBatched(
     int *d_info,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10114,8 +9624,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSpotri_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10127,8 +9636,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDpotri_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10140,8 +9648,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCpotri_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10153,8 +9660,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZpotri_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10168,8 +9674,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSpotri(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10183,8 +9688,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDpotri(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10198,8 +9702,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCpotri(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10213,8 +9716,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZpotri(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10227,8 +9729,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnStrtri_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10241,8 +9742,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDtrtri_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10255,8 +9755,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCtrtri_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10269,8 +9768,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZtrtri_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10285,8 +9783,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnStrtri(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10301,8 +9798,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDtrtri(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10317,8 +9813,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCtrtri(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10333,8 +9828,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZtrtri(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10347,8 +9841,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSlauum_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10360,8 +9853,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDlauum_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10373,8 +9865,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnClauum_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10386,8 +9877,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZlauum_bufferSize(
     int lda,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10401,8 +9891,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSlauum(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10416,8 +9905,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDlauum(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10431,8 +9919,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnClauum(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10446,8 +9933,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZlauum(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10462,8 +9948,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgetrf_bufferSize(
     int lda,
     int *Lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10475,8 +9960,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgetrf_bufferSize(
     int lda,
     int *Lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10488,8 +9972,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgetrf_bufferSize(
     int lda,
     int *Lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10501,8 +9984,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgetrf_bufferSize(
     int lda,
     int *Lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10517,8 +9999,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgetrf(
     int *devIpiv,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10532,8 +10013,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgetrf(
     int *devIpiv,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10547,8 +10027,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgetrf(
     int *devIpiv,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10562,8 +10041,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgetrf(
     int *devIpiv,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10578,8 +10056,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSlaswp(
     const int *devIpiv,
     int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10593,8 +10070,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDlaswp(
     const int *devIpiv,
     int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10608,8 +10084,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnClaswp(
     const int *devIpiv,
     int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10623,8 +10098,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZlaswp(
     const int *devIpiv,
     int incx)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10641,8 +10115,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgetrs(
     int ldb,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10658,8 +10131,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgetrs(
     int ldb,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10675,8 +10147,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgetrs(
     int ldb,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10692,8 +10163,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgetrs(
     int ldb,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10707,8 +10177,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgeqrf_bufferSize(
     int lda,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10720,8 +10189,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgeqrf_bufferSize(
     int lda,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10733,8 +10201,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgeqrf_bufferSize(
     int lda,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10746,8 +10213,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgeqrf_bufferSize(
     int lda,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10762,8 +10228,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgeqrf(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10778,8 +10243,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgeqrf(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10794,8 +10258,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgeqrf(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10810,8 +10273,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgeqrf(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10827,8 +10289,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSorgqr_bufferSize(
     const float *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10842,8 +10303,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDorgqr_bufferSize(
     const double *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10857,8 +10317,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCungqr_bufferSize(
     const cuComplex *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10872,8 +10331,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZungqr_bufferSize(
     const cuDoubleComplex *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10889,8 +10347,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSorgqr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10906,8 +10363,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDorgqr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10923,8 +10379,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCungqr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10940,8 +10395,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZungqr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10962,8 +10416,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSormqr_bufferSize(
     int ldc,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -10981,8 +10434,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDormqr_bufferSize(
     int ldc,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11000,8 +10452,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCunmqr_bufferSize(
     int ldc,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11019,8 +10470,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZunmqr_bufferSize(
     int ldc,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11040,8 +10490,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSormqr(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11061,8 +10510,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDormqr(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11082,8 +10530,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCunmqr(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11103,8 +10550,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZunmqr(
     int lwork,
     int *devInfo)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11117,8 +10563,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsytrf_bufferSize(
     int lda,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11129,8 +10574,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsytrf_bufferSize(
     int lda,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11141,8 +10585,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCsytrf_bufferSize(
     int lda,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11153,8 +10596,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZsytrf_bufferSize(
     int lda,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11169,8 +10611,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsytrf(
     int lwork,
     int *info )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11185,8 +10626,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsytrf(
     int lwork,
     int *info )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11201,8 +10641,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCsytrf(
     int lwork,
     int *info )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11217,8 +10656,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZsytrf(
     int lwork,
     int *info )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11235,8 +10673,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsytrs_bufferSize(
         int ldb,
         int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11252,8 +10689,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsytrs_bufferSize(
         int ldb,
         int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11269,8 +10705,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCsytrs_bufferSize(
         int ldb,
         int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11286,8 +10721,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZsytrs_bufferSize(
         int ldb,
         int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11305,8 +10739,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsytrs(
         int lwork,
         int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11324,8 +10757,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsytrs(
         int lwork,
         int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11343,8 +10775,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCsytrs(
         int lwork,
         int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11362,8 +10793,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZsytrs(
         int lwork,
         int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11377,8 +10807,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsytri_bufferSize(
         const int *ipiv,
         int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11391,8 +10820,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsytri_bufferSize(
         const int *ipiv,
         int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 ;
@@ -11405,8 +10833,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCsytri_bufferSize(
         const int *ipiv,
         int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11419,8 +10846,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZsytri_bufferSize(
         const int *ipiv,
         int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11435,8 +10861,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsytri(
         int lwork,
         int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11451,8 +10876,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsytri(
         int lwork,
         int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11467,8 +10891,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCsytri(
         int lwork,
         int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11483,8 +10906,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZsytri(
         int lwork,
         int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11496,8 +10918,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgebrd_bufferSize(
     int n,
     int *Lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11507,8 +10928,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgebrd_bufferSize(
     int n,
     int *Lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11518,8 +10938,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgebrd_bufferSize(
     int n,
     int *Lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11529,8 +10948,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgebrd_bufferSize(
     int n,
     int *Lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11548,8 +10966,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgebrd(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11567,8 +10984,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgebrd(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11586,8 +11002,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgebrd(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11605,8 +11020,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgebrd(
     int Lwork,
     int *devInfo )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11622,8 +11036,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSorgbr_bufferSize(
     const float *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11638,8 +11051,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDorgbr_bufferSize(
     const double *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11654,8 +11066,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCungbr_bufferSize(
     const cuComplex *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11670,8 +11081,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZungbr_bufferSize(
     const cuDoubleComplex *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11688,8 +11098,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSorgbr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11706,8 +11115,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDorgbr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11724,8 +11132,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCungbr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11742,8 +11149,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZungbr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11760,8 +11166,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsytrd_bufferSize(
     const float *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11776,8 +11181,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsytrd_bufferSize(
     const double *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11792,8 +11196,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnChetrd_bufferSize(
     const cuComplex *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11808,8 +11211,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZhetrd_bufferSize(
     const cuDoubleComplex *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11827,8 +11229,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsytrd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11845,8 +11246,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsytrd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11863,8 +11263,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnChetrd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11881,8 +11280,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZhetrd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11898,8 +11296,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSorgtr_bufferSize(
     const float *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11912,8 +11309,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDorgtr_bufferSize(
     const double *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11926,8 +11322,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCungtr_bufferSize(
     const cuComplex *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11940,8 +11335,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZungtr_bufferSize(
     const cuDoubleComplex *tau,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11956,8 +11350,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSorgtr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11972,8 +11365,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDorgtr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -11988,8 +11380,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCungtr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12004,8 +11395,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZungtr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12026,8 +11416,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSormtr_bufferSize(
     int ldc,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12045,8 +11434,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDormtr_bufferSize(
     int ldc,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12064,8 +11452,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCunmtr_bufferSize(
     int ldc,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12083,8 +11470,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZunmtr_bufferSize(
     int ldc,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12104,8 +11490,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSormtr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12125,8 +11510,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDormtr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12146,8 +11530,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCunmtr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12167,8 +11550,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZunmtr(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12181,8 +11563,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgesvd_bufferSize(
     int n,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12192,8 +11573,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgesvd_bufferSize(
     int n,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12203,8 +11583,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgesvd_bufferSize(
     int n,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12214,8 +11593,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgesvd_bufferSize(
     int n,
     int *lwork )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12237,8 +11615,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgesvd (
     float *rwork,
     int  *info )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12260,8 +11637,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgesvd (
     double *rwork,
     int *info )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12283,8 +11659,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgesvd (
     float *rwork,
     int *info )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12306,8 +11681,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgesvd (
     double *rwork,
     int *info )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12323,8 +11697,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsyevd_bufferSize(
     const float *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12338,8 +11711,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsyevd_bufferSize(
     const double *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12353,8 +11725,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCheevd_bufferSize(
     const float *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12368,8 +11739,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZheevd_bufferSize(
     const double *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12385,8 +11755,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsyevd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12402,8 +11771,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsyevd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12419,8 +11787,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCheevd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12436,8 +11803,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZheevd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12458,8 +11824,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsyevdx_bufferSize(
     const float *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12479,8 +11844,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsyevdx_bufferSize(
     const double *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12500,8 +11864,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCheevdx_bufferSize(
     const float *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12521,8 +11884,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZheevdx_bufferSize(
     const double *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12544,8 +11906,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsyevdx(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12567,8 +11928,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsyevdx(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12590,8 +11950,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCheevdx(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12613,8 +11972,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZheevdx(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12638,8 +11996,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsygvdx_bufferSize(
     const float *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12662,8 +12019,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsygvdx_bufferSize(
     const double *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12686,8 +12042,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnChegvdx_bufferSize(
     const float *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12710,8 +12065,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZhegvdx_bufferSize(
     const double *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12737,8 +12091,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsygvdx(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12763,8 +12116,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsygvdx(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12789,8 +12141,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnChegvdx(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12815,8 +12166,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZhegvdx(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12835,8 +12185,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsygvd_bufferSize(
     const float *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12853,8 +12202,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsygvd_bufferSize(
     const double *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12871,8 +12219,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnChegvd_bufferSize(
     const float *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12889,8 +12236,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZhegvd_bufferSize(
     const double *W,
     int *lwork)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12910,8 +12256,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsygvd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12930,8 +12275,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsygvd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12950,8 +12294,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnChegvd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12970,8 +12313,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZhegvd(
     int lwork,
     int *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12979,16 +12321,14 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZhegvd(
 cusolverStatus_t CUSOLVERAPI cusolverDnCreateSyevjInfo(
     syevjInfo_t *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusolverStatus_t CUSOLVERAPI cusolverDnDestroySyevjInfo(
     syevjInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -12996,8 +12336,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnXsyevjSetTolerance(
     syevjInfo_t info,
     double tolerance)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13005,8 +12344,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnXsyevjSetMaxSweeps(
     syevjInfo_t info,
     int max_sweeps)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13014,8 +12352,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnXsyevjSetSortEig(
     syevjInfo_t info,
     int sort_eig)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13024,8 +12361,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnXsyevjGetResidual(
     syevjInfo_t info,
     double *residual)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13034,8 +12370,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnXsyevjGetSweeps(
     syevjInfo_t info,
     int *executed_sweeps)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13053,8 +12388,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsyevjBatched_bufferSize(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13071,8 +12405,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsyevjBatched_bufferSize(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13089,8 +12422,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCheevjBatched_bufferSize(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13107,8 +12439,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZheevjBatched_bufferSize(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13128,8 +12459,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsyevjBatched(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13148,8 +12478,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsyevjBatched(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13168,8 +12497,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCheevjBatched(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13188,8 +12516,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZheevjBatched(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13205,8 +12532,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsyevj_bufferSize(
     int *lwork,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13222,8 +12548,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsyevj_bufferSize(
     int *lwork,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13239,8 +12564,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCheevj_bufferSize(
     int *lwork,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13256,8 +12580,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZheevj_bufferSize(
     int *lwork,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13275,8 +12598,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsyevj(
     int *info,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13294,8 +12616,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsyevj(
     int *info,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13313,8 +12634,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCheevj(
     int *info,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13332,8 +12652,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZheevj(
     int *info,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13352,8 +12671,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsygvj_bufferSize(
     int *lwork,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13371,8 +12689,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsygvj_bufferSize(
     int *lwork,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13390,8 +12707,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnChegvj_bufferSize(
     int *lwork,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13409,8 +12725,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZhegvj_bufferSize(
     int *lwork,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13430,8 +12745,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSsygvj(
     int *info,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13451,8 +12765,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDsygvj(
     int *info,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13472,8 +12785,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnChegvj(
     int *info,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13493,8 +12805,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZhegvj(
     int *info,
     syevjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13502,16 +12813,14 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZhegvj(
 cusolverStatus_t CUSOLVERAPI cusolverDnCreateGesvdjInfo(
     gesvdjInfo_t *info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusolverStatus_t CUSOLVERAPI cusolverDnDestroyGesvdjInfo(
     gesvdjInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13519,8 +12828,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnXgesvdjSetTolerance(
     gesvdjInfo_t info,
     double tolerance)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13528,8 +12836,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnXgesvdjSetMaxSweeps(
     gesvdjInfo_t info,
     int max_sweeps)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13537,8 +12844,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnXgesvdjSetSortEig(
     gesvdjInfo_t info,
     int sort_svd)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13547,8 +12853,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnXgesvdjGetResidual(
     gesvdjInfo_t info,
     double *residual)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13557,8 +12862,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnXgesvdjGetSweeps(
     gesvdjInfo_t info,
     int *executed_sweeps)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13578,8 +12882,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgesvdjBatched_bufferSize(
     gesvdjInfo_t params,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13599,8 +12902,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgesvdjBatched_bufferSize(
     gesvdjInfo_t params,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13620,8 +12922,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgesvdjBatched_bufferSize(
     gesvdjInfo_t params,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13641,8 +12942,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgesvdjBatched_bufferSize(
     gesvdjInfo_t params,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13664,8 +12964,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgesvdjBatched(
     gesvdjInfo_t params,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13687,8 +12986,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgesvdjBatched(
     gesvdjInfo_t params,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13710,8 +13008,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgesvdjBatched(
     gesvdjInfo_t params,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13733,8 +13030,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgesvdjBatched(
     gesvdjInfo_t params,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13754,8 +13050,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgesvdj_bufferSize(
     int *lwork,
     gesvdjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13775,8 +13070,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgesvdj_bufferSize(
     int *lwork,
     gesvdjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13796,8 +13090,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgesvdj_bufferSize(
     int *lwork,
     gesvdjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13817,8 +13110,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgesvdj_bufferSize(
     int *lwork,
     gesvdjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13840,8 +13132,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgesvdj(
     int *info,
     gesvdjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13863,8 +13154,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgesvdj(
     int *info,
     gesvdjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13886,8 +13176,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgesvdj(
     int *info,
     gesvdjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13909,8 +13198,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgesvdj(
     int *info,
     gesvdjInfo_t params)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13938,8 +13226,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgesvdaStridedBatched_bufferSize(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13965,8 +13252,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgesvdaStridedBatched_bufferSize(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -13992,8 +13278,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgesvdaStridedBatched_bufferSize(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14018,8 +13303,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgesvdaStridedBatched_bufferSize(
     int batchSize
     )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14047,8 +13331,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnSgesvdaStridedBatched(
     double *h_R_nrmF,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14076,8 +13359,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnDgesvdaStridedBatched(
     double *h_R_nrmF,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14105,8 +13387,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnCgesvdaStridedBatched(
     double *h_R_nrmF,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14134,8 +13415,7 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgesvdaStridedBatched(
     double *h_R_nrmF,
     int batchSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14147,16 +13427,14 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgesvdaStridedBatched(
 cusparseStatus_t CUSPARSEAPI
 cusparseCreate(cusparseHandle_t* handle)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroy(cusparseHandle_t handle)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14164,8 +13442,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseGetVersion(cusparseHandle_t handle,
                    int*             version)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14173,8 +13450,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseGetProperty(libraryPropertyType type,
                     int*                value)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14182,8 +13458,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSetStream(cusparseHandle_t handle,
                   cudaStream_t     streamId)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14191,8 +13466,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseGetStream(cusparseHandle_t handle,
                   cudaStream_t*    streamId)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14200,8 +13474,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseGetPointerMode(cusparseHandle_t       handle,
                        cusparsePointerMode_t* mode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14209,8 +13482,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSetPointerMode(cusparseHandle_t      handle,
                        cusparsePointerMode_t mode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14243,16 +13515,14 @@ cusparseGetErrorString(cusparseStatus_t status)
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateMatDescr(cusparseMatDescr_t* descrA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyMatDescr(cusparseMatDescr_t descrA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14260,8 +13530,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseCopyMatDescr(cusparseMatDescr_t       dest,
                      const cusparseMatDescr_t src)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14269,16 +13538,14 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSetMatType(cusparseMatDescr_t   descrA,
                    cusparseMatrixType_t type)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseMatrixType_t CUSPARSEAPI
 cusparseGetMatType(const cusparseMatDescr_t descrA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14286,16 +13553,14 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSetMatFillMode(cusparseMatDescr_t descrA,
                        cusparseFillMode_t fillMode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseFillMode_t CUSPARSEAPI
 cusparseGetMatFillMode(const cusparseMatDescr_t descrA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14303,16 +13568,14 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSetMatDiagType(cusparseMatDescr_t descrA,
                        cusparseDiagType_t diagType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseDiagType_t CUSPARSEAPI
 cusparseGetMatDiagType(const cusparseMatDescr_t descrA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14320,32 +13583,28 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSetMatIndexBase(cusparseMatDescr_t  descrA,
                         cusparseIndexBase_t base_)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseIndexBase_t CUSPARSEAPI
 cusparseGetMatIndexBase(const cusparseMatDescr_t descrA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateSolveAnalysisInfo(cusparseSolveAnalysisInfo_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroySolveAnalysisInfo(cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14356,168 +13615,147 @@ cusparseGetLevelInfo(cusparseHandle_t            handle,
                      int**                       levelPtr,
                      int**                       levelInd)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateCsrsv2Info(csrsv2Info_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyCsrsv2Info(csrsv2Info_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateCsric02Info(csric02Info_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyCsric02Info(csric02Info_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateBsric02Info(bsric02Info_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyBsric02Info(bsric02Info_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateCsrilu02Info(csrilu02Info_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyCsrilu02Info(csrilu02Info_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateBsrilu02Info(bsrilu02Info_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyBsrilu02Info(bsrilu02Info_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateBsrsv2Info(bsrsv2Info_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyBsrsv2Info(bsrsv2Info_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateBsrsm2Info(bsrsm2Info_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyBsrsm2Info(bsrsm2Info_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateHybMat(cusparseHybMat_t* hybA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyHybMat(cusparseHybMat_t hybA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateCsru2csrInfo(csru2csrInfo_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyCsru2csrInfo(csru2csrInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateColorInfo(cusparseColorInfo_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyColorInfo(cusparseColorInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14525,8 +13763,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSetColorAlgs(cusparseColorInfo_t info,
                      cusparseColorAlg_t  alg)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14534,24 +13771,21 @@ cusparseStatus_t CUSPARSEAPI
 cusparseGetColorAlgs(cusparseColorInfo_t info,
                      cusparseColorAlg_t* alg)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreatePruneInfo(pruneInfo_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyPruneInfo(pruneInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14568,8 +13802,7 @@ cusparseSaxpyi(cusparseHandle_t    handle,
                float*              y,
                cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14582,8 +13815,7 @@ cusparseDaxpyi(cusparseHandle_t    handle,
                double*             y,
                cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14596,8 +13828,7 @@ cusparseCaxpyi(cusparseHandle_t    handle,
                cuComplex*          y,
                cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14610,8 +13841,7 @@ cusparseZaxpyi(cusparseHandle_t       handle,
                cuDoubleComplex*       y,
                cusparseIndexBase_t    idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14623,8 +13853,7 @@ cusparseSgthr(cusparseHandle_t    handle,
               const int*          xInd,
               cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14636,8 +13865,7 @@ cusparseDgthr(cusparseHandle_t    handle,
               const int*          xInd,
               cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14649,8 +13877,7 @@ cusparseCgthr(cusparseHandle_t    handle,
               const int*          xInd,
               cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14662,8 +13889,7 @@ cusparseZgthr(cusparseHandle_t       handle,
               const int*             xInd,
               cusparseIndexBase_t    idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14675,8 +13901,7 @@ cusparseSgthrz(cusparseHandle_t    handle,
                const int*          xInd,
                cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14688,8 +13913,7 @@ cusparseDgthrz(cusparseHandle_t    handle,
                const int*          xInd,
                cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14701,8 +13925,7 @@ cusparseCgthrz(cusparseHandle_t    handle,
                const int*          xInd,
                cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14714,8 +13937,7 @@ cusparseZgthrz(cusparseHandle_t    handle,
                const int*          xInd,
                cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14727,8 +13949,7 @@ cusparseSsctr(cusparseHandle_t    handle,
               float*              y,
               cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14740,8 +13961,7 @@ cusparseDsctr(cusparseHandle_t    handle,
               double*             y,
               cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14753,8 +13973,7 @@ cusparseCsctr(cusparseHandle_t    handle,
               cuComplex*          y,
               cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14766,8 +13985,7 @@ cusparseZsctr(cusparseHandle_t       handle,
               cuDoubleComplex*       y,
               cusparseIndexBase_t    idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14781,8 +13999,7 @@ cusparseSroti(cusparseHandle_t    handle,
               const float*        s,
               cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14796,8 +14013,7 @@ cusparseDroti(cusparseHandle_t    handle,
               const double*       s,
               cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14821,8 +14037,7 @@ cusparseSgemvi(cusparseHandle_t    handle,
                cusparseIndexBase_t idxBase,
                void*               pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14834,8 +14049,7 @@ cusparseSgemvi_bufferSize(cusparseHandle_t    handle,
                           int                 nnz,
                           int*                pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14855,8 +14069,7 @@ cusparseDgemvi(cusparseHandle_t    handle,
                cusparseIndexBase_t idxBase,
                void*               pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14868,8 +14081,7 @@ cusparseDgemvi_bufferSize(cusparseHandle_t    handle,
                           int                 nnz,
                           int*                pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14889,8 +14101,7 @@ cusparseCgemvi(cusparseHandle_t    handle,
                cusparseIndexBase_t idxBase,
                void*               pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14902,8 +14113,7 @@ cusparseCgemvi_bufferSize(cusparseHandle_t    handle,
                           int                 nnz,
                           int*                pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14923,8 +14133,7 @@ cusparseZgemvi(cusparseHandle_t       handle,
                cusparseIndexBase_t    idxBase,
                void*                  pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14936,8 +14145,7 @@ cusparseZgemvi_bufferSize(cusparseHandle_t    handle,
                           int                 nnz,
                           int*                pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14964,8 +14172,7 @@ cusparseCsrmvEx_bufferSize(cusparseHandle_t         handle,
                            cudaDataType             executiontype,
                            size_t*                  bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -14992,8 +14199,7 @@ cusparseCsrmvEx(cusparseHandle_t         handle,
                 cudaDataType             executiontype,
                 void*                    buffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15007,8 +14213,7 @@ cusparseShybmv(cusparseHandle_t         handle,
                const float*             beta,
                float*                   y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15022,8 +14227,7 @@ cusparseDhybmv(cusparseHandle_t         handle,
                const double*            beta,
                double*                  y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15037,8 +14241,7 @@ cusparseChybmv(cusparseHandle_t         handle,
                const cuComplex*         beta,
                cuComplex*               y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15052,8 +14255,7 @@ cusparseZhybmv(cusparseHandle_t         handle,
                const cuDoubleComplex*   beta,
                cuDoubleComplex*         y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15074,8 +14276,7 @@ cusparseSbsrmv(cusparseHandle_t         handle,
                const float*             beta,
                float*                   y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15096,8 +14297,7 @@ cusparseDbsrmv(cusparseHandle_t         handle,
                const double*            beta,
                double*                  y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15118,8 +14318,7 @@ cusparseCbsrmv(cusparseHandle_t         handle,
                const cuComplex*         beta,
                cuComplex*               y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15140,8 +14339,7 @@ cusparseZbsrmv(cusparseHandle_t         handle,
                const cuDoubleComplex*   beta,
                cuDoubleComplex*         y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15165,8 +14363,7 @@ cusparseSbsrxmv(cusparseHandle_t         handle,
                 const float*             beta,
                 float*                   y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15190,8 +14387,7 @@ cusparseDbsrxmv(cusparseHandle_t         handle,
                 const double*            beta,
                 double*                  y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15215,8 +14411,7 @@ cusparseCbsrxmv(cusparseHandle_t         handle,
                 const cuComplex*         beta,
                 cuComplex*               y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15240,8 +14435,7 @@ cusparseZbsrxmv(cusparseHandle_t      handle,
              const cuDoubleComplex*   beta,
              cuDoubleComplex*         y)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15250,8 +14444,7 @@ cusparseXcsrsv2_zeroPivot(cusparseHandle_t handle,
                           csrsv2Info_t     info,
                           int*             position)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15267,8 +14460,7 @@ cusparseScsrsv2_bufferSize(cusparseHandle_t         handle,
                            csrsv2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15284,8 +14476,7 @@ cusparseDcsrsv2_bufferSize(cusparseHandle_t         handle,
                            csrsv2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15301,8 +14492,7 @@ cusparseCcsrsv2_bufferSize(cusparseHandle_t         handle,
                            csrsv2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15318,8 +14508,7 @@ cusparseZcsrsv2_bufferSize(cusparseHandle_t         handle,
                            csrsv2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15335,8 +14524,7 @@ cusparseScsrsv2_bufferSizeExt(cusparseHandle_t         handle,
                               csrsv2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15352,8 +14540,7 @@ cusparseDcsrsv2_bufferSizeExt(cusparseHandle_t         handle,
                               csrsv2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15369,8 +14556,7 @@ cusparseCcsrsv2_bufferSizeExt(cusparseHandle_t         handle,
                               csrsv2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15386,8 +14572,7 @@ cusparseZcsrsv2_bufferSizeExt(cusparseHandle_t         handle,
                               csrsv2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15404,8 +14589,7 @@ cusparseScsrsv2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15422,8 +14606,7 @@ cusparseDcsrsv2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15440,8 +14623,7 @@ cusparseCcsrsv2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15458,8 +14640,7 @@ cusparseZcsrsv2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15479,8 +14660,7 @@ cusparseScsrsv2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15500,8 +14680,7 @@ cusparseDcsrsv2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15521,8 +14700,7 @@ cusparseCcsrsv2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15542,8 +14720,7 @@ cusparseZcsrsv2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15552,8 +14729,7 @@ cusparseXbsrsv2_zeroPivot(cusparseHandle_t handle,
                           bsrsv2Info_t     info,
                           int*             position)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15571,8 +14747,7 @@ cusparseSbsrsv2_bufferSize(cusparseHandle_t         handle,
                            bsrsv2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15590,8 +14765,7 @@ cusparseDbsrsv2_bufferSize(cusparseHandle_t         handle,
                            bsrsv2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15609,8 +14783,7 @@ cusparseCbsrsv2_bufferSize(cusparseHandle_t         handle,
                            bsrsv2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15628,8 +14801,7 @@ cusparseZbsrsv2_bufferSize(cusparseHandle_t         handle,
                            bsrsv2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15647,8 +14819,7 @@ cusparseSbsrsv2_bufferSizeExt(cusparseHandle_t         handle,
                               bsrsv2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15666,8 +14837,7 @@ cusparseDbsrsv2_bufferSizeExt(cusparseHandle_t         handle,
                               bsrsv2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15685,8 +14855,7 @@ cusparseCbsrsv2_bufferSizeExt(cusparseHandle_t         handle,
                               bsrsv2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15704,8 +14873,7 @@ cusparseZbsrsv2_bufferSizeExt(cusparseHandle_t         handle,
                               bsrsv2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15724,8 +14892,7 @@ cusparseSbsrsv2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15744,8 +14911,7 @@ cusparseDbsrsv2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15764,8 +14930,7 @@ cusparseCbsrsv2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15784,8 +14949,7 @@ cusparseZbsrsv2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15807,8 +14971,7 @@ cusparseSbsrsv2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15830,8 +14993,7 @@ cusparseDbsrsv2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15853,8 +15015,7 @@ cusparseCbsrsv2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15876,8 +15037,7 @@ cusparseZbsrsv2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15888,8 +15048,7 @@ cusparseShybsv_analysis(cusparseHandle_t            handle,
                         cusparseHybMat_t            hybA,
                         cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15900,8 +15059,7 @@ cusparseDhybsv_analysis(cusparseHandle_t            handle,
                         cusparseHybMat_t            hybA,
                         cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15912,8 +15070,7 @@ cusparseChybsv_analysis(cusparseHandle_t            handle,
                         cusparseHybMat_t            hybA,
                         cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15924,8 +15081,7 @@ cusparseZhybsv_analysis(cusparseHandle_t            handle,
                         cusparseHybMat_t            hybA,
                         cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15939,8 +15095,7 @@ cusparseShybsv_solve(cusparseHandle_t            handle,
                      const float*                f,
                      float*                      x)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15954,8 +15109,7 @@ cusparseChybsv_solve(cusparseHandle_t            handle,
                      const cuComplex*            f,
                      cuComplex*                  x)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15969,8 +15123,7 @@ cusparseDhybsv_solve(cusparseHandle_t            handle,
                      const double*               f,
                      double*                     x)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -15984,8 +15137,7 @@ cusparseZhybsv_solve(cusparseHandle_t            handle,
                      const cuDoubleComplex*      f,
                      cuDoubleComplex*            x)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16014,8 +15166,7 @@ cusparseSbsrmm(cusparseHandle_t         handle,
                float*       C,
                int          ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16040,8 +15191,7 @@ cusparseDbsrmm(cusparseHandle_t         handle,
                double*       C,
                int           ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16066,8 +15216,7 @@ cusparseCbsrmm(cusparseHandle_t         handle,
                cuComplex*       C,
                int              ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16092,8 +15241,7 @@ cusparseStatus_t CUSPARSEAPI
                 cuDoubleComplex*         C,
                 int                      ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16113,8 +15261,7 @@ cusparseStatus_t CUSPARSEAPI
                                 float*           C,
                                 int              ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16134,8 +15281,7 @@ cusparseStatus_t CUSPARSEAPI
                                 double*          C,
                                 int              ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16155,8 +15301,7 @@ cusparseStatus_t CUSPARSEAPI
                                 cuComplex*       C,
                                 int              ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16176,24 +15321,21 @@ cusparseStatus_t CUSPARSEAPI
                                 cuDoubleComplex*       C,
                                 int                    ldc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateCsrsm2Info(csrsm2Info_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyCsrsm2Info(csrsm2Info_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16202,8 +15344,7 @@ cusparseXcsrsm2_zeroPivot(cusparseHandle_t handle,
                           csrsm2Info_t     info,
                           int* position)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16226,8 +15367,7 @@ cusparseScsrsm2_bufferSizeExt(cusparseHandle_t         handle,
                               cusparseSolvePolicy_t    policy,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16250,8 +15390,7 @@ cusparseDcsrsm2_bufferSizeExt(cusparseHandle_t         handle,
                               cusparseSolvePolicy_t    policy,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16274,8 +15413,7 @@ cusparseCcsrsm2_bufferSizeExt(cusparseHandle_t         handle,
                               cusparseSolvePolicy_t    policy,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16298,8 +15436,7 @@ cusparseZcsrsm2_bufferSizeExt(cusparseHandle_t         handle,
                               cusparseSolvePolicy_t    policy,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16322,8 +15459,7 @@ cusparseScsrsm2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16346,8 +15482,7 @@ cusparseDcsrsm2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16370,8 +15505,7 @@ cusparseCcsrsm2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16394,8 +15528,7 @@ cusparseZcsrsm2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16418,8 +15551,7 @@ cusparseScsrsm2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16442,8 +15574,7 @@ cusparseDcsrsm2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16466,8 +15597,7 @@ cusparseCcsrsm2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16490,8 +15620,7 @@ cusparseZcsrsm2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16500,8 +15629,7 @@ cusparseXbsrsm2_zeroPivot(cusparseHandle_t handle,
                           bsrsm2Info_t     info,
                           int*             position)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16521,8 +15649,7 @@ cusparseSbsrsm2_bufferSize(cusparseHandle_t         handle,
                            bsrsm2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16542,8 +15669,7 @@ cusparseDbsrsm2_bufferSize(cusparseHandle_t         handle,
                            bsrsm2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16563,8 +15689,7 @@ cusparseCbsrsm2_bufferSize(cusparseHandle_t         handle,
                            bsrsm2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16584,8 +15709,7 @@ cusparseZbsrsm2_bufferSize(cusparseHandle_t         handle,
                            bsrsm2Info_t             info,
                            int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16605,8 +15729,7 @@ cusparseSbsrsm2_bufferSizeExt(cusparseHandle_t         handle,
                               bsrsm2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16626,8 +15749,7 @@ cusparseDbsrsm2_bufferSizeExt(cusparseHandle_t         handle,
                               bsrsm2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16647,8 +15769,7 @@ cusparseCbsrsm2_bufferSizeExt(cusparseHandle_t         handle,
                               bsrsm2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16668,8 +15789,7 @@ cusparseZbsrsm2_bufferSizeExt(cusparseHandle_t         handle,
                               bsrsm2Info_t             info,
                               size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16690,8 +15810,7 @@ cusparseSbsrsm2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16712,8 +15831,7 @@ cusparseDbsrsm2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16734,8 +15852,7 @@ cusparseCbsrsm2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16756,8 +15873,7 @@ cusparseZbsrsm2_analysis(cusparseHandle_t         handle,
                          cusparseSolvePolicy_t    policy,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16783,8 +15899,7 @@ cusparseSbsrsm2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16810,8 +15925,7 @@ cusparseDbsrsm2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16837,8 +15951,7 @@ cusparseCbsrsm2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16864,8 +15977,7 @@ cusparseZbsrsm2_solve(cusparseHandle_t         handle,
                       cusparseSolvePolicy_t    policy,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16885,8 +15997,7 @@ cusparseCsrilu0Ex(cusparseHandle_t            handle,
                   cusparseSolveAnalysisInfo_t info,
                   cudaDataType                executiontype)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16900,8 +16011,7 @@ cusparseScsrilu0(cusparseHandle_t           handle,
                 const int*                  csrSortedColIndA,
                 cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16915,8 +16025,7 @@ cusparseDcsrilu0(cusparseHandle_t            handle,
                  const int*                  csrSortedColIndA,
                  cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16930,8 +16039,7 @@ cusparseCcsrilu0(cusparseHandle_t         handle,
               const int*                  csrSortedColIndA,
               cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16945,8 +16053,7 @@ cusparseZcsrilu0(cusparseHandle_t            handle,
                  const int*                  csrSortedColIndA,
                  cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16957,8 +16064,7 @@ cusparseScsrilu02_numericBoost(cusparseHandle_t handle,
                                double*          tol,
                                float*           boost_val)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16969,8 +16075,7 @@ cusparseDcsrilu02_numericBoost(cusparseHandle_t handle,
                                double*          tol,
                                double*          boost_val)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16981,8 +16086,7 @@ cusparseCcsrilu02_numericBoost(cusparseHandle_t handle,
                                double*          tol,
                                cuComplex*       boost_val)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -16993,8 +16097,7 @@ cusparseZcsrilu02_numericBoost(cusparseHandle_t handle,
                                double*          tol,
                                cuDoubleComplex* boost_val)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17003,8 +16106,7 @@ cusparseXcsrilu02_zeroPivot(cusparseHandle_t handle,
                             csrilu02Info_t   info,
                             int*             position)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17019,8 +16121,7 @@ cusparseScsrilu02_bufferSize(cusparseHandle_t         handle,
                              csrilu02Info_t           info,
                              int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17035,8 +16136,7 @@ cusparseDcsrilu02_bufferSize(cusparseHandle_t         handle,
                              csrilu02Info_t           info,
                              int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17051,8 +16151,7 @@ cusparseCcsrilu02_bufferSize(cusparseHandle_t         handle,
                              csrilu02Info_t           info,
                              int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17067,8 +16166,7 @@ cusparseZcsrilu02_bufferSize(cusparseHandle_t         handle,
                              csrilu02Info_t           info,
                              int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17083,8 +16181,7 @@ cusparseScsrilu02_bufferSizeExt(cusparseHandle_t         handle,
                                 csrilu02Info_t           info,
                                 size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17099,8 +16196,7 @@ cusparseDcsrilu02_bufferSizeExt(cusparseHandle_t         handle,
                                 csrilu02Info_t           info,
                                 size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17115,8 +16211,7 @@ cusparseCcsrilu02_bufferSizeExt(cusparseHandle_t         handle,
                                 csrilu02Info_t           info,
                                 size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17131,8 +16226,7 @@ cusparseZcsrilu02_bufferSizeExt(cusparseHandle_t         handle,
                                 csrilu02Info_t           info,
                                 size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17148,8 +16242,7 @@ cusparseScsrilu02_analysis(cusparseHandle_t         handle,
                            cusparseSolvePolicy_t    policy,
                            void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17165,8 +16258,7 @@ cusparseDcsrilu02_analysis(cusparseHandle_t         handle,
                            cusparseSolvePolicy_t    policy,
                            void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17182,8 +16274,7 @@ cusparseCcsrilu02_analysis(cusparseHandle_t         handle,
                            cusparseSolvePolicy_t    policy,
                            void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17199,8 +16290,7 @@ cusparseZcsrilu02_analysis(cusparseHandle_t         handle,
                            cusparseSolvePolicy_t    policy,
                            void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17216,8 +16306,7 @@ cusparseScsrilu02(cusparseHandle_t         handle,
                   cusparseSolvePolicy_t policy,
                   void*                 pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17233,8 +16322,7 @@ cusparseDcsrilu02(cusparseHandle_t         handle,
                   cusparseSolvePolicy_t policy,
                   void*                 pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17250,8 +16338,7 @@ cusparseCcsrilu02(cusparseHandle_t         handle,
                   cusparseSolvePolicy_t policy,
                   void*                 pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17267,8 +16354,7 @@ cusparseZcsrilu02(cusparseHandle_t         handle,
                   cusparseSolvePolicy_t policy,
                   void*                 pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17279,8 +16365,7 @@ cusparseSbsrilu02_numericBoost(cusparseHandle_t handle,
                                double*          tol,
                                float*           boost_val)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17291,8 +16376,7 @@ cusparseDbsrilu02_numericBoost(cusparseHandle_t handle,
                                double*          tol,
                                double*          boost_val)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17303,8 +16387,7 @@ cusparseCbsrilu02_numericBoost(cusparseHandle_t handle,
                                double*          tol,
                                cuComplex*       boost_val)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17315,8 +16398,7 @@ cusparseZbsrilu02_numericBoost(cusparseHandle_t handle,
                                double*          tol,
                                cuDoubleComplex* boost_val)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17325,8 +16407,7 @@ cusparseXbsrilu02_zeroPivot(cusparseHandle_t handle,
                             bsrilu02Info_t   info,
                             int*             position)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17343,8 +16424,7 @@ cusparseSbsrilu02_bufferSize(cusparseHandle_t         handle,
                              bsrilu02Info_t           info,
                              int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17361,8 +16441,7 @@ cusparseDbsrilu02_bufferSize(cusparseHandle_t         handle,
                              bsrilu02Info_t           info,
                              int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17379,8 +16458,7 @@ cusparseCbsrilu02_bufferSize(cusparseHandle_t         handle,
                              bsrilu02Info_t           info,
                              int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17397,8 +16475,7 @@ cusparseZbsrilu02_bufferSize(cusparseHandle_t         handle,
                              bsrilu02Info_t           info,
                              int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17415,8 +16492,7 @@ cusparseSbsrilu02_bufferSizeExt(cusparseHandle_t         handle,
                                 bsrilu02Info_t           info,
                                 size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17433,8 +16509,7 @@ cusparseDbsrilu02_bufferSizeExt(cusparseHandle_t         handle,
                                 bsrilu02Info_t           info,
                                 size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17451,8 +16526,7 @@ cusparseCbsrilu02_bufferSizeExt(cusparseHandle_t         handle,
                                 bsrilu02Info_t           info,
                                 size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17469,8 +16543,7 @@ cusparseZbsrilu02_bufferSizeExt(cusparseHandle_t         handle,
                                bsrilu02Info_t           info,
                                size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17488,8 +16561,7 @@ cusparseSbsrilu02_analysis(cusparseHandle_t         handle,
                            cusparseSolvePolicy_t    policy,
                            void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17507,8 +16579,7 @@ cusparseDbsrilu02_analysis(cusparseHandle_t         handle,
                            cusparseSolvePolicy_t    policy,
                            void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17526,8 +16597,7 @@ cusparseCbsrilu02_analysis(cusparseHandle_t         handle,
                            cusparseSolvePolicy_t    policy,
                            void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17545,8 +16615,7 @@ cusparseZbsrilu02_analysis(cusparseHandle_t         handle,
                            cusparseSolvePolicy_t    policy,
                            void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17564,8 +16633,7 @@ cusparseSbsrilu02(cusparseHandle_t         handle,
                   cusparseSolvePolicy_t    policy,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17583,8 +16651,7 @@ cusparseDbsrilu02(cusparseHandle_t         handle,
                   cusparseSolvePolicy_t    policy,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17602,8 +16669,7 @@ cusparseCbsrilu02(cusparseHandle_t         handle,
                   cusparseSolvePolicy_t    policy,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17621,8 +16687,7 @@ cusparseZbsrilu02(cusparseHandle_t         handle,
                   cusparseSolvePolicy_t    policy,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17636,8 +16701,7 @@ cusparseScsric0(cusparseHandle_t            handle,
                 const int*                  csrSortedColIndA,
                 cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17651,8 +16715,7 @@ cusparseDcsric0(cusparseHandle_t         handle,
                 const int*                  csrSortedColIndA,
                 cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17666,8 +16729,7 @@ cusparseCcsric0(cusparseHandle_t         handle,
                 const int*                  csrSortedColIndA,
                 cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17681,8 +16743,7 @@ cusparseZcsric0(cusparseHandle_t            handle,
                 const int*                  csrSortedColIndA,
                 cusparseSolveAnalysisInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17691,8 +16752,7 @@ cusparseXcsric02_zeroPivot(cusparseHandle_t handle,
                            csric02Info_t    info,
                            int*             position)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17707,8 +16767,7 @@ cusparseScsric02_bufferSize(cusparseHandle_t         handle,
                             csric02Info_t            info,
                             int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17723,8 +16782,7 @@ cusparseDcsric02_bufferSize(cusparseHandle_t         handle,
                             csric02Info_t            info,
                             int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17739,8 +16797,7 @@ cusparseCcsric02_bufferSize(cusparseHandle_t         handle,
                             csric02Info_t            info,
                             int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17755,8 +16812,7 @@ cusparseZcsric02_bufferSize(cusparseHandle_t         handle,
                             csric02Info_t            info,
                             int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17771,8 +16827,7 @@ cusparseScsric02_bufferSizeExt(cusparseHandle_t         handle,
                                csric02Info_t            info,
                                size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17787,8 +16842,7 @@ cusparseDcsric02_bufferSizeExt(cusparseHandle_t         handle,
                                csric02Info_t            info,
                                size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17803,8 +16857,7 @@ cusparseCcsric02_bufferSizeExt(cusparseHandle_t         handle,
                                csric02Info_t            info,
                                size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17819,8 +16872,7 @@ cusparseZcsric02_bufferSizeExt(cusparseHandle_t         handle,
                                csric02Info_t            info,
                                size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17836,8 +16888,7 @@ cusparseScsric02_analysis(cusparseHandle_t         handle,
                           cusparseSolvePolicy_t    policy,
                           void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17853,8 +16904,7 @@ cusparseDcsric02_analysis(cusparseHandle_t         handle,
                           cusparseSolvePolicy_t    policy,
                           void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17870,8 +16920,7 @@ cusparseCcsric02_analysis(cusparseHandle_t         handle,
                           cusparseSolvePolicy_t    policy,
                           void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17887,8 +16936,7 @@ cusparseZcsric02_analysis(cusparseHandle_t         handle,
                           cusparseSolvePolicy_t    policy,
                           void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17904,8 +16952,7 @@ cusparseScsric02(cusparseHandle_t         handle,
                  cusparseSolvePolicy_t    policy,
                  void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17921,8 +16968,7 @@ cusparseDcsric02(cusparseHandle_t         handle,
                  cusparseSolvePolicy_t    policy,
                  void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17938,8 +16984,7 @@ cusparseCcsric02(cusparseHandle_t         handle,
                  cusparseSolvePolicy_t    policy,
                  void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17955,8 +17000,7 @@ cusparseZcsric02(cusparseHandle_t         handle,
                  cusparseSolvePolicy_t    policy,
                  void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17965,8 +17009,7 @@ cusparseXbsric02_zeroPivot(cusparseHandle_t handle,
                            bsric02Info_t    info,
                            int*             position)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -17983,8 +17026,7 @@ cusparseSbsric02_bufferSize(cusparseHandle_t         handle,
                             bsric02Info_t            info,
                             int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18001,8 +17043,7 @@ cusparseDbsric02_bufferSize(cusparseHandle_t         handle,
                             bsric02Info_t            info,
                             int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18019,8 +17060,7 @@ cusparseCbsric02_bufferSize(cusparseHandle_t         handle,
                             bsric02Info_t            info,
                             int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18037,8 +17077,7 @@ cusparseZbsric02_bufferSize(cusparseHandle_t         handle,
                             bsric02Info_t            info,
                             int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18055,8 +17094,7 @@ cusparseSbsric02_bufferSizeExt(cusparseHandle_t         handle,
                                bsric02Info_t            info,
                                size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18073,8 +17111,7 @@ cusparseStatus_t CUSPARSEAPI
                                 bsric02Info_t            info,
                                 size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18091,8 +17128,7 @@ cusparseCbsric02_bufferSizeExt(cusparseHandle_t         handle,
                                bsric02Info_t            info,
                                size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18109,8 +17145,7 @@ cusparseZbsric02_bufferSizeExt(cusparseHandle_t         handle,
                                bsric02Info_t            info,
                                size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18128,8 +17163,7 @@ cusparseSbsric02_analysis(cusparseHandle_t         handle,
                           cusparseSolvePolicy_t    policy,
                           void*                    pInputBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18147,8 +17181,7 @@ cusparseDbsric02_analysis(cusparseHandle_t         handle,
                           cusparseSolvePolicy_t    policy,
                           void*                    pInputBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18166,8 +17199,7 @@ cusparseCbsric02_analysis(cusparseHandle_t         handle,
                           cusparseSolvePolicy_t    policy,
                           void*                    pInputBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18185,8 +17217,7 @@ cusparseZbsric02_analysis(cusparseHandle_t         handle,
                           cusparseSolvePolicy_t    policy,
                           void*                    pInputBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18204,8 +17235,7 @@ cusparseSbsric02(cusparseHandle_t         handle,
                  cusparseSolvePolicy_t    policy,
                  void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18223,8 +17253,7 @@ cusparseDbsric02(cusparseHandle_t         handle,
                  cusparseSolvePolicy_t    policy,
                  void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18243,8 +17272,7 @@ cusparseCbsric02(cusparseHandle_t         handle,
                  cusparseSolvePolicy_t    policy,
                  void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18262,8 +17290,7 @@ cusparseZbsric02(cusparseHandle_t         handle,
                  cusparseSolvePolicy_t    policy,
                  void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18277,8 +17304,7 @@ cusparseSgtsv(cusparseHandle_t handle,
               float*           B,
               int              ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18292,8 +17318,7 @@ cusparseDgtsv(cusparseHandle_t handle,
               double*          B,
               int              ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18307,8 +17332,7 @@ cusparseCgtsv(cusparseHandle_t handle,
               cuComplex*       B,
               int              ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18322,8 +17346,7 @@ cusparseZgtsv(cusparseHandle_t       handle,
               cuDoubleComplex*       B,
               int                    ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18338,8 +17361,7 @@ cusparseSgtsv2_bufferSizeExt(cusparseHandle_t handle,
                              int              ldb,
                              size_t*          bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18354,8 +17376,7 @@ cusparseDgtsv2_bufferSizeExt(cusparseHandle_t handle,
                              int              ldb,
                              size_t*          bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18370,8 +17391,7 @@ cusparseCgtsv2_bufferSizeExt(cusparseHandle_t handle,
                              int              ldb,
                              size_t*          bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18386,8 +17406,7 @@ cusparseZgtsv2_bufferSizeExt(cusparseHandle_t       handle,
                              int                    ldb,
                              size_t*                bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18402,8 +17421,7 @@ cusparseSgtsv2(cusparseHandle_t handle,
                int              ldb,
                void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18418,8 +17436,7 @@ cusparseDgtsv2(cusparseHandle_t handle,
                int              ldb,
                void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18434,8 +17451,7 @@ cusparseCgtsv2(cusparseHandle_t handle,
                int              ldb,
                void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18450,8 +17466,7 @@ cusparseZgtsv2(cusparseHandle_t       handle,
                int                    ldb,
                void*                  pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18465,8 +17480,7 @@ cusparseSgtsv_nopivot(cusparseHandle_t handle,
                       float*           B,
                       int              ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18480,8 +17494,7 @@ cusparseDgtsv_nopivot(cusparseHandle_t handle,
                                                    double*          B,
                                                    int              ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18495,8 +17508,7 @@ cusparseCgtsv_nopivot(cusparseHandle_t handle,
                       cuComplex*       B,
                       int              ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18510,8 +17522,7 @@ cusparseZgtsv_nopivot(cusparseHandle_t handle,
                       cuDoubleComplex*       B,
                       int                    ldb)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18526,8 +17537,7 @@ cusparseSgtsv2_nopivot_bufferSizeExt(cusparseHandle_t handle,
                                      int              ldb,
                                      size_t*          bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18542,8 +17552,7 @@ cusparseDgtsv2_nopivot_bufferSizeExt(cusparseHandle_t handle,
                                      int              ldb,
                                      size_t*          bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18558,8 +17567,7 @@ cusparseCgtsv2_nopivot_bufferSizeExt(cusparseHandle_t handle,
                                      int              ldb,
                                      size_t*          bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18574,8 +17582,7 @@ cusparseZgtsv2_nopivot_bufferSizeExt(cusparseHandle_t       handle,
                                      int                    ldb,
                                      size_t*                bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18590,8 +17597,7 @@ cusparseSgtsv2_nopivot(cusparseHandle_t handle,
                        int              ldb,
                        void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18606,8 +17612,7 @@ cusparseDgtsv2_nopivot(cusparseHandle_t handle,
                        int              ldb,
                        void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18622,8 +17627,7 @@ cusparseCgtsv2_nopivot(cusparseHandle_t handle,
                        int              ldb,
                        void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18638,8 +17642,7 @@ cusparseZgtsv2_nopivot(cusparseHandle_t       handle,
                        int                    ldb,
                        void*                  pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18653,8 +17656,7 @@ cusparseSgtsvStridedBatch(cusparseHandle_t handle,
                           int              batchCount,
                           int              batchStride)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18668,8 +17670,7 @@ cusparseDgtsvStridedBatch(cusparseHandle_t handle,
                           int              batchCount,
                           int              batchStride)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18683,8 +17684,7 @@ cusparseCgtsvStridedBatch(cusparseHandle_t handle,
                           int              batchCount,
                           int              batchStride)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18698,8 +17698,7 @@ cusparseZgtsvStridedBatch(cusparseHandle_t       handle,
                           int                    batchCount,
                           int                    batchStride)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18714,8 +17713,7 @@ cusparseSgtsv2StridedBatch_bufferSizeExt(cusparseHandle_t handle,
                                          int              batchStride,
                                          size_t*          bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18730,8 +17728,7 @@ cusparseDgtsv2StridedBatch_bufferSizeExt(cusparseHandle_t handle,
                                          int              batchStride,
                                          size_t*          bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18746,8 +17743,7 @@ cusparseCgtsv2StridedBatch_bufferSizeExt(cusparseHandle_t handle,
                                          int              batchStride,
                                          size_t*          bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18762,8 +17758,7 @@ cusparseStatus_t CUSPARSEAPI
                                           int                    batchStride,
                                           size_t* bufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18778,8 +17773,7 @@ cusparseSgtsv2StridedBatch(cusparseHandle_t handle,
                            int              batchStride,
                            void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18794,8 +17788,7 @@ cusparseDgtsv2StridedBatch(cusparseHandle_t handle,
                            int              batchStride,
                            void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18810,8 +17803,7 @@ cusparseCgtsv2StridedBatch(cusparseHandle_t handle,
                            int              batchStride,
                            void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18826,8 +17818,7 @@ cusparseZgtsv2StridedBatch(cusparseHandle_t       handle,
                            int                    batchStride,
                            void*                  pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18842,8 +17833,7 @@ cusparseSgtsvInterleavedBatch_bufferSizeExt(cusparseHandle_t handle,
                                             int              batchCount,
                                             size_t*         pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18858,8 +17848,7 @@ cusparseDgtsvInterleavedBatch_bufferSizeExt(cusparseHandle_t handle,
                                          int              batchCount,
                                          size_t*          pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18874,8 +17863,7 @@ cusparseCgtsvInterleavedBatch_bufferSizeExt(cusparseHandle_t handle,
                                             int              batchCount,
                                             size_t*         pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18890,8 +17878,7 @@ cusparseStatus_t CUSPARSEAPI
                                              int                    batchCount,
                                              size_t*        pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18906,8 +17893,7 @@ cusparseSgtsvInterleavedBatch(cusparseHandle_t handle,
                               int              batchCount,
                               void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18922,8 +17908,7 @@ cusparseDgtsvInterleavedBatch(cusparseHandle_t handle,
                               int              batchCount,
                               void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18938,8 +17923,7 @@ cusparseCgtsvInterleavedBatch(cusparseHandle_t handle,
                               int              batchCount,
                               void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18954,8 +17938,7 @@ cusparseZgtsvInterleavedBatch(cusparseHandle_t handle,
                               int              batchCount,
                               void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18972,8 +17955,7 @@ cusparseSgpsvInterleavedBatch_bufferSizeExt(cusparseHandle_t handle,
                                             int              batchCount,
                                             size_t*         pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -18990,8 +17972,7 @@ cusparseDgpsvInterleavedBatch_bufferSizeExt(cusparseHandle_t handle,
                                             int              batchCount,
                                             size_t*         pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19008,8 +17989,7 @@ cusparseCgpsvInterleavedBatch_bufferSizeExt(cusparseHandle_t handle,
                                             int              batchCount,
                                             size_t*         pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19026,8 +18006,7 @@ cusparseZgpsvInterleavedBatch_bufferSizeExt(cusparseHandle_t       handle,
                                             int                    batchCount,
                                             size_t*         pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19044,8 +18023,7 @@ cusparseSgpsvInterleavedBatch(cusparseHandle_t handle,
                               int              batchCount,
                               void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19062,8 +18040,7 @@ cusparseDgpsvInterleavedBatch(cusparseHandle_t handle,
                               int              batchCount,
                               void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19080,8 +18057,7 @@ cusparseCgpsvInterleavedBatch(cusparseHandle_t handle,
                               int              batchCount,
                               void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19098,8 +18074,7 @@ cusparseZgpsvInterleavedBatch(cusparseHandle_t handle,
                               int              batchCount,
                               void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19110,16 +18085,14 @@ cusparseZgpsvInterleavedBatch(cusparseHandle_t handle,
 cusparseStatus_t CUSPARSEAPI
 cusparseCreateCsrgemm2Info(csrgemm2Info_t* info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyCsrgemm2Info(csrgemm2Info_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19145,8 +18118,7 @@ cusparseScsrgemm2_bufferSizeExt(cusparseHandle_t         handle,
                                 csrgemm2Info_t           info,
                                 size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19172,8 +18144,7 @@ cusparseDcsrgemm2_bufferSizeExt(cusparseHandle_t         handle,
                                 csrgemm2Info_t           info,
                                 size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19199,8 +18170,7 @@ cusparseCcsrgemm2_bufferSizeExt(cusparseHandle_t         handle,
                                 csrgemm2Info_t           info,
                                 size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19226,8 +18196,7 @@ cusparseZcsrgemm2_bufferSizeExt(cusparseHandle_t         handle,
                                 csrgemm2Info_t           info,
                                 size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19254,8 +18223,7 @@ cusparseXcsrgemm2Nnz(cusparseHandle_t         handle,
                      const csrgemm2Info_t     info,
                      void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19288,8 +18256,7 @@ cusparseScsrgemm2(cusparseHandle_t         handle,
                   const csrgemm2Info_t     info,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19322,8 +18289,7 @@ cusparseDcsrgemm2(cusparseHandle_t         handle,
                   const csrgemm2Info_t     info,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19356,8 +18322,7 @@ cusparseCcsrgemm2(cusparseHandle_t         handle,
                  const csrgemm2Info_t     info,
                  void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19390,8 +18355,7 @@ cusparseZcsrgemm2(cusparseHandle_t         handle,
                   const csrgemm2Info_t     info,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19417,8 +18381,7 @@ cusparseScsrgeam2_bufferSizeExt(cusparseHandle_t         handle,
                                 const int*               csrSortedColIndC,
                                 size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19444,8 +18407,7 @@ cusparseDcsrgeam2_bufferSizeExt(cusparseHandle_t         handle,
                                 const int*               csrSortedColIndC,
                                 size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19471,8 +18433,7 @@ cusparseCcsrgeam2_bufferSizeExt(cusparseHandle_t         handle,
                                 const int*               csrSortedColIndC,
                                 size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19498,8 +18459,7 @@ cusparseZcsrgeam2_bufferSizeExt(cusparseHandle_t         handle,
                                 const int*               csrSortedColIndC,
                                 size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19520,8 +18480,7 @@ cusparseXcsrgeam2Nnz(cusparseHandle_t         handle,
                      int*                     nnzTotalDevHostPtr,
                      void*                    workspace)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19547,8 +18506,7 @@ cusparseScsrgeam2(cusparseHandle_t         handle,
                   int*                     csrSortedColIndC,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19574,8 +18532,7 @@ cusparseDcsrgeam2(cusparseHandle_t         handle,
                   int*                     csrSortedColIndC,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19601,8 +18558,7 @@ cusparseCcsrgeam2(cusparseHandle_t         handle,
                   int*                     csrSortedColIndC,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19628,8 +18584,7 @@ cusparseZcsrgeam2(cusparseHandle_t         handle,
                   int*                     csrSortedColIndC,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19650,8 +18605,7 @@ cusparseStatus_t CUSPARSEAPI cusparseScsrcolor(cusparseHandle_t         handle,
                                                int*         reordering,
                                                const cusparseColorInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19668,8 +18622,7 @@ cusparseStatus_t CUSPARSEAPI cusparseDcsrcolor(cusparseHandle_t         handle,
                                                int*          reordering,
                                                const cusparseColorInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19686,8 +18639,7 @@ cusparseStatus_t CUSPARSEAPI cusparseCcsrcolor(cusparseHandle_t         handle,
                                                int*         reordering,
                                                const cusparseColorInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19705,8 +18657,7 @@ cusparseStatus_t CUSPARSEAPI
                                    int*                      reordering,
                                    const cusparseColorInfo_t info)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19725,8 +18676,7 @@ cusparseSnnz(cusparseHandle_t         handle,
              int*                     nnzPerRowCol,
              int*                     nnzTotalDevHostPtr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19741,8 +18691,7 @@ cusparseDnnz(cusparseHandle_t         handle,
              int*                     nnzPerRowCol,
              int*                     nnzTotalDevHostPtr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19757,8 +18706,7 @@ cusparseCnnz(cusparseHandle_t         handle,
              int*                     nnzPerRowCol,
              int*                     nnzTotalDevHostPtr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19773,8 +18721,7 @@ cusparseZnnz(cusparseHandle_t         handle,
              int*                     nnzPerRowCol,
              int*                     nnzTotalDevHostPtr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19792,8 +18739,7 @@ cusparseSnnz_compress(cusparseHandle_t         handle,
                       int*                     nnzC,
                       float                    tol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19807,8 +18753,7 @@ cusparseDnnz_compress(cusparseHandle_t         handle,
                       int*                     nnzC,
                       double                   tol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19822,8 +18767,7 @@ cusparseCnnz_compress(cusparseHandle_t         handle,
                       int*                     nnzC,
                       cuComplex                tol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19837,8 +18781,7 @@ cusparseZnnz_compress(cusparseHandle_t         handle,
                       int*                     nnzC,
                       cuDoubleComplex          tol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19857,8 +18800,7 @@ cusparseScsr2csr_compress(cusparseHandle_t         handle,
                           int*                     csrSortedRowPtrC,
                           float                    tol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19877,8 +18819,7 @@ cusparseDcsr2csr_compress(cusparseHandle_t         handle,
                           int*                     csrSortedRowPtrC,
                           double                   tol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19897,8 +18838,7 @@ cusparseCcsr2csr_compress(cusparseHandle_t         handle,
                           int*                     csrSortedRowPtrC,
                           cuComplex                tol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19917,8 +18857,7 @@ cusparseZcsr2csr_compress(cusparseHandle_t         handle,
                           int*                     csrSortedRowPtrC,
                           cuDoubleComplex          tol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19934,8 +18873,7 @@ cusparseSdense2csr(cusparseHandle_t         handle,
                    int*                     csrSortedRowPtrA,
                    int*                     csrSortedColIndA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19951,8 +18889,7 @@ cusparseDdense2csr(cusparseHandle_t         handle,
                    int*                     csrSortedRowPtrA,
                    int*                     csrSortedColIndA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19968,8 +18905,7 @@ cusparseCdense2csr(cusparseHandle_t           handle,
                      int*                     csrSortedRowPtrA,
                      int*                     csrSortedColIndA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -19985,8 +18921,7 @@ cusparseZdense2csr(cusparseHandle_t         handle,
                    int*                     csrSortedRowPtrA,
                    int*                     csrSortedColIndA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20001,8 +18936,7 @@ cusparseScsr2dense(cusparseHandle_t         handle,
                    float*                   A,
                    int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20017,8 +18951,7 @@ cusparseDcsr2dense(cusparseHandle_t         handle,
                    double*                  A,
                    int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20033,8 +18966,7 @@ cusparseCcsr2dense(cusparseHandle_t         handle,
                    cuComplex*               A,
                    int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20049,8 +18981,7 @@ cusparseZcsr2dense(cusparseHandle_t         handle,
                 cuDoubleComplex*         A,
                 int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20066,8 +18997,7 @@ cusparseSdense2csc(cusparseHandle_t         handle,
                    int*                     cscSortedRowIndA,
                    int*                     cscSortedColPtrA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20083,8 +19013,7 @@ cusparseDdense2csc(cusparseHandle_t         handle,
                    int*                     cscSortedRowIndA,
                    int*                     cscSortedColPtrA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20100,8 +19029,7 @@ cusparseCdense2csc(cusparseHandle_t         handle,
                    int*                     cscSortedRowIndA,
                    int*                     cscSortedColPtrA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20117,8 +19045,7 @@ cusparseZdense2csc(cusparseHandle_t         handle,
                    int*                     cscSortedRowIndA,
                    int*                     cscSortedColPtrA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20133,8 +19060,7 @@ cusparseScsc2dense(cusparseHandle_t         handle,
                    float*                   A,
                    int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20149,8 +19075,7 @@ cusparseDcsc2dense(cusparseHandle_t         handle,
                    double*                  A,
                    int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20165,8 +19090,7 @@ cusparseCcsc2dense(cusparseHandle_t         handle,
                    cuComplex*               A,
                    int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20181,8 +19105,7 @@ cusparseZcsc2dense(cusparseHandle_t         handle,
                    cuDoubleComplex*         A,
                    int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20194,8 +19117,7 @@ cusparseXcoo2csr(cusparseHandle_t    handle,
                  int*                csrSortedRowPtr,
                  cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20207,8 +19129,7 @@ cusparseXcsr2coo(cusparseHandle_t    handle,
                  int*                cooRowInd,
                  cusparseIndexBase_t idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20224,8 +19145,7 @@ cusparseSdense2hyb(cusparseHandle_t         handle,
                    int                      userEllWidth,
                    cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20241,8 +19161,7 @@ cusparseDdense2hyb(cusparseHandle_t         handle,
                    int                      userEllWidth,
                    cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20258,8 +19177,7 @@ cusparseCdense2hyb(cusparseHandle_t         handle,
                    int                      userEllWidth,
                    cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20275,8 +19193,7 @@ cusparseZdense2hyb(cusparseHandle_t         handle,
                    int                      userEllWidth,
                    cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20287,8 +19204,7 @@ cusparseShyb2dense(cusparseHandle_t         handle,
                    float*                   A,
                    int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20299,8 +19215,7 @@ cusparseDhyb2dense(cusparseHandle_t         handle,
                    double*                  A,
                    int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20311,8 +19226,7 @@ cusparseChyb2dense(cusparseHandle_t         handle,
                    cuComplex*               A,
                    int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20323,8 +19237,7 @@ cusparseZhyb2dense(cusparseHandle_t         handle,
                    cuDoubleComplex*         A,
                    int                      lda)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20340,8 +19253,7 @@ cusparseScsr2hyb(cusparseHandle_t         handle,
                  int                      userEllWidth,
                  cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20357,8 +19269,7 @@ cusparseDcsr2hyb(cusparseHandle_t         handle,
                  int                      userEllWidth,
                  cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20374,8 +19285,7 @@ cusparseCcsr2hyb(cusparseHandle_t         handle,
                  int                      userEllWidth,
                  cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20391,8 +19301,7 @@ cusparseZcsr2hyb(cusparseHandle_t         handle,
                  int                      userEllWidth,
                  cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20404,8 +19313,7 @@ cusparseShyb2csr(cusparseHandle_t         handle,
                  int*                     csrSortedRowPtrA,
                  int*                     csrSortedColIndA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20417,8 +19325,7 @@ cusparseDhyb2csr(cusparseHandle_t         handle,
                  int*                     csrSortedRowPtrA,
                  int*                     csrSortedColIndA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20430,8 +19337,7 @@ cusparseChyb2csr(cusparseHandle_t         handle,
                  int*                     csrSortedRowPtrA,
                  int*                     csrSortedColIndA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20443,8 +19349,7 @@ cusparseZhyb2csr(cusparseHandle_t         handle,
                  int*                     csrSortedRowPtrA,
                  int*                     csrSortedColIndA)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20460,8 +19365,7 @@ cusparseScsc2hyb(cusparseHandle_t         handle,
                  int                      userEllWidth,
                  cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20477,8 +19381,7 @@ cusparseDcsc2hyb(cusparseHandle_t         handle,
                  int                      userEllWidth,
                  cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20494,8 +19397,7 @@ cusparseCcsc2hyb(cusparseHandle_t         handle,
                  int                      userEllWidth,
                  cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20511,8 +19413,7 @@ cusparseZcsc2hyb(cusparseHandle_t         handle,
                  int                      userEllWidth,
                  cusparseHybPartition_t   partitionType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20524,8 +19425,7 @@ cusparseShyb2csc(cusparseHandle_t         handle,
                  int*                     cscSortedRowInd,
                  int*                     cscSortedColPtr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20537,8 +19437,7 @@ cusparseDhyb2csc(cusparseHandle_t         handle,
                  int*                     cscSortedRowInd,
                  int*                     cscSortedColPtr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20550,8 +19449,7 @@ cusparseChyb2csc(cusparseHandle_t         handle,
                  int*                     cscSortedRowInd,
                  int*                     cscSortedColPtr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20563,8 +19461,7 @@ cusparseZhyb2csc(cusparseHandle_t         handle,
                  int*                     cscSortedRowInd,
                  int*                     cscSortedColPtr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20581,8 +19478,7 @@ cusparseXcsr2bsrNnz(cusparseHandle_t         handle,
                     int*                     bsrSortedRowPtrC,
                     int*                     nnzTotalDevHostPtr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20601,8 +19497,7 @@ cusparseScsr2bsr(cusparseHandle_t         handle,
                  int*                     bsrSortedRowPtrC,
                  int*                     bsrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20621,8 +19516,7 @@ cusparseDcsr2bsr(cusparseHandle_t         handle,
                  int*                     bsrSortedRowPtrC,
                  int*                     bsrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20641,8 +19535,7 @@ cusparseCcsr2bsr(cusparseHandle_t         handle,
                  int*                     bsrSortedRowPtrC,
                  int*                     bsrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20661,8 +19554,7 @@ cusparseZcsr2bsr(cusparseHandle_t         handle,
                  int*                     bsrSortedRowPtrC,
                  int*                     bsrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20681,8 +19573,7 @@ cusparseSbsr2csr(cusparseHandle_t         handle,
                  int*                     csrSortedRowPtrC,
                  int*                     csrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20701,8 +19592,7 @@ cusparseDbsr2csr(cusparseHandle_t         handle,
                  int*                     csrSortedRowPtrC,
                  int*                     csrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20721,8 +19611,7 @@ cusparseCbsr2csr(cusparseHandle_t         handle,
                  int*                     csrSortedRowPtrC,
                  int*                     csrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20741,8 +19630,7 @@ cusparseZbsr2csr(cusparseHandle_t         handle,
                  int*                     csrSortedRowPtrC,
                  int*                     csrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20758,8 +19646,7 @@ cusparseSgebsr2gebsc_bufferSize(cusparseHandle_t handle,
                                 int              colBlockDim,
                                 int*             pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20775,8 +19662,7 @@ cusparseDgebsr2gebsc_bufferSize(cusparseHandle_t handle,
                                 int              colBlockDim,
                                 int*             pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20792,8 +19678,7 @@ cusparseCgebsr2gebsc_bufferSize(cusparseHandle_t handle,
                                 int              colBlockDim,
                                 int*             pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20809,8 +19694,7 @@ cusparseZgebsr2gebsc_bufferSize(cusparseHandle_t       handle,
                                 int                    colBlockDim,
                                 int*                   pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20826,8 +19710,7 @@ cusparseSgebsr2gebsc_bufferSizeExt(cusparseHandle_t handle,
                                    int              colBlockDim,
                                    size_t*          pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20843,8 +19726,7 @@ cusparseDgebsr2gebsc_bufferSizeExt(cusparseHandle_t handle,
                                    int              colBlockDim,
                                    size_t*          pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20860,8 +19742,7 @@ cusparseCgebsr2gebsc_bufferSizeExt(cusparseHandle_t handle,
                                    int              colBlockDim,
                                    size_t*          pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20877,8 +19758,7 @@ cusparseZgebsr2gebsc_bufferSizeExt(cusparseHandle_t       handle,
                                    int                    colBlockDim,
                                    size_t*                pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20899,8 +19779,7 @@ cusparseSgebsr2gebsc(cusparseHandle_t handle,
                      cusparseIndexBase_t idxBase,
                      void*               pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20921,8 +19800,7 @@ cusparseDgebsr2gebsc(cusparseHandle_t    handle,
                      cusparseIndexBase_t idxBase,
                      void*               pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20943,8 +19821,7 @@ cusparseCgebsr2gebsc(cusparseHandle_t    handle,
                      cusparseIndexBase_t idxBase,
                      void*               pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20965,8 +19842,7 @@ cusparseZgebsr2gebsc(cusparseHandle_t       handle,
                      cusparseIndexBase_t    idxBase,
                      void*                  pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -20984,8 +19860,7 @@ cusparseXgebsr2csr(cusparseHandle_t         handle,
                    int*                     csrSortedRowPtrC,
                    int*                     csrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21005,8 +19880,7 @@ cusparseSgebsr2csr(cusparseHandle_t         handle,
                    int*                     csrSortedRowPtrC,
                    int*                     csrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21026,8 +19900,7 @@ cusparseDgebsr2csr(cusparseHandle_t         handle,
                    int*                     csrSortedRowPtrC,
                    int*                     csrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21047,8 +19920,7 @@ cusparseCgebsr2csr(cusparseHandle_t         handle,
                    int*                     csrSortedRowPtrC,
                    int*                     csrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21068,8 +19940,7 @@ cusparseZgebsr2csr(cusparseHandle_t         handle,
                    int*                     csrSortedRowPtrC,
                    int*                     csrSortedColIndC)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21086,8 +19957,7 @@ cusparseScsr2gebsr_bufferSize(cusparseHandle_t         handle,
                               int                      colBlockDim,
                               int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21104,8 +19974,7 @@ cusparseDcsr2gebsr_bufferSize(cusparseHandle_t         handle,
                               int                      colBlockDim,
                               int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21122,8 +19991,7 @@ cusparseCcsr2gebsr_bufferSize(cusparseHandle_t         handle,
                               int                      colBlockDim,
                               int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21140,8 +20008,7 @@ cusparseZcsr2gebsr_bufferSize(cusparseHandle_t         handle,
                               int                      colBlockDim,
                               int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21158,8 +20025,7 @@ cusparseScsr2gebsr_bufferSizeExt(cusparseHandle_t         handle,
                                  int                      colBlockDim,
                                  size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21176,8 +20042,7 @@ cusparseDcsr2gebsr_bufferSizeExt(cusparseHandle_t         handle,
                                  int                      colBlockDim,
                                  size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21194,8 +20059,7 @@ cusparseCcsr2gebsr_bufferSizeExt(cusparseHandle_t         handle,
                                  int                      colBlockDim,
                                  size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21212,8 +20076,7 @@ cusparseZcsr2gebsr_bufferSizeExt(cusparseHandle_t         handle,
                                  int                      colBlockDim,
                                  size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21232,8 +20095,7 @@ cusparseXcsr2gebsrNnz(cusparseHandle_t         handle,
                       int*                     nnzTotalDevHostPtr,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21254,8 +20116,7 @@ cusparseScsr2gebsr(cusparseHandle_t         handle,
                    int                      colBlockDim,
                    void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21276,8 +20137,7 @@ cusparseDcsr2gebsr(cusparseHandle_t         handle,
                    int                      colBlockDim,
                    void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21298,8 +20158,7 @@ cusparseCcsr2gebsr(cusparseHandle_t         handle,
                    int                      colBlockDim,
                    void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21320,8 +20179,7 @@ cusparseZcsr2gebsr(cusparseHandle_t         handle,
                    int                      colBlockDim,
                    void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21341,8 +20199,7 @@ cusparseSgebsr2gebsr_bufferSize(cusparseHandle_t         handle,
                                 int                      colBlockDimC,
                                 int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21362,8 +20219,7 @@ cusparseDgebsr2gebsr_bufferSize(cusparseHandle_t         handle,
                                 int                      colBlockDimC,
                                 int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21383,8 +20239,7 @@ cusparseCgebsr2gebsr_bufferSize(cusparseHandle_t         handle,
                                 int                      colBlockDimC,
                                 int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21404,8 +20259,7 @@ cusparseZgebsr2gebsr_bufferSize(cusparseHandle_t         handle,
                                 int                      colBlockDimC,
                                 int*                     pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21425,8 +20279,7 @@ cusparseSgebsr2gebsr_bufferSizeExt(cusparseHandle_t         handle,
                                    int                      colBlockDimC,
                                    size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21446,8 +20299,7 @@ cusparseDgebsr2gebsr_bufferSizeExt(cusparseHandle_t         handle,
                                    int                      colBlockDimC,
                                    size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21467,8 +20319,7 @@ cusparseCgebsr2gebsr_bufferSizeExt(cusparseHandle_t         handle,
                                    int                      colBlockDimC,
                                    size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21488,8 +20339,7 @@ cusparseZgebsr2gebsr_bufferSizeExt(cusparseHandle_t         handle,
                                    int                      colBlockDimC,
                                    size_t*                  pBufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21511,8 +20361,7 @@ cusparseXgebsr2gebsrNnz(cusparseHandle_t         handle,
                         int*                     nnzTotalDevHostPtr,
                         void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21536,8 +20385,7 @@ cusparseSgebsr2gebsr(cusparseHandle_t         handle,
                      int                      colBlockDimC,
                      void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21561,8 +20409,7 @@ cusparseDgebsr2gebsr(cusparseHandle_t         handle,
                      int                      colBlockDimC,
                      void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21586,8 +20433,7 @@ cusparseCgebsr2gebsr(cusparseHandle_t         handle,
                      int                      colBlockDimC,
                      void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21611,8 +20457,7 @@ cusparseZgebsr2gebsr(cusparseHandle_t         handle,
                      int                      colBlockDimC,
                      void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21625,8 +20470,7 @@ cusparseCreateIdentityPermutation(cusparseHandle_t handle,
                                   int              n,
                                   int*             p)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21639,8 +20483,7 @@ cusparseXcoosort_bufferSizeExt(cusparseHandle_t handle,
                                const int*       cooColsA,
                                size_t*          pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21654,8 +20497,7 @@ cusparseXcoosortByRow(cusparseHandle_t handle,
                       int*             P,
                       void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21669,8 +20511,7 @@ cusparseXcoosortByColumn(cusparseHandle_t handle,
                          int*             P,
                          void*            pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21683,8 +20524,7 @@ cusparseXcsrsort_bufferSizeExt(cusparseHandle_t handle,
                                const int*       csrColIndA,
                                size_t*          pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21699,8 +20539,7 @@ cusparseXcsrsort(cusparseHandle_t         handle,
                  int*                     P,
                  void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21713,8 +20552,7 @@ cusparseXcscsort_bufferSizeExt(cusparseHandle_t handle,
                                const int*       cscRowIndA,
                                size_t*          pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21729,8 +20567,7 @@ cusparseXcscsort(cusparseHandle_t         handle,
                  int*                     P,
                  void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21745,8 +20582,7 @@ cusparseScsru2csr_bufferSizeExt(cusparseHandle_t handle,
                                 csru2csrInfo_t   info,
                                 size_t*          pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21761,8 +20597,7 @@ cusparseDcsru2csr_bufferSizeExt(cusparseHandle_t handle,
                                 csru2csrInfo_t   info,
                                 size_t*          pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21777,8 +20612,7 @@ cusparseCcsru2csr_bufferSizeExt(cusparseHandle_t handle,
                                 csru2csrInfo_t   info,
                                 size_t*          pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21793,8 +20627,7 @@ cusparseZcsru2csr_bufferSizeExt(cusparseHandle_t handle,
                                 csru2csrInfo_t   info,
                                 size_t*          pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21810,8 +20643,7 @@ cusparseScsru2csr(cusparseHandle_t         handle,
                   csru2csrInfo_t           info,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21827,8 +20659,7 @@ cusparseDcsru2csr(cusparseHandle_t         handle,
                   csru2csrInfo_t           info,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21844,8 +20675,7 @@ cusparseCcsru2csr(cusparseHandle_t         handle,
                   csru2csrInfo_t           info,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21861,8 +20691,7 @@ cusparseZcsru2csr(cusparseHandle_t         handle,
                   csru2csrInfo_t           info,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21878,8 +20707,7 @@ cusparseScsr2csru(cusparseHandle_t         handle,
                   csru2csrInfo_t           info,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21895,8 +20723,7 @@ cusparseDcsr2csru(cusparseHandle_t         handle,
                   csru2csrInfo_t           info,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21912,8 +20739,7 @@ cusparseCcsr2csru(cusparseHandle_t         handle,
                   csru2csrInfo_t           info,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21929,8 +20755,7 @@ cusparseZcsr2csru(cusparseHandle_t         handle,
                   csru2csrInfo_t           info,
                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -21946,8 +20771,7 @@ cusparseHpruneDense2csr_bufferSizeExt(cusparseHandle_t         handle,
                                       const int*               csrSortedColIndC,
                                       size_t* pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -21963,8 +20787,7 @@ cusparseSpruneDense2csr_bufferSizeExt(cusparseHandle_t         handle,
                                       const int*               csrSortedColIndC,
                                       size_t* pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -21981,8 +20804,7 @@ cusparseDpruneDense2csr_bufferSizeExt(cusparseHandle_t         handle,
                                       const int*               csrSortedColIndC,
                                       size_t*               pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -21997,8 +20819,7 @@ cusparseHpruneDense2csrNnz(cusparseHandle_t         handle,
                            int*                     nnzTotalDevHostPtr,
                            void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22013,8 +20834,7 @@ cusparseSpruneDense2csrNnz(cusparseHandle_t         handle,
                            int*                     nnzTotalDevHostPtr,
                            void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22030,8 +20850,7 @@ cusparseDpruneDense2csrNnz(cusparseHandle_t         handle,
                            int*                     nnzTotalDevHostPtr,
                            void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22047,8 +20866,7 @@ cusparseHpruneDense2csr(cusparseHandle_t         handle,
                         int*                     csrSortedColIndC,
                         void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22064,8 +20882,7 @@ cusparseSpruneDense2csr(cusparseHandle_t         handle,
                         int*                     csrSortedColIndC,
                         void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22082,8 +20899,7 @@ cusparseDpruneDense2csr(cusparseHandle_t         handle,
                         int*                     csrSortedColIndC,
                         void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22102,8 +20918,7 @@ cusparseHpruneCsr2csr_bufferSizeExt(cusparseHandle_t         handle,
                                     const int*               csrSortedColIndC,
                                     size_t* pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22122,8 +20937,7 @@ cusparseSpruneCsr2csr_bufferSizeExt(cusparseHandle_t         handle,
                                     const int*               csrSortedColIndC,
                                     size_t*                 pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22143,8 +20957,7 @@ cusparseDpruneCsr2csr_bufferSizeExt(cusparseHandle_t         handle,
                                     const int*               csrSortedColIndC,
                                     size_t*                 pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22162,8 +20975,7 @@ cusparseHpruneCsr2csrNnz(cusparseHandle_t         handle,
                          int*                     nnzTotalDevHostPtr,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22181,8 +20993,7 @@ cusparseSpruneCsr2csrNnz(cusparseHandle_t         handle,
                          int*                     nnzTotalDevHostPtr,
                          void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22201,8 +21012,7 @@ cusparseStatus_t CUSPARSEAPI
                           int*                     nnzTotalDevHostPtr,
                           void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22221,8 +21031,7 @@ cusparseHpruneCsr2csr(cusparseHandle_t         handle,
                       int*                     csrSortedColIndC,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22241,8 +21050,7 @@ cusparseSpruneCsr2csr(cusparseHandle_t         handle,
                       int*                     csrSortedColIndC,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22262,8 +21070,7 @@ cusparseDpruneCsr2csr(cusparseHandle_t         handle,
                       int*                     csrSortedColIndC,
                       void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22281,8 +21088,7 @@ cusparseHpruneDense2csrByPercentage_bufferSizeExt(
                                    pruneInfo_t              info,
                                    size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22300,8 +21106,7 @@ cusparseSpruneDense2csrByPercentage_bufferSizeExt(
                                    pruneInfo_t              info,
                                    size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22320,8 +21125,7 @@ cusparseDpruneDense2csrByPercentage_bufferSizeExt(
                                    pruneInfo_t              info,
                                    size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22338,8 +21142,7 @@ cusparseHpruneDense2csrNnzByPercentage(
                                     pruneInfo_t              info,
                                     void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22356,8 +21159,7 @@ cusparseSpruneDense2csrNnzByPercentage(
                                     pruneInfo_t              info,
                                     void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22375,8 +21177,7 @@ cusparseDpruneDense2csrNnzByPercentage(
                                     pruneInfo_t              info,
                                     void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22393,8 +21194,7 @@ cusparseHpruneDense2csrByPercentage(cusparseHandle_t         handle,
                                     pruneInfo_t              info,
                                     void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22411,8 +21211,7 @@ cusparseSpruneDense2csrByPercentage(cusparseHandle_t         handle,
                                     pruneInfo_t              info,
                                     void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22430,8 +21229,7 @@ cusparseDpruneDense2csrByPercentage(cusparseHandle_t         handle,
                                     pruneInfo_t              info,
                                     void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22452,8 +21250,7 @@ cusparseHpruneCsr2csrByPercentage_bufferSizeExt(
                                    pruneInfo_t              info,
                                    size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22474,8 +21271,7 @@ cusparseSpruneCsr2csrByPercentage_bufferSizeExt(
                                    pruneInfo_t              info,
                                    size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22497,8 +21293,7 @@ cusparseDpruneCsr2csrByPercentage_bufferSizeExt(
                                    pruneInfo_t              info,
                                    size_t*                  pBufferSizeInBytes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22518,8 +21313,7 @@ cusparseHpruneCsr2csrNnzByPercentage(
                                     pruneInfo_t              info,
                                     void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22539,8 +21333,7 @@ cusparseSpruneCsr2csrNnzByPercentage(
                                     pruneInfo_t              info,
                                     void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22561,8 +21354,7 @@ cusparseDpruneCsr2csrNnzByPercentage(
                                     pruneInfo_t              info,
                                     void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22582,8 +21374,7 @@ cusparseHpruneCsr2csrByPercentage(cusparseHandle_t         handle,
                                   pruneInfo_t              info,
                                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 cusparseStatus_t CUSPARSEAPI
@@ -22603,8 +21394,7 @@ cusparseSpruneCsr2csrByPercentage(cusparseHandle_t         handle,
                                   pruneInfo_t              info,
                                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22625,8 +21415,7 @@ cusparseDpruneCsr2csrByPercentage(cusparseHandle_t         handle,
                                   pruneInfo_t              info,
                                   void*                    pBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22651,8 +21440,7 @@ cusparseCsr2cscEx2(cusparseHandle_t     handle,
                    cusparseCsr2CscAlg_t alg,
                    void*                buffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22673,8 +21461,7 @@ cusparseCsr2cscEx2_bufferSize(cusparseHandle_t     handle,
                               cusparseCsr2CscAlg_t alg,
                               size_t*              bufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22691,16 +21478,14 @@ cusparseCreateSpVec(cusparseSpVecDescr_t* spVecDescr,
                     cusparseIndexBase_t   idxBase,
                     cudaDataType          valueType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroySpVec(cusparseSpVecDescr_t spVecDescr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22714,8 +21499,7 @@ cusparseSpVecGet(const cusparseSpVecDescr_t spVecDescr,
                  cusparseIndexBase_t*       idxBase,
                  cudaDataType*              valueType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22723,8 +21507,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSpVecGetIndexBase(const cusparseSpVecDescr_t spVecDescr,
                           cusparseIndexBase_t*       idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22732,8 +21515,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSpVecGetValues(const cusparseSpVecDescr_t spVecDescr,
                        void**                     values)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22741,8 +21523,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSpVecSetValues(cusparseSpVecDescr_t spVecDescr,
                        void*                values)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22755,16 +21536,14 @@ cusparseCreateDnVec(cusparseDnVecDescr_t* dnVecDescr,
                     void*                 values,
                     cudaDataType          valueType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyDnVec(cusparseDnVecDescr_t dnVecDescr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22774,8 +21553,7 @@ cusparseDnVecGet(const cusparseDnVecDescr_t dnVecDescr,
                  void**                     values,
                  cudaDataType*              valueType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22783,8 +21561,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseDnVecGetValues(const cusparseDnVecDescr_t dnVecDescr,
                        void**                     values)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22792,8 +21569,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseDnVecSetValues(cusparseDnVecDescr_t dnVecDescr,
                        void*                values)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22812,8 +21588,7 @@ cusparseCreateCoo(cusparseSpMatDescr_t* spMatDescr,
                   cusparseIndexBase_t   idxBase,
                   cudaDataType          valueType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22830,8 +21605,7 @@ cusparseCreateCsr(cusparseSpMatDescr_t* spMatDescr,
                   cusparseIndexBase_t   idxBase,
                   cudaDataType          valueType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22846,16 +21620,14 @@ cusparseCreateCooAoS(cusparseSpMatDescr_t* spMatDescr,
                      cusparseIndexBase_t   idxBase,
                      cudaDataType          valueType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroySpMat(cusparseSpMatDescr_t spMatDescr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22871,8 +21643,7 @@ cusparseCooGet(const cusparseSpMatDescr_t spMatDescr,
                cusparseIndexBase_t*       idxBase,
                cudaDataType*              valueType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22887,8 +21658,7 @@ cusparseCooAoSGet(const cusparseSpMatDescr_t spMatDescr,
                   cusparseIndexBase_t*       idxBase,
                   cudaDataType*              valueType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22905,8 +21675,7 @@ cusparseCsrGet(const cusparseSpMatDescr_t spMatDescr,
                cusparseIndexBase_t*       idxBase,
                cudaDataType*              valueType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22914,8 +21683,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSpMatGetFormat(const cusparseSpMatDescr_t spMatDescr,
                        cusparseFormat_t*          format)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22923,8 +21691,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSpMatGetIndexBase(const cusparseSpMatDescr_t spMatDescr,
                           cusparseIndexBase_t*       idxBase)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22932,8 +21699,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSpMatGetValues(const cusparseSpMatDescr_t spMatDescr,
                        void**                     values)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22941,8 +21707,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSpMatSetValues(cusparseSpMatDescr_t spMatDescr,
                        void*                values)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22950,8 +21715,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSpMatSetStridedBatch(cusparseSpMatDescr_t spMatDescr,
                              int                  batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22959,8 +21723,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseSpMatGetStridedBatch(const cusparseSpMatDescr_t spMatDescr,
                              int*                       batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22976,16 +21739,14 @@ cusparseCreateDnMat(cusparseDnMatDescr_t* dnMatDescr,
                     cudaDataType          valueType,
                     cusparseOrder_t       order)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
 cusparseStatus_t CUSPARSEAPI
 cusparseDestroyDnMat(cusparseDnMatDescr_t dnMatDescr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -22998,8 +21759,7 @@ cusparseDnMatGet(const cusparseDnMatDescr_t dnMatDescr,
                  cudaDataType*              type,
                  cusparseOrder_t*           order)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -23007,8 +21767,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseDnMatGetValues(const cusparseDnMatDescr_t dnMatDescr,
                        void**                     values)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -23016,8 +21775,7 @@ cusparseStatus_t CUSPARSEAPI
 cusparseDnMatSetValues(cusparseDnMatDescr_t dnMatDescr,
                        void*                values)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -23026,8 +21784,7 @@ cusparseDnMatSetStridedBatch(cusparseDnMatDescr_t dnMatDescr,
                              int                  batchCount,
                              int64_t              batchStride)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -23036,8 +21793,7 @@ cusparseDnMatGetStridedBatch(const cusparseDnMatDescr_t dnMatDescr,
                              int*                       batchCount,
                              int64_t*                   batchStride)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -23053,8 +21809,7 @@ cusparseSpVV(cusparseHandle_t           handle,
              cudaDataType               computeType,
              void*                      externalBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -23067,8 +21822,7 @@ cusparseSpVV_bufferSize(cusparseHandle_t           handle,
                         cudaDataType               computeType,
                         size_t*                    bufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -23087,8 +21841,7 @@ cusparseSpMV(cusparseHandle_t           handle,
              cusparseSpMVAlg_t          alg,
              void*                      externalBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -23104,8 +21857,7 @@ cusparseSpMV_bufferSize(cusparseHandle_t           handle,
                         cusparseSpMVAlg_t          alg,
                         size_t*                    bufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -23125,8 +21877,7 @@ cusparseSpMM(cusparseHandle_t           handle,
              cusparseSpMMAlg_t          alg,
              void*                      externalBuffer)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 
@@ -23143,93 +21894,78 @@ cusparseSpMM_bufferSize(cusparseHandle_t           handle,
                         cusparseSpMMAlg_t          alg,
                         size_t*                    bufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /******* cudart *********/
 __host__ cudaError_t CUDARTAPI cudaDeviceSetLimit(enum cudaLimit limit, size_t value)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaDeviceGetLimit(size_t *pValue, enum cudaLimit limit)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaDeviceGetCacheConfig(enum cudaFuncCache *pCacheConfig)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaDeviceGetStreamPriorityRange(int *leastPriority, int *greatestPriority)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDeviceSetCacheConfig(enum cudaFuncCache cacheConfig)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaDeviceGetSharedMemConfig(enum cudaSharedMemConfig *pConfig)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDeviceSetSharedMemConfig(enum cudaSharedMemConfig config)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDeviceGetByPCIBusId(int *device, const char *pciBusId)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDeviceGetPCIBusId(char *pciBusId, int len, int device)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 // __host__ cudaError_t CUDARTAPI cudaIpcGetEventHandle(cudaIpcEventHandle_t *handle, cudaEvent_t event)
 // {
-//     fprintf(stderr, "%s is not implemented\n", __func__);
-//     abort();
+//     ava_unsupported;
 // }
 //
 // __host__ cudaError_t CUDARTAPI cudaIpcOpenEventHandle(cudaEvent_t *event, cudaIpcEventHandle_t handle)
 // {
-//     fprintf(stderr, "%s is not implemented\n", __func__);
-//     abort();
+//     ava_unsupported;
 // }
 //
 // __host__ cudaError_t CUDARTAPI cudaIpcGetMemHandle(cudaIpcMemHandle_t *handle, void *devPtr)
 // {
-//     fprintf(stderr, "%s is not implemented\n", __func__);
-//     abort();
+//     ava_unsupported;
 // }
 
 // __host__ cudaError_t CUDARTAPI cudaIpcOpenMemHandle(void **devPtr, cudaIpcMemHandle_t handle, unsigned int flags)
 // {
-//     fprintf(stderr, "%s is not implemented\n", __func__);
-//     abort();
+//     ava_unsupported;
 // }
 //
 // __host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr)
 // {
-//     fprintf(stderr, "%s is not implemented\n", __func__);
-//     abort();
+//     ava_unsupported;
 // }
 
 ava_begin_replacement;
@@ -23250,38 +21986,32 @@ __host__ __cudart_builtin__ const char* CUDARTAPI cudaGetErrorName(cudaError_t e
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaDeviceGetP2PAttribute(int *value, enum cudaDeviceP2PAttr attr, int srcDevice, int dstDevice)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaChooseDevice(int *device, const struct cudaDeviceProp *prop)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaSetValidDevices(int *device_arr, int len)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaSetDeviceFlags( unsigned int flags )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetDeviceFlags( unsigned int *flags )
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaStreamCreate(cudaStream_t *pStream)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamCreateWithFlags(cudaStream_t *pStream, unsigned int flags)
@@ -23294,20 +22024,17 @@ __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamCreateWithFlags(cuda
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamCreateWithPriority(cudaStream_t *pStream, unsigned int flags, int priority)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamGetPriority(cudaStream_t hStream, int *priority)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamGetFlags(cudaStream_t hStream, unsigned int *flags)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamDestroy(cudaStream_t stream)
@@ -23317,8 +22044,7 @@ __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamDestroy(cudaStream_t
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamWaitEvent(cudaStream_t stream, cudaEvent_t event, unsigned int flags)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaStreamSynchronize(cudaStream_t stream)
@@ -23333,32 +22059,27 @@ __host__ cudaError_t CUDARTAPI cudaStreamQuery(cudaStream_t stream)
 
 __host__ cudaError_t CUDARTAPI cudaStreamBeginCapture(cudaStream_t stream, enum cudaStreamCaptureMode mode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaThreadExchangeStreamCaptureMode(enum cudaStreamCaptureMode *mode)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaStreamEndCapture(cudaStream_t stream, cudaGraph_t *pGraph)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaStreamIsCapturing(cudaStream_t stream, enum cudaStreamCaptureStatus *pCaptureStatus)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaStreamGetCaptureInfo(cudaStream_t stream, enum cudaStreamCaptureStatus *pCaptureStatus, unsigned long long *pId)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaEventCreateWithFlags(cudaEvent_t *event, unsigned int flags)
@@ -23371,74 +22092,62 @@ __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaEventCreateWithFlags(cudaE
 
 __host__ cudaError_t CUDARTAPI cudaImportExternalMemory(cudaExternalMemory_t *extMem_out, const struct cudaExternalMemoryHandleDesc *memHandleDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaExternalMemoryGetMappedBuffer(void **devPtr, cudaExternalMemory_t extMem, const struct cudaExternalMemoryBufferDesc *bufferDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaExternalMemoryGetMappedMipmappedArray(cudaMipmappedArray_t *mipmap, cudaExternalMemory_t extMem, const struct cudaExternalMemoryMipmappedArrayDesc *mipmapDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDestroyExternalMemory(cudaExternalMemory_t extMem)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaImportExternalSemaphore(cudaExternalSemaphore_t *extSem_out, const struct cudaExternalSemaphoreHandleDesc *semHandleDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaSignalExternalSemaphoresAsync(const cudaExternalSemaphore_t *extSemArray, const struct cudaExternalSemaphoreSignalParams *paramsArray, unsigned int numExtSems, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaWaitExternalSemaphoresAsync(const cudaExternalSemaphore_t *extSemArray, const struct cudaExternalSemaphoreWaitParams *paramsArray, unsigned int numExtSems, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDestroyExternalSemaphore(cudaExternalSemaphore_t extSem)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaLaunchCooperativeKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args, size_t sharedMem, cudaStream_t stream)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaLaunchCooperativeKernelMultiDevice(struct cudaLaunchParams *launchParamsList, unsigned int numDevices, unsigned int flags  __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaFuncSetCacheConfig(const void *func, enum cudaFuncCache cacheConfig)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaFuncSetSharedMemConfig(const void *func, enum cudaSharedMemConfig config)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
@@ -23470,14 +22179,12 @@ cudaFuncGetAttributes(struct cudaFuncAttributes *attr, const void *func)
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaFuncSetAttribute(const void *func, enum cudaFuncAttribute attr, int value)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaLaunchHostFunc(cudaStream_t stream, cudaHostFn_t fn, void *userData)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI
@@ -23543,627 +22250,523 @@ cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(int *numBlocks,
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMallocManaged(void **devPtr, size_t size, unsigned int flags __dv(cudaMemAttachGlobal))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMallocPitch(void **devPtr, size_t *pitch, size_t width, size_t height)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaFreeArray(cudaArray_t array)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaFreeMipmappedArray(cudaMipmappedArray_t mipmappedArray)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaHostAlloc(void **pHost, size_t size, unsigned int flags)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaHostRegister(void *ptr, size_t size, unsigned int flags)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaHostUnregister(void *ptr)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaHostGetDevicePointer(void **pDevice, void *pHost, unsigned int flags)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaHostGetFlags(unsigned int *pFlags, void *pHost)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMalloc3D(struct cudaPitchedPtr* pitchedDevPtr, struct cudaExtent extent)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMalloc3DArray(cudaArray_t *array, const struct cudaChannelFormatDesc* desc, struct cudaExtent extent, unsigned int flags __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMallocMipmappedArray(cudaMipmappedArray_t *mipmappedArray, const struct cudaChannelFormatDesc* desc, struct cudaExtent extent, unsigned int numLevels, unsigned int flags __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetMipmappedArrayLevel(cudaArray_t *levelArray, cudaMipmappedArray_const_t mipmappedArray, unsigned int level)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpy3D(const struct cudaMemcpy3DParms *p)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpy3DPeer(const struct cudaMemcpy3DPeerParms *p)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemcpy3DAsync(const struct cudaMemcpy3DParms *p, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpy3DPeerAsync(const struct cudaMemcpy3DPeerParms *p, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaArrayGetInfo(struct cudaChannelFormatDesc *desc, struct cudaExtent *extent, unsigned int *flags, cudaArray_t array)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpyPeer(void *dst, int dstDevice, const void *src, int srcDevice, size_t count)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpy2D(void *dst, size_t dpitch, const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpy2DToArray(cudaArray_t dst, size_t wOffset, size_t hOffset, const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpy2DFromArray(void *dst, size_t dpitch, cudaArray_const_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, enum cudaMemcpyKind kind)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpy2DArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hOffsetDst, cudaArray_const_t src, size_t wOffsetSrc, size_t hOffsetSrc, size_t width, size_t height, enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToDevice))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbol(void *dst, const void *symbol, size_t count, size_t offset __dv(0), enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToHost))
 {
     /* kind is always cudaMemcpyDeviceToHost */
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpyPeerAsync(void *dst, int dstDevice, const void *src, int srcDevice, size_t count, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemcpy2DAsync(void *dst, size_t dpitch, const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpy2DToArrayAsync(cudaArray_t dst, size_t wOffset, size_t hOffset, const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpy2DFromArrayAsync(void *dst, size_t dpitch, cudaArray_const_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpyToSymbolAsync(const void *symbol, const void *src, size_t count, size_t offset, enum cudaMemcpyKind kind, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbolAsync(void *dst, const void *symbol, size_t count, size_t offset, enum cudaMemcpyKind kind, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemset2D(void *devPtr, size_t pitch, int value, size_t width, size_t height)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemset3D(struct cudaPitchedPtr pitchedDevPtr, int value, struct cudaExtent extent)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemsetAsync(void *devPtr, int value, size_t count, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemset2DAsync(void *devPtr, size_t pitch, int value, size_t width, size_t height, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemset3DAsync(struct cudaPitchedPtr pitchedDevPtr, int value, struct cudaExtent extent, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetSymbolAddress(void **devPtr, const void *symbol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetSymbolSize(size_t *size, const void *symbol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemPrefetchAsync(const void *devPtr, size_t count, int dstDevice, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemAdvise(const void *devPtr, size_t count, enum cudaMemoryAdvise advice, int device)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemRangeGetAttribute(void *data, size_t dataSize, enum cudaMemRangeAttribute attribute, const void *devPtr, size_t count)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemRangeGetAttributes(void **data, size_t *dataSizes, enum cudaMemRangeAttribute *attributes, size_t numAttributes, const void *devPtr, size_t count)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDeviceCanAccessPeer(int *canAccessPeer, int device, int peerDevice)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDeviceEnablePeerAccess(int peerDevice, unsigned int flags)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDeviceDisablePeerAccess(int peerDevice)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphicsUnregisterResource(cudaGraphicsResource_t resource)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphicsResourceSetMapFlags(cudaGraphicsResource_t resource, unsigned int flags)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphicsMapResources(int count, cudaGraphicsResource_t *resources, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphicsUnmapResources(int count, cudaGraphicsResource_t *resources, cudaStream_t stream __dv(0))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphicsResourceGetMappedPointer(void **devPtr, size_t *size, cudaGraphicsResource_t resource)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphicsSubResourceGetMappedArray(cudaArray_t *array, cudaGraphicsResource_t resource, unsigned int arrayIndex, unsigned int mipLevel)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphicsResourceGetMappedMipmappedArray(cudaMipmappedArray_t *mipmappedArray, cudaGraphicsResource_t resource)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaBindTexture(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct cudaChannelFormatDesc *desc, size_t size __dv(UINT_MAX))
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaBindTexture2D(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct cudaChannelFormatDesc *desc, size_t width, size_t height, size_t pitch)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaBindTextureToArray(const struct textureReference *texref, cudaArray_const_t array, const struct cudaChannelFormatDesc *desc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaBindTextureToMipmappedArray(const struct textureReference *texref, cudaMipmappedArray_const_t mipmappedArray, const struct cudaChannelFormatDesc *desc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaUnbindTexture(const struct textureReference *texref)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetTextureAlignmentOffset(size_t *offset, const struct textureReference *texref)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetTextureReference(const struct textureReference **texref, const void *symbol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaBindSurfaceToArray(const struct surfaceReference *surfref, cudaArray_const_t array, const struct cudaChannelFormatDesc *desc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetSurfaceReference(const struct surfaceReference **surfref, const void *symbol)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetChannelDesc(struct cudaChannelFormatDesc *desc, cudaArray_const_t array)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ struct cudaChannelFormatDesc CUDARTAPI cudaCreateChannelDesc(int x, int y, int z, int w, enum cudaChannelFormatKind f)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaCreateTextureObject(cudaTextureObject_t *pTexObject, const struct cudaResourceDesc *pResDesc, const struct cudaTextureDesc *pTexDesc, const struct cudaResourceViewDesc *pResViewDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDestroyTextureObject(cudaTextureObject_t texObject)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetTextureObjectResourceDesc(struct cudaResourceDesc *pResDesc, cudaTextureObject_t texObject)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetTextureObjectTextureDesc(struct cudaTextureDesc *pTexDesc, cudaTextureObject_t texObject)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetTextureObjectResourceViewDesc(struct cudaResourceViewDesc *pResViewDesc, cudaTextureObject_t texObject)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaCreateSurfaceObject(cudaSurfaceObject_t *pSurfObject, const struct cudaResourceDesc *pResDesc)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDestroySurfaceObject(cudaSurfaceObject_t surfObject)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGetSurfaceObjectResourceDesc(struct cudaResourceDesc *pResDesc, cudaSurfaceObject_t surfObject)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaDriverGetVersion(int *driverVersion)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaRuntimeGetVersion(int *runtimeVersion)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphCreate(cudaGraph_t *pGraph, unsigned int flags)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphAddKernelNode(cudaGraphNode_t *pGraphNode, cudaGraph_t graph, const cudaGraphNode_t *pDependencies, size_t numDependencies, const struct cudaKernelNodeParams *pNodeParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphKernelNodeGetParams(cudaGraphNode_t node, struct cudaKernelNodeParams *pNodeParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphKernelNodeSetParams(cudaGraphNode_t node, const struct cudaKernelNodeParams *pNodeParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphAddMemcpyNode(cudaGraphNode_t *pGraphNode, cudaGraph_t graph, const cudaGraphNode_t *pDependencies, size_t numDependencies, const struct cudaMemcpy3DParms *pCopyParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphMemcpyNodeGetParams(cudaGraphNode_t node, struct cudaMemcpy3DParms *pNodeParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphMemcpyNodeSetParams(cudaGraphNode_t node, const struct cudaMemcpy3DParms *pNodeParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphAddMemsetNode(cudaGraphNode_t *pGraphNode, cudaGraph_t graph, const cudaGraphNode_t *pDependencies, size_t numDependencies, const struct cudaMemsetParams *pMemsetParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphMemsetNodeGetParams(cudaGraphNode_t node, struct cudaMemsetParams *pNodeParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphMemsetNodeSetParams(cudaGraphNode_t node, const struct cudaMemsetParams *pNodeParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphAddHostNode(cudaGraphNode_t *pGraphNode, cudaGraph_t graph, const cudaGraphNode_t *pDependencies, size_t numDependencies, const struct cudaHostNodeParams *pNodeParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphHostNodeGetParams(cudaGraphNode_t node, struct cudaHostNodeParams *pNodeParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphHostNodeSetParams(cudaGraphNode_t node, const struct cudaHostNodeParams *pNodeParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphAddChildGraphNode(cudaGraphNode_t *pGraphNode, cudaGraph_t graph, const cudaGraphNode_t *pDependencies, size_t numDependencies, cudaGraph_t childGraph)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphChildGraphNodeGetGraph(cudaGraphNode_t node, cudaGraph_t *pGraph)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphAddEmptyNode(cudaGraphNode_t *pGraphNode, cudaGraph_t graph, const cudaGraphNode_t *pDependencies, size_t numDependencies)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphClone(cudaGraph_t *pGraphClone, cudaGraph_t originalGraph)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphNodeFindInClone(cudaGraphNode_t *pNode, cudaGraphNode_t originalNode, cudaGraph_t clonedGraph)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphNodeGetType(cudaGraphNode_t node, enum cudaGraphNodeType *pType)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphGetNodes(cudaGraph_t graph, cudaGraphNode_t *nodes, size_t *numNodes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphGetRootNodes(cudaGraph_t graph, cudaGraphNode_t *pRootNodes, size_t *pNumRootNodes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphGetEdges(cudaGraph_t graph, cudaGraphNode_t *from, cudaGraphNode_t *to, size_t *numEdges)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphNodeGetDependencies(cudaGraphNode_t node, cudaGraphNode_t *pDependencies, size_t *pNumDependencies)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphNodeGetDependentNodes(cudaGraphNode_t node, cudaGraphNode_t *pDependentNodes, size_t *pNumDependentNodes)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphAddDependencies(cudaGraph_t graph, const cudaGraphNode_t *from, const cudaGraphNode_t *to, size_t numDependencies)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphRemoveDependencies(cudaGraph_t graph, const cudaGraphNode_t *from, const cudaGraphNode_t *to, size_t numDependencies)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphDestroyNode(cudaGraphNode_t node)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphInstantiate(cudaGraphExec_t *pGraphExec, cudaGraph_t graph, cudaGraphNode_t *pErrorNode, char *pLogBuffer, size_t bufferSize)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphExecKernelNodeSetParams(cudaGraphExec_t hGraphExec, cudaGraphNode_t node, const struct cudaKernelNodeParams *pNodeParams)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphLaunch(cudaGraphExec_t graphExec, cudaStream_t stream)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphExecDestroy(cudaGraphExec_t graphExec)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 /* ONNX */
@@ -24183,8 +22786,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmBatched (cublasHandle_t handle,
                                                           int ldc,
                                                           int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmStridedBatched (cublasHandle_t handle,
@@ -24206,8 +22808,7 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmStridedBatched (cublasHandle_t 
                                                                  long long int strideC,
                                                                  int batchCount)
 {
-    fprintf(stderr, "%s is not implemented\n", __func__);
-    abort();
+    ava_unsupported;
 }
 
 const char *CUDNNWINAPI
