@@ -1895,7 +1895,7 @@ cuEventCreate(CUevent *phEvent, unsigned int Flags)
     if (g_queue_is_empty(cu_event_pool)) {
         size_t count = DESCRITPOR_POOL_SIZE;
         CUevent *desc = (CUevent *)malloc(sizeof(CUevent) * count);
-        int i;
+        size_t i;
         res = __pool_cuEventCreate(desc, count);
 
         if (res == CUDA_SUCCESS) {
@@ -5997,7 +5997,7 @@ cudnnCreateConvolutionDescriptor(cudnnConvolutionDescriptor_t *convDesc)
         size_t count = DESCRITPOR_POOL_SIZE;
         cudnnConvolutionDescriptor_t *desc = (cudnnConvolutionDescriptor_t *)
             malloc(sizeof(cudnnConvolutionDescriptor_t) * count);
-        int i;
+        size_t i;
         res = __pool_cudnnCreateConvolutionDescriptor(desc, count);
 
         if (res == CUDNN_STATUS_SUCCESS) {
@@ -6022,7 +6022,7 @@ cudnnCreateFilterDescriptor(cudnnFilterDescriptor_t *filterDesc)
         size_t count = DESCRITPOR_POOL_SIZE;
         cudnnFilterDescriptor_t *desc = (cudnnFilterDescriptor_t *)
             malloc(sizeof(cudnnFilterDescriptor_t) * count);
-        int i;
+        size_t i;
         res = __pool_cudnnCreateFilterDescriptor(desc, count);
 
         if (res == CUDNN_STATUS_SUCCESS) {
@@ -6047,7 +6047,7 @@ cudnnCreatePoolingDescriptor(cudnnPoolingDescriptor_t *poolingDesc)
         size_t count = DESCRITPOR_POOL_SIZE;
         cudnnPoolingDescriptor_t *desc = (cudnnPoolingDescriptor_t *)
             malloc(sizeof(cudnnPoolingDescriptor_t) * count);
-        int i;
+        size_t i = 0;
         res = __pool_cudnnCreatePoolingDescriptor(desc, count);
 
         if (res == CUDNN_STATUS_SUCCESS) {
@@ -6072,7 +6072,7 @@ cudnnCreateTensorDescriptor(cudnnTensorDescriptor_t *tensorDesc)
         size_t count = DESCRITPOR_POOL_SIZE;
         cudnnTensorDescriptor_t *desc = (cudnnTensorDescriptor_t *)
             malloc(sizeof(cudnnTensorDescriptor_t) * count);
-        int i;
+        size_t i;
         res = __pool_cudnnCreateTensorDescriptor(desc, count);
 
         if (res == CUDNN_STATUS_SUCCESS) {

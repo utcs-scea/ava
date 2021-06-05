@@ -8,6 +8,8 @@
 #include <plog/Log.h>
 #include <stdio.h>
 
+#include <gsl/gsl>
+
 #include "common/cmd_handler.hpp"
 #include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
@@ -116,7 +118,7 @@ int shadow_thread_handle_single_command(struct shadow_thread_pool_t *pool) {
     return 1;
   }
 
-  assert(cmd->thread_id == t->ava_id);
+  assert(gsl::narrow_cast<uintptr_t>(cmd->thread_id) == t->ava_id);
   // TODO: checks MSG_SHUTDOWN messages/channel close from the other side.
 
   handle_command_and_notify(chan, cmd);

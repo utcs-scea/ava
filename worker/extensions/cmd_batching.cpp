@@ -1,5 +1,7 @@
 #include "common/extensions/cmd_batching.h"
 
+#include <gsl/gsl>
+
 #include "common/linkage.h"
 
 struct command_batch *nw_global_cmd_batch = NULL;  // always NULL
@@ -20,7 +22,7 @@ EXPORTED_WEAKLY void __do_batch_execute(void *command_buffer, size_t total_buffe
   off_t offset = 0;
   struct command_base *cmd;
 
-  while (offset < total_buffer_size) {
+  while (gsl::narrow_cast<size_t>(offset) < total_buffer_size) {
     cmd = (struct command_base *)(command_buffer + offset);
     offset += cmd->command_size + cmd->region_size;
     __handle_command_cudart_opt_single(NULL, NULL, NULL, cmd);

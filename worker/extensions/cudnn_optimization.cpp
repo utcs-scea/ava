@@ -49,7 +49,7 @@ void worker_cudnn_opt_init(void) {
 }
 
 cudnnStatus_t __pool_cudnnCreateConvolutionDescriptor(cudnnConvolutionDescriptor_t *convDesc, size_t count) {
-  int i;
+  size_t i;
   cudnnConvolutionDescriptor_t *desc;
   cudnnStatus_t res = CUDNN_STATUS_SUCCESS;
 
@@ -63,7 +63,7 @@ cudnnStatus_t __pool_cudnnCreateConvolutionDescriptor(cudnnConvolutionDescriptor
 }
 
 cudnnStatus_t __pool_cudnnDestroyConvolutionDescriptor(cudnnConvolutionDescriptor_t *convDesc, size_t count) {
-  int i;
+  size_t i;
   cudnnStatus_t res;
 
   for (i = 0; i < count; i++) {
@@ -75,7 +75,7 @@ cudnnStatus_t __pool_cudnnDestroyConvolutionDescriptor(cudnnConvolutionDescripto
 }
 
 cudnnStatus_t __pool_cudnnCreatePoolingDescriptor(cudnnPoolingDescriptor_t *poolingDesc, size_t count) {
-  int i;
+  size_t i;
   cudnnPoolingDescriptor_t *desc;
   cudnnStatus_t res = CUDNN_STATUS_SUCCESS;
 
@@ -89,7 +89,7 @@ cudnnStatus_t __pool_cudnnCreatePoolingDescriptor(cudnnPoolingDescriptor_t *pool
 }
 
 cudnnStatus_t __pool_cudnnDestroyPoolingDescriptor(cudnnPoolingDescriptor_t *poolingDesc, size_t count) {
-  int i;
+  size_t i;
   cudnnStatus_t res;
 
   for (i = 0; i < count; i++) {
@@ -101,7 +101,7 @@ cudnnStatus_t __pool_cudnnDestroyPoolingDescriptor(cudnnPoolingDescriptor_t *poo
 }
 
 cudnnStatus_t __pool_cudnnCreateTensorDescriptor(cudnnTensorDescriptor_t *tensorDesc, size_t count) {
-  int i;
+  size_t i;
   cudnnTensorDescriptor_t *desc;
   cudnnStatus_t res = CUDNN_STATUS_SUCCESS;
 
@@ -115,7 +115,7 @@ cudnnStatus_t __pool_cudnnCreateTensorDescriptor(cudnnTensorDescriptor_t *tensor
 }
 
 cudnnStatus_t __pool_cudnnDestroyTensorDescriptor(cudnnTensorDescriptor_t *tensorDesc, size_t count) {
-  int i;
+  size_t i;
   cudnnStatus_t res;
 
   for (i = 0; i < count; i++) {
@@ -127,7 +127,7 @@ cudnnStatus_t __pool_cudnnDestroyTensorDescriptor(cudnnTensorDescriptor_t *tenso
 }
 
 cudnnStatus_t __pool_cudnnCreateFilterDescriptor(cudnnFilterDescriptor_t *filterDesc, size_t count) {
-  int i;
+  size_t i;
   cudnnFilterDescriptor_t *desc;
   cudnnStatus_t res = CUDNN_STATUS_SUCCESS;
 
@@ -141,7 +141,7 @@ cudnnStatus_t __pool_cudnnCreateFilterDescriptor(cudnnFilterDescriptor_t *filter
 }
 
 cudnnStatus_t __pool_cudnnDestroyFilterDescriptor(cudnnFilterDescriptor_t *filterDesc, size_t count) {
-  int i;
+  size_t i;
   cudnnStatus_t res;
 
   for (i = 0; i < count; i++) {

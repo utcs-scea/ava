@@ -169,7 +169,7 @@ ssize_t command_channel_log_transfer_command(struct command_channel_log *c, cons
 void command_channel_log_update_flags(struct command_channel_log *chan, ssize_t offset, uint32_t flags) {
   assert(offset >= 0);
   off_t r = lseek(chan->fd, offset + sizeof(size_t), SEEK_SET);
-  assert(r == offset + sizeof(size_t));
+  assert(gsl::narrow_cast<unsigned long>(r) == offset + sizeof(size_t));
   (void)r;
   ssize_t ret = write(chan->fd, &flags, sizeof(flags));
   if (ret == -1) {
