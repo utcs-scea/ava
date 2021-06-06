@@ -12,7 +12,7 @@ def command_print_implementation(f: Function):
         def printf(format, *values):
             return f"""fprintf(file, "{format}", {",".join(values)});"""
 
-        def print_value_deep(values, type: Type, depth, no_depends, argument, **other):
+        def print_value_deep(values, cast_type: Type, type: Type, depth, no_depends, argument, **other):
             (value,) = values
             if type.is_void:
                 return ""
@@ -28,7 +28,7 @@ def command_print_implementation(f: Function):
                     fprintf(file, " = {{");
                     {type.nonconst.attach_to(tmp_name)};
                     {tmp_name} = ({type.nonconst.spelling})({get_transfer_buffer_expr(value, type)});
-                    {for_all_elements(inner_values, type, precomputed_size=Expr(1), depth=depth, argument=argument, no_depends=no_depends, **other)}
+                    {for_all_elements(inner_values, cast_type, type, precomputed_size=Expr(1), depth=depth, argument=argument, no_depends=no_depends, **other)}
                     fprintf(file, ",...}}");
                     """
                 )
@@ -72,6 +72,7 @@ def command_print_implementation(f: Function):
         def print_value(argument: Argument, value, type: Type, no_depends):
             conv = print_value_deep(
                 (value,),
+                argument.type.nonconst,
                 argument.type,
                 depth=0,
                 name=argument.name,

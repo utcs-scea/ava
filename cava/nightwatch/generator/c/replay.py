@@ -26,13 +26,13 @@ def replay_command_implementation(f: Function):
             struct {f.call_spelling}* __call = (struct {f.call_spelling}*)__call_cmd;
             assert(__call->base.api_id == {f.api.number_spelling});
             assert(__call->base.command_size == sizeof(struct {f.call_spelling}) && "Command size does not match ID. (Can be caused by incorrectly computed buffer sizes, expecially using `strlen(s)` instead of `strlen(s)+1`)");
-        
+
             /* Unpack and translate arguments */
             {lines(convert_input_for_argument(a, "__call") for a in f.arguments)}
-        
+
             /* Perform Call */
             {call_function_wrapper(f)}
-        
+
             ava_is_in = 0; ava_is_out = 1;
             __cmd = __ret_cmd;
             struct {f.ret_spelling}* __ret = (struct {f.ret_spelling}*)__ret_cmd;
@@ -61,11 +61,15 @@ def replay_command_implementation(f: Function):
 
 
 def assign_original_handle_for_argument(arg: Argument, original: str):
-    def convert_result_value(values, type: Type, depth, original_type=None, **other) -> str:
+    def convert_result_value(values, cast_type: Type, type: Type, depth, original_type=None, **other) -> str:
         if isinstance(type, ConditionalType):
             return Expr(type.predicate).if_then_else(
-                convert_result_value(values, type.then_type, depth, original_type=type.original_type, **other),
-                convert_result_value(values, type.else_type, depth, original_type=type.original_type, **other),
+                convert_result_value(
+                    values, type.then_type.nonconst, type.then_type, depth, original_type=type.original_type, **other
+                ),
+                convert_result_value(
+                    values, type.then_type.nonconst, type.else_type, depth, original_type=type.original_type, **other
+                ),
             )
 
         if type.is_void:
@@ -86,9 +90,9 @@ def assign_original_handle_for_argument(arg: Argument, original: str):
             inner_values = (tmp_name, local_value)
             return buffer_pred.if_then_else(
                 f"""
-                {type.nonconst.attach_to(tmp_name)}; 
-                {get_buffer(tmp_name, original_value, type, original_type=original_type)}
-                {for_all_elements(inner_values, type, depth=depth, original_type=original_type, **other)}
+                {type.nonconst.attach_to(tmp_name)};
+                {get_buffer(tmp_name, cast_type, original_value, type, original_type=original_type)}
+                {for_all_elements(inner_values, cast_type, type, depth=depth, original_type=original_type, **other)}
                 """
             )
 
@@ -108,7 +112,7 @@ def assign_original_handle_for_argument(arg: Argument, original: str):
             )
 
         if type.fields:
-            return for_all_elements(values, type, depth=depth, original_type=original_type, **other)
+            return for_all_elements(values, cast_type, type, depth=depth, original_type=original_type, **other)
         return (
             type.is_simple_buffer()
             .if_then_else(
@@ -120,6 +124,7 @@ def assign_original_handle_for_argument(arg: Argument, original: str):
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
         conv = convert_result_value(
             (f"{original}->{arg.param_spelling}", f"{arg.name}"),
+            arg.type.nonconst,
             arg.type,
             depth=0,
             name=arg.name,
@@ -133,7 +138,7 @@ def replay_command_function(api: API, calls: List[Function]) -> str:
     function_name = f"__replay_command_{api.identifier.lower()}"
     return f"""
     void {function_name}(struct command_channel* __chan, struct nw_handle_pool* handle_pool,
-            struct command_channel* __log, 
+            struct command_channel* __log,
             const struct command_base* __call_cmd, const struct command_base* __ret_cmd) {{
         int ava_is_in, ava_is_out;
         struct command_base const * __cmd;

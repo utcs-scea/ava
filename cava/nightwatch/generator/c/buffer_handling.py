@@ -57,7 +57,15 @@ def get_buffer_expr(value: str, type: Type, *, not_null=False, size_out=None) ->
     :param size_out: If non-None, fill the existing variable with the buffer size in BYTES.
     :return: A C expression.
     """
-    size_out = ("&" + size_out) if size_out else "NULL"
+    if size_out:
+        # handle cast of volative size_t* to size_t* explicitly for default
+        # buffer size expr
+        if size_out == "__buffer_size":
+            size_out = "(size_t*)&" + size_out
+        else:
+            size_out = "&" + size_out
+    else:
+        size_out = "NULL"
     return (type.lifetime.not_equals("AVA_CALL") & (Expr(value).not_equals("NULL") | not_null)).if_then_else_expression(
         f"""
         ({type.spelling})ava_shadow_buffer_get_buffer(&__ava_endpoint, __chan, __cmd, {value},
@@ -74,6 +82,7 @@ def get_buffer_expr(value: str, type: Type, *, not_null=False, size_out=None) ->
 
 def get_buffer(
     target: str,
+    target_type: Type,
     value: str,
     type: Type,
     *,
@@ -95,31 +104,42 @@ def get_buffer(
     """
     size_expr = compute_buffer_size(type, original_type) if precomputed_size is None else precomputed_size
     declarations = DECLARE_BUFFER_SIZE_EXPR if declare_buffer_size else Expr("")
+
+    pointee_size = f"sizeof({type.pointee.spelling})"
+    # for void* buffer, assume that each element is 1 byte
+    if type.pointee.is_void:
+        pointee_size = "1"
+
     return declarations.then(
         (type.lifetime.not_equals("AVA_CALL") & (Expr(value).not_equals("NULL") | not_null)).if_then_else(
             # FIXME: The initial assert is probably incorrect. Should it be checking the ADDRESSES? Should it be there at all? Commented for now: AVA_DEBUG_ASSERT({target} != {value}); (was at top of code)
             # FIXME: Should we check the buffer size? Can it be computed here? AVA_DEBUG_ASSERT(__buffer_size == {size_expr}); (was at bottom of code)
             f"""
             /* Size is in bytes until the division below. */
-            {target} = ({type.nonconst.spelling})({get_buffer_expr(value, type, not_null=not_null, size_out="__buffer_size")});
-            AVA_DEBUG_ASSERT(__buffer_size % sizeof({type.pointee.spelling}) == 0);
-            __buffer_size /= sizeof({type.pointee.spelling});
+            {target} = ({target_type})({get_buffer_expr(value, type, not_null=not_null, size_out="__buffer_size")});
+            AVA_DEBUG_ASSERT(__buffer_size % {pointee_size} == 0);
+            __buffer_size /= {pointee_size};
             /* Size is now in elements. */
         """.lstrip(),
             f"""
             __buffer_size = {size_expr};
-            {target} = {get_buffer_expr(value, type, not_null=not_null, size_out="__buffer_size")};
+            {target} = ({target_type})({get_buffer_expr(value, type, not_null=not_null, size_out="__buffer_size")});
         """.strip(),
         )
     )
 
 
 def size_to_bytes(size: ExprOrStr, type: Type) -> str:
-    return f"{size} * sizeof({type.pointee.spelling})"
+    pointee_size = f"sizeof({type.pointee.spelling})"
+    # for void* buffer, assume that each element is 1 byte
+    if type.pointee.is_void:
+        pointee_size = "1"
+    return f"{size} * {pointee_size}"
 
 
 def attach_buffer(
     target: str,
+    target_type: Type,
     value: str,
     data: str,
     type: Type,
@@ -149,19 +169,19 @@ def attach_buffer(
 
     def simple_attach(func):
         return (
-            lambda: f"""{target} = ({type.nonconst.spelling}){func}(__chan, {cmd}, {data}, {size_expr});
+            lambda: f"""{target} = ({target_type}){func}(__chan, {cmd}, {data}, {size_expr});
                         """
         )
 
     def zerocopy_attach(func="ava_zcopy_region_encode_position_independent"):
         return (
-            lambda: f"""{target} = ({type.nonconst.spelling}){func}(__ava_endpoint.zcopy_region, {data});
+            lambda: f"""{target} = ({target_type}){func}(__ava_endpoint.zcopy_region, {data});
                         """
         )
 
     def shadow_attach(func):
         return (
-            lambda: f"""{target} = ({type.nonconst.spelling}){func}(&__ava_endpoint,
+            lambda: f"""{target} = ({target_type}){func}(&__ava_endpoint,
                         __chan, {cmd}, {value}, {data}, {size_expr},
                         {type.lifetime}, {type.buffer_allocator}, {type.buffer_deallocator},
                         (struct ava_buffer_header_t*)alloca(sizeof(struct ava_buffer_header_t)));"""
@@ -174,7 +194,7 @@ def attach_buffer(
         type.lifetime.equals("AVA_CALL").if_then_else(
             Expr(copy).if_then_else(
                 simple_attach("command_channel_attach_buffer"),
-                f"{target} = ({type.nonconst.spelling})HAS_OUT_BUFFER_SENTINEL;"
+                f"{target} = ({target_type})HAS_OUT_BUFFER_SENTINEL;"
                 if expect_reply
                 else f"{target} = NULL; /* No output */\n",
             ),
@@ -195,11 +215,15 @@ def compute_total_size(args: Iterable[Argument], copy_pred: Callable[[Argument],
     """
     size = "__total_buffer_size"
 
-    def compute_size(values, type: Type, depth, argument: Argument, original_type=None, **other):
+    def compute_size(values, cast_type: Type, type: Type, depth, argument: Argument, original_type=None, **other):
         if isinstance(type, ConditionalType):
             return Expr(type.predicate).if_then_else(
-                compute_size(values, type.then_type, depth, argument, original_type=type.original_type, **other),
-                compute_size(values, type.else_type, depth, argument, original_type=type.original_type, **other),
+                compute_size(
+                    values, type.then_type, type.then_type, depth, argument, original_type=type.original_type, **other
+                ),
+                compute_size(
+                    values, type.else_type, type.else_type, depth, argument, original_type=type.original_type, **other
+                ),
             )
 
         (value,) = values
@@ -225,12 +249,16 @@ def compute_total_size(args: Iterable[Argument], copy_pred: Callable[[Argument],
         def buffer_case():
             if not hasattr(type, "pointee"):
                 return """abort_with_reason("Reached code to handle buffer in non-pointer type.");"""
-            loop = for_all_elements(values, type, depth=depth, argument=argument, original_type=original_type, **other)
+            loop = for_all_elements(
+                values, cast_type, type, depth=depth, argument=argument, original_type=original_type, **other
+            )
             outer_buffer = str(add_buffer_size())
             return pred.if_then_else(loop + outer_buffer)
 
         if type.fields:
-            return for_all_elements(values, type, depth=depth, argument=argument, original_type=original_type, **other)
+            return for_all_elements(
+                values, cast_type, type, depth=depth, argument=argument, original_type=original_type, **other
+            )
         return type.is_simple_buffer(allow_handle=True).if_then_else(
             simple_buffer_case, lambda: Expr(type.transfer).equals("NW_BUFFER").if_then_else(buffer_case)
         )
@@ -240,6 +268,7 @@ def compute_total_size(args: Iterable[Argument], copy_pred: Callable[[Argument],
             f"Size: {a}",
             compute_size(
                 (a.name,),
+                a.type,
                 a.type,
                 depth=0,
                 name=a.name,
@@ -255,11 +284,15 @@ def compute_total_size(args: Iterable[Argument], copy_pred: Callable[[Argument],
 
 
 def deallocate_managed_for_argument(arg: Argument, src: str):
-    def convert_result_value(values, type: Type, depth, original_type=None, **other):
+    def convert_result_value(values, cast_type: Type, type: Type, depth, original_type=None, **other):
         if isinstance(type, ConditionalType):
             return Expr(type.predicate).if_then_else(
-                convert_result_value(values, type.then_type, depth, original_type=type.original_type, **other),
-                convert_result_value(values, type.else_type, depth, original_type=type.original_type, **other),
+                convert_result_value(
+                    values, type.then_type, type.then_type, depth, original_type=type.original_type, **other
+                ),
+                convert_result_value(
+                    values, type.else_type, type.else_type, depth, original_type=type.original_type, **other
+                ),
             )
 
         (local_value,) = values
@@ -275,7 +308,7 @@ def deallocate_managed_for_argument(arg: Argument, src: str):
             if not hasattr(type, "pointee"):
                 return """abort_with_reason("Reached code to handle buffer in non-pointer type.");"""
             return buffer_pred.if_then_else(
-                for_all_elements(values, type, depth=depth, original_type=original_type, **other)
+                for_all_elements(values, cast_type, type, depth=depth, original_type=original_type, **other)
             )
 
         def default_case():
@@ -291,7 +324,7 @@ def deallocate_managed_for_argument(arg: Argument, src: str):
             return dealloc_code
 
         if type.fields:
-            return for_all_elements(values, type, depth=depth, original_type=original_type, **other)
+            return for_all_elements(values, cast_type, type, depth=depth, original_type=original_type, **other)
         return (
             type.is_simple_buffer(allow_handle=False)
             .if_then_else(
@@ -309,6 +342,7 @@ def deallocate_managed_for_argument(arg: Argument, src: str):
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
         conv = convert_result_value(
             (f"""{src + "->" if src else ""}{arg.name}""",),
+            arg.type,
             arg.type,
             depth=0,
             name=arg.name,
