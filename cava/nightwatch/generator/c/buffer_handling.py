@@ -37,7 +37,7 @@ def get_transfer_buffer_expr(value: str, type: Type, *, not_null=False) -> ExprO
             f"({type.spelling})command_channel_get_buffer(__chan, __cmd, {value})",
             Expr(type.transfer)
             .equals("NW_ZEROCOPY_BUFFER")
-            .if_then_else_expression(                
+            .if_then_else_expression(
                 # TODO(yuhc): Add back zero copy region supprot after this feature is refactored.
                 # f"({type.spelling})ava_zcopy_region_decode_position_independent(__ava_endpoint.zcopy_region, {value})",
                 f"({type.spelling})command_channel_get_buffer(__chan, __cmd, {value})",
@@ -101,7 +101,7 @@ def get_buffer(
             # FIXME: Should we check the buffer size? Can it be computed here? AVA_DEBUG_ASSERT(__buffer_size == {size_expr}); (was at bottom of code)
             f"""
             /* Size is in bytes until the division below. */
-            {target} = {get_buffer_expr(value, type, not_null=not_null, size_out="__buffer_size")};
+            {target} = ({type.nonconst.spelling})({get_buffer_expr(value, type, not_null=not_null, size_out="__buffer_size")});
             AVA_DEBUG_ASSERT(__buffer_size % sizeof({type.pointee.spelling}) == 0);
             __buffer_size /= sizeof({type.pointee.spelling});
             /* Size is now in elements. */
@@ -164,7 +164,7 @@ def attach_buffer(
             lambda: f"""{target} = ({type.nonconst.spelling}){func}(&__ava_endpoint,
                         __chan, {cmd}, {value}, {data}, {size_expr},
                         {type.lifetime}, {type.buffer_allocator}, {type.buffer_deallocator},
-                        alloca(sizeof(struct ava_buffer_header_t)));"""
+                        (struct ava_buffer_header_t*)alloca(sizeof(struct ava_buffer_header_t)));"""
         )
 
     return type.transfer.equals("NW_ZEROCOPY_BUFFER").if_then_else(
@@ -174,7 +174,9 @@ def attach_buffer(
         type.lifetime.equals("AVA_CALL").if_then_else(
             Expr(copy).if_then_else(
                 simple_attach("command_channel_attach_buffer"),
-                f"{target} = HAS_OUT_BUFFER_SENTINEL;" if expect_reply else f"{target} = NULL; /* No output */\n",
+                f"{target} = ({type.nonconst.spelling})HAS_OUT_BUFFER_SENTINEL;"
+                if expect_reply
+                else f"{target} = NULL; /* No output */\n",
             ),
             Expr(copy).if_then_else(
                 shadow_attach("ava_shadow_buffer_attach_buffer"),

@@ -55,7 +55,7 @@ def copy_result_for_argument(arg: Argument, dest: str, src: str) -> ExprOrStr:
                 f"""
                 {DECLARE_BUFFER_SIZE_EXPR}
                 {type.attach_to(src_name)};
-                {src_name} = {get_transfer_buffer_expr(local_value, type, not_null=True)};
+                {src_name} = ({type.nonconst.spelling})({get_transfer_buffer_expr(local_value, type, not_null=True)});
                 """
             ).then(
                 Expr(type.lifetime)
@@ -244,7 +244,7 @@ def attach_for_argument(arg: Argument, dest: str):
             )
             userdata_code = f"""
             if ({callback_arg.param_spelling} != NULL) {{
-                // TODO:MEMORYLEAK: This leaks 2*sizeof(void*) whenever a callback is transported. Should be fixable  
+                // TODO:MEMORYLEAK: This leaks 2*sizeof(void*) whenever a callback is transported. Should be fixable
                 //  with "coupled buffer" framework.
                 struct ava_callback_user_data *__callback_data = malloc(sizeof(struct ava_callback_user_data));
                 __callback_data->userdata = {arg.param_spelling};
@@ -285,11 +285,11 @@ def return_command_implementation(f: Function):
             assert(__ret->base.api_id == {f.api.number_spelling});
             assert(__ret->base.command_size == sizeof(struct {f.ret_spelling}) && "Command size does not match ID. (Can be caused by incorrectly computed buffer sizes, especially using `strlen(s)` instead of `strlen(s)+1`)");
             struct {f.call_record_spelling}* __local = (struct {f.call_record_spelling}*)ava_remove_call(&__ava_endpoint, __ret->__call_id);
-        
+
             {{
                 {unpack_struct("__local", f.arguments, "->")} \
                 {unpack_struct("__local", f.logue_declarations, "->")} \
-                {unpack_struct("__ret", [f.return_value], "->", convert=get_buffer_expr) 
+                {unpack_struct("__ret", [f.return_value], "->", convert=get_buffer_expr)
                     if not f.return_value.type.is_void else ""} \
                 {lines(copy_result_for_argument(a, "__local", "__ret")
                        for a in f.arguments if a.type.contains_buffer)}

@@ -20,7 +20,7 @@ def source(api: API, errors: List[Any]) -> Tuple[str, str]:
 
 {handle_command_header(api)}
 
-void __attribute__((constructor(1))) init_{api.identifier.lower()}_worker(void) {{
+void __attribute__((constructor(102))) init_{api.identifier.lower()}_worker(void) {{
     __handle_command_{api.identifier.lower()}_init();
     {api.worker_init_epilogue};
 }}

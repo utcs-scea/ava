@@ -92,7 +92,7 @@ def function_implementation(f: Function) -> Union[str, Expr]:
             __cmd->base.original_thread_id = __cmd->base.thread_id;
 
             __cmd->__call_id = __call_id;
-    
+
             {nl.join(a.declaration + ";" for a in f.logue_declarations)}
             {{
                 {"".join(attach_for_argument(a, "__cmd") for a in f.implicit_arguments)}
@@ -158,7 +158,7 @@ def function_wrapper(f: Function) -> str:
             callback_unpack = ""
         elif not f.callback_decl:
             # Normal call
-            call_code = f"""{f.name}({", ".join(a.name for a in f.real_arguments)})"""
+            call_code = f"""({f.return_value.type.nonconst.spelling})({f.name}({", ".join(a.name for a in f.real_arguments)}))"""
             callback_unpack = ""
         else:
             # Indirect call (callback)
@@ -184,12 +184,12 @@ def function_wrapper(f: Function) -> str:
             {declare_ret}
             {capture_ret}{call_code};
             {lines(f.epilogue)}
-    
+
             /* Report resources */
             {lines(report_alloc_resources(arg) for arg in f.arguments)}
             {report_alloc_resources(f.return_value)}
             {report_consume_resources(f)}
-    
+
             {return_statement}
             }}
         }}
@@ -205,7 +205,7 @@ def call_function_wrapper(f: Function) -> ExprOrStr:
     if f.return_value.type.is_void:
         capture_ret = ""
     else:
-        capture_ret = f"{f.return_value.type.nonconst.attach_to(f.return_value.name)}; {f.return_value.name} = "
+        capture_ret = f"{f.return_value.type.nonconst.attach_to(f.return_value.name)}; {f.return_value.name} = ({f.return_value.type.nonconst.spelling})"
     return f"""
-        {capture_ret}__wrapper_{f.name}({", ".join(a.name for a in f.arguments)});
+        {capture_ret}__wrapper_{f.name}({", ".join(f"({a.type.spelling}){a.name}" for a in f.arguments)});
     """.strip()
