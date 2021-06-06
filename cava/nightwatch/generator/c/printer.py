@@ -27,7 +27,7 @@ def command_print_implementation(f: Function):
                     f"""
                     fprintf(file, " = {{");
                     {type.nonconst.attach_to(tmp_name)};
-                    {tmp_name} = ({type.nonconst.spelling})({get_transfer_buffer_expr(value, type)});
+                    {tmp_name} = ({cast_type})({get_transfer_buffer_expr(value, type)});
                     {for_all_elements(inner_values, cast_type, type, precomputed_size=Expr(1), depth=depth, argument=argument, no_depends=no_depends, **other)}
                     fprintf(file, ",...}}");
                     """
