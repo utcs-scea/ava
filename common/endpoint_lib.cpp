@@ -823,7 +823,7 @@ void *ava_shadow_buffer_attach_buffer_without_data(struct ava_endpoint *endpoint
 }
 
 void *ava_shadow_buffer_get_buffer(struct ava_endpoint *endpoint, struct command_channel *chan,
-                                   struct command_base *cmd, void *offset, enum ava_lifetime_t lifetime,
+                                   const struct command_base *cmd, void *offset, enum ava_lifetime_t lifetime,
                                    void *lifetime_coupled, size_t *size_out, ava_allocator alloc,
                                    ava_deallocator dealloc) {
   assert(lifetime != AVA_CALL);
