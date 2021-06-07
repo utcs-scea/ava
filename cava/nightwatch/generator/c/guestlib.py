@@ -17,7 +17,7 @@ def source(api: API, errors: List[Any]) -> Tuple[str, str]:
 
 {handle_command_header(api)}
 
-void __attribute__((constructor(1))) init_{api.identifier.lower()}_guestlib(void) {{
+void __attribute__((constructor(102))) init_{api.identifier.lower()}_guestlib(void) {{
     __handle_command_{api.identifier.lower()}_init();
     {api.guestlib_init_prologue};
     nw_init_guestlib({api.number_spelling});
@@ -43,8 +43,8 @@ void __attribute__((destructor)) destroy_{api.identifier.lower()}_guestlib(void)
 
 ////// Replacement declarations
 
-#define ava_begin_replacement 
-#define ava_end_replacement 
+#define ava_begin_replacement
+#define ava_end_replacement
 
 {api.c_replacement_code}
     """.lstrip()

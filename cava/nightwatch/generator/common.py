@@ -32,8 +32,8 @@ def unpack_struct(
     return lines(
         (
             f"""
-         {f.type.nonconst.attach_to(f.name)}; 
-         {f.name} = {convert(struct + access + f.name, f.type)};
+         {f.type.nonconst.attach_to(f.name)};
+         {f.name} = ({f.type.nonconst.spelling})({convert(struct + access + f.name, f.type)});
          """
             for f in fields
         ),
@@ -57,7 +57,7 @@ def pack_struct(
     return lines(
         (
             f"""
-        {struct}{access}{f.name} = {convert(f.name, f.type)};
+        {struct}{access}{f.name} = ({f.type.nonconst.spelling})({convert(f.name, f.type)});
         """
             for f in fields
         ),

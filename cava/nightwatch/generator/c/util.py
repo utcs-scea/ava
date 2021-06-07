@@ -63,7 +63,11 @@ def _char_type_like(type):
 def compute_buffer_size(type: Type, original_type: Optional[Type] = None):
     size_expr = Expr(type.buffer)
     if original_type and original_type.pointee.spelling != type.pointee.spelling:
-        size_adjustment = f" * sizeof({original_type.pointee.spelling}) / sizeof({type.pointee.spelling})"
+        pointee_size = f"sizeof({type.pointee.spelling})"
+        # for void* buffer, assume that each element is 1 byte
+        if type.pointee.is_void:
+            pointee_size = "1"
+        size_adjustment = f" * sizeof({original_type.pointee.spelling}) / {pointee_size}"
     else:
         size_adjustment = ""
     return Expr(f"(size_t){size_expr.group()}{size_adjustment}").group()
@@ -71,6 +75,7 @@ def compute_buffer_size(type: Type, original_type: Optional[Type] = None):
 
 def for_all_elements(
     values: tuple,
+    cast_type: Type,
     type: Type,
     *,
     depth: int,
@@ -82,7 +87,7 @@ def for_all_elements(
     **extra,
 ):
     """
-    kernel(values, type, **other)
+    kernel(values, cast_type, type, **other)
     """
     size = f"__{name}_size_{depth}"
     index = f"__{name}_index_{depth}"
@@ -96,6 +101,7 @@ def for_all_elements(
             type_pointee = _char_type_like(type.pointee) if type.pointee.is_void else type.pointee
             nested = kernel(
                 tuple("*" + v for v in inner_values),
+                type_pointee.nonconst,
                 type_pointee,
                 depth=depth + 1,
                 name=name,
@@ -106,7 +112,7 @@ def for_all_elements(
             if nested:
                 set_inner_values = lines(
                     f"""
-                     {type_pointee.nonconst.attach_to(iv, additional_inner_type_elements="*")}; 
+                     {type_pointee.nonconst.attach_to(iv, additional_inner_type_elements="*")};
                      {iv} = {type_pointee.nonconst.cast_type(type.ascribe_type(v), "*")} + {index};
                      """
                     for v, iv in zip(values, inner_values)
@@ -141,6 +147,7 @@ def for_all_elements(
                 inner_values = tuple(f"__{name}_{_letters[i]}_{depth}_{field_name}" for i in range(len(values)))
                 nested = kernel(
                     tuple("*" + v for v in inner_values),
+                    field.nonconst,
                     field,
                     depth=depth + 1,
                     name=name,
@@ -153,7 +160,7 @@ def for_all_elements(
                     set_inner_values = lines(
                         f"""
                         {field.nonconst.attach_to(iv, additional_inner_type_elements="*")};
-                        {iv} = {field.nonconst.cast_type(field.ascribe_type(f"&({v}).{field_name}", "*"), "*")}; 
+                        {iv} = {field.nonconst.cast_type(field.ascribe_type(f"&({v}).{field_name}", "*"), "*")};
                         """.strip()
                         for v, iv in zip(values, inner_values)
                     )

@@ -12,7 +12,7 @@ def command_print_implementation(f: Function):
         def printf(format, *values):
             return f"""fprintf(file, "{format}", {",".join(values)});"""
 
-        def print_value_deep(values, type: Type, depth, no_depends, argument, **other):
+        def print_value_deep(values, cast_type: Type, type: Type, depth, no_depends, argument, **other):
             (value,) = values
             if type.is_void:
                 return ""
@@ -26,9 +26,9 @@ def command_print_implementation(f: Function):
                 data_code = buffer_pred.if_then_else(
                     f"""
                     fprintf(file, " = {{");
-                    {type.nonconst.attach_to(tmp_name)}; 
-                    {tmp_name} = {get_transfer_buffer_expr(value, type)};
-                    {for_all_elements(inner_values, type, precomputed_size=Expr(1), depth=depth, argument=argument, no_depends=no_depends, **other)}
+                    {type.nonconst.attach_to(tmp_name)};
+                    {tmp_name} = ({cast_type})({get_transfer_buffer_expr(value, type)});
+                    {for_all_elements(inner_values, cast_type, type, precomputed_size=Expr(1), depth=depth, argument=argument, no_depends=no_depends, **other)}
                     fprintf(file, ",...}}");
                     """
                 )
@@ -72,6 +72,7 @@ def command_print_implementation(f: Function):
         def print_value(argument: Argument, value, type: Type, no_depends):
             conv = print_value_deep(
                 (value,),
+                argument.type.nonconst,
                 argument.type,
                 depth=0,
                 name=argument.name,
@@ -102,7 +103,7 @@ def command_print_implementation(f: Function):
             assert(__ret->base.command_size == sizeof(struct {f.ret_spelling}) && "Command size does not match ID. (Can be caused by incorrectly computed buffer sizes, especially using `strlen(s)` instead of `strlen(s)+1`)");
             {unpack_struct("__ret",
                            ([] if f.return_value.type.is_void else [f.return_value]) +
-                           [a for a in f.arguments if a.output and a.type.contains_buffer and not bool(a.depends_on)], 
+                           [a for a in f.arguments if a.output and a.type.contains_buffer and not bool(a.depends_on)],
                            "->", get_transfer_buffer_expr)}
             {printf("<%03ld> <thread=%012lx> %s(", "(long int)__ret->__call_id", "(unsigned long int)__ret->base.thread_id", f'"{f.name}"')}
             {print_comma.join(str(print_value(a, f"__ret->{a.name}", a.type, True)) for a in f.arguments if a.output and a.type.contains_buffer)}

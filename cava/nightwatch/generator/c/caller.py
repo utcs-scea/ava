@@ -28,11 +28,15 @@ def copy_result_for_argument(arg: Argument, dest: str, src: str) -> ExprOrStr:
     """
     reported_missing_lifetime = False
 
-    def convert_result_value(values, type: Type, depth, original_type=None, **other):
+    def convert_result_value(values, cast_type: Type, type: Type, depth, original_type=None, **other):
         if isinstance(type, ConditionalType):
             return Expr(type.predicate).if_then_else(
-                convert_result_value(values, type.then_type, depth, original_type=type.original_type, **other),
-                convert_result_value(values, type.else_type, depth, original_type=type.original_type, **other),
+                convert_result_value(
+                    values, type.then_type.nonconst, type.then_type, depth, original_type=type.original_type, **other
+                ),
+                convert_result_value(
+                    values, type.else_type.nonconst, type.else_type, depth, original_type=type.original_type, **other
+                ),
             )
 
         param_value, local_value = values
@@ -55,13 +59,13 @@ def copy_result_for_argument(arg: Argument, dest: str, src: str) -> ExprOrStr:
                 f"""
                 {DECLARE_BUFFER_SIZE_EXPR}
                 {type.attach_to(src_name)};
-                {src_name} = {get_transfer_buffer_expr(local_value, type, not_null=True)};
+                {src_name} = ({type.spelling})({get_transfer_buffer_expr(local_value, type, not_null=True)});
                 """
             ).then(
                 Expr(type.lifetime)
                 .not_equals("AVA_CALL")
                 .if_then_else(
-                    f"""{get_buffer(param_value, local_value, type, original_type=original_type, not_null=True, declare_buffer_size=False)}""",
+                    f"""{get_buffer(param_value, cast_type, local_value, type, original_type=original_type, not_null=True, declare_buffer_size=False)}""",
                     f"""__buffer_size = {compute_buffer_size(type, original_type)};""",
                 )
                 .then(Expr(arg.output).if_then_else(f"AVA_DEBUG_ASSERT({param_value} != NULL);"))
@@ -95,7 +99,13 @@ def copy_result_for_argument(arg: Argument, dest: str, src: str) -> ExprOrStr:
 
             inner_values = (param_value, src_name)
             loop = for_all_elements(
-                inner_values, type, depth=depth, precomputed_size="__buffer_size", original_type=original_type, **other
+                inner_values,
+                cast_type,
+                type,
+                depth=depth,
+                precomputed_size="__buffer_size",
+                original_type=original_type,
+                **other,
             )
             if loop:
                 return (
@@ -120,7 +130,7 @@ def copy_result_for_argument(arg: Argument, dest: str, src: str) -> ExprOrStr:
             return dealloc_code.then((Expr(arg.output) | arg.ret).if_then_else(f"{param_value} = {local_value};"))
 
         if type.fields:
-            return for_all_elements(values, type, depth=depth, original_type=original_type, **other)
+            return for_all_elements(values, cast_type, type, depth=depth, original_type=original_type, **other)
         return (
             type.is_simple_buffer(allow_handle=False)
             .if_then_else(
@@ -137,6 +147,7 @@ def copy_result_for_argument(arg: Argument, dest: str, src: str) -> ExprOrStr:
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
         conv = convert_result_value(
             (f"{dest}->{arg.param_spelling}", f"{src}->{arg.name}"),
+            arg.type.nonconst,
             arg.type,
             depth=0,
             name=arg.name,
@@ -165,18 +176,42 @@ def attach_for_argument(arg: Argument, dest: str):
     """
     alloc_list = AllocList(arg.function)
 
-    def copy_for_value(values, type: Type, depth, argument, original_type=None, **other):
+    def copy_for_value(values, cmd_value_type: Type, type: Type, depth, argument, original_type=None, **other):
         if isinstance(type, ConditionalType):
             return Expr(type.predicate).if_then_else(
-                copy_for_value(values, type.then_type, depth, argument, original_type=type.original_type, **other),
-                copy_for_value(values, type.else_type, depth, argument, original_type=type.original_type, **other),
+                copy_for_value(
+                    values,
+                    type.then_type.nonconst,
+                    type.then_type,
+                    depth,
+                    argument,
+                    original_type=type.original_type,
+                    **other,
+                ),
+                copy_for_value(
+                    values,
+                    type.else_type.nonconst,
+                    type.else_type,
+                    depth,
+                    argument,
+                    original_type=type.original_type,
+                    **other,
+                ),
             )
 
         arg_value, cmd_value = values
 
         def attach_data(data):
             return attach_buffer(
-                cmd_value, arg_value, data, type, arg.input, cmd=dest, original_type=original_type, expect_reply=True
+                cmd_value,
+                cmd_value_type,
+                arg_value,
+                data,
+                type,
+                arg.input,
+                cmd=dest,
+                original_type=original_type,
+                expect_reply=True,
             )
 
         def simple_buffer_case():
@@ -196,6 +231,7 @@ def attach_for_argument(arg: Argument, dest: str):
             size_name = f"__size_{arg.name}_{depth}"
             loop = for_all_elements(
                 (arg_value, tmp_name),
+                cmd_value_type,
                 type,
                 depth=depth,
                 argument=argument,
@@ -214,11 +250,14 @@ def attach_for_argument(arg: Argument, dest: str):
 
         def default_case():
             return Expr(not type.is_void).if_then_else(
-                f"{cmd_value} = {arg_value};", """abort_with_reason("Reached code to handle void value.");"""
+                f"{cmd_value} = ({cmd_value_type}){arg_value};",
+                """abort_with_reason("Reached code to handle void value.");""",
             )
 
         if type.fields:
-            return for_all_elements(values, type, depth=depth, argument=argument, original_type=original_type, **other)
+            return for_all_elements(
+                values, cmd_value_type, type, depth=depth, argument=argument, original_type=original_type, **other
+            )
         return (
             type.is_simple_buffer(allow_handle=True)
             .if_then_else(
@@ -244,7 +283,7 @@ def attach_for_argument(arg: Argument, dest: str):
             )
             userdata_code = f"""
             if ({callback_arg.param_spelling} != NULL) {{
-                // TODO:MEMORYLEAK: This leaks 2*sizeof(void*) whenever a callback is transported. Should be fixable  
+                // TODO:MEMORYLEAK: This leaks 2*sizeof(void*) whenever a callback is transported. Should be fixable
                 //  with "coupled buffer" framework.
                 struct ava_callback_user_data *__callback_data = malloc(sizeof(struct ava_callback_user_data));
                 __callback_data->userdata = {arg.param_spelling};
@@ -257,6 +296,7 @@ def attach_for_argument(arg: Argument, dest: str):
             Expr(userdata_code).then(
                 copy_for_value(
                     (arg.param_spelling, f"{dest}->{arg.param_spelling}"),
+                    arg.type.nonconst,
                     arg.type,
                     depth=0,
                     argument=arg,
@@ -285,11 +325,11 @@ def return_command_implementation(f: Function):
             assert(__ret->base.api_id == {f.api.number_spelling});
             assert(__ret->base.command_size == sizeof(struct {f.ret_spelling}) && "Command size does not match ID. (Can be caused by incorrectly computed buffer sizes, especially using `strlen(s)` instead of `strlen(s)+1`)");
             struct {f.call_record_spelling}* __local = (struct {f.call_record_spelling}*)ava_remove_call(&__ava_endpoint, __ret->__call_id);
-        
+
             {{
                 {unpack_struct("__local", f.arguments, "->")} \
                 {unpack_struct("__local", f.logue_declarations, "->")} \
-                {unpack_struct("__ret", [f.return_value], "->", convert=get_buffer_expr) 
+                {unpack_struct("__ret", [f.return_value], "->", convert=get_buffer_expr)
                     if not f.return_value.type.is_void else ""} \
                 {lines(copy_result_for_argument(a, "__local", "__ret")
                        for a in f.arguments if a.type.contains_buffer)}

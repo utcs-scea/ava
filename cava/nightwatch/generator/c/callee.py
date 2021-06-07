@@ -33,15 +33,29 @@ def convert_input_for_argument(arg: Argument, src: str):
     """
     alloc_list = AllocList(arg.function)
 
-    def convert_input_value(values, type: Type, depth, original_type=None, **other):
+    def convert_input_value(values, local_value_type: Type, type: Type, depth, original_type=None, **other):
         local_value, param_value = values
-        preassignment = f"{local_value} = {get_transfer_buffer_expr(param_value, type)};"
+        preassignment = f"{local_value} = ({local_value_type})({get_transfer_buffer_expr(param_value, type)});"
 
         if isinstance(type, ConditionalType):
             return Expr(preassignment).then(
                 Expr(type.predicate).if_then_else(
-                    convert_input_value(values, type.then_type, depth, original_type=type.original_type, **other),
-                    convert_input_value(values, type.else_type, depth, original_type=type.original_type, **other),
+                    convert_input_value(
+                        values,
+                        type.then_type.nonconst,
+                        type.then_type,
+                        depth,
+                        original_type=type.original_type,
+                        **other,
+                    ),
+                    convert_input_value(
+                        values,
+                        type.else_type.nonconst,
+                        type.else_type,
+                        depth,
+                        original_type=type.original_type,
+                        **other,
+                    ),
                 )
             )
 
@@ -57,8 +71,8 @@ def convert_input_for_argument(arg: Argument, src: str):
                 .not_equals("NULL")
                 .if_then_else(
                     f"""{{
-            const size_t __size = {compute_buffer_size(type, original_type)};                                   
-            {local_value} = ({type.nonconst.spelling}){allocator}({size_to_bytes("__size", type)});    
+            const size_t __size = {compute_buffer_size(type, original_type)};
+            {local_value} = ({local_value_type})({allocator}({size_to_bytes("__size", type)}));
             {alloc_list.insert(local_value, deallocator)}
             }}"""
                 )
@@ -69,8 +83,8 @@ def convert_input_for_argument(arg: Argument, src: str):
         def get_buffer_code():
             return f"""
                 {type.nonconst.attach_to(src_name)};
-                {src_name} = {local_value};
-                {get_buffer(local_value, param_value, type, original_type=original_type, not_null=True)}
+                {src_name} = ({local_value_type})({local_value});
+                {get_buffer(local_value, local_value_type, param_value, type, original_type=original_type, not_null=True)}
                 {(type.lifetime.equals("AVA_CALL") & (~type.is_simple_buffer() | type.buffer_allocator.not_equals("malloc"))).if_then_else(
                         maybe_alloc_local_temporary_buffer)}
                 """
@@ -101,7 +115,13 @@ def convert_input_for_argument(arg: Argument, src: str):
 
             inner_values = (local_value, src_name)
             core = for_all_elements(
-                inner_values, type, depth=depth, precomputed_size="__buffer_size", original_type=original_type, **other
+                inner_values,
+                local_value_type,
+                type,
+                depth=depth,
+                precomputed_size="__buffer_size",
+                original_type=original_type,
+                **other,
             )
             return (
                 (type.lifetime.not_equals("AVA_CALL") | arg.input) & Expr(param_value).not_equals("NULL")
@@ -118,9 +138,9 @@ def convert_input_for_argument(arg: Argument, src: str):
                 return lambda: (Expr(type.transfer).one_of({"NW_CALLBACK", "NW_CALLBACK_REGISTRATION"})).if_then_else(
                     f"{local_value} =  ({param_value} == NULL) ? NULL : {type.callback_stub_function};",
                     (Expr(type.transfer).equals("NW_HANDLE")).if_then_else(
-                        f"{local_value} = ({type.nonconst.spelling}){handlepool_function}(handle_pool, (void*){param_value});",
+                        f"{local_value} = ({local_value_type})({handlepool_function}(handle_pool, (void*){param_value}));",
                         Expr(not type.is_void).if_then_else(
-                            f"{local_value} = {param_value};",
+                            f"{local_value} = ({local_value_type}){param_value};",
                             """abort_with_reason("Reached code to handle void value.");""",
                         ),
                     ),
@@ -131,7 +151,7 @@ def convert_input_for_argument(arg: Argument, src: str):
             )
 
         if type.fields:
-            return for_all_elements(values, type, depth=depth, **other)
+            return for_all_elements(values, local_value_type, type, depth=depth, **other)
         rest = type.is_simple_buffer().if_then_else(
             simple_buffer_case, Expr(type.transfer).equals("NW_BUFFER").if_then_else(buffer_case, default_case)
         )
@@ -143,6 +163,7 @@ def convert_input_for_argument(arg: Argument, src: str):
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
         conv = convert_input_value(
             (arg.name, f"{src}->{arg.param_spelling}"),
+            arg.type.nonconst,
             arg.type,
             depth=0,
             name=arg.name,
@@ -168,11 +189,15 @@ def convert_result_for_argument(arg: Argument, dest: str) -> ExprOrStr:
     """
     alloc_list = AllocList(arg.function)
 
-    def convert_result_value(values, type: Type, depth, original_type=None, **other) -> str:
+    def convert_result_value(values, cast_type: Type, type: Type, depth, original_type=None, **other) -> str:
         if isinstance(type, ConditionalType):
             return Expr(type.predicate).if_then_else(
-                convert_result_value(values, type.then_type, depth, original_type=type.original_type, **other),
-                convert_result_value(values, type.else_type, depth, original_type=type.original_type, **other),
+                convert_result_value(
+                    values, type.then_type.nonconst, type.then_type, depth, original_type=type.original_type, **other
+                ),
+                convert_result_value(
+                    values, type.else_type.nonconst, type.else_type, depth, original_type=type.original_type, **other
+                ),
             )
 
         if type.is_void:
@@ -183,6 +208,7 @@ def convert_result_for_argument(arg: Argument, dest: str) -> ExprOrStr:
         def attach_data(data):
             return attach_buffer(
                 param_value,
+                cast_type,
                 local_value,
                 data,
                 type,
@@ -214,7 +240,7 @@ def convert_result_for_argument(arg: Argument, dest: str) -> ExprOrStr:
                 .if_then_else(
                     f"""{{
                 {allocate_tmp_buffer(tmp_name, size_name, type, alloc_list=alloc_list, original_type=original_type)}
-                {for_all_elements(inner_values, type, precomputed_size=size_name, depth=depth, original_type=original_type, **other)}
+                {for_all_elements(inner_values, cast_type, type, precomputed_size=size_name, depth=depth, original_type=original_type, **other)}
                 {attach_data(tmp_name)}
                 }}""",
                     f"{param_value} = NULL;",
@@ -229,14 +255,14 @@ def convert_result_for_argument(arg: Argument, dest: str) -> ExprOrStr:
                 .if_then_else(
                     Expr(type.deallocates).if_then_else(
                         f"{param_value} = NULL;",
-                        f"{param_value} = ({type.nonconst.spelling}){handlepool_function}(handle_pool, (void*){local_value});",
+                        f"{param_value} = ({cast_type})({handlepool_function}(handle_pool, (void*){local_value}));",
                     ),
                     Expr(not type.is_void).if_then_else(f"{param_value} = {local_value};"),
                 )
             )
 
         if type.fields:
-            return for_all_elements(values, type, depth=depth, original_type=original_type, **other)
+            return for_all_elements(values, cast_type, type, depth=depth, original_type=original_type, **other)
         return (
             type.is_simple_buffer()
             .if_then_else(
@@ -248,6 +274,7 @@ def convert_result_for_argument(arg: Argument, dest: str) -> ExprOrStr:
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
         conv = convert_result_value(
             (f"{dest}->{arg.param_spelling}", f"{arg.name}"),
+            arg.type.nonconst,
             arg.type,
             depth=0,
             name=arg.name,
@@ -330,12 +357,12 @@ def call_command_implementation(f: Function):
 
 def record_call_metadata(handle: str, type: Optional[Type]) -> Expr:
     log_call_command = f"""if(__call_log_offset == -1) {{
-        __call_log_offset = 
+        __call_log_offset =
             command_channel_log_transfer_command(__log, __chan, (const struct command_base *)__cmd);
     }}
     assert(__call_log_offset != -1);"""
     log_ret_command = f"""if(__ret_log_offset == -1) {{
-        __ret_log_offset = 
+        __ret_log_offset =
             command_channel_log_transfer_command(__log, __chan, (const struct command_base *)__ret);
     }}
     assert(__ret_log_offset != -1);"""
@@ -356,11 +383,15 @@ def record_call_metadata(handle: str, type: Optional[Type]) -> Expr:
 
 
 def record_argument_metadata(arg: Argument, src: str):
-    def convert_result_value(values, type: Type, depth, original_type=None, **other) -> str:
+    def convert_result_value(values, cast_type: Type, type: Type, depth, original_type=None, **other) -> str:
         if isinstance(type, ConditionalType):
             return Expr(type.predicate).if_then_else(
-                convert_result_value(values, type.then_type, depth, original_type=type.original_type, **other),
-                convert_result_value(values, type.else_type, depth, original_type=type.original_type, **other),
+                convert_result_value(
+                    values, type.then_type, type.then_type, depth, original_type=type.original_type, **other
+                ),
+                convert_result_value(
+                    values, type.else_type, type.else_type, depth, original_type=type.original_type, **other
+                ),
             )
 
         if type.is_void:
@@ -377,11 +408,11 @@ def record_argument_metadata(arg: Argument, src: str):
                 return """abort_with_reason("Reached code to handle buffer in non-pointer type.");"""
             tmp_name = f"__tmp_{arg.name}_{depth}"
             inner_values = (tmp_name,)
-            loop = for_all_elements(inner_values, type, depth=depth, original_type=original_type, **other)
+            loop = for_all_elements(inner_values, cast_type, type, depth=depth, original_type=original_type, **other)
             if loop:
                 return buffer_pred.if_then_else(
                     f"""
-                     {type.nonconst.attach_to(tmp_name)}; 
+                     {type.nonconst.attach_to(tmp_name)};
                      {tmp_name} = {param_value};
                      {loop}
                     """
@@ -398,14 +429,14 @@ def record_argument_metadata(arg: Argument, src: str):
             )
 
         if type.fields:
-            return for_all_elements(values, type, depth=depth, original_type=original_type, **other)
+            return for_all_elements(values, cast_type, type, depth=depth, original_type=original_type, **other)
         return type.is_simple_buffer().if_then_else(
             simple_buffer_case, Expr(type.transfer).equals("NW_BUFFER").if_then_else(buffer_case, default_case)
         )
 
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
         conv = convert_result_value(
-            (f"{arg.name}",), arg.type, depth=0, name=arg.name, kernel=convert_result_value, self_index=0
+            (f"{arg.name}",), arg.type, arg.type, depth=0, name=arg.name, kernel=convert_result_value, self_index=0
         )
         return conv
 

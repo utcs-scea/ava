@@ -378,7 +378,7 @@ struct shadow_thread_pool_t *nw_shadow_thread_pool;
 GHashTable *nw_global_metadata_map;
 pthread_mutex_t nw_global_metadata_map_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void __attribute__((constructor(0))) init_endpoint_lib(void) {
+void __attribute__((constructor(101))) init_endpoint_lib(void) {
   nw_global_handle_pool = nw_handle_pool_new();
   nw_global_metadata_map = metadata_map_new();
   nw_shadow_thread_pool = shadow_thread_pool_new();
@@ -823,7 +823,7 @@ void *ava_shadow_buffer_attach_buffer_without_data(struct ava_endpoint *endpoint
 }
 
 void *ava_shadow_buffer_get_buffer(struct ava_endpoint *endpoint, struct command_channel *chan,
-                                   struct command_base *cmd, void *offset, enum ava_lifetime_t lifetime,
+                                   const struct command_base *cmd, void *offset, enum ava_lifetime_t lifetime,
                                    void *lifetime_coupled, size_t *size_out, ava_allocator alloc,
                                    ava_deallocator dealloc) {
   assert(lifetime != AVA_CALL);

@@ -460,7 +460,7 @@ void *ava_shadow_buffer_attach_buffer_without_data(struct ava_endpoint *endpoint
                                                    ava_deallocator dealloc, struct ava_buffer_header_t *header);
 
 __attribute__((pure)) void *ava_shadow_buffer_get_buffer(struct ava_endpoint *endpoint, struct command_channel *chan,
-                                                         struct command_base *cmd, void *offset,
+                                                         const struct command_base *cmd, void *offset,
                                                          enum ava_lifetime_t lifetime, void *lifetime_coupled,
                                                          size_t *size_out, ava_allocator alloc,
                                                          ava_deallocator dealloc);
