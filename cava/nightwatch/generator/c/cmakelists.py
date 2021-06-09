@@ -108,6 +108,8 @@ target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
 target_compile_options(${{SUBPROJECT_PREFIX}}_guestlib
   PUBLIC -fvisibility=hidden
 )
+target_link_options(${{SUBPROJECT_PREFIX}}_guestlib
+  PUBLIC -Wl,--exclude-libs,ALL)
 set_target_properties(${{SUBPROJECT_PREFIX}}_guestlib PROPERTIES OUTPUT_NAME "guestlib")
 
 include(GNUInstallDirs)
