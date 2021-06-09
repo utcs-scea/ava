@@ -72,8 +72,8 @@ def command_print_implementation(f: Function):
         def print_value(argument: Argument, value, type: Type, no_depends):
             conv = print_value_deep(
                 (value,),
-                argument.type.nonconst,
-                argument.type,
+                argument._type.nonconst,
+                argument._type,
                 depth=0,
                 name=argument.name,
                 argument=argument,
@@ -92,7 +92,7 @@ def command_print_implementation(f: Function):
             assert(__call->base.command_size == sizeof(struct {f.call_spelling}) && "Command size does not match ID. (Can be caused by incorrectly computed buffer sizes, especially using `strlen(s)` instead of `strlen(s)+1`)");
             {unpack_struct("__call", f.arguments, "->", get_transfer_buffer_expr)}
             {printf("<%03ld> <thread=%012lx> %s(", "(long int)__call->__call_id", "(unsigned long int)__call->base.thread_id", f'"{f.name}"')}
-            {print_comma.join(str(print_value(a, f"__call->{a.name}", a.type, False)) for a in f.arguments if a.input or not a.type.contains_buffer)}
+            {print_comma.join(str(print_value(a, f"__call->{a.name}", a._type, False)) for a in f.arguments if a.input or not a._type.contains_buffer)}
             fprintf(file, "){snl}");
             break;
         }}
@@ -102,13 +102,13 @@ def command_print_implementation(f: Function):
             assert(__ret->base.api_id == {f.api.number_spelling});
             assert(__ret->base.command_size == sizeof(struct {f.ret_spelling}) && "Command size does not match ID. (Can be caused by incorrectly computed buffer sizes, especially using `strlen(s)` instead of `strlen(s)+1`)");
             {unpack_struct("__ret",
-                           ([] if f.return_value.type.is_void else [f.return_value]) +
-                           [a for a in f.arguments if a.output and a.type.contains_buffer and not bool(a.depends_on)],
+                           ([] if f.return_value._type.is_void else [f.return_value]) +
+                           [a for a in f.arguments if a.output and a._type.contains_buffer and not bool(a.depends_on)],
                            "->", get_transfer_buffer_expr)}
             {printf("<%03ld> <thread=%012lx> %s(", "(long int)__ret->__call_id", "(unsigned long int)__ret->base.thread_id", f'"{f.name}"')}
-            {print_comma.join(str(print_value(a, f"__ret->{a.name}", a.type, True)) for a in f.arguments if a.output and a.type.contains_buffer)}
+            {print_comma.join(str(print_value(a, f"__ret->{a.name}", a._type, True)) for a in f.arguments if a.output and a._type.contains_buffer)}
             fprintf(file, ") -> ");
-            {print_value(f.return_value, f"__ret->{f.return_value.name}", f.return_value.type, True)}
+            {print_value(f.return_value, f"__ret->{f.return_value.name}", f.return_value._type, True)}
             fprintf(file, "{snl}");
             break;
         }}

@@ -268,8 +268,8 @@ def compute_total_size(args: Iterable[Argument], copy_pred: Callable[[Argument],
             f"Size: {a}",
             compute_size(
                 (a.name,),
-                a.type,
-                a.type,
+                a._type,
+                a._type,
                 depth=0,
                 name=a.name,
                 kernel=compute_size,
@@ -342,8 +342,8 @@ def deallocate_managed_for_argument(arg: Argument, src: str):
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
         conv = convert_result_value(
             (f"""{src + "->" if src else ""}{arg.name}""",),
-            arg.type,
-            arg.type,
+            arg._type,
+            arg._type,
             depth=0,
             name=arg.name,
             kernel=convert_result_value,

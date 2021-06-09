@@ -1,15 +1,15 @@
 from collections import namedtuple
 import re
 from copy import copy
-from typing import List, Set, Iterator, Collection, Optional, Union, Mapping
+from typing import List, Set, Iterator, Optional, Mapping
 
 from toposort import toposort_flatten, CircularDependencyError
 
-from nightwatch import c_dsl
 from nightwatch.annotation_set import default_annotations, Conditional
-from nightwatch.c_dsl import Expr, ExprOrStr
+from nightwatch.c_dsl import ExprOrStr
 from .indent import indent_c
-from .parser import parse_assert, parse_requires, parse_expects
+from .parser import parse_assert, parse_requires
+
 
 _annotation_prefix = "ava_"
 ASCRIBE_TYPES = False
@@ -37,8 +37,8 @@ def identifier_spelling(self):
     return s2
 
 
-def flag(flag, pred, sep=" "):
-    return flag + sep if pred else ""
+def flag(flag_, pred, sep=" "):
+    return flag_ + sep if pred else ""
 
 
 def _clean_type_string(s):
@@ -74,7 +74,7 @@ class Location(namedtuple("Location", ["filename", "line", "column", "offset"]))
 # Types
 
 
-class Type(object):
+class Type:
     success: Optional[ExprOrStr]
     transfer: Optional[ExprOrStr]
     spelling: str
@@ -155,6 +155,7 @@ class Type(object):
     hidden_annotations = {"location", "spelling", "buffer_deallocator", "callback_stub_function"}
 
     @property
+    # pylint: disable=too-many-branches
     def annotations(self) -> str:
         annotations = ""
         late_annotations = ""
@@ -215,8 +216,7 @@ class Type(object):
     def ascribe_type(self, v: str, additional_inner_type_elements: str = "") -> str:
         if ASCRIBE_TYPES:
             return f"__ava_check_type({self.spelled_with(additional_inner_type_elements)}, {v})"
-        else:
-            return v
+        return v
 
     def cast_type(self, v: str, additional_inner_type_elements: str = "") -> str:
         return f"({self.spelled_with(additional_inner_type_elements)})({v})"
@@ -279,12 +279,13 @@ class FunctionPointer(Type):
             str(self.transfer) in ("NW_OPAQUE", "NW_CALLBACK", "NW_CALLBACK_REGISTRATION"),
             "Function pointers must be opaque: " + str(self.transfer),
         )
+        self.pointee = pointee
         self.return_type = return_type
         self.argument_types = argument_types
 
     @property
     def nonconst(self):
-        v = super(FunctionPointer, self).nonconst
+        v = super().nonconst
         v.return_type = v.return_type.nonconst
         return v
 
@@ -302,13 +303,14 @@ class FunctionPointer(Type):
 RET_ARGUMENT_NAME = "ret"
 
 
-class Argument(object):
-    type: Type
+class Argument:
+    _type: Type
+    name: str
 
-    def __init__(self, name: str, type: Type, **annotations) -> None:
-        assert isinstance(type, Type)
+    def __init__(self, name: str, arg_type: Type, **annotations) -> None:
+        assert isinstance(arg_type, Type)
         self.name = name
-        self.type = type
+        self._type = arg_type
         self.depends_on = None
         self.implicit_argument = None
         self.value = None
@@ -319,26 +321,26 @@ class Argument(object):
         self.__dict__.update(annotations)
 
         parse_requires(
-            not self.userdata or self.type.spelling == "void *", "Type of userdata arguments must be exactly void*."
+            not self.userdata or self._type.spelling == "void *", "Type of userdata arguments must be exactly void*."
         )
         parse_requires(
             not self.implicit_argument or self.value, f"Implicit arguments must have a value assigned to them: {self}"
         )
         parse_requires(
             not any(t.buffer for t in self.contained_types) or (self.no_copy or self.input or self.output),
-            f"Arguments containing buffers must be either ava_input or "
-            f"ava_output (and it was not guessed). If you want no copies "
-            f"at all, provide ava_no_copy.",
+            "Arguments containing buffers must be either ava_input or "
+            "ava_output (and it was not guessed). If you want no copies "
+            "at all, provide ava_no_copy.",
         )
 
     @property
     def contained_types(self) -> Set[Type]:
         """Return an iterable contains all types in this argument."""
-        return self.type.contained_types
+        return self._type.contained_types
 
     def __str__(self) -> str:
         value_str = " = " + str(self.value) if self.value else ""
-        return self.type.attach_to(self.name + value_str)
+        return self._type.attach_to(self.name + value_str)
 
     def __lt__(self, other: "Argument") -> bool:
         a = self._all_arguments.index(self)
@@ -364,28 +366,26 @@ class Argument(object):
                 else:
                     if value:
                         annotations += f"{_annotation_prefix}{name}({value});\n"
-        annotations += self.type.annotations
+        annotations += self._type.annotations
         if annotations:
             if self.ret:
                 return f"{_annotation_prefix}return_value {{ {annotations} }}"
-            else:
-                return f"{_annotation_prefix}argument({self.name}) {{ {annotations} }}"
-        else:
-            return ""
+            return f"{_annotation_prefix}argument({self.name}) {{ {annotations} }}"
+        return ""
 
     @property
     def declaration(self) -> str:
-        return self.type.attach_to(self.name)
+        return self._type.attach_to(self.name)
 
     @property
     def original_declaration(self) -> str:
-        return self.type.original_type.attach_to(self.name)
+        return self._type.original_type.attach_to(self.name)
 
 
 # Function
 
 
-class Function(object):
+class Function:
     name: str
     return_value: Argument
     _arguments: List[Argument]
@@ -440,10 +440,9 @@ class Function(object):
         for a in arguments:
             if a.name == name:
                 return a
-        if default is not None:
-            return default
-        else:
+        if default is None:
             raise LookupError(name)
+        return default
 
     @classmethod
     def _order_arguments(cls, arguments: List[Argument], location: Location) -> List[Argument]:
@@ -451,6 +450,7 @@ class Function(object):
         # Build dag to have deps specified by depends_on, and a dep
         # chain through all the NON-depends_on arguments in order.
         for arg in arguments:
+            # pylint: disable=protected-access
             arg._all_arguments = arguments
             try:
                 if arg.depends_on:
@@ -465,6 +465,7 @@ class Function(object):
             return toposort_flatten(dag, sort=True)
         except CircularDependencyError:
             parse_requires(False, "The dependencies between arguments are cyclic.", loc=location)
+        return None
 
     @property
     def contained_types(self) -> Set[Type]:
@@ -483,6 +484,7 @@ class Function(object):
 
     hidden_annotations = {"api", "location", "name", "return_value", "epilogue", "prologue", "arguments", "type"}
 
+    # pylint: disable=too-many-branches
     def __str__(self):
         annotations = ""
         for name, value in self.__dict__.items():
@@ -526,21 +528,22 @@ class Function(object):
 # API
 
 
-class API(object):
+class API:
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         name: str,
         version: str,
         identifier: str,
         number: str,
-        includes: Collection[str],
+        includes: List[str],
         functions: List[Function],
         c_types_header_code: str = "",
         c_utility_code: str = "",
         metadata_type: Optional[Type] = None,
         export_qualifier: str = "",
         cplusplus: bool = False,
-        **kwds,
+        **kwargs,
     ) -> None:
         self.name = name
         self.includes = includes
@@ -570,7 +573,7 @@ class API(object):
         self.worker_argument_process_code = ""
         self.cplusplus = cplusplus
 
-        self.__dict__.update(kwds)
+        self.__dict__.update(kwargs)
 
         callback_names = {f.name for f in self.callback_functions}
 
@@ -612,27 +615,37 @@ class API(object):
 
     @property
     def unsupported_functions(self) -> Iterator[Function]:
-        """Generate all the unsupported."""
+        """
+        Generate all the unsupported.
+        """
         return (f for f in self.functions if not f.supported)
 
     @property
     def supported_functions(self) -> Iterator[Function]:
-        """Generate all the unsupported."""
+        """
+        Generate all the unsupported.
+        """
         return (f for f in self.functions if f.supported)
 
     @property
     def real_functions(self) -> Iterator[Function]:
-        """Generate all the application-to-worker API functions."""
+        """
+        Generate all the application-to-worker API functions.
+        """
         return (f for f in self.functions if not f.callback_decl and f.supported)
 
     @property
     def callback_functions(self) -> Iterator[Function]:
-        """Generate all the worker-to-guest callback functions."""
+        """
+        Generate all the worker-to-guest callback functions.
+        """
         return (f for f in self.functions if f.callback_decl and f.supported)
 
     @property
     def contained_types(self) -> Set[Type]:
-        """Return an iterable contains all types in this API. Each type will appear only once (based on Type == Type)."""
+        """
+        Return an iterable contains all types in this API. Each type will appear only once (based on Type == Type).
+        """
         seen = set()
         for f in self.functions:
             seen.update(f.contained_types)

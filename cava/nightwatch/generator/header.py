@@ -6,7 +6,7 @@ from typing import Any, List, Tuple
 
 def argument(arg: Argument) -> str:
     return f"""
-    {arg.type.nonconst.attach_to(arg.param_spelling)};
+    {arg._type.nonconst.attach_to(arg.param_spelling)};
     """.strip()
 
 
@@ -33,8 +33,8 @@ def function_ret_struct(f: Function, errors: List[Any]):
             struct {f.ret_spelling} {{
                 struct command_base base;
                 intptr_t __call_id;
-                {"".join(argument(a) + arg_suffix for a in f.arguments if a.type.contains_buffer and a.output).strip()}\
-                {argument(f.return_value) if not f.return_value.type.is_void else ""}
+                {"".join(argument(a) + arg_suffix for a in f.arguments if a._type.contains_buffer and a.output).strip()}\
+                {argument(f.return_value) if not f.return_value._type.is_void else ""}
             }};
             """
         # noinspection PyUnreachableCode
@@ -48,7 +48,7 @@ def function_call_record_struct(f: Function, errors: List[Any]):
             return f"""
             struct {f.call_record_spelling} {{
                 {"".join(argument(a) + arg_suffix for a in f.arguments).strip()}\
-                {argument(f.return_value) if not f.return_value.type.is_void else ""}\
+                {argument(f.return_value) if not f.return_value._type.is_void else ""}\
                 {"".join(argument(a) + arg_suffix for a in f.logue_declarations).strip()}\
                 char __handler_deallocate;
                 volatile char __call_complete;

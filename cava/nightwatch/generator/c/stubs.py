@@ -18,16 +18,16 @@ def function_implementation(f: Function) -> Union[str, Expr]:
     :return: A C function definition (as a string or Expr)
     """
     with location(f"at {term.yellow(str(f.name))}", f.location):
-        if f.return_value.type.buffer:
+        if f.return_value._type.buffer:
             forge_success = f"#error Async returned buffers are not implemented."
-        elif f.return_value.type.is_void:
+        elif f.return_value._type.is_void:
             forge_success = "return;"
-        elif f.return_value.type.success is not None:
-            forge_success = f"return {f.return_value.type.success};"
+        elif f.return_value._type.success is not None:
+            forge_success = f"return {f.return_value._type.success};"
         else:
             forge_success = """abort_with_reason("Cannot forge success without a success value for the type.");"""
 
-        if f.return_value.type.is_void:
+        if f.return_value._type.is_void:
             return_statement = f"""
                 free(__call_record);
                 return;
@@ -63,7 +63,7 @@ def function_implementation(f: Function) -> Union[str, Expr]:
         )
 
         return f"""
-        EXPORTED {(f.api.export_qualifier + " ") if f.api.export_qualifier else ""}{f.return_value.type.spelling} {f.name}(
+        EXPORTED {(f.api.export_qualifier + " ") if f.api.export_qualifier else ""}{f.return_value._type.spelling} {f.name}(
                     {", ".join(a.original_declaration for a in f.real_arguments)}) {{
             {timing_code_guest("before_marshal", str(f.name), f.generate_timing_code)}
 
@@ -126,7 +126,7 @@ def unsupported_function_implementation(f: Function) -> str:
     """
     with location(f"at {term.yellow(str(f.name))}", f.location):
         return f"""
-        EXPORTED {(f.api.export_qualifier + " ") if f.api.export_qualifier else ""}{f.return_value.type.spelling} {f.name}(
+        EXPORTED {(f.api.export_qualifier + " ") if f.api.export_qualifier else ""}{f.return_value._type.spelling} {f.name}(
                     {", ".join(a.declaration for a in f.real_arguments)}) {{
             abort_with_reason("Unsupported API function: {f.name}");
         }}
@@ -141,12 +141,12 @@ def function_wrapper(f: Function) -> str:
     :return: A C static function definition.
     """
     with location(f"at {term.yellow(str(f.name))}", f.location):
-        if f.return_value.type.is_void:
+        if f.return_value._type.is_void:
             declare_ret = ""
             capture_ret = ""
             return_statement = "return;"
         else:
-            declare_ret = f"{f.return_value.type.nonconst.attach_to(f.return_value.name)};"
+            declare_ret = f"{f.return_value._type.nonconst.attach_to(f.return_value.name)};"
             capture_ret = f"{f.return_value.name} = "
             return_statement = f"return {f.return_value.name};"
         if f.disable_native:
@@ -158,7 +158,7 @@ def function_wrapper(f: Function) -> str:
             callback_unpack = ""
         elif not f.callback_decl:
             # Normal call
-            call_code = f"""({f.return_value.type.nonconst.spelling})({f.name}({", ".join(a.name for a in f.real_arguments)}))"""
+            call_code = f"""({f.return_value._type.nonconst.spelling})({f.name}({", ".join(a.name for a in f.real_arguments)}))"""
             callback_unpack = ""
         else:
             # Indirect call (callback)
@@ -170,13 +170,13 @@ def function_wrapper(f: Function) -> str:
                 )
             call_code = f"""__target_function({", ".join(a.name for a in f.real_arguments)})"""
             callback_unpack = f"""
-                {f.type.attach_to("__target_function")};
-                __target_function = {f.type.cast_type(f"((struct ava_callback_user_data*){userdata_arg.name})->function_pointer")};
+                {f._type.attach_to("__target_function")};
+                __target_function = {f._type.cast_type(f"((struct ava_callback_user_data*){userdata_arg.name})->function_pointer")};
                 {userdata_arg.name} = ((struct ava_callback_user_data*){userdata_arg.name})->userdata;
             """
 
         return f"""
-        static {f.return_value.type.spelling} __wrapper_{f.name}({", ".join(a.declaration for a in f.arguments)}) {{
+        static {f.return_value._type.spelling} __wrapper_{f.name}({", ".join(a.declaration for a in f.arguments)}) {{
             {callback_unpack}\
             {lines(a.declaration + ";" for a in f.logue_declarations)}\
             {lines(f.prologue)}\
@@ -202,10 +202,10 @@ def call_function_wrapper(f: Function) -> ExprOrStr:
     :param f: The function to call.
     :return: A C statement to perform the call and capture the return value.
     """
-    if f.return_value.type.is_void:
+    if f.return_value._type.is_void:
         capture_ret = ""
     else:
-        capture_ret = f"{f.return_value.type.nonconst.attach_to(f.return_value.name)}; {f.return_value.name} = ({f.return_value.type.nonconst.spelling})"
+        capture_ret = f"{f.return_value._type.nonconst.attach_to(f.return_value.name)}; {f.return_value.name} = ({f.return_value._type.nonconst.spelling})"
     return f"""
-        {capture_ret}__wrapper_{f.name}({", ".join(f"({a.type.spelling}){a.name}" for a in f.arguments)});
+        {capture_ret}__wrapper_{f.name}({", ".join(f"({a._type.spelling}){a.name}" for a in f.arguments)});
     """.strip()

@@ -147,8 +147,8 @@ def copy_result_for_argument(arg: Argument, dest: str, src: str) -> ExprOrStr:
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
         conv = convert_result_value(
             (f"{dest}->{arg.param_spelling}", f"{src}->{arg.name}"),
-            arg.type.nonconst,
-            arg.type,
+            arg._type.nonconst,
+            arg._type,
             depth=0,
             name=arg.name,
             kernel=convert_result_value,
@@ -160,7 +160,7 @@ def copy_result_for_argument(arg: Argument, dest: str, src: str) -> ExprOrStr:
 def compute_argument_value(arg: Argument):
     if arg.implicit_argument:
         return f"""
-        {arg.type.nonconst.attach_to(arg.name)};
+        {arg._type.nonconst.attach_to(arg.name)};
         {arg.name} = {arg.value};
         """.strip()
     else:
@@ -270,7 +270,7 @@ def attach_for_argument(arg: Argument, dest: str):
         userdata_code = ""
         if arg.userdata and not arg.function.callback_decl:
             try:
-                (callback_arg,) = [a for a in arg.function.arguments if a.type.transfer == "NW_CALLBACK"]
+                (callback_arg,) = [a for a in arg.function.arguments if a._type.transfer == "NW_CALLBACK"]
             except ValueError:
                 generate_requires(
                     False,
@@ -296,8 +296,8 @@ def attach_for_argument(arg: Argument, dest: str):
             Expr(userdata_code).then(
                 copy_for_value(
                     (arg.param_spelling, f"{dest}->{arg.param_spelling}"),
-                    arg.type.nonconst,
-                    arg.type,
+                    arg._type.nonconst,
+                    arg._type,
                     depth=0,
                     argument=arg,
                     name=arg.name,
@@ -314,7 +314,7 @@ def return_command_implementation(f: Function):
         # pthread_mutex_lock(&nw_handler_lock);
         # took_lock = 1;
         generate_requires(
-            not f.return_value.type.buffer or f.return_value.type.lifetime != Expr("AVA_CALL"),
+            not f.return_value._type.buffer or f.return_value._type.lifetime != Expr("AVA_CALL"),
             "Returned buffers must have a lifetime other than `call' (i.e., must be annotated with `ava_lifetime_static', `ava_lifetime_coupled', or `ava_lifetime_manual').",
         )
         return f"""
@@ -330,10 +330,10 @@ def return_command_implementation(f: Function):
                 {unpack_struct("__local", f.arguments, "->")} \
                 {unpack_struct("__local", f.logue_declarations, "->")} \
                 {unpack_struct("__ret", [f.return_value], "->", convert=get_buffer_expr)
-                    if not f.return_value.type.is_void else ""} \
+                    if not f.return_value._type.is_void else ""} \
                 {lines(copy_result_for_argument(a, "__local", "__ret")
-                       for a in f.arguments if a.type.contains_buffer)}
-                {copy_result_for_argument(f.return_value, "__local", "__ret") if not f.return_value.type.is_void else ""}\
+                       for a in f.arguments if a._type.contains_buffer)}
+                {copy_result_for_argument(f.return_value, "__local", "__ret") if not f.return_value._type.is_void else ""}\
                 {lines(f.epilogue)}
                 {lines(deallocate_managed_for_argument(a, "__local")
                        for a in f.arguments)}

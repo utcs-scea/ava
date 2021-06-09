@@ -26,14 +26,14 @@ def unpack_struct(
     """
     Generate statements to unpack the fields of struct into scope.
 
-    fields: an iterable of values with attributes "name" and "type" (usually Argument).
+    fields: an iterable of values with attributes "name" and "_type" (usually Argument).
     """
     # {f.name} = {f.type.nonconst.cast_type(f.type.ascribe_type(convert(struct + access + f.name, f.type)))};
     return lines(
         (
             f"""
-         {f.type.nonconst.attach_to(f.name)};
-         {f.name} = ({f.type.nonconst.spelling})({convert(struct + access + f.name, f.type)});
+         {f._type.nonconst.attach_to(f.name)};
+         {f.name} = ({f._type.nonconst.spelling})({convert(struct + access + f.name, f._type)});
          """
             for f in fields
         ),
@@ -51,13 +51,13 @@ def pack_struct(
     """
     Generate statements to pack the fields of struct from the current scope.
 
-    fields: an iterable of values with attributes "name" and "type" (usually Argument).
+    fields: an iterable of values with attributes "name" and "_type" (usually Argument).
     """
-    # {struct}{access}{f.name} = {f.type.nonconst.cast_type(f.type.ascribe_type(convert(f.name, f.type)))};
+    # {struct}{access}{f.name} = {f._type.nonconst.cast_type(f._type.ascribe_type(convert(f.name, f._type)))};
     return lines(
         (
             f"""
-        {struct}{access}{f.name} = ({f.type.nonconst.spelling})({convert(f.name, f.type)});
+        {struct}{access}{f.name} = ({f._type.nonconst.spelling})({convert(f.name, f._type)});
         """
             for f in fields
         ),

@@ -19,7 +19,7 @@ class Converter:
         self.version = ""
         self.identifier = ""
         self.number = ""
-        self.imports = {}
+        self.imports = []
         self.type_annotations = {}
 
     def convert(self, ast, filename):
