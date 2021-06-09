@@ -163,18 +163,18 @@ def convert_input_for_argument(arg: Argument, src: str):
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
         conv = convert_input_value(
             (arg.name, f"{src}->{arg.param_spelling}"),
-            arg._type.nonconst,
-            arg._type,
+            arg.type.nonconst,
+            arg.type,
             depth=0,
             name=arg.name,
             kernel=convert_input_value,
-            original_type=arg._type,
+            original_type=arg.type,
             self_index=0,
         )
         return comment_block(
             f"Input: {arg}",
             f"""\
-        {arg._type.nonconst.attach_to(arg.name)}; \
+        {arg.type.nonconst.attach_to(arg.name)}; \
         {conv}
         """,
         )
@@ -274,8 +274,8 @@ def convert_result_for_argument(arg: Argument, dest: str) -> ExprOrStr:
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
         conv = convert_result_value(
             (f"{dest}->{arg.param_spelling}", f"{arg.name}"),
-            arg._type.nonconst,
-            arg._type,
+            arg.type.nonconst,
+            arg.type,
             depth=0,
             name=arg.name,
             kernel=convert_result_value,
@@ -296,6 +296,7 @@ def call_command_implementation(f: Function):
         if f.api.reply_code:
             import_code = f.api.reply_code.encode("ascii", "ignore").decode("unicode_escape")[1:-1]
             ldict = locals()
+            # pylint: disable=exec-used
             exec(import_code, globals(), ldict)
             reply_code = ldict["reply_code"]
 
@@ -303,6 +304,7 @@ def call_command_implementation(f: Function):
         if f.api.worker_argument_process_code:
             import_code = f.api.worker_argument_process_code.encode("ascii", "ignore").decode("unicode_escape")[1:-1]
             ldict = locals()
+            # pylint: disable=exec-used
             exec(import_code, globals(), ldict)
             worker_argument_process_code = ldict["worker_argument_process_code"]
 
@@ -333,15 +335,15 @@ def call_command_implementation(f: Function):
             __ret->base.thread_id = __call->base.original_thread_id;
             __ret->__call_id = __call->__call_id;
 
-            {convert_result_for_argument(f.return_value, "__ret") if not f.return_value._type.is_void else ""}
-            {lines(convert_result_for_argument(a, "__ret") for a in f.arguments if a._type.contains_buffer)}
+            {convert_result_for_argument(f.return_value, "__ret") if not f.return_value.type.is_void else ""}
+            {lines(convert_result_for_argument(a, "__ret") for a in f.arguments if a.type.contains_buffer)}
 
             #ifdef AVA_RECORD_REPLAY
             {log_call_declaration}
             {log_ret_declaration}
             {lines(
-            record_argument_metadata(a, src="__ret" if a._type.contains_buffer else "__call") for a in f.arguments)}
-            {record_argument_metadata(f.return_value, "__ret") if not f.return_value._type.is_void else ""}
+            record_argument_metadata(a, src="__ret" if a.type.contains_buffer else "__call") for a in f.arguments)}
+            {record_argument_metadata(f.return_value, "__ret") if not f.return_value.type.is_void else ""}
             {record_call_metadata("NULL", None) if f.object_record else ""}
             #endif
 
@@ -436,7 +438,7 @@ def record_argument_metadata(arg: Argument, src: str):
 
     with location(f"at {term.yellow(str(arg.name))}", arg.location):
         conv = convert_result_value(
-            (f"{arg.name}",), arg._type, arg._type, depth=0, name=arg.name, kernel=convert_result_value, self_index=0
+            (f"{arg.name}",), arg.type, arg.type, depth=0, name=arg.name, kernel=convert_result_value, self_index=0
         )
         return conv
 

@@ -117,7 +117,7 @@ Functions are missing from {args.inputfile}, but appear in {", ".join(api.includ
             write_file_c(*header.types_header(api, errors), indent=False, filename_prefix=filename_prefix)
             from .generator.c import guestlib
 
-            write_file_c(*guestlib.source(api, errors), filename_prefix=filename_prefix)
+            write_file_c(*guestlib.source(api), filename_prefix=filename_prefix)
 
             from .generator.c import worker
 
@@ -125,7 +125,7 @@ Functions are missing from {args.inputfile}, but appear in {", ".join(api.includ
 
             from .generator.c import cmakelists
 
-            write_file_c(*cmakelists.source(api, errors), indent=False, filename_prefix=filename_prefix)
+            write_file_c(*cmakelists.source(api), indent=False, filename_prefix=filename_prefix)
 
             # TODO(yuhc): Fix build.
             if args.build:

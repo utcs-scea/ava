@@ -1,3 +1,5 @@
+from typing import Union
+
 from nightwatch import location, term
 from nightwatch.c_dsl import ExprOrStr, Expr
 from nightwatch.generator import generate_requires, generate_expects
@@ -15,7 +17,6 @@ from nightwatch.generator.c.util import compute_buffer_size, for_all_elements, A
 from nightwatch.generator.common import comment_block, unpack_struct, lines
 from nightwatch.model import Argument, Type, ConditionalType, Function
 from nightwatch.generator.c.instrumentation import timing_code_guest
-from typing import Union
 
 
 def copy_result_for_argument(arg: Argument, dest: str, src: str) -> ExprOrStr:

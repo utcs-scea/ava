@@ -1,10 +1,12 @@
+from typing import Tuple
+
 from nightwatch.generator.c.stubs import function_implementation, unsupported_function_implementation
-from .command_handler import *
+from nightwatch.generator.c.command_handler import handle_command_function, handle_command_header
+from nightwatch.generator.common import lines
 from nightwatch.model import API
-from typing import Any, List, Tuple
 
 
-def source(api: API, errors: List[Any]) -> Tuple[str, str]:
+def source(api: API) -> Tuple[str, str]:
     handle_command_func_code = handle_command_function(
         api, api.callback_functions, list(api.real_functions) + list(api.callback_functions)
     )

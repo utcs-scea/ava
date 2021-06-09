@@ -381,6 +381,10 @@ class Argument:
     def original_declaration(self) -> str:
         return self._type.original_type.attach_to(self.name)
 
+    @property
+    def type(self):
+        return self._type
+
 
 # Function
 
