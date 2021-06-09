@@ -121,7 +121,7 @@ Functions are missing from {args.inputfile}, but appear in {", ".join(api.includ
 
             from .generator.c import worker
 
-            write_file_c(*worker.source(api, errors), filename_prefix=filename_prefix)
+            write_file_c(*worker.source(api), filename_prefix=filename_prefix)
 
             from .generator.c import cmakelists
 
