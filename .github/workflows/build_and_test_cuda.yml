@@ -47,7 +47,7 @@ jobs:
     - name: Cache boost 1_71 binary
       uses: actions/cache@v2
       with:
-        key: ${{matrix.os}}-boost-${{hashFiles('third_party/boost_1_71_0.tar.gz')}}
+        key: ${{matrix.os}}-boost-${{hashFiles('CMakeLists.txt')}}
         path: |
           third_party/boost_1_71_0.tar.gz
           third_party/boost_1_71_0
