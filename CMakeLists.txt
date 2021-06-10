@@ -88,10 +88,6 @@ find_package(Python3 COMPONENTS Interpreter)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
-# Socket library
-find_package(Boost 1.65 REQUIRED COMPONENTS system)
-message(STATUS "Using Boost.asio ${Boost_LIB_VERSION}")
-
 # Config parser library
 find_library(Config++ NAMES libconfig++ config++ REQUIRED)
 message(STATUS "Using libconfig++ ${Config++}")
@@ -108,6 +104,26 @@ if (libclang-7_not_found)
 endif()
 
 ###### Dependent libraries ######
+include(ExternalProject)
+
+# boost
+set(BOOST_TARGET "boost_1_71_0")
+set(BOOST_VERSION "1.71.0")
+set(BOOST_URL
+  https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/${BOOST_TARGET}.tar.gz)
+add_library(boost INTERFACE)
+add_dependencies(boost ${BOOST_TARGET})
+ExternalProject_Add(
+  ${BOOST_TARGET}
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ""
+  URL ${BOOST_URL}
+  PREFIX ${CMAKE_SOURCE_DIR}/third_party/${BOOST_TARGET}
+)
+target_include_directories(boost INTERFACE
+  ${CMAKE_SOURCE_DIR}/third_party/${BOOST_TARGET}/src/${BOOST_TARGET})
+
 add_subdirectory(third_party/fmt)
 add_subdirectory(third_party/abseil-cpp)
 add_subdirectory(third_party/GSL)

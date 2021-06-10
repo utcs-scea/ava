@@ -68,7 +68,7 @@ add_executable(${{SUBPROJECT_PREFIX}}_worker
 )
 target_link_libraries(${{SUBPROJECT_PREFIX}}_worker
   ${{GLIB2_LIBRARIES}}
-  ${{Boost_LIBRARIES}}
+  boost
   Threads::Threads
   fmt::fmt
   GSL
@@ -99,7 +99,7 @@ add_library(${{SUBPROJECT_PREFIX}}_guestlib SHARED
 )
 target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
   ${{GLIB2_LIBRARIES}}
-  ${{Boost_LIBRARIES}}
+  boost
   Threads::Threads
   fmt::fmt
   GSL
