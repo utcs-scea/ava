@@ -12,8 +12,8 @@ from nightwatch.generator.c.buffer_handling import (
     DECLARE_BUFFER_SIZE_EXPR,
 )
 from nightwatch.generator.c.util import compute_buffer_size, for_all_elements, AllocList
-from nightwatch.generator.common import comment_block, unpack_struct, lines
-from nightwatch.model import Argument, Type, ConditionalType, Function
+from nightwatch.generator.common import comment_block, unpack_struct
+from nightwatch.model import Argument, Type, ConditionalType, Function, lines
 from nightwatch.generator.c.instrumentation import timing_code_guest
 
 

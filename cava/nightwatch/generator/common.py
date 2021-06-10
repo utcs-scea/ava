@@ -1,9 +1,8 @@
 from typing import Callable, List, Union, Iterable
 
-from ..model import *
-from ..extension import extension
+from nightwatch.extension import extension
 from nightwatch.c_dsl import Expr
-from nightwatch.model import Argument
+from nightwatch.model import API, Argument, Function, Type, identifier_spelling, lines, uncamel
 
 
 def comment_block(comment: str, block: Union[str, Expr]) -> str:
@@ -16,52 +15,48 @@ nl = "\n"
 snl = "\\n"
 
 
-def lines(strs: Iterable, nl: str = "\n") -> str:
-    return nl.join(str(s) for s in strs if s)
-
-
 def unpack_struct(
-    struct: str, fields: Iterable, access: str = ".", convert: Callable = lambda v, t: v, nl: str = "\n"
+    struct: str, fields: Iterable, access: str = ".", convert: Callable = lambda v, t: v, nl_: str = "\n"
 ) -> str:
     """
     Generate statements to unpack the fields of struct into scope.
 
-    fields: an iterable of values with attributes "name" and "_type" (usually Argument).
+    fields: an iterable of values with attributes "name" and "type" (usually Argument).
     """
     # {f.name} = {f.type.nonconst.cast_type(f.type.ascribe_type(convert(struct + access + f.name, f.type)))};
     return lines(
         (
             f"""
-         {f._type.nonconst.attach_to(f.name)};
-         {f.name} = ({f._type.nonconst.spelling})({convert(struct + access + f.name, f._type)});
-         """
+            {f.type.nonconst.attach_to(f.name)};
+            {f.name} = ({f.type.nonconst.spelling})({convert(struct + access + f.name, f.type)});
+            """
             for f in fields
         ),
-        nl=nl,
+        nl_=nl_,
     )
 
 
-def unpack_struct_scope(code, *args, nl="\n", **kws):
-    return f"""({{{nl}{unpack_struct(*args, **kws, nl=nl)}{nl}{code}{nl}}})"""
+def unpack_struct_scope(code, *args, nl_="\n", **kwargs):
+    return f"""({{{nl_}{unpack_struct(*args, **kwargs, nl_=nl_)}{nl_}{code}{nl_}}})"""
 
 
 def pack_struct(
-    struct: str, fields: List[Argument], access: str = ".", convert: Callable = (lambda v, t: v), nl: str = "\n"
+    struct: str, fields: List[Argument], access: str = ".", convert: Callable = (lambda v, t: v), nl_: str = "\n"
 ) -> str:
     """
     Generate statements to pack the fields of struct from the current scope.
 
-    fields: an iterable of values with attributes "name" and "_type" (usually Argument).
+    fields: an iterable of values with attributes "name" and "type" (usually Argument).
     """
-    # {struct}{access}{f.name} = {f._type.nonconst.cast_type(f._type.ascribe_type(convert(f.name, f._type)))};
+    # {struct}{access}{f.name} = {f.type.nonconst.cast_type(f.type.ascribe_type(convert(f.name, f.type)))};
     return lines(
         (
             f"""
-        {struct}{access}{f.name} = ({f._type.nonconst.spelling})({convert(f.name, f._type)});
-        """
+            {struct}{access}{f.name} = ({f.type.nonconst.spelling})({convert(f.name, f.type)});
+            """
             for f in fields
         ),
-        nl,
+        nl_=nl_,
     )
 
 
@@ -128,8 +123,7 @@ class _APISpelling:
     def source_extension(self) -> str:
         if self.cplusplus:
             return "cpp"
-        else:
-            return "c"
+        return "c"
 
     @property
     def c_header_spelling(self) -> str:

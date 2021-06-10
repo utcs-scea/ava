@@ -2,8 +2,8 @@ from nightwatch import location, term
 from nightwatch.c_dsl import Expr
 from nightwatch.generator.c.buffer_handling import get_transfer_buffer_expr
 from nightwatch.generator.c.util import for_all_elements
-from nightwatch.generator.common import unpack_struct, snl, lines
-from nightwatch.model import Function, Type, Argument, API
+from nightwatch.generator.common import unpack_struct, snl
+from nightwatch.model import Function, Type, Argument, API, lines
 
 
 def command_print_implementation(f: Function):

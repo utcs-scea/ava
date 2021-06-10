@@ -2,8 +2,7 @@ from typing import Tuple
 
 from nightwatch.generator.c.stubs import function_implementation
 from nightwatch.generator.c.command_handler import handle_command_function, handle_command_header
-from nightwatch.generator.common import lines
-from nightwatch.model import API
+from nightwatch.model import API, lines
 
 
 def handle_call(api: API) -> str:

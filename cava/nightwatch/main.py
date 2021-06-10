@@ -6,6 +6,7 @@ import sys
 from . import *
 
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -112,9 +113,9 @@ Functions are missing from {args.inputfile}, but appear in {", ".join(api.includ
             from .generator import header
 
             write_file_c(*header.header(api, errors), filename_prefix=filename_prefix)
-            write_file_c(*header.utilities_header(api, errors), indent=False, filename_prefix=filename_prefix)
-            write_file_c(*header.utility_types_header(api, errors), indent=False, filename_prefix=filename_prefix)
-            write_file_c(*header.types_header(api, errors), indent=False, filename_prefix=filename_prefix)
+            write_file_c(*header.utilities_header(api), indent=False, filename_prefix=filename_prefix)
+            write_file_c(*header.utility_types_header(api), indent=False, filename_prefix=filename_prefix)
+            write_file_c(*header.types_header(api), indent=False, filename_prefix=filename_prefix)
             from .generator.c import guestlib
 
             write_file_c(*guestlib.source(api), filename_prefix=filename_prefix)
@@ -148,16 +149,11 @@ Functions are missing from {args.inputfile}, but appear in {", ".join(api.includ
             from .parser import python
 
             api = python.parse(args.inputfile, include_path=args.include_path or [], extra_args=args.extra_args or [])
-
             if args.dump:
                 print(api)
 
-            filename_prefix = api.directory_spelling + "/"
+            logger.error("Python virtualization is unsupported.")
 
-            from .indent import write_file_py
-            from .generator.python import guestlib
-
-            write_file_py(*guestlib.source(api, errors))
 
         if errors:
             raise MultipleError(*errors)

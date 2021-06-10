@@ -6,8 +6,7 @@ from nightwatch import location, term
 from nightwatch.c_dsl import Expr
 from nightwatch.extension import extension
 from nightwatch.generator import generate_expects
-from nightwatch.generator.common import lines
-from nightwatch.model import Type, Function, StaticArray
+from nightwatch.model import Type, Function, StaticArray, lines
 
 @extension(Type)
 class _TypeExtensions:

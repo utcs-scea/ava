@@ -7,8 +7,8 @@ from nightwatch.generator.c.buffer_handling import compute_total_size
 from nightwatch.generator.c.caller import compute_argument_value, attach_for_argument
 from nightwatch.generator.c.instrumentation import timing_code_guest, report_alloc_resources, report_consume_resources
 from nightwatch.generator.c.util import AllocList
-from nightwatch.generator.common import lines, nl, pack_struct
-from nightwatch.model import Function
+from nightwatch.generator.common import nl, pack_struct
+from nightwatch.model import Function, lines
 
 
 def function_implementation(f: Function) -> Union[str, Expr]:

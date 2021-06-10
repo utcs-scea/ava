@@ -14,8 +14,8 @@ from nightwatch.generator.c.buffer_handling import (
 from nightwatch.generator.c.instrumentation import timing_code_worker
 from nightwatch.generator.c.stubs import call_function_wrapper
 from nightwatch.generator.c.util import AllocList, compute_buffer_size, for_all_elements
-from nightwatch.generator.common import comment_block, lines
-from nightwatch.model import Argument, Type, ConditionalType, Function
+from nightwatch.generator.common import comment_block
+from nightwatch.model import Argument, Type, ConditionalType, Function, lines
 
 log_call_declaration = "ssize_t __call_log_offset = -1;"
 log_ret_declaration = "ssize_t __ret_log_offset = -1;"
@@ -298,6 +298,8 @@ def call_command_implementation(f: Function):
     with location(f"at {term.yellow(str(f.name))}", f.location):
         alloc_list = AllocList(f)
 
+        # pylint: disable=possibly-unused-variable
+        is_async = ~Expr(f.synchrony).equals("NW_SYNC")
         reply_code = """
             command_channel_send_command(__chan, (struct command_base*)__ret);
         """.strip()

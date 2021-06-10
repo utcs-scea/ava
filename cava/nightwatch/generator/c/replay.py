@@ -12,8 +12,8 @@ from nightwatch.generator.c.callee import (
 )
 from nightwatch.generator.c.stubs import call_function_wrapper
 from nightwatch.generator.c.util import for_all_elements, AllocList
-from nightwatch.generator.common import lines, comment_block
-from nightwatch.model import Type, Argument, ConditionalType, Function, FunctionPointer, API
+from nightwatch.generator.common import comment_block
+from nightwatch.model import Type, Argument, ConditionalType, Function, FunctionPointer, API, lines
 
 
 def replay_command_implementation(f: Function):

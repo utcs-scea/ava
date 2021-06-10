@@ -1,7 +1,7 @@
 from collections import namedtuple
 import re
 from copy import copy
-from typing import List, Set, Iterator, Optional, Mapping
+from typing import List, Set, Iterable, Iterator, Optional, Mapping
 
 from toposort import toposort_flatten, CircularDependencyError
 
@@ -15,8 +15,8 @@ _annotation_prefix = "ava_"
 ASCRIBE_TYPES = False
 
 
-def lines(strs: List[str]) -> str:
-    return "\n".join(s for s in strs if s)
+def lines(strs: Iterable[str], nl_: str = "\n") -> str:
+    return nl_.join(str(s) for s in strs if s)
 
 
 def uncamel(self: str) -> str:

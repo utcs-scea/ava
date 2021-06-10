@@ -1,12 +1,14 @@
-from .common import *
-from . import *
-from nightwatch.model import API, Argument, Function
 from typing import Any, List, Tuple
+
+from nightwatch import location, term, capture_errors, captured_errors
+# pylint: disable=unused-import
+from nightwatch.generator.common import _APISpelling
+from nightwatch.model import API, Argument, Function, guard_macro_spelling, lines
 
 
 def argument(arg: Argument) -> str:
     return f"""
-    {arg._type.nonconst.attach_to(arg.param_spelling)};
+    {arg.type.nonconst.attach_to(arg.param_spelling)};
     """.strip()
 
 
@@ -33,8 +35,8 @@ def function_ret_struct(f: Function, errors: List[Any]):
             struct {f.ret_spelling} {{
                 struct command_base base;
                 intptr_t __call_id;
-                {"".join(argument(a) + arg_suffix for a in f.arguments if a._type.contains_buffer and a.output).strip()}\
-                {argument(f.return_value) if not f.return_value._type.is_void else ""}
+                {"".join(argument(a) + arg_suffix for a in f.arguments if a.type.contains_buffer and a.output).strip()}\
+                {argument(f.return_value) if not f.return_value.type.is_void else ""}
             }};
             """
         # noinspection PyUnreachableCode
@@ -48,7 +50,7 @@ def function_call_record_struct(f: Function, errors: List[Any]):
             return f"""
             struct {f.call_record_spelling} {{
                 {"".join(argument(a) + arg_suffix for a in f.arguments).strip()}\
-                {argument(f.return_value) if not f.return_value._type.is_void else ""}\
+                {argument(f.return_value) if not f.return_value.type.is_void else ""}\
                 {"".join(argument(a) + arg_suffix for a in f.logue_declarations).strip()}\
                 char __handler_deallocate;
                 volatile char __call_complete;
@@ -68,7 +70,8 @@ def command_ids(f: Function) -> str:
 
 def header(api: API, errors: List[Any]) -> Tuple[str, str]:
     functions = list(api.supported_functions)
-    # TODO: Any objects pointed to by metadata will be leaked when the metadata is discarded. metadata needs a destructor.
+    # TODO: Any objects pointed to by metadata will be leaked when the metadata is discarded.
+    #   Metadata needs a destructor.
     code = f"""
 #ifndef {guard_macro_spelling(api.c_header_spelling)}
 #define {guard_macro_spelling(api.c_header_spelling)}
@@ -135,7 +138,7 @@ struct {api.metadata_struct_spelling} {{
     return api.c_header_spelling, code
 
 
-def utilities_header(api: API, errors: List[Any]) -> Tuple[str, str]:
+def utilities_header(api: API) -> Tuple[str, str]:
     code = f"""
 #ifndef {guard_macro_spelling(api.c_utilities_header_spelling)}
 #define {guard_macro_spelling(api.c_utilities_header_spelling)}
@@ -153,7 +156,7 @@ def utilities_header(api: API, errors: List[Any]) -> Tuple[str, str]:
     return api.c_utilities_header_spelling, code
 
 
-def utility_types_header(api: API, errors: List[Any]) -> Tuple[str, str]:
+def utility_types_header(api: API) -> Tuple[str, str]:
     code = f"""
 #ifndef {guard_macro_spelling(api.c_utility_types_header_spelling)}
 #define {guard_macro_spelling(api.c_utility_types_header_spelling)}
@@ -165,7 +168,7 @@ def utility_types_header(api: API, errors: List[Any]) -> Tuple[str, str]:
     return api.c_utility_types_header_spelling, code
 
 
-def types_header(api: API, errors: List[Any]) -> Tuple[str, str]:
+def types_header(api: API) -> Tuple[str, str]:
     nw_header = f"""
 /** NightWatch MODIFIED header for {api.name} (version {api.version})
  *  Lines marked with "NWR:" were removed by NightWatch.
