@@ -28,3 +28,8 @@
 	url = https://github.com/hyperrealm/libconfig.git
   branch = 5ea446216255e90bfdbf646a06404e37651f192b
   ignore = dirty
+[submodule "third_party/glib"]
+	path = third_party/glib
+	url = https://gitlab.gnome.org/GNOME/glib.git
+  branch = 2.56.3
+  ignore = dirty

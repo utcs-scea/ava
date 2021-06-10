@@ -67,7 +67,7 @@ add_executable(${{SUBPROJECT_PREFIX}}_worker
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel_socket_tcp.cpp
 )
 target_link_libraries(${{SUBPROJECT_PREFIX}}_worker
-  ${{GLIB2_LIBRARIES}}
+  glib2.0
   boost
   Threads::Threads
   fmt::fmt
@@ -98,7 +98,7 @@ add_library(${{SUBPROJECT_PREFIX}}_guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/proto/manager_service.proto.cpp
 )
 target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
-  ${{GLIB2_LIBRARIES}}
+  glib2.0
   boost
   Threads::Threads
   fmt::fmt
