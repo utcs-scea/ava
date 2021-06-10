@@ -49,9 +49,8 @@ def replay_command_implementation(f: Function):
             #ifdef AVA_RECORD_REPLAY
             {log_call_declaration}
             {log_ret_declaration}
-            {lines(
-            record_argument_metadata(a, src="__ret" if a.type.contains_buffer and a.output else "__call") for a in f.arguments)}
-            {record_argument_metadata(f.return_value, "__ret") if not f.return_value.type.is_void else ""}
+            {lines(record_argument_metadata(a) for a in f.arguments)}
+            {record_argument_metadata(f.return_value) if not f.return_value.type.is_void else ""}
             {record_call_metadata("NULL", None) if f.object_record else ""}
             #endif
 
