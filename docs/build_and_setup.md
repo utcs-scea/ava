@@ -15,7 +15,7 @@ sudo ./tools/install_dependencies.sh
 ```
 
 The following instructions are tested on Ubuntu 18.04 (Linux 4.15) with
-GCC 7.5.0, Python 3.6.9, Boost 1.65.x, cmake 3.19.1 and Protobuf 3.0-3.9.
+GCC 7.5.0, Python 3.6.9, Boost 1.71.x, cmake 3.19.1 and Protobuf 3.0-3.9.
 
 ## Configuration
 
