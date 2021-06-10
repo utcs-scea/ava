@@ -75,6 +75,7 @@ def compute_buffer_size(type_: Type, original_type: Optional[Type] = None):
 
 def for_all_elements(
     values: tuple,
+    # pylint: disable=unused-argument
     cast_type: Type,
     type_: Type,
     *,
