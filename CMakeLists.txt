@@ -113,10 +113,12 @@ ExternalProject_Add(
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
   URL ${BOOST_URL}
-  PREFIX ${CMAKE_SOURCE_DIR}/third_party/${BOOST_TARGET}
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/third_party/${BOOST_TARGET}
+  DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/third_party/
+  BUILD_IN_SOURCE 1
 )
 target_include_directories(boost INTERFACE
-  ${CMAKE_SOURCE_DIR}/third_party/${BOOST_TARGET}/src/${BOOST_TARGET})
+  ${CMAKE_SOURCE_DIR}/third_party/${BOOST_TARGET}/)
 
 # libconfig
 set(INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/third_party/deps)
