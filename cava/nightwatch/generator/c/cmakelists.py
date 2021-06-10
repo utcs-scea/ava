@@ -103,7 +103,7 @@ target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
   Threads::Threads
   fmt::fmt
   GSL
-  ${{Config++}}
+  config++
 )
 target_compile_options(${{SUBPROJECT_PREFIX}}_guestlib
   PUBLIC -fvisibility=hidden

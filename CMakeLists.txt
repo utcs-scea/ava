@@ -88,9 +88,9 @@ find_package(Python3 COMPONENTS Interpreter)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLIB2 REQUIRED glib-2.0)
 
-# Config parser library
-find_library(Config++ NAMES libconfig++ config++ REQUIRED)
-message(STATUS "Using libconfig++ ${Config++}")
+# # Config parser library
+# find_library(Config++ NAMES libconfig++ config++ REQUIRED)
+# message(STATUS "Using libconfig++ ${Config++}")
 
 # Check ClangLib
 find_package(LLVM 7.0 CONFIG REQUIRED)
@@ -123,6 +123,21 @@ ExternalProject_Add(
 )
 target_include_directories(boost INTERFACE
   ${CMAKE_SOURCE_DIR}/third_party/${BOOST_TARGET}/src/${BOOST_TARGET})
+
+# libconfig
+add_library(config++ INTERFACE)
+add_dependencies(config++ config++_build)
+ExternalProject_Add(config++_build
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/third_party/libconfig
+  CMAKE_ARGS -DBUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF BUILD_TESTS=OFF
+  -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/third_party/deps -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+  -DCMAKE_CXX_STANDARD=14 -DCMAKE_CXX_STANDARD_REQUIRED=ON -DCMAKE_CXX_EXTENSIONS=OFF
+  INSTALL_DIR ${CMAKE_SOURCE_DIR}/third_party/deps
+)
+target_include_directories(config++ INTERFACE
+  ${CMAKE_SOURCE_DIR}/third_party/deps/include)
+target_link_libraries(config++ INTERFACE
+  ${CMAKE_SOURCE_DIR}/third_party/deps/lib/libconfig++.a)
 
 add_subdirectory(third_party/fmt)
 add_subdirectory(third_party/abseil-cpp)
