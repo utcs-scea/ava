@@ -1,5 +1,5 @@
-#ifndef _AVA_SUPPORT_FMT_H_
-#define _AVA_SUPPORT_FMT_H_
+#ifndef _AVA_COMMON_SUPPORT_FMT_H_
+#define _AVA_COMMON_SUPPORT_FMT_H_
 // adopt from envy
 
 #include <absl/strings/string_view.h>
@@ -21,4 +21,4 @@ struct formatter<absl::string_view> : formatter<string_view> {
 
 }  // namespace fmt
 
-#endif  // _AVA_SUPPORT_FMT_H_
+#endif  // _AVA_COMMON_SUPPORT_FMT_H_

@@ -1,5 +1,5 @@
-#ifndef _AVA_SUPPORT_IO_H_
-#define _AVA_SUPPORT_IO_H_
+#ifndef _AVA_COMMON_SUPPORT_IO_H_
+#define _AVA_COMMON_SUPPORT_IO_H_
 #include <errno.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -13,7 +13,6 @@ inline bool SendData(int fd, const char *data, size_t size) {
   size_t pos = 0;
   while (pos < size) {
     ssize_t nwrite = write(fd, data + pos, size - pos);
-    // DCHECK(nwrite != 0) << "write() returns 0";
     if (nwrite < 0) {
       if (errno == EAGAIN || errno == EINTR) {
         continue;
@@ -60,4 +59,4 @@ inline bool RecvData(int fd, char *buffer, size_t size, bool *eof) {
 }  // namespace support
 }  // namespace ava
 
-#endif  // _AVA_SUPPORT_IO_H_
+#endif  // _AVA_COMMON_SUPPORT_IO_H_

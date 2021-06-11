@@ -1,3 +1,5 @@
+#ifndef _AVA_COMMON_SUPPORT_STD_SPAN_H_
+#define _AVA_COMMON_SUPPORT_STD_SPAN_H_
 #pragma once
 
 #include <gsl/span>
@@ -16,3 +18,5 @@ using gsl::span;
 #define VECTOR_AS_CHAR_SPAN(VEC_VAR)                                      \
   std::span<const char>(reinterpret_cast<const char *>((VEC_VAR).data()), \
                         sizeof(decltype(VEC_VAR)::value_type) * (VEC_VAR).size())
+
+#endif  // _AVA_COMMON_SUPPORT_STD_SPAN_H_

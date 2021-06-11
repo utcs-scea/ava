@@ -101,7 +101,6 @@ add_library(${{SUBPROJECT_PREFIX}}_guestlib SHARED
 )
 target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
   glib2.0
-  boost
   Threads::Threads
   fmt::fmt
   GSL
