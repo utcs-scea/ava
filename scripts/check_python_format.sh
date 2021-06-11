@@ -17,7 +17,7 @@ if [ "$1" == "-fix" ]; then
 fi
 
 ROOTS=("$@")
-PRUNE_PATHS="cava/nightwatch llvm third_party"
+PRUNE_PATHS="llvm third_party"
 PRUNE_NAMES=".git build*"
 
 emit_prunes() {
