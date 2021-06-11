@@ -43,9 +43,9 @@ jobs:
 
     - name: Check shell script formatting
       run: scripts/check_sh_format.sh .
-    
+
     - name: Check Python formatting
       run: scripts/check_python_format.sh .
-      
+
     - name: Check Python linting
       run: scripts/check_python_lint.sh .
