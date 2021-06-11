@@ -1,9 +1,10 @@
+from typing import Tuple
 import logging
 
 # pylint: disable=unused-import
 import nightwatch.parser.c.reload_libclang
 from clang.cindex import Cursor, CursorKind, File, TranslationUnit, Type, TypeKind
-from nightwatch.extension import *
+from nightwatch.extension import extension, replace
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +32,7 @@ class _TypeExtension:
         """
         if self.kind == TypeKind.TYPEDEF:
             return self.get_declaration().underlying_typedef_type
-        else:
-            return self
+        return self
 
     _original_get_pointee = Type.get_pointee
 
@@ -112,7 +112,7 @@ class _CursorExtension:
         return res
 
     @property
-    def children(self):
+    def children(self) -> Tuple[Cursor]:
         if not hasattr(self, "_children"):
             self._children = tuple(self.get_children())
         return self._children
@@ -133,69 +133,86 @@ class _CursorExtension:
     def untokenized(self):
         return " ".join(t.spelling for t in self.get_tokens())
 
+    @property
+    def unparse_expression(self):
+        return self._unparse_expression()
+
+    # pylint: disable=too-many-branches,too-many-return-statements
     def _unparse_expression(self):
         # logger.info(("_unparse_expression", self.kind, self.source, self.spelling, self.untokenized,
         # self.displayname, self.mangled_name, self.canonical.spelling, self.referenced))
         if self.kind == CursorKind.CALL_EXPR:
             if len(self.children) > 1:
-                args = ", ".join(c._unparse_expression() for c in self.children[1:])
+                args = ", ".join(c.unparse_expression for c in self.children[1:])
             else:
                 args = ""
             return f"{self.spelling}({args})"
-        elif self.kind == CursorKind.CXX_UNARY_EXPR:
+
+        if self.kind == CursorKind.CXX_UNARY_EXPR:
             return self.untokenized
-        elif self.kind == CursorKind.DECL_REF_EXPR:
-            # print(self.kind, self.spelling)
+
+        if self.kind == CursorKind.DECL_REF_EXPR:
             return self.spelling
-        elif self.kind == CursorKind.MEMBER_REF_EXPR:
-            (v,) = [c._unparse_expression() for c in self.children]
+
+        if self.kind == CursorKind.MEMBER_REF_EXPR:
+            (v,) = [c.unparse_expression for c in self.children]
             accessor = self.tokens[-2].spelling
             return f"{v}{accessor}{self.spelling}"
-        elif self.kind == CursorKind.STMT_EXPR:
+
+        if self.kind == CursorKind.STMT_EXPR:
             (c,) = self.children
-            return f"({{ {c._unparse_expression()} }})"
-        elif self.kind == CursorKind.PAREN_EXPR:
+            return f"({{ {c.unparse_expression} }})"
+
+        if self.kind == CursorKind.PAREN_EXPR:
             (c,) = self.children
-            return f"({c._unparse_expression()})"
-        elif self.kind == CursorKind.CSTYLE_CAST_EXPR:
+            return f"({c.unparse_expression})"
+
+        if self.kind == CursorKind.CSTYLE_CAST_EXPR:
             expr = self.children[-1]
-            return f"({self.type.spelling}){expr._unparse_expression()}"
-        elif self.kind in (CursorKind.INTEGER_LITERAL, CursorKind.STRING_LITERAL):
+            return f"({self.type.spelling}){expr.unparse_expression}"
+
+        if self.kind in (CursorKind.INTEGER_LITERAL, CursorKind.STRING_LITERAL):
             return self.spelling  # or self.untokenized
-        elif self.kind == CursorKind.CONDITIONAL_OPERATOR:
-            pred, then_, else_ = [c._unparse_expression() for c in self.children]
+
+        if self.kind == CursorKind.CONDITIONAL_OPERATOR:
+            pred, then_, else_ = [c.unparse_expression for c in self.children]
             return f"{pred} ? {then_} : {else_}"
-        elif self.kind == CursorKind.BINARY_OPERATOR:
-            l, r = [c._unparse_expression() for c in self.children]
+
+        if self.kind == CursorKind.BINARY_OPERATOR:
+            l, r = [c.unparse_expression for c in self.children]
             return f"{l} {self.spelling} {r}"
-        elif self.kind == CursorKind.UNARY_OPERATOR:
-            (v,) = [c._unparse_expression() for c in self.children]
+
+        if self.kind == CursorKind.UNARY_OPERATOR:
+            (v,) = [c.unparse_expression for c in self.children]
             if len(self.tokens) > 0:
                 return f"{self.tokens[0].spelling}{v}"
-            else:
-                return ""
-        elif self.kind == CursorKind.ARRAY_SUBSCRIPT_EXPR:
-            v, i = [c._unparse_expression() for c in self.children]
+            return ""
+
+        if self.kind == CursorKind.ARRAY_SUBSCRIPT_EXPR:
+            v, i = [c.unparse_expression for c in self.children]
             return f"{v}[{i}]"
-        elif self.kind == CursorKind.UNEXPOSED_EXPR:
-            return " ".join(c._unparse_expression() for c in self.children)
-        elif self.kind == CursorKind.INIT_LIST_EXPR:
-            return "{" + ", ".join(c._unparse_expression() for c in self.children) + "}"
-        elif self.kind == CursorKind.CXX_NULL_PTR_LITERAL_EXPR or self.kind == CursorKind.GNU_NULL_EXPR:
+
+        if self.kind == CursorKind.UNEXPOSED_EXPR:
+            return " ".join(c.unparse_expression for c in self.children)
+
+        if self.kind == CursorKind.INIT_LIST_EXPR:
+            return "{" + ", ".join(c.unparse_expression for c in self.children) + "}"
+
+        if self.kind == CursorKind.CXX_NULL_PTR_LITERAL_EXPR or self.kind == CursorKind.GNU_NULL_EXPR:
             return f"({self.source})"
-        elif self.kind == CursorKind.NAMESPACE_REF:
+
+        if self.kind == CursorKind.NAMESPACE_REF:
             # TODO(yuhc): debug me.
             return f"{self.spelling}::"
-        else:
-            return f"""_Pragma("GCC error \\"{self.kind} not supported in specification expressions.\\"")"""
+
+        return f"""_Pragma("GCC error \\"{self.kind} not supported in specification expressions.\\"")"""
 
     @property
     def unparsed(self):
         if self.kind.is_expression():
-            r = self._unparse_expression()
+            r = self.unparse_expression
             return r
-        else:
-            return self.source or self.untokenized
+        return self.source or self.untokenized
 
 
 @extension(File)
