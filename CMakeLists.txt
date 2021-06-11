@@ -100,26 +100,6 @@ endif()
 ###### Dependent libraries ######
 include(ExternalProject)
 
-# boost
-set(BOOST_TARGET "boost_1_71_0")
-set(BOOST_VERSION "1.71.0")
-set(BOOST_URL
-  https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/${BOOST_TARGET}.tar.gz)
-add_library(boost INTERFACE)
-add_dependencies(boost ${BOOST_TARGET})
-ExternalProject_Add(
-  ${BOOST_TARGET}
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
-  URL ${BOOST_URL}
-  SOURCE_DIR ${CMAKE_SOURCE_DIR}/third_party/${BOOST_TARGET}
-  DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/third_party/
-  BUILD_IN_SOURCE 1
-)
-target_include_directories(boost INTERFACE
-  ${CMAKE_SOURCE_DIR}/third_party/${BOOST_TARGET}/)
-
 # libconfig
 set(INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/third_party/deps)
 ExternalProject_Add(config++_build
