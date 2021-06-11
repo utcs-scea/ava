@@ -10,8 +10,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/asio.hpp>
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -24,8 +22,6 @@
 #include "common/guest_mem.h"
 #include "common/logging.h"
 #include "manager_service.proto.h"
-
-using boost::asio::ip::tcp;
 
 extern int nw_global_vm_id;
 

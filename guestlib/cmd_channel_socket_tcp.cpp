@@ -1,5 +1,9 @@
-#include <boost/algorithm/string.hpp>
-#include <boost/asio.hpp>
+#include <absl/strings/str_split.h>
+#include <arpa/inet.h>
+#include <fmt/format.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -9,11 +13,11 @@
 #include "common/cmd_channel_socket_utilities.hpp"
 #include "common/cmd_handler.hpp"
 #include "common/logging.h"
+#include "common/support/io.h"
+#include "common/support/socket.h"
 #include "guest_config.h"
 #include "guestlib.h"
 #include "manager_service.proto.h"
-
-using boost::asio::ip::tcp;
 
 namespace {
 extern struct command_channel_vtable command_channel_socket_tcp_vtable;
@@ -28,14 +32,20 @@ extern int nw_global_vm_id;
  */
 std::vector<struct command_channel *> command_channel_socket_tcp_guest_new() {
   // Connect API server manager
-  boost::asio::io_service io_service;
+  std::vector<std::string> manager_addr =
+      absl::StrSplit(guestconfig::config->manager_address_, absl::ByAnyChar(":-/ "));
+  DCHECK(manager_addr.size() == 2) << "Invalid API server manager address";
+  struct sockaddr_in addr;
+  if (!ava::support::ResolveTcpAddr(&addr, manager_addr[0], manager_addr[1])) {
+    AVA_LOG(FATAL) << fmt::format("Cannot resolve manager address {}:{}", manager_addr[0], manager_addr[1]);
+    abort();
+  }
 
-  tcp::socket manager_sock(io_service);
-  tcp::resolver resolver(io_service);
-  std::vector<std::string> manager_addr;
-  boost::split(manager_addr, guestconfig::config->manager_address_, boost::is_any_of(":-/ "));
-  BOOST_ASSERT_MSG(manager_addr.size() == 2, "Invalid API server manager address");
-  boost::asio::connect(manager_sock, resolver.resolve({manager_addr[0], manager_addr[1]}));
+  int manager_sock = ava::support::TcpSocketConnect(&addr);
+  if (manager_sock == -1) {
+    AVA_LOG(FATAL) << "Cannot connect to manager";
+    abort();
+  }
 
   // Serialize configurations
   ava_proto::WorkerAssignRequest request;
@@ -47,15 +57,31 @@ std::vector<struct command_channel *> command_channel_socket_tcp_guest_new() {
   zpp::serializer::memory_output_archive out(request_buf);
   out(request);
   uint32_t request_length = static_cast<uint32_t>(request_buf.size());
-  boost::asio::write(manager_sock, boost::asio::buffer(&request_length, sizeof(uint32_t)));
-  boost::asio::write(manager_sock, boost::asio::buffer(request_buf.data(), request_length));
+  if (!ava::support::SendData(manager_sock, reinterpret_cast<const char *>(&request_length), sizeof(uint32_t))) {
+    AVA_LOG(FATAL) << "Fail to send request len to manager";
+    abort();
+  }
+  if (!ava::support::SendData(manager_sock, reinterpret_cast<const char *>(request_buf.data()), request_length)) {
+    AVA_LOG(FATAL) << "Fail to send request body to manager";
+    abort();
+  }
 
   // De-serialize API server addresses
-  uint32_t reply_length;
-  boost::asio::read(manager_sock, boost::asio::buffer(&reply_length, sizeof(uint32_t)));
+  uint32_t reply_length = 0;
+  if (!ava::support::RecvData(manager_sock, reinterpret_cast<char *>(&reply_length), sizeof(uint32_t),
+                              /* eof= */ nullptr)) {
+    AVA_LOG(FATAL) << "Fail to receive reply len";
+    abort();
+  }
+
   std::vector<unsigned char> reply_buf(reply_length);
   zpp::serializer::memory_input_archive in(reply_buf);
-  boost::asio::read(manager_sock, boost::asio::buffer(reply_buf.data(), reply_length));
+
+  if (!ava::support::RecvData(manager_sock, reinterpret_cast<char *>(reply_buf.data()), reply_length,
+                              /* eof= */ nullptr)) {
+    AVA_LOG(FATAL) << "Fail to receive reply from manager";
+    abort();
+  }
   ava_proto::WorkerAssignReply reply;
   in(reply);
   std::vector<std::string> worker_address;
