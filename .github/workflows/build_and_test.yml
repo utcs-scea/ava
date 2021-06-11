@@ -36,6 +36,14 @@ jobs:
         key: ${{matrix.os}}-ava-llvm-${{hashFiles('generate.py')}}
         path: llvm/build
 
+    - name: Cache boost 1_71 binary
+      uses: actions/cache@v2
+      with:
+        key: ${{matrix.os}}-boost-${{hashFiles('CMakeLists.txt')}}
+        path: |
+          third_party/boost_1_71_0.tar.gz
+          third_party/boost_1_71_0
+
     ###
     # Install platform-level dependencies (OS-specific)
     ###

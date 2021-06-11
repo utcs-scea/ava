@@ -44,6 +44,14 @@ jobs:
         key: ${{matrix.os}}-cudnn-${{hashFiles('.github/workflows/install_cuda10.1_cudnn7.6.sh')}}
         path: ~/cuda_packages
 
+    - name: Cache boost 1_71 binary
+      uses: actions/cache@v2
+      with:
+        key: ${{matrix.os}}-boost-${{hashFiles('CMakeLists.txt')}}
+        path: |
+          third_party/boost_1_71_0.tar.gz
+          third_party/boost_1_71_0
+
     ###
     # Install platform-level dependencies (OS-specific)
     ###

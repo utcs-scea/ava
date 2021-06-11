@@ -85,16 +85,6 @@ add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-g>")
 # Check libraries
 
 find_package(Python3 COMPONENTS Interpreter)
-find_package(PkgConfig REQUIRED)
-pkg_search_module(GLIB2 REQUIRED glib-2.0)
-
-# Socket library
-find_package(Boost 1.65 REQUIRED COMPONENTS system)
-message(STATUS "Using Boost.asio ${Boost_LIB_VERSION}")
-
-# Config parser library
-find_library(Config++ NAMES libconfig++ config++ REQUIRED)
-message(STATUS "Using libconfig++ ${Config++}")
 
 # Check ClangLib
 find_package(LLVM 7.0 CONFIG REQUIRED)
@@ -108,6 +98,67 @@ if (libclang-7_not_found)
 endif()
 
 ###### Dependent libraries ######
+include(ExternalProject)
+
+# boost
+set(BOOST_TARGET "boost_1_71_0")
+set(BOOST_VERSION "1.71.0")
+set(BOOST_URL
+  https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/${BOOST_TARGET}.tar.gz)
+add_library(boost INTERFACE)
+add_dependencies(boost ${BOOST_TARGET})
+ExternalProject_Add(
+  ${BOOST_TARGET}
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ""
+  URL ${BOOST_URL}
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/third_party/${BOOST_TARGET}
+  DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/third_party/
+  BUILD_IN_SOURCE 1
+)
+target_include_directories(boost INTERFACE
+  ${CMAKE_SOURCE_DIR}/third_party/${BOOST_TARGET}/)
+
+# libconfig
+set(INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/third_party/deps)
+ExternalProject_Add(config++_build
+  BUILD_BYPRODUCTS ${INSTALL_PREFIX}/lib/libconfig++.a
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/third_party/libconfig
+  CMAKE_ARGS -DBUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF BUILD_TESTS=OFF
+  -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+  -DCMAKE_CXX_STANDARD=14 -DCMAKE_CXX_STANDARD_REQUIRED=ON -DCMAKE_CXX_EXTENSIONS=OFF
+  INSTALL_DIR ${INSTALL_PREFIX}
+)
+add_library(config++ INTERFACE)
+add_dependencies(config++ config++_build)
+target_include_directories(config++ INTERFACE
+  ${INSTALL_PREFIX}/include)
+target_link_libraries(config++ INTERFACE
+  ${INSTALL_PREFIX}/lib/libconfig++.a)
+
+# glib-2.0
+set(GLIB_SRC ${CMAKE_SOURCE_DIR}/third_party/glib)
+ExternalProject_Add(glib2.0_build
+  SOURCE_DIR ${GLIB_SRC}
+  BUILD_BYPRODUCTS ${INSTALL_PREFIX}/lib/x86_64-linux-gnu/libglib-2.0.a
+  INSTALL_DIR ${INSTALL_PREFIX}
+  CONFIGURE_COMMAND cd ${GLIB_SRC} && mkdir -p _build &&
+  meson _build -Dinternal_pcre=true --buildtype=release -Ddtrace=false -Dsystemtap=false
+  -Dselinux=false --prefix=${INSTALL_PREFIX} -Dlibmount=false -Ddefault_library=static
+  BUILD_COMMAND cd ${GLIB_SRC}/_build && ninja
+  INSTALL_COMMAND cd ${GLIB_SRC}/_build && ninja install
+  BUILD_IN_SOURCE 1
+)
+add_library(glib2.0 INTERFACE)
+add_dependencies(glib2.0 glib2.0_build)
+target_include_directories(glib2.0 INTERFACE
+  ${INSTALL_PREFIX}/include)
+target_link_libraries(glib2.0 INTERFACE
+  ${INSTALL_PREFIX}/lib/x86_64-linux-gnu/libglib-2.0.a)
+set(GLIB2_INCLUDE_DIRS ${INSTALL_PREFIX}/lib/x86_64-linux-gnu/glib-2.0/include
+  ${INSTALL_PREFIX}/include/glib-2.0/)
+
 add_subdirectory(third_party/fmt)
 add_subdirectory(third_party/abseil-cpp)
 add_subdirectory(third_party/GSL)

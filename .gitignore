@@ -12,3 +12,5 @@ cmake-build-*
 benchmark/
 kvm/
 qemu/
+third_party/boost_1_71_0/
+third_party/deps/

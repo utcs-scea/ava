@@ -6,7 +6,6 @@ install(DIRECTORY DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 # Common libraries
 find_package(Threads REQUIRED)
-find_package(Boost 1.65 REQUIRED COMPONENTS system)
 
 ###### Configure compiler ######
 
@@ -21,7 +20,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_compile_options(-Wall -Wextra -pedantic -Wno-write-strings -g)
 
 set(manager_service_libraries Threads::Threads
-                              "${Boost_LIBRARIES}")
+                              boost)
 set(absl_flags_libraries
   absl::flags
   absl::flags_commandlineflag
