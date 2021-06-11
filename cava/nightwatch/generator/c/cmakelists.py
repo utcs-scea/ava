@@ -72,6 +72,7 @@ target_link_libraries(${{SUBPROJECT_PREFIX}}_worker
   Threads::Threads
   fmt::fmt
   GSL
+  absl::strings
   {api.libs}
 )
 set_target_properties(${{SUBPROJECT_PREFIX}}_worker PROPERTIES OUTPUT_NAME "worker")
@@ -95,6 +96,7 @@ add_library(${{SUBPROJECT_PREFIX}}_guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel_socket_tcp.cpp
+  ${{CMAKE_SOURCE_DIR}}/common/support/socket.cpp
   ${{CMAKE_SOURCE_DIR}}/proto/manager_service.proto.cpp
 )
 target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
@@ -104,6 +106,7 @@ target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
   fmt::fmt
   GSL
   config++
+  absl::strings
 )
 target_compile_options(${{SUBPROJECT_PREFIX}}_guestlib
   PUBLIC -fvisibility=hidden
