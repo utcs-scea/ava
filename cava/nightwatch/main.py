@@ -2,12 +2,22 @@ import argparse
 import logging
 import pathlib
 import sys
+from pathlib import Path
+import subprocess
 
-from . import *
+from nightwatch import info, error, LocatedError, MultipleError, NightWatchError
+from nightwatch.indent import indent_c, write_file_c
+from nightwatch.parser import c, parse_expects
+from nightwatch.model import Location
+from nightwatch.generator import header
+from nightwatch.generator.c import guestlib, worker, cmakelists
+
 
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
+# pylint: disable=too-many-branches,too-many-statements
 def main():
     parser = argparse.ArgumentParser(description="NightWatch generator")
     parser.add_argument("inputfile", metavar="FILENAME", type=str, help="The NightWatch file to parse.")
@@ -60,9 +70,6 @@ def main():
         errors = []
         if args.language.lower() == "c":
             errors = []
-
-            from pathlib import Path
-
             here = Path(__file__)
             default_include_path = [
                 str(p)
@@ -72,8 +79,6 @@ def main():
                     (here / ".." / ".." / ".." / "third_party" / "plog" / "include").resolve(),
                 ]
             ]
-
-            from .parser import c
 
             api = c.parse(
                 args.inputfile,
@@ -87,14 +92,9 @@ def main():
             if args.dump:
                 print(api)
             if args.missing:
-                from nightwatch.indent import indent_c
-
                 print(indent_c("\n".join(str(f) for f in api.missing_functions)))
             else:
                 function_str = ", ".join(str(f.name) for f in api.missing_functions)
-                from nightwatch.parser import parse_expects
-                from nightwatch.model import Location
-
                 parse_expects(
                     not api.missing_functions,
                     f"""
@@ -108,29 +108,16 @@ Functions are missing from {args.inputfile}, but appear in {", ".join(api.includ
             filename_prefix = api.directory_spelling + "/"
             pathlib.Path(api.directory_spelling).mkdir(parents=True, exist_ok=True)
 
-            from .indent import write_file_c
-            from .generator import header
-
             write_file_c(*header.header(api, errors), filename_prefix=filename_prefix)
-            write_file_c(*header.utilities_header(api, errors), indent=False, filename_prefix=filename_prefix)
-            write_file_c(*header.utility_types_header(api, errors), indent=False, filename_prefix=filename_prefix)
-            write_file_c(*header.types_header(api, errors), indent=False, filename_prefix=filename_prefix)
-            from .generator.c import guestlib
-
-            write_file_c(*guestlib.source(api, errors), filename_prefix=filename_prefix)
-
-            from .generator.c import worker
-
-            write_file_c(*worker.source(api, errors), filename_prefix=filename_prefix)
-
-            from .generator.c import cmakelists
-
-            write_file_c(*cmakelists.source(api, errors), indent=False, filename_prefix=filename_prefix)
+            write_file_c(*header.utilities_header(api), indent=False, filename_prefix=filename_prefix)
+            write_file_c(*header.utility_types_header(api), indent=False, filename_prefix=filename_prefix)
+            write_file_c(*header.types_header(api), indent=False, filename_prefix=filename_prefix)
+            write_file_c(*guestlib.source(api), filename_prefix=filename_prefix)
+            write_file_c(*worker.source(api), filename_prefix=filename_prefix)
+            write_file_c(*cmakelists.source(api), indent=False, filename_prefix=filename_prefix)
 
             # TODO(yuhc): Fix build.
             if args.build:
-                import subprocess
-
                 try:
                     subprocess.run(
                         ["make", "-C", str(pathlib.Path(api.directory_spelling).resolve()), "clean"], check=True
@@ -145,19 +132,7 @@ Functions are missing from {args.inputfile}, but appear in {", ".join(api.includ
                         )
                     )
         elif args.language.lower().startswith("py"):
-            from .parser import python
-
-            api = python.parse(args.inputfile, include_path=args.include_path or [], extra_args=args.extra_args or [])
-
-            if args.dump:
-                print(api)
-
-            filename_prefix = api.directory_spelling + "/"
-
-            from .indent import write_file_py
-            from .generator.python import guestlib
-
-            write_file_py(*guestlib.source(api, errors))
+            raise RuntimeError("Python virtualization is unsupported.")
 
         if errors:
             raise MultipleError(*errors)

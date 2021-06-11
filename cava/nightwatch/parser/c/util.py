@@ -3,16 +3,16 @@ from pathlib import Path
 import ast
 import re
 from collections import namedtuple
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, Set
 
+# pylint: disable=unused-import
+import nightwatch.parser.c.reload_libclang
+from clang.cindex import Cursor, CursorKind, SourceLocation
+from nightwatch.parser.c.clanginterface import _CursorExtension
 from nightwatch.annotation_set import AnnotationSet, annotation_set
 from nightwatch.c_dsl import Expr
-from nightwatch.model import Location
-from clang.cindex import Cursor, SourceLocation
-from ...model import *
-from ...c_dsl import *
-from .clanginterface import CursorKind
-from ...parser import *
+from nightwatch.model import Location, NIGHTWATCH_PREFIX
+from nightwatch.parser import location, parse_assert
 
 
 def strip_prefix(prefix: str, s: str) -> str:
@@ -77,9 +77,9 @@ def get_string_literal(c: Cursor) -> Optional[str]:
         # TODO: This parses python literals which are not the same as C. Ideally this would use clang to parse C
         #  literals to bytes.
         return ast.literal_eval(c.spelling)
-    else:
-        for ch in c.get_children():
-            return get_string_literal(ch)
+
+    for ch in c.get_children():
+        return get_string_literal(ch)
 
 
 def convert_location(loc: SourceLocation) -> Location:
@@ -130,8 +130,8 @@ def _as_bool(s: str) -> bool:
     return bool(int(s))
 
 
-def _as_string_set(s):
-    return set([s for s in NW_ANNOTATION_SPLIT_RE.split(s and ast.literal_eval(s)) if s])
+def _as_string_set(s) -> Set:
+    return {s for s in NW_ANNOTATION_SPLIT_RE.split(s and ast.literal_eval(s)) if s}
 
 
 def _as_cexpr_singleton_set(s):

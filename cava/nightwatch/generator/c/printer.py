@@ -2,33 +2,42 @@ from nightwatch import location, term
 from nightwatch.c_dsl import Expr
 from nightwatch.generator.c.buffer_handling import get_transfer_buffer_expr
 from nightwatch.generator.c.util import for_all_elements
-from nightwatch.generator.common import unpack_struct, snl, lines
-from nightwatch.model import Function, Type, Argument, API
+from nightwatch.generator.common import unpack_struct, snl
+from nightwatch.model import Function, Type, Argument, API, lines
 
 
 def command_print_implementation(f: Function):
     with location(f"at {term.yellow(str(f.name))}", f.location):
 
-        def printf(format, *values):
-            return f"""fprintf(file, "{format}", {",".join(values)});"""
+        def printf(fmt, *values):
+            return f"""fprintf(file, "{fmt}", {",".join(values)});"""
 
-        def print_value_deep(values, cast_type: Type, type: Type, depth, no_depends, argument, **other):
+        def print_value_deep(values, cast_type: Type, type_: Type, depth, no_depends, argument, **other):
             (value,) = values
-            if type.is_void:
+            if type_.is_void:
                 return ""
-            buffer_pred = Expr(type.transfer).equals("NW_BUFFER") & Expr(value).not_equals("NULL")
+            buffer_pred = Expr(type_.transfer).equals("NW_BUFFER") & Expr(value).not_equals("NULL")
 
             def address():
-                if not hasattr(type, "pointee"):
+                if not hasattr(type_, "pointee"):
                     return """abort_with_reason("Reached code to handle buffer in non-pointer type.");"""
                 tmp_name = f"__tmp_{argument.name}_{depth}"
                 inner_values = (tmp_name,)
                 data_code = buffer_pred.if_then_else(
                     f"""
                     fprintf(file, " = {{");
-                    {type.nonconst.attach_to(tmp_name)};
-                    {tmp_name} = ({cast_type})({get_transfer_buffer_expr(value, type)});
-                    {for_all_elements(inner_values, cast_type, type, precomputed_size=Expr(1), depth=depth, argument=argument, no_depends=no_depends, **other)}
+                    {type_.nonconst.attach_to(tmp_name)};
+                    {tmp_name} = ({cast_type})({get_transfer_buffer_expr(value, type_)});
+                    {for_all_elements(
+                        inner_values,
+                        cast_type,
+                        type_,
+                        precomputed_size=Expr(1),
+                        depth=depth,
+                        argument=argument,
+                        no_depends=no_depends,
+                        **other
+                    )}
                     fprintf(file, ",...}}");
                     """
                 )
@@ -41,35 +50,34 @@ def command_print_implementation(f: Function):
                 return printf("handle %#lx", f"(long int){value}")
 
             def opaque():
-                st = str(type)
+                st = str(type_)
                 if "*" in st:
                     return printf("%#lx", f"(long int){value}")
-                elif "int" in st:
+                if "int" in st:
                     return printf("%ld", f"(long int){value}")
-                elif "float" in st or "double" in st:
+                if "float" in st or "double" in st:
                     return printf("%Lf", f"(long double){value}")
-                else:
-                    # Fall back on pointer representation
-                    return printf("%#lx", f"(long int){value}")
+                # Fall back on pointer representation
+                return printf("%#lx", f"(long int){value}")
 
-            return Expr(bool(type.fields or argument.depends_on and no_depends)).if_then_else(
+            return Expr(bool(type_.fields or argument.depends_on and no_depends)).if_then_else(
                 "",  # Using only else branch
-                Expr(type.transfer)
+                Expr(type_.transfer)
                 .equals("NW_BUFFER")
                 .if_then_else(
                     address,
-                    Expr(type.transfer)
+                    Expr(type_.transfer)
                     .equals("NW_ZEROCOPY_BUFFER")
                     .if_then_else(
                         address,
-                        Expr(type.transfer)
+                        Expr(type_.transfer)
                         .equals("NW_OPAQUE")
-                        .if_then_else(opaque, Expr(type.transfer).equals("NW_HANDLE").if_then_else(handle)),
+                        .if_then_else(opaque, Expr(type_.transfer).equals("NW_HANDLE").if_then_else(handle)),
                     ),
                 ),
             )
 
-        def print_value(argument: Argument, value, type: Type, no_depends):
+        def print_value(argument: Argument, value, no_depends):
             conv = print_value_deep(
                 (value,),
                 argument.type.nonconst,
@@ -92,7 +100,7 @@ def command_print_implementation(f: Function):
             assert(__call->base.command_size == sizeof(struct {f.call_spelling}) && "Command size does not match ID. (Can be caused by incorrectly computed buffer sizes, especially using `strlen(s)` instead of `strlen(s)+1`)");
             {unpack_struct("__call", f.arguments, "->", get_transfer_buffer_expr)}
             {printf("<%03ld> <thread=%012lx> %s(", "(long int)__call->__call_id", "(unsigned long int)__call->base.thread_id", f'"{f.name}"')}
-            {print_comma.join(str(print_value(a, f"__call->{a.name}", a.type, False)) for a in f.arguments if a.input or not a.type.contains_buffer)}
+            {print_comma.join(str(print_value(a, f"__call->{a.name}", False)) for a in f.arguments if a.input or not a.type.contains_buffer)}
             fprintf(file, "){snl}");
             break;
         }}
@@ -106,9 +114,9 @@ def command_print_implementation(f: Function):
                            [a for a in f.arguments if a.output and a.type.contains_buffer and not bool(a.depends_on)],
                            "->", get_transfer_buffer_expr)}
             {printf("<%03ld> <thread=%012lx> %s(", "(long int)__ret->__call_id", "(unsigned long int)__ret->base.thread_id", f'"{f.name}"')}
-            {print_comma.join(str(print_value(a, f"__ret->{a.name}", a.type, True)) for a in f.arguments if a.output and a.type.contains_buffer)}
+            {print_comma.join(str(print_value(a, f"__ret->{a.name}", True)) for a in f.arguments if a.output and a.type.contains_buffer)}
             fprintf(file, ") -> ");
-            {print_value(f.return_value, f"__ret->{f.return_value.name}", f.return_value.type, True)}
+            {print_value(f.return_value, f"__ret->{f.return_value.name}", True)}
             fprintf(file, "{snl}");
             break;
         }}

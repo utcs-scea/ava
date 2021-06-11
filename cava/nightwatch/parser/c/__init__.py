@@ -1,15 +1,70 @@
 from typing import Any, List, Dict
-
-from .rules import *
-from .util import *
 import copy
-from nightwatch.model import API
+
+# pylint: disable=unused-import
+from nightwatch.parser.c.reload_libclang import clang_flags
+from clang.cindex import (
+    Cursor,
+    CursorKind,
+    Diagnostic,
+    File,
+    Index,
+    LinkageKind,
+    StorageClass,
+    TranslationUnit,
+    TypeKind,
+)
+
+# pylint: disable=ungrouped-imports
+from nightwatch import error, info, warning, location, term, MultipleError
+from nightwatch.parser.c.rules import (
+    Functions,
+    Types,
+    ConstPointerTypes,
+    NonconstPointerTypes,
+    PointerTypes,
+    NonTransferableTypes,
+)
+from nightwatch.annotation_set import annotation_set, Conditional
+from nightwatch.c_dsl import Expr
+from nightwatch.parser.c.util import (
+    convert_location,
+    extract_annotations,
+    extract_attr_annotations,
+    get_string_literal,
+    strip_unique_suffix,
+    strip_nw,
+    strip_prefix,
+    argument_annotations,
+    function_annotations,
+    ignored_cursor_kinds,
+    resource_directory,
+    nightwatch_parser_c_header,
+    type_annotations,
+    Field,
+)
+from nightwatch.model import (
+    API,
+    Argument,
+    ConditionalType,
+    Function,
+    FunctionPointer,
+    Location,
+    StaticArray,
+    Type,
+    NIGHTWATCH_PREFIX,
+    RET_ARGUMENT_NAME,
+    buffer_index_spelling,
+)
+from nightwatch.parser import parse_assert, parse_requires, parse_expects
+
 
 consumes_amount_prefix = "consumes_amount_"
 allocates_amount_prefix = "allocates_amount_"
 deallocates_amount_prefix = "deallocates_amount_"
 
 
+# pylint: disable=too-many-branches,too-many-statements
 def parse(filename: str, include_path: List[str], definitions: List[Any], extra_args: List[Any]) -> API:
     index = Index.create(True)
     includes = [s for p in include_path for s in ["-I", p]]
@@ -80,13 +135,13 @@ def parse(filename: str, include_path: List[str], definitions: List[Any], extra_
                 rule.apply(c, annotations)
 
         do(rules)
-        # print(c.spelling, annotations)
         if not annotations or (len(annotations) == 1 and "name" in annotations):
             do(default_rules)
         do(final_rules)
         if name:
             del annotations["name"]
 
+    # pylint: disable=too-many-return-statements
     def convert_type(tpe, name, annotations, containing_types):
         parse_requires(
             tpe.get_canonical().spelling not in containing_types or "void" in tpe.get_canonical().spelling,
@@ -127,13 +182,11 @@ def parse(filename: str, include_path: List[str], definitions: List[Any], extra_
                         convert_type(tpe, name, annotations, containing_types),
                     )
                     return ret
-                else:
-                    parse_assert(new_type is not None, "ava_type_cast must provide a new type")
-                    # Attach the original type and then perform conversion using the new type.
-                    our_annotations["original_type"] = convert_type(
-                        tpe, name, annotation_set(), original_containing_types
-                    )
-                    tpe = new_type
+
+                parse_assert(new_type is not None, "ava_type_cast must provide a new type")
+                # Attach the original type and then perform conversion using the new type.
+                our_annotations["original_type"] = convert_type(tpe, name, annotation_set(), original_containing_types)
+                tpe = new_type
 
             if tpe.is_function_pointer():
                 pointee = tpe.get_pointee()
@@ -141,54 +194,57 @@ def parse(filename: str, include_path: List[str], definitions: List[Any], extra_
                     args = []
                 else:
                     args = [convert_type(t, "", annotation_set(), containing_types) for t in pointee.argument_types()]
-                ret = FunctionPointer(
+                return FunctionPointer(
                     tpe.spelling,
                     Type(f"*{name}", **our_annotations),
                     return_type=convert_type(pointee.get_result(), "ret", annotation_set(), containing_types),
                     argument_types=args,
                     **our_annotations,
                 )
-            elif tpe.kind in (TypeKind.FUNCTIONPROTO, TypeKind.FUNCTIONNOPROTO):
+
+            if tpe.kind in (TypeKind.FUNCTIONPROTO, TypeKind.FUNCTIONNOPROTO):
                 if tpe.kind == TypeKind.FUNCTIONNOPROTO:
                     args = []
                 else:
                     args = [convert_type(t, "", annotation_set(), containing_types) for t in tpe.argument_types()]
-                ret = FunctionPointer(
+                return FunctionPointer(
                     tpe.spelling,
                     Type(tpe.spelling, **our_annotations),
                     return_type=convert_type(tpe.get_result(), "ret", annotation_set(), containing_types),
                     argument_types=args,
                     **our_annotations,
                 )
-            elif tpe.is_static_array():
+
+            if tpe.is_static_array():
                 pointee = tpe.get_pointee()
                 pointee_annotations = annotations.subelement("element")
                 pointee_name = f"{name}[{buffer_index_spelling}]"
                 our_annotations["buffer"] = Expr(tpe.get_array_size())
-                ret = StaticArray(
+                return StaticArray(
                     tpe.spelling,
                     pointee=convert_type(pointee, pointee_name, pointee_annotations, containing_types),
                     **our_annotations,
                 )
-            elif tpe.is_pointer():
+
+            if tpe.is_pointer():
                 pointee = tpe.get_pointee()
                 pointee_annotations = annotations.subelement("element")
                 pointee_name = f"{name}[{buffer_index_spelling}]"
                 if tpe.kind in (TypeKind.VARIABLEARRAY, TypeKind.INCOMPLETEARRAY):
                     sp: str = tpe.spelling
                     sp = sp.replace("[]", "*")
-                    ret = Type(
+                    return Type(
                         sp,
                         pointee=convert_type(tpe.element_type, pointee_name, pointee_annotations, containing_types),
                         **our_annotations,
                     )
-                else:
-                    ret = Type(
-                        tpe.spelling,
-                        pointee=convert_type(pointee, pointee_name, pointee_annotations, containing_types),
-                        **our_annotations,
-                    )
-            elif tpe.get_canonical().kind == TypeKind.RECORD:
+                return Type(
+                    tpe.spelling,
+                    pointee=convert_type(pointee, pointee_name, pointee_annotations, containing_types),
+                    **our_annotations,
+                )
+
+            if tpe.get_canonical().kind == TypeKind.RECORD:
 
                 def expand_field(f: Cursor, prefix):
                     f_tpe = f.type
@@ -198,8 +254,7 @@ def parse(filename: str, include_path: List[str], definitions: List[Any], extra_
                             # FIXME: This assumes the first field is as large or larger than any other field.
                             first_field = sorted(f_tpe.get_fields(), key=lambda f: f.type.get_size())[0]
                             return expand_field(first_field, f"{prefix}.{first_field.displayname}")
-                        else:
-                            parse_requires(False, "The only supported anonymous member type is unions.")
+                        parse_requires(False, "The only supported anonymous member type is unions.")
                     return [
                         (
                             f.displayname,
@@ -213,12 +268,11 @@ def parse(filename: str, include_path: List[str], definitions: List[Any], extra_
                     ]
 
                 field_types = dict(ff for field in tpe.get_canonical().get_fields() for ff in expand_field(field, name))
-                ret = Type(tpe.spelling, fields=field_types, **our_annotations)
-            else:
-                ret = Type(tpe.spelling, **our_annotations)
-        return ret
+                return Type(tpe.spelling, fields=field_types, **our_annotations)
 
-    def convert_argument(i, arg, annotations, *, type=None, is_ret=False):
+            return Type(tpe.spelling, **our_annotations)
+
+    def convert_argument(i, arg, annotations, *, type_=None, is_ret=False):
         name = arg.displayname if not is_ret else RET_ARGUMENT_NAME
         if not name:
             name = "__arg{}".format(i)
@@ -232,11 +286,11 @@ def parse(filename: str, include_path: List[str], definitions: List[Any], extra_
             else:
                 value = None
 
-            type = type or arg.type
+            type_ = type_ or arg.type
 
             return Argument(
                 name,
-                convert_type(type, name, annotations, set()),
+                convert_type(type_, name, annotations, set()),
                 value=value,
                 location=convert_location(arg.location),
                 **annotations.direct(argument_annotations).flatten(),
@@ -306,7 +360,7 @@ def parse(filename: str, include_path: List[str], definitions: List[Any], extra_
                     resources[resource] = annotation_value
 
             return_value = convert_argument(
-                -1, cursor, annotations.subelement("return_value"), is_ret=True, type=cursor.result_type
+                -1, cursor, annotations.subelement("return_value"), is_ret=True, type_=cursor.result_type
             )
 
             if "unsupported" in annotations:
@@ -362,10 +416,8 @@ def parse(filename: str, include_path: List[str], definitions: List[Any], extra_
             name = strip_unique_suffix(strip_prefix(NIGHTWATCH_PREFIX + "category_", c.displayname))
             annotations = extract_annotations(c)
             attr_annotations = extract_attr_annotations(c)
-            # print(annotations)
             rule_list = default_rules if "default" in attr_annotations else rules
             annotations.pop("default", None)
-            # print(name, annotations)
             if name == "type":
                 rule_list.append(Types(c.result_type.get_pointee(), annotations))
             elif name == "functions":
@@ -463,7 +515,7 @@ def parse(filename: str, include_path: List[str], definitions: List[Any], extra_
                 parse_assert(not e, str(e), loc=convert_location(c.location))
         # elif normal_mode and c.kind == CursorKind.INCLUSION_DIRECTIVE and c.tokens[-1].spelling == '"' \
         #         and not c.displayname.endswith(nightwatch_parser_c_header):
-        #     parse_assert(False, "Including AvA specifications in other specifications is not yet supported. Ask amp to do it.")
+        #     parse_assert(False, "Including AvA specifications in other specifications is not yet supported.")
         elif (
             normal_mode
             and c.kind in (CursorKind.MACRO_DEFINITION, CursorKind.STRUCT_DECL, CursorKind.TYPEDEF_DECL)
@@ -473,6 +525,7 @@ def parse(filename: str, include_path: List[str], definitions: List[Any], extra_
             # This is a utility macro for the API forwarding code.
             type_extents.append((c.extent.start.line, c.extent.end.line))
         elif (
+            # pylint: disable=too-many-boolean-expressions
             (normal_mode or replacement_mode)
             and c.kind in (CursorKind.UNEXPOSED_DECL,)
             and len(c.tokens)
@@ -548,6 +601,7 @@ Functions appear in {filename}, but are not in {", ".join(primary_include_files.
             def find_modes(i):
                 modes = set()
                 for in_name, start, end, mode in primary_include_extents:
+                    # pylint: disable=cell-var-from-loop
                     if in_name == file and start <= i <= end:
                         modes.add(mode)
                 return modes

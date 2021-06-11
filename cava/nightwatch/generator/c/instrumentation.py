@@ -34,7 +34,7 @@ def report_consume_resources(f: Function) -> str:
     ret = ""
     for resource, amount in f.consumes_resources.items():
         ret += f"""nw_report_throughput_resource_consumption("{resource}", {amount});\n"""
-    ret += f"""
+    ret += """
     #ifdef AVA_API_FUNCTION_CALL_RESOURCE
         nw_report_throughput_resource_consumption("ava_api_function_call", 1);
     #endif

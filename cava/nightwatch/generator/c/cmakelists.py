@@ -1,8 +1,9 @@
+from typing import Tuple
+
 from nightwatch.model import API
-from typing import Any, List, Tuple
 
 
-def source(api: API, errors: List[Any]) -> Tuple[str, str]:
+def source(api: API) -> Tuple[str, str]:
     guestlib_srcs = api.guestlib_srcs.split()
     guestlib_srcs = ["${CMAKE_SOURCE_DIR}/guestlib/" + src for src in guestlib_srcs]
     worker_srcs = api.worker_srcs.split()

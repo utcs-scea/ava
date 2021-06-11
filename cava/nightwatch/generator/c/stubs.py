@@ -1,13 +1,14 @@
+from typing import Union
+
 from nightwatch import location, term
 from nightwatch.c_dsl import Expr, ExprOrStr
 from nightwatch.generator import generate_requires
 from nightwatch.generator.c.buffer_handling import compute_total_size
 from nightwatch.generator.c.caller import compute_argument_value, attach_for_argument
 from nightwatch.generator.c.instrumentation import timing_code_guest, report_alloc_resources, report_consume_resources
-from nightwatch.generator.c.util import *
-from nightwatch.generator.common import *
-from nightwatch.model import *
-from typing import Union
+from nightwatch.generator.c.util import AllocList
+from nightwatch.generator.common import nl, pack_struct
+from nightwatch.model import Function, lines
 
 
 def function_implementation(f: Function) -> Union[str, Expr]:
@@ -19,7 +20,7 @@ def function_implementation(f: Function) -> Union[str, Expr]:
     """
     with location(f"at {term.yellow(str(f.name))}", f.location):
         if f.return_value.type.buffer:
-            forge_success = f"#error Async returned buffers are not implemented."
+            forge_success = "#error Async returned buffers are not implemented."
         elif f.return_value.type.is_void:
             forge_success = "return;"
         elif f.return_value.type.success is not None:
@@ -28,7 +29,7 @@ def function_implementation(f: Function) -> Union[str, Expr]:
             forge_success = """abort_with_reason("Cannot forge success without a success value for the type.");"""
 
         if f.return_value.type.is_void:
-            return_statement = f"""
+            return_statement = """
                 free(__call_record);
                 return;
             """.strip()
@@ -44,13 +45,14 @@ def function_implementation(f: Function) -> Union[str, Expr]:
 
         alloc_list = AllocList(f)
 
-        send_code = f"""
+        send_code = """
             command_channel_send_command(__chan, (struct command_base*)__cmd);
         """.strip()
 
         if f.api.send_code:
             import_code = f.api.send_code.encode("ascii", "ignore").decode("unicode_escape")[1:-1]
             ldict = locals()
+            # pylint: disable=exec-used
             exec(import_code, globals(), ldict)
             send_code = ldict["send_code"]
 
@@ -158,7 +160,10 @@ def function_wrapper(f: Function) -> str:
             callback_unpack = ""
         elif not f.callback_decl:
             # Normal call
-            call_code = f"""({f.return_value.type.nonconst.spelling})({f.name}({", ".join(a.name for a in f.real_arguments)}))"""
+            call_code = (
+                f"""({f.return_value.type.nonconst.spelling})"""
+                f"""({f.name}({", ".join(a.name for a in f.real_arguments)}))"""
+            )
             callback_unpack = ""
         else:
             # Indirect call (callback)
@@ -205,7 +210,10 @@ def call_function_wrapper(f: Function) -> ExprOrStr:
     if f.return_value.type.is_void:
         capture_ret = ""
     else:
-        capture_ret = f"{f.return_value.type.nonconst.attach_to(f.return_value.name)}; {f.return_value.name} = ({f.return_value.type.nonconst.spelling})"
+        capture_ret = (
+            f"{f.return_value.type.nonconst.attach_to(f.return_value.name)}; "
+            f"{f.return_value.name} = ({f.return_value.type.nonconst.spelling})"
+        )
     return f"""
         {capture_ret}__wrapper_{f.name}({", ".join(f"({a.type.spelling}){a.name}" for a in f.arguments)});
     """.strip()

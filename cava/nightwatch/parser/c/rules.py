@@ -1,12 +1,14 @@
-from nightwatch import model
-from .clanginterface import *
-from .util import *
-from clang.cindex import Cursor, Type
-from nightwatch.annotation_set import AnnotationSet
 from typing import Union
 
+# pylint: disable=unused-import
+import nightwatch.parser.c.reload_libclang
+from clang.cindex import Cursor, CursorKind, Type, TypeKind
+from clang import cindex
+from nightwatch import model
+from nightwatch.annotation_set import AnnotationSet
 
-class Rule(object):
+
+class Rule:
     def __init__(self, annotations: AnnotationSet) -> None:
         self.annotations = annotations
 
@@ -75,10 +77,12 @@ class Types(TypeRule):
     def __init__(self, tpe: Type, annotations: AnnotationSet) -> None:
         super().__init__(annotations)
         self.type = tpe
+        # pylint: disable=protected-access
         self.type_str = model.Type._drop_const(self.type.spelling)
 
     def _is_correct_type(self, ct: Type) -> bool:
         # TODO: This should compare the types instead of their spellings, but type comparison is returning false.
+        # pylint: disable=protected-access
         return model.Type._drop_const(ct.spelling) == self.type_str
 
     def _matches_type(self, ct: Type, data: AnnotationSet) -> bool:

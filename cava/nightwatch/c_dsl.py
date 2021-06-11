@@ -23,7 +23,8 @@ _known_constants = frozenset(
         "AVA_MANUAL",
         "NULL",
         "malloc",
-        "free" "ava_zerocopy_alloc",
+        "free",
+        "ava_zerocopy_alloc",
         "ava_zerocopy_free",
     ]
 )
@@ -101,13 +102,14 @@ class Expr(metaclass=_ExprMetaclass):
             try:
                 return _parse_bool(str(self._code))
             except ValueError:
+                # pylint: disable=raise-missing-from
                 raise ValueError("CExpr is not a constant.")
 
     def is_constant(self, value: Optional[int] = None) -> bool:
         try:
             if value is None:
                 # Get the constant value to trigger an exception (caught below) if it cannot be accessed.
-                # noinspection PyStatementEffect
+                # pylint: disable=pointless-statement
                 self.constant_value
                 return True
             return self.constant_value == value

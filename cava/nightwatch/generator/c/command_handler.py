@@ -1,11 +1,11 @@
+from typing import Iterable
+
 from nightwatch.generator.c.callee import call_command_implementation
 from nightwatch.generator.c.caller import return_command_implementation
 from nightwatch.generator.c.printer import print_command_function
 from nightwatch.generator.c.replay import replay_command_function
 from nightwatch.generator.c.stubs import function_wrapper
-from .util import *
-from nightwatch.model import API, Function
-from typing import Iterable
+from nightwatch.model import API, Function, lines
 
 
 # TODO: Abstract the case structure of most functions into a class or something.

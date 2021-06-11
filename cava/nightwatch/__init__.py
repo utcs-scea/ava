@@ -1,11 +1,10 @@
-import blessings
+import logging
 import re
+import sys
 import threading
 from contextlib import contextmanager
-import logging
-import sys
+import blessings
 
-from nightwatch import *
 
 __all__ = [
     "NightWatchError",
@@ -37,8 +36,6 @@ class NightWatchError(Exception):
 
     @property
     def pretty(self):
-        indent = "  "
-        # logger.exception(self)
         return f"""{self.phase}: {self}"""
 
 
@@ -46,10 +43,9 @@ class MultipleError(Exception):
     def __new__(cls, *exceptions):
         if len(exceptions) > 1:
             return super().__new__(cls, *exceptions)
-        elif exceptions:
+        if exceptions:
             return exceptions[0]
-        else:
-            raise ValueError("MultipleError should have multiple exceptions as its arguments.")
+        raise ValueError("MultipleError should have multiple exceptions as its arguments.")
 
     def report(self):
         for exc in self.args:
@@ -65,6 +61,7 @@ class MultipleError(Exception):
 
 try:
     term = blessings.Terminal(stream=sys.stderr)
+# pylint: disable=bare-except
 except:
     term = blessings.Terminal(stream=sys.stderr, force_styling=None)
 
@@ -174,13 +171,10 @@ def location(description, loc=None, report_continue=None):
         # e.improve(description, loc)
         if report_continue is None:
             raise e
-        elif hasattr(report_continue, "append"):
+        if hasattr(report_continue, "append"):
             e.report()
             report_continue.append(e)
-        else:
-            assert False
-        if _parse_state.errors[-1] is not None:
-            _parse_state.errors[-1].append(e)
+        assert False
     finally:
         if description:
             _parse_state.descriptions.pop()
@@ -198,6 +192,7 @@ def capture_errors():
         _parse_state.errors[-1].append(e)
     finally:
         errors = _parse_state.errors.pop()
+    return errors
 
 
 def captured_errors():

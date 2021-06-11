@@ -1,7 +1,10 @@
-from .common import *
-from . import *
-from nightwatch.model import API, Argument, Function
 from typing import Any, List, Tuple
+
+from nightwatch import location, term, capture_errors, captured_errors
+
+# pylint: disable=unused-import
+from nightwatch.generator.common import _APISpelling
+from nightwatch.model import API, Argument, Function, guard_macro_spelling, lines
 
 
 def argument(arg: Argument) -> str:
@@ -68,7 +71,8 @@ def command_ids(f: Function) -> str:
 
 def header(api: API, errors: List[Any]) -> Tuple[str, str]:
     functions = list(api.supported_functions)
-    # TODO: Any objects pointed to by metadata will be leaked when the metadata is discarded. metadata needs a destructor.
+    # TODO: Any objects pointed to by metadata will be leaked when the metadata is discarded.
+    #   Metadata needs a destructor.
     code = f"""
 #ifndef {guard_macro_spelling(api.c_header_spelling)}
 #define {guard_macro_spelling(api.c_header_spelling)}
@@ -135,7 +139,7 @@ struct {api.metadata_struct_spelling} {{
     return api.c_header_spelling, code
 
 
-def utilities_header(api: API, errors: List[Any]) -> Tuple[str, str]:
+def utilities_header(api: API) -> Tuple[str, str]:
     code = f"""
 #ifndef {guard_macro_spelling(api.c_utilities_header_spelling)}
 #define {guard_macro_spelling(api.c_utilities_header_spelling)}
@@ -153,7 +157,7 @@ def utilities_header(api: API, errors: List[Any]) -> Tuple[str, str]:
     return api.c_utilities_header_spelling, code
 
 
-def utility_types_header(api: API, errors: List[Any]) -> Tuple[str, str]:
+def utility_types_header(api: API) -> Tuple[str, str]:
     code = f"""
 #ifndef {guard_macro_spelling(api.c_utility_types_header_spelling)}
 #define {guard_macro_spelling(api.c_utility_types_header_spelling)}
@@ -165,7 +169,7 @@ def utility_types_header(api: API, errors: List[Any]) -> Tuple[str, str]:
     return api.c_utility_types_header_spelling, code
 
 
-def types_header(api: API, errors: List[Any]) -> Tuple[str, str]:
+def types_header(api: API) -> Tuple[str, str]:
     nw_header = f"""
 /** NightWatch MODIFIED header for {api.name} (version {api.version})
  *  Lines marked with "NWR:" were removed by NightWatch.
