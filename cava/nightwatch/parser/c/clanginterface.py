@@ -24,7 +24,7 @@ def _config_clang():
 
 _config_clang()
 
-from clang.cindex import *
+from clang.cindex import Cursor, CursorKind, File, TranslationUnit, Type, TypeKind
 from clang import cindex
 from ...extension import *
 from glob import glob
@@ -38,7 +38,6 @@ clang_directories = glob("/usr/lib*/llvm-{v}/lib/clang/{v}*/include".format(v=cl
 clang_flags = (
     [
         "-Wno-return-type",
-        # "-Wno-implicit-function-declaration",
         "-Wno-empty-body",
         "-nobuiltininc",
     ]

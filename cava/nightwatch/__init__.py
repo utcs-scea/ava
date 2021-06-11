@@ -1,11 +1,10 @@
-import blessings
+import logging
 import re
+import sys
 import threading
 from contextlib import contextmanager
-import logging
-import sys
+import blessings
 
-from nightwatch import *
 
 __all__ = [
     "NightWatchError",
@@ -37,8 +36,6 @@ class NightWatchError(Exception):
 
     @property
     def pretty(self):
-        indent = "  "
-        # logger.exception(self)
         return f"""{self.phase}: {self}"""
 
 

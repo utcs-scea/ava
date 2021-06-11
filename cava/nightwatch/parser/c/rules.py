@@ -1,9 +1,10 @@
+from typing import Union
+
 from nightwatch import model
-from .clanginterface import *
-from .util import *
+from nightwatch.parser.c.clanginterface import *
+from nightwatch.parser.c.util import *
 from clang.cindex import Cursor, Type
 from nightwatch.annotation_set import AnnotationSet
-from typing import Union
 
 
 class Rule(object):
