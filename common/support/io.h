@@ -29,7 +29,7 @@ inline bool SendData(int fd, std::span<const char> data) { return SendData(fd, d
 
 inline bool WriteData(int fd, std::span<const char> data) { return SendData(fd, data.data(), data.size()); }
 
-inline bool WriteData(int fd, const char* data, size_t size) { return SendData(fd, data, size); }
+inline bool WriteData(int fd, const char *data, size_t size) { return SendData(fd, data, size); }
 
 inline bool WriteString(int fd, std::string data) { return SendData(fd, data.data(), data.size()); }
 
@@ -60,4 +60,4 @@ inline bool RecvData(int fd, char *buffer, size_t size, bool *eof) {
 }  // namespace support
 }  // namespace ava
 
-#endif // _AVA_SUPPORT_IO_H_
+#endif  // _AVA_SUPPORT_IO_H_

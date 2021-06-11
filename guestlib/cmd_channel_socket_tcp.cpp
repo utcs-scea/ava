@@ -1,11 +1,13 @@
+#include <absl/strings/str_split.h>
+#include <arpa/inet.h>
+#include <fmt/format.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+
 #include <chrono>
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 #include "common/cmd_channel_impl.hpp"
 #include "common/cmd_channel_socket_utilities.hpp"
@@ -16,8 +18,6 @@
 #include "guest_config.h"
 #include "guestlib.h"
 #include "manager_service.proto.h"
-#include <absl/strings/str_split.h>
-#include <fmt/format.h>
 
 namespace {
 extern struct command_channel_vtable command_channel_socket_tcp_vtable;
@@ -32,7 +32,8 @@ extern int nw_global_vm_id;
  */
 std::vector<struct command_channel *> command_channel_socket_tcp_guest_new() {
   // Connect API server manager
-  std::vector<std::string> manager_addr = absl::StrSplit(guestconfig::config->manager_address_, absl::ByAnyChar(":-/ "));
+  std::vector<std::string> manager_addr =
+      absl::StrSplit(guestconfig::config->manager_address_, absl::ByAnyChar(":-/ "));
   DCHECK(manager_addr.size() == 2) << "Invalid API server manager address";
   struct sockaddr_in addr;
   if (!ava::support::ResolveTcpAddr(&addr, manager_addr[0], manager_addr[1])) {
@@ -56,18 +57,19 @@ std::vector<struct command_channel *> command_channel_socket_tcp_guest_new() {
   zpp::serializer::memory_output_archive out(request_buf);
   out(request);
   uint32_t request_length = static_cast<uint32_t>(request_buf.size());
-  if (!ava::support::SendData(manager_sock, reinterpret_cast<const char*>(&request_length), sizeof(uint32_t))) {
+  if (!ava::support::SendData(manager_sock, reinterpret_cast<const char *>(&request_length), sizeof(uint32_t))) {
     AVA_LOG(FATAL) << "Fail to send request len to manager";
     abort();
   }
-  if (!ava::support::SendData(manager_sock, reinterpret_cast<const char*>(request_buf.data()), request_length)) {
+  if (!ava::support::SendData(manager_sock, reinterpret_cast<const char *>(request_buf.data()), request_length)) {
     AVA_LOG(FATAL) << "Fail to send request body to manager";
     abort();
   }
 
   // De-serialize API server addresses
   uint32_t reply_length = 0;
-  if (!ava::support::RecvData(manager_sock, reinterpret_cast<char*>(&reply_length), sizeof(uint32_t), /* eof= */ nullptr)) {
+  if (!ava::support::RecvData(manager_sock, reinterpret_cast<char *>(&reply_length), sizeof(uint32_t),
+                              /* eof= */ nullptr)) {
     AVA_LOG(FATAL) << "Fail to receive reply len";
     abort();
   }
@@ -75,7 +77,8 @@ std::vector<struct command_channel *> command_channel_socket_tcp_guest_new() {
   std::vector<unsigned char> reply_buf(reply_length);
   zpp::serializer::memory_input_archive in(reply_buf);
 
-  if (!ava::support::RecvData(manager_sock, reinterpret_cast<char*>(reply_buf.data()), reply_length, /* eof= */ nullptr)) {
+  if (!ava::support::RecvData(manager_sock, reinterpret_cast<char *>(reply_buf.data()), reply_length,
+                              /* eof= */ nullptr)) {
     AVA_LOG(FATAL) << "Fail to receive reply from manager";
     abort();
   }

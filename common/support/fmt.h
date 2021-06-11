@@ -21,4 +21,4 @@ struct formatter<absl::string_view> : formatter<string_view> {
 
 }  // namespace fmt
 
-#endif // _AVA_SUPPORT_FMT_H_
+#endif  // _AVA_SUPPORT_FMT_H_
