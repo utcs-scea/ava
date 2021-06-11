@@ -1,8 +1,20 @@
 from typing import Any, List, Dict
 import copy
 
-from nightwatch.parser.c.clanginterface import *
-from clang.cindex import Diagnostic, Index, LinkageKind, StorageClass
+# pylint: disable=unused-import
+from nightwatch.parser.c.reload_libclang import clang_flags
+from clang.cindex import (
+    Cursor,
+    CursorKind,
+    Diagnostic,
+    File,
+    Index,
+    LinkageKind,
+    StorageClass,
+    TranslationUnit,
+    TypeKind,
+)
+# pylint: disable=ungrouped-imports
 from nightwatch import (
     error, info, warning, location, term, MultipleError
 )
@@ -10,7 +22,6 @@ from nightwatch.parser.c.rules import (
     Functions,
     Types,
     ConstPointerTypes,
-    ConditionalType,
     NonconstPointerTypes,
     PointerTypes,
     NonTransferableTypes,
@@ -36,6 +47,7 @@ from nightwatch.parser.c.util import (
 from nightwatch.model import (
     API,
     Argument,
+    ConditionalType,
     Function,
     FunctionPointer,
     Location,
