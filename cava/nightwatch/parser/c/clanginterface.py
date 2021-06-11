@@ -38,6 +38,7 @@ class _TypeExtension:
 
     @replace
     def get_pointee(self):
+        # pylint: disable=protected-access
         pointee = self.expanded._original_get_pointee()
         if pointee.kind == TypeKind.INVALID:
             return self.element_type
@@ -46,6 +47,10 @@ class _TypeExtension:
 
 @extension(TranslationUnit)
 class _TranslationUnitExtension:
+    def get_file_content(self, file):
+        return self._get_file_content(file)
+
+    # pylint: disable=attribute-defined-outside-init
     def _get_file_content(self, file):
         if not hasattr(self, "_file_contents"):
             self._file_contents = {}
@@ -90,23 +95,23 @@ class _CursorExtension:
 
     @property
     def source(self):
-        tu = self.translation_unit
-        file = self.location.file
+        tu: TranslationUnit = self.translation_unit
+        file: TranslationUnit = self.location.file
         s = self.extent.start.offset
         e = self.extent.end.offset
-        res = str(tu._get_file_content(file)[s:e], encoding="utf-8")
+        res = str(tu.get_file_content(file)[s:e], encoding="utf-8")
         # if not res:
         #     print((file, s, e))
         return res
 
     @property
     def referenced_name(self):
-        tu = self.translation_unit
-        file = self.location.file
-        range = self.referenced_name_range
-        s = range.start.offset
-        e = range.end.offset
-        res = str(tu._get_file_content(file)[s:e], encoding="utf-8")
+        tu: TranslationUnit = self.translation_unit
+        file: TranslationUnit = self.location.file
+        range_ = self.referenced_name_range
+        s = range_.start.offset
+        e = range_.end.offset
+        res = str(tu.get_file_content(file)[s:e], encoding="utf-8")
         # if not res:
         #     print((file, s, e))
         return res
@@ -114,12 +119,14 @@ class _CursorExtension:
     @property
     def children(self) -> Tuple[Cursor]:
         if not hasattr(self, "_children"):
+            # pylint: disable=attribute-defined-outside-init
             self._children = tuple(self.get_children())
         return self._children
 
     @property
     def tokens(self):
         if not hasattr(self, "_tokens"):
+            # pylint: disable=attribute-defined-outside-init
             self._tokens = tuple(self.get_tokens())
         return self._tokens
 
@@ -219,5 +226,5 @@ class _CursorExtension:
 class _FileExtension:
     @property
     def source(self):
-        tu = self._tu
-        return str(tu._get_file_content(self), encoding="utf-8")
+        tu: TranslationUnit = self._tu
+        return str(tu.get_file_content(self), encoding="utf-8")
