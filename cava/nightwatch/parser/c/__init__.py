@@ -14,10 +14,9 @@ from clang.cindex import (
     TranslationUnit,
     TypeKind,
 )
+
 # pylint: disable=ungrouped-imports
-from nightwatch import (
-    error, info, warning, location, term, MultipleError
-)
+from nightwatch import error, info, warning, location, term, MultipleError
 from nightwatch.parser.c.rules import (
     Functions,
     Types,
@@ -186,9 +185,7 @@ def parse(filename: str, include_path: List[str], definitions: List[Any], extra_
 
                 parse_assert(new_type is not None, "ava_type_cast must provide a new type")
                 # Attach the original type and then perform conversion using the new type.
-                our_annotations["original_type"] = convert_type(
-                    tpe, name, annotation_set(), original_containing_types
-                )
+                our_annotations["original_type"] = convert_type(tpe, name, annotation_set(), original_containing_types)
                 tpe = new_type
 
             if tpe.is_function_pointer():

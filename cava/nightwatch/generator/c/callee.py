@@ -135,9 +135,7 @@ def convert_input_for_argument(arg: Argument, src: str):
 
         def default_case():
             def deref_code(handlepool_function: str) -> callable:
-                return lambda: (
-                    Expr(type_.transfer).one_of({"NW_CALLBACK", "NW_CALLBACK_REGISTRATION"})
-                ).if_then_else(
+                return lambda: (Expr(type_.transfer).one_of({"NW_CALLBACK", "NW_CALLBACK_REGISTRATION"})).if_then_else(
                     f"{local_value} =  ({param_value} == NULL) ? NULL : {type_.callback_stub_function};",
                     (Expr(type_.transfer).equals("NW_HANDLE")).if_then_else(
                         f"{local_value} = ({local_value_type})"
@@ -384,8 +382,7 @@ def record_call_metadata(handle: str, type_: Optional[Type]) -> Expr:
         return f"ava_add_dependency(&__ava_endpoint, {dependent}, {dependency});"
 
     return (
-        Expr(type_ is None or type_.object_record)
-        .if_then_else(
+        Expr(type_ is None or type_.object_record).if_then_else(
             f"""
         {log_call_command}{log_ret_command}
         ava_add_recorded_call(&__ava_endpoint, {handle}, ava_new_offset_pair(__call_log_offset, __ret_log_offset));

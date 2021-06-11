@@ -232,15 +232,16 @@ def compute_total_size(args: Iterable[Argument], copy_pred: Callable[[Argument],
                     depth,
                     argument,
                     original_type=type_.original_type,
-                    **other
+                    **other,
                 ),
                 compute_size(
                     values,
                     type_.else_type,
                     type_.else_type,
-                    depth, argument,
+                    depth,
+                    argument,
                     original_type=type_.original_type,
-                    **other
+                    **other,
                 ),
             )
 

@@ -13,7 +13,7 @@ from nightwatch import (
     captured_errors,
     _build_assert,
     _build_requires,
-    _build_expects
+    _build_expects,
 )
 
 __all__ = [

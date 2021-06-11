@@ -8,6 +8,7 @@ from nightwatch.extension import extension
 from nightwatch.generator import generate_expects
 from nightwatch.model import Type, Function, StaticArray, lines
 
+
 @extension(Type)
 class _TypeExtensions:
     # def deep_sizeof(self, inner=False):

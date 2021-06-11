@@ -1,6 +1,7 @@
 from typing import Any, List, Tuple
 
 from nightwatch import location, term, capture_errors, captured_errors
+
 # pylint: disable=unused-import
 from nightwatch.generator.common import _APISpelling
 from nightwatch.model import API, Argument, Function, guard_macro_spelling, lines

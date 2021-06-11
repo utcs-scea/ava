@@ -45,10 +45,7 @@ def copy_result_for_argument(arg: Argument, dest: str, src: str) -> ExprOrStr:
         def get_buffer_code():
             nonlocal reported_missing_lifetime
             if not reported_missing_lifetime:
-                if (
-                    ((arg.ret or arg.output and depth > 0) and type_.buffer)
-                    and type_.lifetime == "AVA_CALL"
-                ):
+                if ((arg.ret or arg.output and depth > 0) and type_.buffer) and type_.lifetime == "AVA_CALL":
                     reported_missing_lifetime = True
                     generate_expects(
                         False,
