@@ -1,5 +1,7 @@
-#!/bin/bash
+#!/bin/bash -e
 
+sudo apt update
+sudo apt install -y lsb-release
 if [[ $(lsb_release -rs) != "18.04" ]]; then
   echo "The support of $(lsb_release -ds) is untested. Continue (y/n)?"
   read -r yn_value
