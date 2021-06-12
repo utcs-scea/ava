@@ -1,0 +1,7 @@
+FROM ava-cuda-10.1
+RUN git clone https://github.com/mlcommons/inference && \
+    python3 -m pip install tensorflow-gpu && \
+    cd inference/loadgen && CFLAGS="-std=c++14" python3 setup.py develop --user && \
+    cd ../vision/classification_and_detection && \
+
+CMD ["bash"]
