@@ -14,3 +14,4 @@ kvm/
 qemu/
 third_party/boost_1_71_0/
 third_party/deps/
+third_party/boost_1_71_0.tar.gz
