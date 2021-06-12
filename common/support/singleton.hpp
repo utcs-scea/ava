@@ -3,6 +3,9 @@
 
 #include <memory>
 
+namespace ava {
+namespace support {
+
 template <typename T>
 class Singleton {
  public:
@@ -18,14 +21,7 @@ class Singleton {
   Singleton() {}
 };
 
-class ApiServerSetting final : public Singleton<ApiServerSetting> {
- public:
-  void set_listen_port(unsigned int p) { listen_port = p; }
-
-  unsigned int get_listen_port() const { return listen_port; }
-
- private:
-  unsigned int listen_port;
-};
+}  // namespace support
+}  // namespace ava
 
 #endif  // AVA_SINGLETON_HPP_

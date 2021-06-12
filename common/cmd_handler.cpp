@@ -5,7 +5,7 @@
 #include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
 #include "common/shadow_thread_pool.hpp"
-#include "common/singleton.hpp"
+#include "common/worker_context.hpp"
 
 #ifdef __cplusplus
 #include <atomic>
@@ -264,8 +264,9 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
 
     // TODO(migration): Move to a separate file.
   case COMMAND_START_LIVE_MIGRATION: {
-    auto &setting = ApiServerSetting::instance();
-    transfer_chan = (struct command_channel *)command_channel_socket_tcp_migration_new(setting.get_listen_port(), 1);
+    auto &wctx = ava::WorkerContext::instance();
+    transfer_chan =
+        (struct command_channel *)command_channel_socket_tcp_migration_new(wctx.get_api_server_listen_port(), 1);
     struct timeval start, end;
 
     FILE *fd;

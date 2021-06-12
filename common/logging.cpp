@@ -69,6 +69,20 @@ void ava_error(const char *format, ...) {
   free(str);
 }
 
+void ava_error(const char *format, ...) {
+  char *str = NULL;
+  va_list ap;
+
+  va_start(ap, format);
+  int len = vasprintf(&str, format, ap);
+  static_cast<void>(len);
+  va_end(ap);
+
+  AVA_FATAL << str;
+  free(str);
+  raise(SIGABORT);
+}
+
 namespace ava {
 namespace logging {
 
