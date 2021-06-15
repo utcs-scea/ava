@@ -1,8 +1,10 @@
 #include "logging.h"
 
 #include <fmt/format.h>
+#include <stdlib.h>
 
-#include "cstdarg"
+#include <csignal>
+#include <cstdarg>
 
 void ava_trace(const char *format, ...) {
   char *str = NULL;
@@ -71,6 +73,22 @@ void ava_fatal(const char *format, ...) {
 
 namespace ava {
 namespace logging {
+
+LogMessageFatal::LogMessageFatal(const char *file, int line)
+    : record_(plog::fatal, "", line, file, PLOG_GET_THIS(), PLOG_DEFAULT_INSTANCE_ID) {}
+
+LogMessageFatal::LogMessageFatal(const char *file, int line, const std::string &result)
+    : record_(plog::fatal, "", line, file, PLOG_GET_THIS(), PLOG_DEFAULT_INSTANCE_ID) {
+  record_.ref() << std::string(result);
+}
+
+LogMessageFatal::~LogMessageFatal() {
+  (*plog::get<PLOG_DEFAULT_INSTANCE_ID>()) += record_.ref();
+  raise(SIGABRT);
+  exit(EXIT_FAILURE);
+}
+
+plog::Record &LogMessageFatal::record() { return record_.ref(); }
 
 CheckOpMessageBuilder::CheckOpMessageBuilder(const char *exprtext) : stream_(new std::ostringstream) {
   *stream_ << exprtext << " (";

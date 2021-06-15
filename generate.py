@@ -60,6 +60,8 @@ CAVA_DIR = os.path.dirname(os.path.realpath(sys.argv[0])) + "/cava"
 CUDA_10_1_CFLAGS = "-I/usr/local/cuda-10.1/include -I/usr/local/cuda-10.1/nvvm/include".split(" ")
 GLIB2_CFLAGS = pkgconfig.cflags("glib-2.0").split(" ")
 FMT_CFLAGS = ["-I" + os.path.dirname(os.path.realpath(sys.argv[0])) + "/third_party/fmt/include"]
+GSL_CFLAGS = ["-I" + os.path.dirname(os.path.realpath(sys.argv[0])) + "/third_party/GSL/include"]
+ABSL_CFLAGS = ["-I" + os.path.dirname(os.path.realpath(sys.argv[0])) + "/third_party/abseil-cpp"]
 
 
 def check_cflags(force_build: bool = False):
@@ -76,7 +78,7 @@ def check_cflags(force_build: bool = False):
         logger.warning("GLIB2_CFLAGS is empty. Are you running in a virtual environment?")
         any_warning = True
 
-    for cflag in CUDA_10_1_CFLAGS + GLIB2_CFLAGS:
+    for cflag in CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS + GSL_CFLAGS:
         if cflag.startswith("-I"):
             if not include_dir_exists(cflag):
                 any_warning = True
@@ -87,15 +89,30 @@ def check_cflags(force_build: bool = False):
 
 SPEC_LIST = {
     "cudadrv": ("samples/cudadrv/cuda_driver.c", [] + CUDA_10_1_CFLAGS),
-    "cudart": ("samples/cudart/cudart.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS),
+    "cudart": (
+        "samples/cudart/cudart.cpp",
+        ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS + GSL_CFLAGS + ABSL_CFLAGS,
+    ),
     "demo": ("samples/demo/demo.c", ["-Iheaders"]),
     "gti": ("samples/gti/gti.c", []),
     "ncsdk": ("samples/ncsdk/mvnc.c", []),
-    "onnx_dump": ("samples/onnxruntime/onnx_dump.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS),
-    "onnx_opt": ("samples/onnxruntime/onnx_opt.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS),
+    "onnx_dump": (
+        "samples/onnxruntime/onnx_dump.cpp",
+        ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS + GSL_CFLAGS + ABSL_CFLAGS,
+    ),
+    "onnx_opt": (
+        "samples/onnxruntime/onnx_opt.cpp",
+        ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS + GSL_CFLAGS + ABSL_CFLAGS,
+    ),
     "opencl": ("samples/opencl/opencl.c", []),
-    "pt_dump": ("samples/pytorch/pt_dump.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS),
-    "pt_opt": ("samples/pytorch/pt_opt.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS),
+    "pt_dump": (
+        "samples/pytorch/pt_dump.cpp",
+        ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS + GSL_CFLAGS + ABSL_CFLAGS,
+    ),
+    "pt_opt": (
+        "samples/pytorch/pt_opt.cpp",
+        ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS + GSL_CFLAGS + ABSL_CFLAGS,
+    ),
     "qat": (
         "samples/quickassist/qat.c",
         [
@@ -105,8 +122,14 @@ SPEC_LIST = {
     ),
     "test": ("samples/test/libtrivial.c", ["-I../test"]),
     "tf_c": ("samples/tensorflow_c/tf_c.c", []),
-    "tf_dump": ("samples/tensorflow/tf_dump.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS),
-    "tf_opt": ("samples/tensorflow/tf_opt.cpp", ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS),
+    "tf_dump": (
+        "samples/tensorflow/tf_dump.cpp",
+        ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS + GSL_CFLAGS + ABSL_CFLAGS,
+    ),
+    "tf_opt": (
+        "samples/tensorflow/tf_opt.cpp",
+        ["-Iheaders"] + CUDA_10_1_CFLAGS + GLIB2_CFLAGS + FMT_CFLAGS + GSL_CFLAGS + ABSL_CFLAGS,
+    ),
 }
 
 

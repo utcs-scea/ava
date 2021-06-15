@@ -397,6 +397,7 @@ class Function:
     callback_decl: bool
     ignore: bool
     generate_timing_code: bool
+    generate_stats_code: bool
     disable_native: bool
 
     def __init__(
@@ -416,6 +417,7 @@ class Function:
         self.supported = True
         self.location = location
         self.generate_timing_code = False
+        self.generate_stats_code = False
         self.disable_native = False
         self.__dict__.update(annotations)
 

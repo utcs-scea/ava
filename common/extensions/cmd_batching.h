@@ -35,6 +35,7 @@ struct command_batch {
   GAsyncQueue *pending_cmds;
   GAsyncQueue *active_cmds;
   pthread_t process_thread;
+  int guest_stats_fd;
   int running;
 };
 

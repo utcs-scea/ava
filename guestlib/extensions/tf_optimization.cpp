@@ -4,7 +4,9 @@
 #include <stdint.h>
 
 #include "common/endpoint_lib.hpp"
-#include "common/extensions/cmd_batching.h"
+// #include "common/extensions/cmd_batching.h"
+#include "guestlib/extensions/command_batch_worker.h"
+#include "guestlib/guest_thread.h"
 
 GQueue *call_configuration_stack;
 GTree *gpu_address_set;
@@ -41,7 +43,9 @@ void guestlib_tf_opt_init(void) {
   idle_cu_event_pool = g_queue_new();
 
   /* API batch */
-  nw_global_cmd_batch = cmd_batch_thread_init();
+  // nw_global_cmd_batch = cmd_batch_thread_init();
+  batch_worker = new ava::CmdBatchingWorker();
+  batch_worker->Start();
 }
 
 void guestlib_tf_opt_fini(void) {
@@ -56,7 +60,9 @@ void guestlib_tf_opt_fini(void) {
   g_queue_free(cu_event_pool);
   g_queue_free(idle_cu_event_pool);
 
-  cmd_batch_thread_fini(nw_global_cmd_batch);
+  // cmd_batch_thread_fini(nw_global_cmd_batch);
+  batch_worker->Stop();
+  delete batch_worker;
 }
 
 int free_cu_event_pool(GQueue *pool) {

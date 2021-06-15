@@ -282,6 +282,7 @@ typedef void (*ava_buffer_deallocator)(void *ptr);
 // This is a utility annotation used to generate code to measure time spent in different parts
 // of the offloading.
 #define ava_time_me __AVA_ANNOTATE_FLAG(generate_timing_code)
+#define ava_stats __AVA_ANNOTATE_FLAG(generate_stats_code)
 
 #define ava_unsupported __AVA_ANNOTATE_FLAG(unsupported)
 

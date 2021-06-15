@@ -1,29 +1,21 @@
-#include "common/extensions/cmd_batching.h"
+#include "guestlib/extensions/command_batch_worker.h"
 
-#include <pthread.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/syscall.h>
+#include <absl/functional/bind_front.h>
+#include <glib.h>
 
 #include <gsl/gsl>
+#include <memory>
 
 #include "common/cmd_channel.hpp"
 #include "common/common_context.h"
+#include "common/declaration.h"
 #include "common/endpoint_lib.hpp"
-#include "common/linkage.h"
+#include "common/extensions/cmd_batching.h"
 #include "common/logging.h"
 #include "common/shadow_thread_pool.hpp"
-#include "common/support/fs.h"
+#include "guestlib/guest_thread.h"
 
-#define batch_array_index(array, index_) ((struct command_base *)g_ptr_array_index(array, index_))
-
-// struct command_batch *nw_global_cmd_batch = NULL;
-
-struct command_wrapper {
-  struct command_base *cmd;
-  struct command_channel *chan;
-  int is_async;
-};
+ava::CmdBatchingWorker *batch_worker = nullptr;
 
 /**
  * batch_emit - Emit batched commands to the API server
@@ -61,9 +53,36 @@ static void batch_emit(GAsyncQueue *active_cmds) {
   g_queue_free(queue);
 }
 
+struct command_wrapper {
+  struct command_base *cmd;
+  struct command_channel *chan;
+  int is_async;
+};
+
+namespace ava {
+
+CmdBatchingWorker::CmdBatchingWorker()
+    : cmd_batching_thread_("CmdBatchingWorker", absl::bind_front(&CmdBatchingWorker::CmdBatchingThreadMain, this)) {
+  pending_cmds_ = g_async_queue_new_full((GDestroyNotify)free);
+  active_cmds_ = g_async_queue_new_full((GDestroyNotify)free);
+}
+
+CmdBatchingWorker::~CmdBatchingWorker() {
+  g_async_queue_unref(active_cmds_);
+  // FIXME: g_async_queue_unref: assertion 'queue->waiting_threads == 0' failed
+  // g_async_queue_unref(pending_cmds_);
+}
+
+void CmdBatchingWorker::Start() { cmd_batching_thread_.Start(); }
+
+void CmdBatchingWorker::Stop() {
+  running_ = false;
+  cmd_batching_thread_.Cancel();
+  cmd_batching_thread_.Join();
+}
+
 /**
- * batch_insert_command - Insert a new command to the batch
- * @cmd_batch: command batch struct
+ * enqueue - Insert a new command to the batch
  * @cmd: command to be inserted to the batch
  * @chan: channel to emit the command
  * @is_async: whether this command is asynchronous or not
@@ -71,26 +90,24 @@ static void batch_emit(GAsyncQueue *active_cmds) {
  * When the batched commands reach the maximum batch size, we emit the batch to
  * the API server.
  */
-EXPORTED_WEAKLY void batch_insert_command(struct command_batch *cmd_batch, struct command_base *cmd,
-                                          struct command_channel *chan, int is_async) {
+void CmdBatchingWorker::enqueue_cmd(::command_base *cmd, ::command_channel *chan, bool is_async) {
   struct command_wrapper *wrap = reinterpret_cast<struct command_wrapper *>(g_malloc(sizeof(struct command_wrapper)));
   wrap->cmd = cmd;
   wrap->chan = chan;
   wrap->is_async = is_async;
 
   ava_debug("Add command (%ld) to pending batched command list\n", cmd->command_id);
-  g_async_queue_push(cmd_batch->pending_cmds, (gpointer)wrap);
+  g_async_queue_push(pending_cmds_, (gpointer)wrap);
 }
 
-static void *batch_process_thread(void *opaque) {
-  auto common_context = ava::CommonContext::instance();
-  struct command_batch *cmd_batch = (struct command_batch *)opaque;
+void CmdBatchingWorker::CmdBatchingThreadMain() {
   struct command_wrapper *wrap;
   gdouble elapsed_time;
   GTimer *timer = g_timer_new();
-  int64_t thread_id = shadow_thread_id(common_context->nw_shadow_thread_pool);
+  auto common_ctx = ava::CommonContext::instance();
+  int64_t thread_id = shadow_thread_id(common_ctx->nw_shadow_thread_pool);
 
-  cmd_batch->running = 1;
+  running_ = true;
   if (pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL)) {
     perror("pthread_setcancelstate failed\n");
     exit(0);
@@ -103,10 +120,10 @@ static void *batch_process_thread(void *opaque) {
   fprintf(stderr, "Start batch processing thread\n");
   g_timer_start(timer);
 
-  while (cmd_batch->running) {
-    wrap = (struct command_wrapper *)g_async_queue_timeout_pop(cmd_batch->pending_cmds, (BATCH_QUEUE_TIME_OUT_US));
+  while (running_) {
+    wrap = (struct command_wrapper *)g_async_queue_timeout_pop(pending_cmds_, (BATCH_QUEUE_TIME_OUT_US));
 
-    if (!cmd_batch->running) break;
+    if (!running_) break;
 
     /* Special case:
      * cuCtxSetCurrent must be inserted to the batch to set the correct CUDA context for the
@@ -117,7 +134,7 @@ static void *batch_process_thread(void *opaque) {
      */
 
     /* Emit the single synchronous API. */
-    if (wrap && !wrap->is_async && g_async_queue_length(cmd_batch->active_cmds) == 0) {
+    if (wrap && !wrap->is_async && g_async_queue_length(active_cmds_) == 0) {
       ava_debug("Emit a synchronous command %ld, thread id %lx->%lx\n", wrap->cmd->command_id, wrap->cmd->thread_id,
                 thread_id);
       wrap->cmd->thread_id = thread_id;
@@ -127,19 +144,19 @@ static void *batch_process_thread(void *opaque) {
       continue;
     }
 
-    if (wrap) g_async_queue_push(cmd_batch->active_cmds, (gpointer)wrap->cmd);
+    if (wrap) g_async_queue_push(active_cmds_, (gpointer)wrap->cmd);
 
     /* Emit the batch when there is a synchronous API, or we have enough commands in the batch,
      * or it has been a while (10ms) since last emit. */
     g_timer_stop(timer);
     elapsed_time = g_timer_elapsed(timer, NULL);
-    if ((wrap && !wrap->is_async) || g_async_queue_length(cmd_batch->active_cmds) >= BATCH_SIZE ||
+    if ((wrap && !wrap->is_async) || g_async_queue_length(active_cmds_) >= BATCH_SIZE ||
         elapsed_time >= BATCH_TIME_OUT_US) {
       if (wrap && !wrap->is_async) {
         ava_debug("Emit a batch ending with a synchronous command %ld\n", wrap->cmd->command_id);
       }
 
-      batch_emit(cmd_batch->active_cmds);
+      batch_emit(active_cmds_);
       g_timer_start(timer);
     } else {
       g_timer_continue(timer);
@@ -153,41 +170,4 @@ static void *batch_process_thread(void *opaque) {
   return NULL;
 }
 
-/**
- * batch_init_thread - Initialize command batch
- *
- * This function initializes command batch structure, and starts a batch
- * processing thread.
- */
-EXPORTED_WEAKLY struct command_batch *cmd_batch_thread_init(void) {
-  struct command_batch *cmd_batch = (struct command_batch *)calloc(1, sizeof(struct command_batch));
-#ifdef __AVA_ENABLE_STATS
-  auto tid = gsl::narrow_cast<int>(syscall(SYS_gettid));
-  auto stat_fname = fmt::format("./guestlib_stats_{}", tid);
-  auto stat_path = ava::support::GetRealPath(stat_fname);
-  if (auto fd = ava::support::Create(stat_path)) {
-    cmd_batch->guest_stats_fd = *fd;
-  } else {
-    cmd_batch->guest_stats_fd = STDOUT_FILENO;
-  }
-#else
-  cmd_batch->guest_stats_fd = STDOUT_FILENO;
-#endif
-
-  // TODO: extend it to multi-threads
-  cmd_batch->pending_cmds = g_async_queue_new_full((GDestroyNotify)free);
-  cmd_batch->active_cmds = g_async_queue_new_full((GDestroyNotify)free);
-  pthread_create(&cmd_batch->process_thread, NULL, &batch_process_thread, (void *)cmd_batch);
-
-  return cmd_batch;
-}
-
-EXPORTED_WEAKLY void cmd_batch_thread_fini(struct command_batch *cmd_batch) {
-  cmd_batch->running = 0;
-  if (pthread_cancel(cmd_batch->process_thread)) perror("pthread_cancel failed\n");
-  pthread_join(cmd_batch->process_thread, NULL);
-  g_async_queue_unref(cmd_batch->active_cmds);
-  // FIXME: g_async_queue_unref: assertion 'queue->waiting_threads == 0' failed
-  // g_async_queue_unref(cmd_batch->pending_cmds);
-  free(cmd_batch);
-}
+}  // namespace ava

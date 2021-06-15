@@ -4,8 +4,10 @@ ava_version("10.1.0");
 ava_identifier(PT_OPT);
 ava_number(13);
 ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -DAVA_PRELOAD_CUBIN);
+// To enable stat collecting, use the below line and uncomment the ava_stats definition
+// ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -DAVA_PRELOAD_CUBIN -D__AVA_ENABLE_STAT);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
-ava_guestlib_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/cmd_batching.cpp);
+ava_guestlib_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/command_batch_worker.cpp queue_worker.cpp);
 ava_worker_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/cmd_batching.cpp);
 ava_common_utility_srcs(extensions/cudart_10.1_utilities.cpp);
 ava_export_qualifier();
@@ -23,6 +25,8 @@ ava_soname(libcuda.so libcuda.so.1 libcudart.so.10 libcudart.so.10.1 libcublas.s
  */
 
 ava_non_transferable_types { ava_handle; }
+
+// ava_functions { ava_stats; }
 
 size_t __args_index_0;
 size_t __kernelParams_index_0;
@@ -56,6 +60,7 @@ ava_begin_utility;
 #include "common/logging.h"
 #include "common/extensions/tf_optimization.h"
 #include "common/extensions/cmd_batching.h"
+#include "guestlib/extensions/command_batch_worker.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
 
 #if !defined(__dv)

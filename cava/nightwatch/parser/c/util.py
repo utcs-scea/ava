@@ -95,7 +95,14 @@ def convert_location(loc: SourceLocation) -> Location:
 resource_directory = Path(__file__).parent
 nightwatch_parser_c_header = "nightwatch.h"
 
-function_annotations = {"synchrony", "ignore", "callback_decl", "object_record", "generate_timing_code"}
+function_annotations = {
+    "synchrony",
+    "ignore",
+    "callback_decl",
+    "object_record",
+    "generate_timing_code",
+    "generate_stats_code",
+}
 type_annotations = {
     "transfer",
     "success",
@@ -158,6 +165,7 @@ annotation_parsers = dict(
     lifetime=Expr,
     lifetime_coupled=Expr,
     generate_timing_code=_as_bool,
+    generate_stats_code=_as_bool,
 )
 
 annotation_relevant_kinds = frozenset((CursorKind.VAR_DECL, CursorKind.IF_STMT))

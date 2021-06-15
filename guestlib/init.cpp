@@ -12,6 +12,7 @@
 #include "common/linkage.h"
 #include "guest_config.h"
 #include "guestlib.h"
+#include "guestlib/guest_thread.h"
 #include "plog/Initializers/RollingFileInitializer.h"
 struct command_channel *chan;
 
@@ -20,19 +21,21 @@ extern int nw_global_vm_id;
 
 static struct command_channel *channel_create() { return chan; }
 
-EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id) {
+EXPORTED_WEAKLY void nw_init_log() {
   std::ios_base::Init();
-
   guestconfig::config = guestconfig::readGuestConfig();
   if (guestconfig::config == nullptr) exit(EXIT_FAILURE);
 #ifdef DEBUG
   guestconfig::config->print();
 #endif
-
   // Initialize logger
   std::string log_file = std::tmpnam(nullptr);
   plog::init(guestconfig::config->logger_severity_, log_file.c_str());
   std::cerr << "To check the state of AvA remoting progress, use `tail -f " << log_file << "`" << std::endl;
+}
+
+EXPORTED_WEAKLY void nw_init_guestlib(intptr_t api_id) {
+  ava::register_guestlib_main_thread(ava::GuestThread::kGuestStatsPath, ava::GuestThread::kGuestStatsPrefix);
 
 #ifdef AVA_PRINT_TIMESTAMP
   struct timeval ts;

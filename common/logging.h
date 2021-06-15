@@ -97,17 +97,23 @@ T CheckNotNull(const char *file, int line, const char *exprtext, T &&t) {
   return std::forward<T>(t);
 }
 
+class LogMessageFatal {
+ public:
+  LogMessageFatal(const char *file, int line);
+  LogMessageFatal(const char *file, int line, const std::string &result);
+  __attribute__((noreturn)) ~LogMessageFatal();
+  plog::Record &record();
+
+ private:
+  plog::Record record_;
+  LogMessageFatal(const LogMessageFatal &) = delete;
+  void operator=(const LogMessageFatal &) = delete;
+};
+
 }  // namespace logging
 }  // namespace ava
 
 #endif  // __CAVA__
-
-#define TRACE plog::verbose
-#define DEBUG plog::debug
-#define INFO plog::info
-#define WARNING plog::warning
-#define ERROR plog::error
-#define FATAL plog::fatal
 
 #define AVA_VERBOSE PLOG(plog::verbose)
 #define AVA_TRACE PLOG(plog::verbose)
@@ -115,9 +121,14 @@ T CheckNotNull(const char *file, int line, const char *exprtext, T &&t) {
 #define AVA_INFO PLOG(plog::info)
 #define AVA_WARNING PLOG(plog::warning)
 #define AVA_ERROR PLOG(plog::error)
-#define AVA_FATAL PLOG(plog::fatal)
-#define AVA_LOG(severity) PLOG(severity)
-#define CHECK(condition) PLOG_FATAL_IF(__AVA_PREDICT_FALSE(!(condition))) << "Check failed: " #condition " "
+#define AVA_FATAL ava::logging::LogMessageFatal(__FILE__, __LINE__).record()
+#define AVA_LOG(severity) AVA_##severity
+#define AVA_LOG_IF(severity, condition) \
+  if (!(condition)) {                   \
+    ;                                   \
+  } else                                \
+    AVA_LOG(severity)
+#define CHECK(condition) AVA_LOG_IF(FATAL, __AVA_PREDICT_FALSE(!(condition))) << "Check failed: " #condition " "
 
 #define CHECK_OP_LOG(name, op, val1, val2, log)                                                             \
   while (auto _result = std::unique_ptr<std::string>(                                                       \

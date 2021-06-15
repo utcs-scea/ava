@@ -14,6 +14,22 @@ def timing_code_guest(selector: str, name: str, enabled: bool) -> str:
     #endif\n"""
 
 
+def time_stamp_begin(name: str, enabled: bool) -> str:
+    if not enabled:
+        return ""
+    return f"""#ifdef __AVA_ENABLE_STAT
+               auto {name}_begin_ts = ava::GetMonotonicNanoTimestamp();
+    #endif\n"""
+
+
+def time_stamp_end(name: str, enabled: bool) -> str:
+    if not enabled:
+        return ""
+    return f"""#ifdef __AVA_ENABLE_STAT
+    auto {name}_end_ts = ava::GetMonotonicNanoTimestamp();
+    #endif\n"""
+
+
 def report_type_alloc_resources(ty: Type) -> str:
     ret = ""
     for resource, amount in ty.allocates_resources.items():
