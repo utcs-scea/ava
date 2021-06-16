@@ -426,25 +426,25 @@ struct ava_coupled_record_t *ava_coupled_record_new() {
 }
 
 static struct ava_metadata_base *ava_internal_metadata_unlocked(struct ava_endpoint *endpoint, const void *ptr) {
-  void *metadata = g_hash_table_lookup(metadata_map, ptr);
+  void *metadata = g_hash_table_lookup(nw_global_metadata_map, ptr);
   if (metadata == NULL) {
     metadata = calloc(1, endpoint->metadata_size);
-    g_hash_table_insert(metadata_map, (void *)ptr, metadata);
+    g_hash_table_insert(nw_global_metadata_map, (void *)ptr, metadata);
   }
   return (struct ava_metadata_base *)metadata;
 }
 
 struct ava_metadata_base *ava_internal_metadata(struct ava_endpoint *endpoint, const void *ptr) {
-  pthread_mutex_lock(&metadata_map_mutex);
+  pthread_mutex_lock(&nw_global_metadata_map_mutex);
   struct ava_metadata_base *ret = ava_internal_metadata_unlocked(endpoint, ptr);
-  pthread_mutex_unlock(&metadata_map_mutex);
+  pthread_mutex_unlock(&nw_global_metadata_map_mutex);
   return ret;
 }
 
 struct ava_metadata_base *ava_internal_metadata_no_create(struct ava_endpoint *AVA_UNUSED(endpoint), const void *ptr) {
-  pthread_mutex_lock(&metadata_map_mutex);
-  struct ava_metadata_base *ret = (struct ava_metadata_base *)g_hash_table_lookup(metadata_map, ptr);
-  pthread_mutex_unlock(&metadata_map_mutex);
+  pthread_mutex_lock(&nw_global_metadata_map_mutex);
+  struct ava_metadata_base *ret = (struct ava_metadata_base *)g_hash_table_lookup(nw_global_metadata_map, ptr);
+  pthread_mutex_unlock(&nw_global_metadata_map_mutex);
   return ret;
 }
 
@@ -517,17 +517,17 @@ void *ava_static_alloc(struct ava_endpoint *endpoint, int call_id, size_t size) 
 }
 
 void ava_add_recorded_call(struct ava_endpoint *endpoint, void *handle, struct ava_offset_pair_t *pair) {
-  pthread_mutex_lock(&metadata_map_mutex);
+  pthread_mutex_lock(&nw_global_metadata_map_mutex);
   struct ava_metadata_base *__internal_metadata = ava_internal_metadata_unlocked(endpoint, handle);
   if (__internal_metadata->recorded_calls == NULL) {
     __internal_metadata->recorded_calls = g_ptr_array_new_full(1, free);
   }
   g_ptr_array_add(__internal_metadata->recorded_calls, pair);
-  pthread_mutex_unlock(&metadata_map_mutex);
+  pthread_mutex_unlock(&nw_global_metadata_map_mutex);
 }
 
 void ava_expunge_recorded_calls(struct ava_endpoint *endpoint, struct command_channel_log *log, void *handle) {
-  pthread_mutex_lock(&metadata_map_mutex);
+  pthread_mutex_lock(&nw_global_metadata_map_mutex);
   struct ava_metadata_base *__internal_metadata = ava_internal_metadata_unlocked(endpoint, handle);
   if (__internal_metadata->recorded_calls != NULL) {
     for (size_t i = 0; i < __internal_metadata->recorded_calls->len; i++) {
@@ -537,17 +537,17 @@ void ava_expunge_recorded_calls(struct ava_endpoint *endpoint, struct command_ch
       command_channel_log_update_flags(log, pair->b, 1);
     }
   }
-  pthread_mutex_unlock(&metadata_map_mutex);
+  pthread_mutex_unlock(&nw_global_metadata_map_mutex);
 }
 
 void ava_add_dependency(struct ava_endpoint *endpoint, void *a, void *b) {
-  pthread_mutex_lock(&metadata_map_mutex);
+  pthread_mutex_lock(&nw_global_metadata_map_mutex);
   struct ava_metadata_base *__internal_metadata = ava_internal_metadata_unlocked(endpoint, a);
   if (__internal_metadata->dependencies == NULL) {
     __internal_metadata->dependencies = g_ptr_array_new_full(1, NULL);
   }
   g_ptr_array_add(__internal_metadata->dependencies, b);
-  pthread_mutex_unlock(&metadata_map_mutex);
+  pthread_mutex_unlock(&nw_global_metadata_map_mutex);
 }
 
 void ava_endpoint_init(struct ava_endpoint *endpoint, size_t metadata_size, uint8_t counter_tag) {
