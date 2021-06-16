@@ -44,6 +44,8 @@ run:
 ./generate.py -h
 ```
 
+> Please visit [Generate Code](generate_code.md) for more information.
+
 | API framework    | Version | Status   |
 | ---------------- | ------- | -------- |
 | CUDA driver      | 10.1    | TESTED   |

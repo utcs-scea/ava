@@ -26,6 +26,7 @@ Documentations
 --------------
 
 * [Build and Setup](docs/build_and_setup.md)
+* [Generate Code](docs/generate_code.md)
 * [Guestlib Configurations](config/README.md)
 * [Virtualize (Your Own) New APIs](docs/virtualize_new_api.md)
 * [Introduction to LAPIS](cava/lapis.md)

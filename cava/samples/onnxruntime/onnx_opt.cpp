@@ -22898,30 +22898,3 @@ ava_utility void __helper_worker_init_epilogue() {
 ava_guestlib_init_prologue(__helper_guestlib_init_prologue());
 ava_guestlib_fini_prologue(__helper_guestlib_fini_prologue());
 ava_worker_init_epilogue(__helper_worker_init_epilogue());
-
-ava_send_code(
-"send_code = is_async.if_then_else(\n\
-    f\"\"\"\n\
-    batch_insert_command(nw_global_cmd_batch, (struct command_base*)__cmd, __chan, 1);\n\
-    \"\"\".strip(),\n\
-    f\"\"\"\n\
-    batch_insert_command(nw_global_cmd_batch, (struct command_base*)__cmd, __chan, 0);\n\
-    \"\"\".strip())\n\
-if f.name == \"__do_batch_emit\":\n\
-   send_code = f\"\"\"\n\
-      command_channel_send_command(__chan, (struct command_base*)__cmd);\n\
-   \"\"\".strip()");
-
-ava_reply_code(
-"reply_code = is_async.if_then_else(\n\
-    f\"\"\"\n\
-    //TODO: batch ava_async APIs\' return command\n\
-    //batch_insert_command(nw_global_cmd_batch, (struct command_base*)__cmd, __chan, 1);\n\
-    \"\"\".strip(),\n\
-    f\"\"\"\n\
-    command_channel_send_command(__chan, (struct command_base*)__ret);\n\
-    \"\"\".strip())");
-
-ava_worker_argument_process_code(
-"worker_argument_process_code = \"__handle_command_cudart_opt_single(__chan, handle_pool, __log, NULL);\".strip() \
-  if f.name == \"__do_batch_emit\" else \"\"");
