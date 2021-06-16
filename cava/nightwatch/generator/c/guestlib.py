@@ -39,7 +39,7 @@ void destroy_guestlib(void) {{
 #define __chan nw_global_command_channel
 
 {lines(function_implementation(f) for f in api.callback_functions)}
-{lines(function_implementation(f) for f in api.real_functions)}
+{lines(function_implementation(f, api.enabled_optimizations) for f in api.real_functions)}
 {lines(unsupported_function_implementation(f) for f in api.unsupported_functions)}
 
 ////// Replacement declarations

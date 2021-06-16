@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from nightwatch import location, term
 from nightwatch.c_dsl import Expr, ExprOrStr
@@ -292,22 +292,27 @@ def convert_result_for_argument(arg: Argument, dest: str) -> ExprOrStr:
         return (Expr(arg.output) | arg.ret).if_then_else(comment_block(f"Output: {arg}", conv))
 
 
-def call_command_implementation(f: Function):
+def call_command_implementation(f: Function, enabled_opts: List[str] = None):
     with location(f"at {term.yellow(str(f.name))}", f.location):
         alloc_list = AllocList(f)
 
         # pylint: disable=possibly-unused-variable
         is_async = ~Expr(f.synchrony).equals("NW_SYNC")
-        reply_code = """
-            command_channel_send_command(__chan, (struct command_base*)__ret);
-        """.strip()
 
-        if f.api.reply_code:
-            import_code = f.api.reply_code.encode("ascii", "ignore").decode("unicode_escape")[1:-1]
-            ldict = locals()
-            # pylint: disable=exec-used
-            exec(import_code, globals(), ldict)
-            reply_code = ldict["reply_code"]
+        if enabled_opts:
+            # Enable batching optimization: batch the reply command; but for now we do not send reply
+            # at all (because all batched APIs are ava_async).
+            if "batching" in enabled_opts:
+                reply_code = is_async.if_then_else(
+                    "",
+                    """
+                    command_channel_send_command(__chan, (struct command_base*)__ret);
+                    """.strip(),
+                )
+        else:
+            reply_code = """
+                command_channel_send_command(__chan, (struct command_base*)__ret);
+            """.strip()
 
         worker_argument_process_code = ""
         if f.api.worker_argument_process_code:

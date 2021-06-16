@@ -119,6 +119,15 @@ def cava_main():
         action="store_true",
         help="Output the API model in roughly the input format. This will loose information.",
     )
+    parser.add_argument(
+        "--optimization",
+        "-O",
+        type=str,
+        action="append",
+        dest="optimizations",
+        choices=["batching"],
+        help="Enable code generation for AvA optimizations.",
+    )
     args = parser.parse_args()
 
     if args.language.lower() == "c":
@@ -137,6 +146,7 @@ def cava_main():
             verbose=args.verbose,
             print_missing=args.missing,
         )
+        api.enable_optimizations(args.optimizations)
         if args.dump:
             print(api)
         generate_c(api)

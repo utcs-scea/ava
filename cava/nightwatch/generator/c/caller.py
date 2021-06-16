@@ -319,8 +319,6 @@ def attach_for_argument(arg: Argument, dest: str):
 
 def return_command_implementation(f: Function):
     with location(f"at {term.yellow(str(f.name))}", f.location):
-        # pthread_mutex_lock(&nw_handler_lock);
-        # took_lock = 1;
         generate_requires(
             not f.return_value.type.buffer or f.return_value.type.lifetime != Expr("AVA_CALL"),
             "Returned buffers must have a lifetime other than `call' "

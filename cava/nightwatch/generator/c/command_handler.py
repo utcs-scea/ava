@@ -33,7 +33,7 @@ def handle_command_function(api: API, calls: Iterable[Function], returns: Iterab
         int ava_is_in, ava_is_out;
         switch (__cmd->command_id) {{
         {lines(return_command_implementation(f) for f in returns)}
-        {lines(call_command_implementation(f) for f in calls)}
+        {lines(call_command_implementation(f, api.enabled_optimizations) for f in calls)}
         default:
             abort_with_reason("Received unsupported command");
         }} // switch

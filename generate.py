@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+from typing import List
+
 import argparse
 import hashlib
 import logging
@@ -108,13 +110,17 @@ SPEC_LIST = {
 }
 
 
-def generate_code(spec_name: str):
+def generate_code(spec_name: str, enabled_optimizations: List[str] = None):
     if spec_name not in SPEC_LIST:
         logger.warning(f"Unsupported {spec_name} specification")
         return
 
     spec_file, spec_parameter = SPEC_LIST[spec_name]
-    _ = subprocess.run(["./nwcc", spec_file] + spec_parameter, cwd=CAVA_DIR, check=True)
+    opt_parameter = []
+    if enabled_optimizations and len(enabled_optimizations) > 0:
+        opt_parameter = ["--optimization"] + enabled_optimizations
+
+    _ = subprocess.run(["./nwcc", spec_file] + opt_parameter + spec_parameter, cwd=CAVA_DIR, check=True)
     logger.info(f"Code generation for {spec_name} specification is done")
 
 
@@ -124,6 +130,15 @@ if __name__ == "__main__":
         "-s", "--specs", nargs="+", default=[], choices=SPEC_LIST.keys(), help="Specification shortnames"
     )
     parser.add_argument("-f", "--force", action="store_true", help="Build specifications regardless any warnings")
+    parser.add_argument(
+        "-O",
+        "--opt",
+        type=str,
+        action="append",
+        dest="optimizations",
+        choices=["batching"],
+        help="Enable optimizations",
+    )
     args = parser.parse_args()
 
     download_llvm_lib()
@@ -131,4 +146,4 @@ if __name__ == "__main__":
     check_cflags(args.force)
 
     for spec in args.specs:
-        generate_code(spec)
+        generate_code(spec, args.optimizations)
