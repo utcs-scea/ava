@@ -633,6 +633,89 @@ cudaEventSynchronize(cudaEvent_t event)
 }
 
 __host__ cudaError_t CUDARTAPI
+cudaStreamCreate(cudaStream_t *pStream) {
+    ava_argument(pStream) {
+        ava_out; ava_buffer(1);
+        ava_element ava_handle;
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaStreamCreateWithFlags(cudaStream_t* pStream, unsigned int flags)
+{
+    ava_argument(pStream) {
+        ava_out; ava_buffer(1);
+        ava_element ava_handle;
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaStreamCreateWithPriority(cudaStream_t* pStream, unsigned int flags, int priority)
+{
+    ava_argument(pStream) {
+        ava_out; ava_buffer(1);
+        ava_element ava_handle;
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaStreamDestroy(cudaStream_t stream)
+{
+    ava_argument(stream) {
+        ava_element ava_handle;
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaStreamGetFlags(cudaStream_t hStream, unsigned int* flags)
+{
+    ava_argument(hStream) {
+        ava_handle;
+    }
+    ava_argument(flags) {
+        ava_out; ava_buffer(1);
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaStreamGetPriority(cudaStream_t hStream, int* priority)
+{
+    ava_argument(hStream) {
+        ava_handle;
+    }
+    ava_argument(priority) {
+        ava_out; ava_buffer(1);
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaStreamQuery(cudaStream_t stream)
+{
+    ava_argument(stream) {
+        ava_handle;
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaStreamSynchronize(cudaStream_t stream)
+{
+    ava_argument(stream) {
+        ava_handle;
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
+cudaStreamWaitEvent(cudaStream_t stream, cudaEvent_t event, unsigned int flags)
+{
+    ava_argument(stream) {
+        ava_handle;
+    }
+    ava_argument(event) {
+        ava_handle;
+    }
+}
+
+__host__ cudaError_t CUDARTAPI
 cudaStreamAddCallback(cudaStream_t AVA_UNUSED(stream),
         cudaStreamCallback_t AVA_UNUSED(callback),
         void * AVA_UNUSED(userData), unsigned int AVA_UNUSED(flags))
