@@ -18,14 +18,14 @@ def source(api: API) -> Tuple[str, str]:
 
 {handle_command_header(api)}
 
-void __attribute__((constructor(102))) init_{api.identifier.lower()}_guestlib(void) {{
+void init_guestlib(void) {{
     __handle_command_{api.identifier.lower()}_init();
     {api.guestlib_init_prologue};
     nw_init_guestlib({api.number_spelling});
     {api.guestlib_init_epilogue};
 }}
 
-void __attribute__((destructor)) destroy_{api.identifier.lower()}_guestlib(void) {{
+void destroy_guestlib(void) {{
     {api.guestlib_fini_prologue};
     nw_destroy_guestlib();
     {api.guestlib_fini_epilogue};

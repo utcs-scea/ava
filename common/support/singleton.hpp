@@ -9,9 +9,9 @@ namespace support {
 template <typename T>
 class Singleton {
  public:
-  static T &instance() {
+  static T *instance() {
     static const std::unique_ptr<T> instance{new T()};
-    return *instance;
+    return instance.get();
   }
 
   Singleton(const Singleton &) = delete;

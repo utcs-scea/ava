@@ -8,9 +8,11 @@
 
 #include "common/cmd_channel_impl.hpp"
 #include "common/cmd_handler.hpp"
+#include "common/common_context.h"
 #include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
 #include "common/shadow_thread_pool.hpp"
+#include "guestlib/guest_context.h"
 
 /**
  * Starts migration process for test.
@@ -71,15 +73,16 @@ extern int nw_end_migration_flag;
  * are the same one.
  */
 EXPORTED_WEAKLY void start_self_migration(struct command_channel *chan) {
+  auto common_context = ava::CommonContext::instance();
   nw_end_migration_flag = 0;
   struct command_base *msg = command_channel_new_command(chan, sizeof(struct command_base), 0);
   msg->api_id = COMMAND_HANDLER_API;
   msg->command_id = COMMAND_START_MIGRATION;
-  msg->thread_id = shadow_thread_id(nw_shadow_thread_pool);
+  msg->thread_id = shadow_thread_id(common_context->nw_shadow_thread_pool);
   command_channel_send_command(chan, msg);
 
   /* wait until the migration finishes */
-  shadow_thread_handle_command_until(nw_shadow_thread_pool, nw_end_migration_flag);
+  shadow_thread_handle_command_until(common_context->nw_shadow_thread_pool, nw_end_migration_flag);
 }
 
 // TODO(migration): instead of letting guestlib initiates the migration, we
@@ -101,15 +104,16 @@ EXPORTED_WEAKLY void start_self_migration(struct command_channel *chan) {
 // and shuts down the other. The best approach is to close the channel by the
 // guestlib, so that the source API server will shut down by itself.
 EXPORTED_WEAKLY void start_live_migration(struct command_channel *chan) {
+  auto common_context = ava::CommonContext::instance();
   nw_end_migration_flag = 0;
   struct command_base *msg = command_channel_new_command(chan, sizeof(struct command_base), 0);
   msg->api_id = COMMAND_HANDLER_API;
   msg->command_id = COMMAND_START_LIVE_MIGRATION;
-  msg->thread_id = shadow_thread_id(nw_shadow_thread_pool);
+  msg->thread_id = shadow_thread_id(common_context->nw_shadow_thread_pool);
   command_channel_send_command(chan, msg);
 
   /* wait until the migration finishes */
-  shadow_thread_handle_command_until(nw_shadow_thread_pool, nw_end_migration_flag);
+  shadow_thread_handle_command_until(common_context->nw_shadow_thread_pool, nw_end_migration_flag);
 
   // TODO(migration): reconnect to new worker to execute the left APIs.
   // Currently, the APIs after the migration point are still executed by

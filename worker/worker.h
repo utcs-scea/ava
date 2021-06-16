@@ -20,6 +20,7 @@ typedef struct MemoryRegion {
   size_t size;
 } MemoryRegion;
 
+void init_worker();
 void nw_report_storage_resource_allocation(const char *const name, ssize_t amount);
 void nw_report_throughput_resource_consumption(const char *const name, ssize_t amount);
 

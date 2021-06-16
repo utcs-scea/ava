@@ -1,6 +1,7 @@
 #include "common/cmd_channel_impl.hpp"
 #include "common/endpoint_lib.hpp"
 
+// TODO: actually not used but can't get rid of it...
 int nw_worker_id = 0;
 int nw_global_vm_id = 1;
 

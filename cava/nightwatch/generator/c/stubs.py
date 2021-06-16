@@ -59,7 +59,7 @@ def function_implementation(f: Function) -> Union[str, Expr]:
         return_code = is_async.if_then_else(
             forge_success,
             f"""
-                shadow_thread_handle_command_until(nw_shadow_thread_pool, __call_record->__call_complete);
+                shadow_thread_handle_command_until(common_context->nw_shadow_thread_pool, __call_record->__call_complete);
                 {return_statement}
             """.strip(),
         )
@@ -71,6 +71,7 @@ def function_implementation(f: Function) -> Union[str, Expr]:
 
             const int ava_is_in = 1, ava_is_out = 0;
             intptr_t __call_id = ava_get_call_id(&__ava_endpoint);
+            auto common_context = ava::CommonContext::instance();
 
             #ifdef AVA_BENCHMARKING_MIGRATE
             if (__ava_endpoint.migration_call_id >= 0 && __call_id ==
@@ -90,7 +91,7 @@ def function_implementation(f: Function) -> Union[str, Expr]:
                 __chan, sizeof(struct {f.call_spelling}), __total_buffer_size);
             __cmd->base.api_id = {f.api.number_spelling};
             __cmd->base.command_id = {f.call_id_spelling};
-            __cmd->base.thread_id = shadow_thread_id(nw_shadow_thread_pool);
+            __cmd->base.thread_id = shadow_thread_id(common_context->nw_shadow_thread_pool);
             __cmd->base.original_thread_id = __cmd->base.thread_id;
 
             __cmd->__call_id = __call_id;

@@ -52,10 +52,12 @@ add_executable(${{SUBPROJECT_PREFIX}}_worker
   ${{CMAKE_SOURCE_DIR}}/worker/worker.cpp
   ${{CMAKE_SOURCE_DIR}}/worker/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/worker/provision_gpu.cpp
+  ${{CMAKE_SOURCE_DIR}}/worker/worker_context.cpp
   {' '.join(worker_srcs)}
   {' '.join(common_utility_srcs)}
   {api.c_worker_spelling}
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel.cpp
+  ${{CMAKE_SOURCE_DIR}}/common/common_context.cpp
   ${{CMAKE_SOURCE_DIR}}/common/logging.cpp
   ${{CMAKE_SOURCE_DIR}}/common/murmur3.cpp
   ${{CMAKE_SOURCE_DIR}}/common/cmd_handler.cpp
@@ -76,6 +78,9 @@ target_link_libraries(${{SUBPROJECT_PREFIX}}_worker
   absl::strings
   {api.libs}
 )
+target_compile_options(${{SUBPROJECT_PREFIX}}_worker
+  PUBLIC -DAVA_WORKER
+)
 set_target_properties(${{SUBPROJECT_PREFIX}}_worker PROPERTIES OUTPUT_NAME "worker")
 
 add_library(${{SUBPROJECT_PREFIX}}_guestlib SHARED
@@ -83,10 +88,12 @@ add_library(${{SUBPROJECT_PREFIX}}_guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/guestlib/guest_config.cpp
   ${{CMAKE_SOURCE_DIR}}/guestlib/migration.cpp
   ${{CMAKE_SOURCE_DIR}}/guestlib/cmd_channel_socket_tcp.cpp
+  ${{CMAKE_SOURCE_DIR}}/guestlib/guest_context.cpp
   {' '.join(guestlib_srcs)}
   {' '.join(common_utility_srcs)}
   {api.c_library_spelling}
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel.cpp
+  ${{CMAKE_SOURCE_DIR}}/common/common_context.cpp
   ${{CMAKE_SOURCE_DIR}}/common/logging.cpp
   ${{CMAKE_SOURCE_DIR}}/common/murmur3.cpp
   ${{CMAKE_SOURCE_DIR}}/common/cmd_handler.cpp
@@ -109,7 +116,7 @@ target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
   absl::strings
 )
 target_compile_options(${{SUBPROJECT_PREFIX}}_guestlib
-  PUBLIC -fvisibility=hidden
+  PUBLIC -fvisibility=hidden -DAVA_GUESTLIB
 )
 target_link_options(${{SUBPROJECT_PREFIX}}_guestlib
   PUBLIC -Wl,--exclude-libs,ALL)

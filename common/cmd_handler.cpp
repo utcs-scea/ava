@@ -2,10 +2,13 @@
 
 #include <plog/Log.h>
 
+#include "common/common_context.h"
 #include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
 #include "common/shadow_thread_pool.hpp"
-#include "common/worker_context.hpp"
+#ifdef AVA_WORKER
+#include "worker/worker_context.h"
+#endif
 
 #ifdef __cplusplus
 #include <atomic>
@@ -87,12 +90,14 @@ static void _handle_commands_loop(struct command_channel *chan) {
 #endif
 
     // TODO: checks MSG_SHUTDOWN messages/channel close from the other side.
-    shadow_thread_pool_dispatch(nw_shadow_thread_pool, chan, cmd);
+    auto context = ava::CommonContext::instance();
+    shadow_thread_pool_dispatch(context->nw_shadow_thread_pool, chan, cmd);
   }
 }
 
 void handle_command_and_notify(struct command_channel *chan, struct command_base *cmd) {
-  handle_command(chan, nw_global_handle_pool, (struct command_channel *)nw_record_command_channel, cmd);
+  auto context = ava::CommonContext::instance();
+  handle_command(chan, context->nw_global_handle_pool, (struct command_channel *)nw_record_command_channel, cmd);
 }
 
 static void *dispatch_thread_impl(void *userdata) {
@@ -174,6 +179,7 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
     break;
   }
 
+#ifdef AVA_WORKER
   /**
    * For testing, guestlib initiates the migration and worker
    * replays the logs that recorded by itself.
@@ -187,13 +193,14 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
     //         nw_handle_pool_get_live_handles(nw_global_handle_pool));
     // New worker executes received logs.
 
+    auto ccontext = ava::CommonContext::instance();
     //! Simplified steps
     // Create a log channel for sending and receiving
     transfer_chan = (struct command_channel *)command_channel_log_new(nw_worker_id + 1000);
 
     // Transfer logs from nw_record_command_channel to new log channel
     ava_extract_objects(transfer_chan, nw_record_command_channel,
-                        nw_handle_pool_get_live_handles(nw_global_handle_pool));
+                        nw_handle_pool_get_live_handles(ccontext->nw_global_handle_pool));
     {
       struct command_base *log_end = command_channel_new_command(transfer_chan, sizeof(struct command_base), 0);
       log_end->api_id = COMMAND_HANDLER_API;
@@ -236,8 +243,8 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
     // TODO: For swapping we will need to selectively copy values back into
     // the nw_global_handle_pool
     //  and then destroy the reply_handle_pool.
-    nw_handle_pool_free(nw_global_handle_pool);
-    nw_global_handle_pool = replay_handle_pool;
+    nw_handle_pool_free(ccontext->nw_global_handle_pool);
+    ccontext->nw_global_handle_pool = replay_handle_pool;
 
     {
       struct command_base *log_end = command_channel_new_command(chan, sizeof(struct command_base), 0);
@@ -250,6 +257,7 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
     command_channel_free(transfer_chan);
     break;
   }
+#endif
 
   case COMMAND_END_MIGRATION: {
     // TODO: Move this command into a handler guestlib/src/init.c
@@ -257,6 +265,7 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
     break;
   }
 
+#ifdef AVA_WORKER
   case COMMAND_HANDLER_REPLACE_EXPLICIT_STATE: {
     ava_handle_replace_explicit_state(chan, handle_pool, (struct ava_replay_command_t *)cmd);
     break;
@@ -264,9 +273,10 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
 
     // TODO(migration): Move to a separate file.
   case COMMAND_START_LIVE_MIGRATION: {
-    auto &wctx = ava::WorkerContext::instance();
+    auto cctx = ava::CommonContext::instance();
+    auto wctx = ava::WorkerContext::instance();
     transfer_chan =
-        (struct command_channel *)command_channel_socket_tcp_migration_new(wctx.get_api_server_listen_port(), 1);
+        (struct command_channel *)command_channel_socket_tcp_migration_new(wctx->get_api_server_listen_port(), 1);
     struct timeval start, end;
 
     FILE *fd;
@@ -284,7 +294,7 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
 
     // Extract recorded commands and exlicit objects
     ava_extract_objects_in_pair(transfer_chan, nw_record_command_channel,
-                                nw_handle_pool_get_live_handles(nw_global_handle_pool));
+                                nw_handle_pool_get_live_handles(cctx->nw_global_handle_pool));
     LOG_DEBUG << "sent recorded commands to target";
 
     {
@@ -312,6 +322,7 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
 
     break;
   }
+#endif
 
   case COMMAND_END_LIVE_MIGRATION: {
     printf("\n//! finishes live migration\n\n");
@@ -322,12 +333,14 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
     break;
   }
 
+#ifdef AVA_WORKER
   case COMMAND_ACCEPT_LIVE_MIGRATION: {
     printf("\n//! starts to accept incoming commands\n\n");
     break;
   }
 
   case COMMAND_HANDLER_RECORDED_PAIR: {
+    auto common_context = ava::CommonContext::instance();
     struct ava_replay_command_pair_t *combine = (struct ava_replay_command_pair_t *)cmd;
     struct command_base *call_cmd =
         (struct command_base *)command_channel_get_buffer(chan, (struct command_base *)combine, combine->call_cmd);
@@ -339,9 +352,11 @@ void internal_api_handler(struct command_channel *chan, struct nw_handle_pool *h
     printf("replay command <%ld, %lx>\n", call_cmd->command_id, call_cmd->region_size);
 
     // Replay the commands.
-    replay_command(chan, nw_global_handle_pool, (struct command_channel *)nw_record_command_channel, call_cmd, ret_cmd);
+    replay_command(chan, common_context->nw_global_handle_pool, (struct command_channel *)nw_record_command_channel,
+                   call_cmd, ret_cmd);
     break;
   }
+#endif
 
   default:
     LOG_ERROR << "Unknown internal command: " << cmd->command_id;

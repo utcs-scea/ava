@@ -22,9 +22,16 @@ using namespace std;
 
 #include "common/cmd_channel.hpp"
 #include "common/cmd_handler.hpp"
+#include "common/common_context.h"
 #include "common/declaration.h"
 #include "common/murmur3.h"
 #include "common/shadow_thread_pool.hpp"
+
+#ifdef AVA_GUESTLIB
+#include "guestlib/guest_context.h"
+#elif defined(AVA_WORKER)
+#include "worker/worker_context.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -152,11 +159,6 @@ static inline struct ava_offset_pair_t *ava_new_offset_pair(size_t a, size_t b) 
 
 /// Create a new metadata map.
 GHashTable *metadata_map_new();
-
-extern struct nw_handle_pool *nw_global_handle_pool;
-extern struct shadow_thread_pool_t *nw_shadow_thread_pool;
-extern GHashTable *nw_global_metadata_map;
-extern pthread_mutex_t nw_global_metadata_map_mutex;
 
 struct ava_replay_command_t;
 

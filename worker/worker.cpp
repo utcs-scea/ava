@@ -17,9 +17,9 @@
 #include "common/cmd_channel_impl.hpp"
 #include "common/cmd_handler.hpp"
 #include "common/socket.hpp"
-#include "common/worker_context.hpp"
 #include "plog/Initializers/RollingFileInitializer.h"
 #include "provision_gpu.h"
+#include "worker_context.h"
 
 struct command_channel *chan;
 struct command_channel *chan_hv = NULL;
@@ -101,14 +101,14 @@ int main(int argc, char *argv[]) {
   if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR) printf("failed to ignore SIGCHLD\n");
 
   /* define arguments */
-  auto &wctx = ava::WorkerContext::instance();
+  auto wctx = ava::WorkerContext::instance();
   nw_worker_id = 0;
   unsigned int listen_port;
 
   /* This is a target API server. Starts live migration */
   if (!strcmp(argv[1], "migrate")) {
     listen_port = (unsigned int)atoi(argv[2]);
-    wctx.set_api_server_listen_port(listen_port);
+    wctx->set_api_server_listen_port(listen_port);
     std::cerr << "[worker#" << listen_port << "] To check the state of AvA remoting progress, use `tail -f " << log_file
               << "`" << std::endl;
 
@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
 
   /* parse arguments */
   listen_port = (unsigned int)atoi(argv[1]);
-  wctx.set_api_server_listen_port(listen_port);
+  wctx->set_api_server_listen_port(listen_port);
   std::cerr << "[worker#" << listen_port << "] To check the state of AvA remoting progress, use `tail -f " << log_file
             << "`" << std::endl;
 

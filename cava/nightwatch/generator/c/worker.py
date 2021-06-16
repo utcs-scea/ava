@@ -21,7 +21,7 @@ def source(api: API) -> Tuple[str, str]:
 
 {handle_command_header(api)}
 
-void __attribute__((constructor(102))) init_{api.identifier.lower()}_worker(void) {{
+void init_worker(void) {{
     __handle_command_{api.identifier.lower()}_init();
     {api.worker_init_epilogue};
 }}
