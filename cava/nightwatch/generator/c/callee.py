@@ -369,12 +369,12 @@ def call_command_implementation(f: Function):
 def record_call_metadata(handle: str, type_: Optional[Type]) -> Expr:
     log_call_command = """if(__call_log_offset == -1) {
         __call_log_offset =
-            command_channel_log_transfer_command(__log, __chan, (const struct command_base *)__cmd);
+            command_channel_log_transfer_command((struct command_channel_log*)__log, __chan, (const struct command_base *)__cmd);
     }
     assert(__call_log_offset != -1);"""
     log_ret_command = """if(__ret_log_offset == -1) {
         __ret_log_offset =
-            command_channel_log_transfer_command(__log, __chan, (const struct command_base *)__ret);
+            command_channel_log_transfer_command((struct command_channel_log*)__log, __chan, (const struct command_base *)__ret);
     }
     assert(__ret_log_offset != -1);"""
 
@@ -461,5 +461,5 @@ def assign_record_replay_functions(local_value: str, type_: Type) -> Expr:
 
 def expunge_calls(handle: str) -> str:
     return f"""
-        ava_expunge_recorded_calls(&__ava_endpoint, __log, {handle});
+        ava_expunge_recorded_calls(&__ava_endpoint, (struct command_channel_log*)__log, {handle});
         """
