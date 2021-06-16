@@ -1302,61 +1302,8 @@ cuGetErrorName(CUresult error, const char** pStr)
 }
 
 /* CUDABLAS API */
-CUBLASAPI cublasStatus_t CUBLASWINAPI
-cublasCreate(cublasHandle_t *handle)
-{
-    ava_argument(handle) {
-        ava_out; ava_buffer(1);
-        ava_element { ava_handle; }
-    }
-}
 
-cublasStatus_t CUBLASWINAPI
-cublasSetMatrix (int rows, int cols, int elemSize,
-                const void *A, int lda,
-                void *B, int ldb)
-{
-    ava_argument(A) {
-        ava_in; ava_buffer(rows * cols * elemSize);
-    }
-
-    ava_argument(B) {
-        ava_handle;
-    }
-}
-
-cublasStatus_t CUBLASWINAPI
-cublasGetMatrix(int rows, int cols, int elemSize,
-                const void *A, int lda,
-                void *B, int ldb)
-{
-    ava_argument(A) {
-        ava_handle;
-    }
-
-    ava_argument(B) {
-        ava_out; ava_buffer(rows * cols * elemSize);
-    }
-}
-
-ava_begin_replacement;
-CUBLASAPI cublasStatus_t CUBLASWINAPI
-cublasGetPointerMode_v2(cublasHandle_t AVA_UNUSED(handle), cublasPointerMode_t *mode)
-{
-    /* XXX seems ok for tensorflow but might be wrong !FIXME */
-    *mode = CUBLAS_POINTER_MODE_HOST;
-    return CUBLAS_STATUS_SUCCESS;
-}
-
-CUBLASAPI cublasStatus_t CUBLASWINAPI
-cublasSetPointerMode_v2(cublasHandle_t AVA_UNUSED(handle), cublasPointerMode_t AVA_UNUSED(mode))
-{
-    /* XXX seems ok for tensorflow but might be wrong ! FIXME */
-    assert(mode == CUBLAS_POINTER_MODE_HOST);
-    return CUBLAS_STATUS_SUCCESS;
-}
-ava_end_replacement;
-
+#include "cava/samples/cuda_common_spec/cublas/cublas.h"
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasSgemm_v2 (cublasHandle_t handle, cublasOperation_t transa,
@@ -1378,32 +1325,10 @@ cublasSgemm_v2 (cublasHandle_t handle, cublasOperation_t transa,
     ava_argument(beta)  { ava_in; ava_buffer(1); }
 }
 
-
-CUBLASAPI cublasStatus_t CUBLASWINAPI
-cublasSetStream(cublasHandle_t handle, cudaStream_t streamId)
-{
-    ava_argument(handle) ava_handle;
-    ava_argument(streamId) ava_handle;
-}
-
 CUBLASAPI cublasStatus_t CUBLASWINAPI
 cublasDestroy(cublasHandle_t handle)
 {
     ava_argument(handle) ava_handle;
-}
-
-CUBLASAPI cublasStatus_t CUBLASWINAPI
-cublasSscal(cublasHandle_t handle,
-            int n,
-            const float *alpha,  /* host or device pointer */
-            float *x,
-            int incx)
-{
-    ava_argument(handle) ava_handle;
-    ava_argument(alpha) {
-        ava_in; ava_buffer(1);
-    }
-    ava_argument(x) ava_handle;
 }
 
 /***** CUDNN (OOF) ******/
