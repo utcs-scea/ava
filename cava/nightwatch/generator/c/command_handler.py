@@ -70,9 +70,9 @@ void __print_command_{api.identifier.lower()}(FILE* file, const struct command_c
                                     const struct command_base* __cmd);
 
 #define ava_metadata(p) (&((struct {api.metadata_struct_spelling}*)ava_internal_metadata(&__ava_endpoint, p))->application)
-#define ava_zerocopy_alloc(s) ava_endpoint_zerocopy_alloc(&__ava_endpoint, s)
-#define ava_zerocopy_free(p) ava_endpoint_zerocopy_free(&__ava_endpoint, p)
-#define ava_zerocopy_get_physical_address(p) ava_endpoint_zerocopy_get_physical_address(&__ava_endpoint, p)
+// #define ava_zerocopy_alloc(s) ava_endpoint_zerocopy_alloc(&__ava_endpoint, s)
+// #define ava_zerocopy_free(p) ava_endpoint_zerocopy_free(&__ava_endpoint, p)
+// #define ava_zerocopy_get_physical_address(p) ava_endpoint_zerocopy_get_physical_address(&__ava_endpoint, p)
 
 
 #include "{api.c_utilities_header_spelling}"

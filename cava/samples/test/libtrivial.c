@@ -61,7 +61,7 @@ function1()
 //! Callbacks
 
 ava_callback_decl
-int error_callback(int errno, void *arg) {
+int error_callback(int errno_, void *arg) {
     ava_argument(arg) {
         ava_userdata;
     }
@@ -488,11 +488,13 @@ ava_begin_replacement;
 void *special_alloc(size_t size)
 {
     return ava_zerocopy_alloc(size);
+    return malloc(size);
 }
 
 void special_free(void *ptr)
 {
     ava_zerocopy_free(ptr);
+    return free(ptr);
 }
 ava_end_replacement;
 
