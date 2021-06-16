@@ -9,11 +9,11 @@ ava_soname(libtrivial.so);
 
 #include "libtrivial.h"
 
-//ava_begin_utility;
-//#ifndef __CAVA__
-//#include "common/zcopy.h"
-//#endif
-//ava_end_utility;
+ava_begin_utility;
+#ifndef __CAVA__
+#include "common/zcopy.h"
+#endif
+ava_end_utility;
 
 
 struct metadata_t {
@@ -488,13 +488,11 @@ ava_begin_replacement;
 void *special_alloc(size_t size)
 {
     return ava_zerocopy_alloc(size);
-    return malloc(size);
 }
 
 void special_free(void *ptr)
 {
     ava_zerocopy_free(ptr);
-    return free(ptr);
 }
 ava_end_replacement;
 
