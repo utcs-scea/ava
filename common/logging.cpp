@@ -56,7 +56,7 @@ void ava_warning(const char *format, ...) {
   free(str);
 }
 
-void ava_error(const char *format, ...) {
+void ava_fatal(const char *format, ...) {
   char *str = NULL;
   va_list ap;
 
