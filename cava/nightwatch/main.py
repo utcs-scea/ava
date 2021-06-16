@@ -61,7 +61,7 @@ def main():
     if not args.language:
         if args.inputfile.endswith(".py"):
             args.language = "py"
-        elif args.inputfile.endswith(".c"):
+        elif args.inputfile.endswith(".c") or args.inputfile.endswith(".cpp"):
             args.language = "c"
         else:
             args.language = "c"

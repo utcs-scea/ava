@@ -78,7 +78,7 @@ jobs:
     - name: Download ava-llvm and generate codes
       if: startsWith(matrix.os, 'ubuntu-')
       run: |
-        python3 generate.py -f -s cudadrv cudart
+        python3 generate.py -f -s cudadrv cudart tf_dump tf_opt onnx_dump onnx_opt
 
     ###
     # Standard CMake build process
@@ -88,7 +88,11 @@ jobs:
         cmake -S . -B $HOME/build \
           -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
           -DAVA_GEN_CUDADRV_SPEC=ON \
-          -DAVA_GEN_CUDART_SPEC=ON
+          -DAVA_GEN_CUDART_SPEC=ON \
+          -DAVA_GEN_TENSORFLOW_DUMP_SPEC=ON \
+          -DAVA_GEN_TENSORFLOW_OPT_SPEC=ON \
+          -DAVA_GEN_ONNXRT_DUMP_SPEC=ON \
+          -DAVA_GEN_ONNXRT_OPT_SPEC=ON
 
     - name: Build
       run: |

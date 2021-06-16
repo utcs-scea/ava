@@ -69,8 +69,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
           -DAVA_MANAGER_DEMO=ON \
           -DAVA_MANAGER_LEGACY=ON \
-          -DAVA_GEN_DEMO_SPEC=ON \
-          -DAVA_GEN_TEST_SPEC=ON
+          -DAVA_GEN_DEMO_SPEC=ON
 
     - name: Build
       run: |

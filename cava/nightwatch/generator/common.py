@@ -121,9 +121,8 @@ class _APISpelling:
 
     @property
     def source_extension(self) -> str:
-        if self.cplusplus:
-            return "cpp"
-        return "c"
+        # Always generate C++ files no matter whether self.cplusplus is True.
+        return "cpp"
 
     @property
     def c_header_spelling(self) -> str:

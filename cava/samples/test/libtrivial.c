@@ -9,11 +9,11 @@ ava_soname(libtrivial.so);
 
 #include "libtrivial.h"
 
-//ava_begin_utility;
-//#ifndef __CAVA__
-//#include "common/zcopy.h"
-//#endif
-//ava_end_utility;
+ava_begin_utility;
+#ifndef __CAVA__
+#include "common/zcopy.h"
+#endif
+ava_end_utility;
 
 
 struct metadata_t {
@@ -61,7 +61,7 @@ function1()
 //! Callbacks
 
 ava_callback_decl
-int error_callback(int errno, void *arg) {
+int error_callback(int errno_, void *arg) {
     ava_argument(arg) {
         ava_userdata;
     }
