@@ -22835,7 +22835,3 @@ ava_utility void __helper_worker_init_epilogue() {
 ava_guestlib_init_prologue(__helper_guestlib_init_prologue());
 ava_guestlib_fini_prologue(__helper_guestlib_fini_prologue());
 ava_worker_init_epilogue(__helper_worker_init_epilogue());
-
-ava_worker_argument_process_code(
-"worker_argument_process_code = \"__handle_command_cudart_opt_single(__chan, handle_pool, __log, NULL);\".strip() \
-  if f.name == \"__do_batch_emit\" else \"\"");

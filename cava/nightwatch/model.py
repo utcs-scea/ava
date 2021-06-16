@@ -572,7 +572,6 @@ class API:
         self.guestlib_fini_prologue = ""
         self.guestlib_fini_epilogue = ""
         self.worker_init_epilogue = ""
-        self.worker_argument_process_code = ""
         self.cplusplus = cplusplus
         self._enabled_optimizations = []
 

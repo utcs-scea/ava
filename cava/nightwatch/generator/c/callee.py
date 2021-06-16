@@ -303,6 +303,14 @@ def call_command_implementation(f: Function, enabled_opts: List[str] = None):
             # Enable batching optimization: batch the reply command; but for now we do not send reply
             # at all (because all batched APIs are ava_async).
             if "batching" in enabled_opts:
+                # TODO: improve the batching logic to get rid of worker_argument_process_code.
+                worker_argument_process_code = (
+                    """
+                    __handle_command_cudart_opt_single(__chan, handle_pool, __log, NULL);
+                """.strip()
+                    if f.name == "__do_batch_emit"
+                    else ""
+                )
                 reply_code = is_async.if_then_else(
                     "",
                     """
@@ -310,17 +318,10 @@ def call_command_implementation(f: Function, enabled_opts: List[str] = None):
                     """.strip(),
                 )
         else:
+            worker_argument_process_code = ""
             reply_code = """
                 command_channel_send_command(__chan, (struct command_base*)__ret);
             """.strip()
-
-        worker_argument_process_code = ""
-        if f.api.worker_argument_process_code:
-            import_code = f.api.worker_argument_process_code.encode("ascii", "ignore").decode("unicode_escape")[1:-1]
-            ldict = locals()
-            # pylint: disable=exec-used
-            exec(import_code, globals(), ldict)
-            worker_argument_process_code = ldict["worker_argument_process_code"]
 
         return f"""
         case {f.call_id_spelling}: {{\

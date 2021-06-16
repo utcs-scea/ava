@@ -402,10 +402,6 @@ typedef void (*ava_replace_function)(void *obj, void *data, size_t length);
 #define ava_guestlib_fini_epilogue(n) const char *__AVA_NAME(guestlib_fini_epilogue) = __STRINGIFY(n)
 #define ava_worker_init_epilogue(n) const char *__AVA_NAME(worker_init_epilogue) = __STRINGIFY(n)
 
-/// The helper Python functions called before `{call_function_wrapper(f)}`. It must set
-/// a Python variable `worker_argument_process_code`.
-#define ava_worker_argument_process_code(n) const char *__AVA_NAME(worker_argument_process_code) = __STRINGIFY(n)
-
 /////// Enums
 
 enum ava_sync_mode_t { NW_ASYNC = 0, NW_SYNC, NW_FLUSH };
