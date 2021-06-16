@@ -216,9 +216,6 @@ struct ava_callback_user_data {
 
 //! The endpoint representation itself
 
-#define metadata_map nw_global_metadata_map
-#define metadata_map_mutex nw_global_metadata_map_mutex
-
 struct ava_shadow_buffer_pool {
   pthread_mutex_t mutex;
   GHashTable *buffers_by_id;
