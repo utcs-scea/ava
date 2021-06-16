@@ -59,7 +59,8 @@ def function_implementation(f: Function) -> Union[str, Expr]:
         return_code = is_async.if_then_else(
             forge_success,
             f"""
-                shadow_thread_handle_command_until(common_context->nw_shadow_thread_pool, __call_record->__call_complete);
+                shadow_thread_handle_command_until(
+                  common_context->nw_shadow_thread_pool, __call_record->__call_complete);
                 {return_statement}
             """.strip(),
         )
