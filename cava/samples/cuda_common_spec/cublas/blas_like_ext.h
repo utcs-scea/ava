@@ -1,7 +1,7 @@
 #ifndef _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_H_
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_H_
-#include <cublas_v2.h>
 #include <cublas_api.h>
+#include <cublas_v2.h>
 
 /* ---------------- CUBLAS BLAS-like extension ---------------- */
 /* GEAM */
@@ -42,5 +42,4 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSscal(cublasHandle_t handle, int n,
   ava_argument(x) ava_opaque;
 }
 
-
-#endif // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_H_
+#endif  // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_H_

@@ -24,4 +24,4 @@ const char *CUSPARSEAPI cusparseGetErrorString(cusparseStatus_t status) {
   }
 }
 
-#endif // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_H_
+#endif  // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_H_

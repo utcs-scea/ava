@@ -112,4 +112,4 @@ cufftResult CUFFTAPI cufftDestroy(cufftHandle plan) { ava_unsupported; }
 cufftResult CUFFTAPI cufftGetVersion(int *version) { ava_unsupported; }
 
 cufftResult CUFFTAPI cufftGetProperty(libraryPropertyType type, int *value) { ava_unsupported; }
-#endif // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUFFT_UNIMPLEMENTED_H_
+#endif  // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUFFT_UNIMPLEMENTED_H_

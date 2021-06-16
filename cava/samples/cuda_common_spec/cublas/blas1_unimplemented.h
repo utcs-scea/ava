@@ -1,7 +1,7 @@
 #ifndef _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_CUBLAS1_UNIMPLEMENTED_H_
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS1_UNIMPLEMENTED_H_
-#include <cublas_v2.h>
 #include <cublas_api.h>
+#include <cublas_v2.h>
 
 /* ---------------- CUBLAS BLAS1 functions ---------------- */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasNrm2Ex(cublasHandle_t handle, int n, const void *x, cudaDataType xType,
@@ -423,4 +423,4 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasRotmgEx(cublasHandle_t handle, void 
   ava_unsupported;
 }
 
-#endif // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_CUBLAS1_UNIMPLEMENTED_H_
+#endif  // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_CUBLAS1_UNIMPLEMENTED_H_

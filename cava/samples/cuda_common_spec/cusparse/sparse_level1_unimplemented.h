@@ -96,4 +96,4 @@ cusparseStatus_t CUSPARSEAPI cusparseDroti(cusparseHandle_t handle, int nnz, dou
                                            const double *c, const double *s, cusparseIndexBase_t idxBase) {
   ava_unsupported;
 }
-#endif // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_SPARSE_LEVEL1_UNIMPLEMENTED_H_
+#endif  // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_SPARSE_LEVEL1_UNIMPLEMENTED_H_

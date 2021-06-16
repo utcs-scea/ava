@@ -1,7 +1,7 @@
 #ifndef _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS3_UNIMPLEMENTED_H_
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS3_UNIMPLEMENTED_H_
-#include <cublas_v2.h>
 #include <cublas_api.h>
+#include <cublas_v2.h>
 
 /* --------------- CUBLAS BLAS3 functions  ---------------- */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgemm_v2(cublasHandle_t handle, cublasOperation_t transa,
@@ -534,4 +534,4 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZgemmStridedBatched(
   ava_unsupported;
 }
 
-#endif // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS3_UNIMPLEMENTED_H_
+#endif  // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS3_UNIMPLEMENTED_H_

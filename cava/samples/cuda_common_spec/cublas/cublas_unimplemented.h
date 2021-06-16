@@ -1,7 +1,7 @@
 #ifndef _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_UNIMPLEMENTED_H_
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_UNIMPLEMENTED_H_
-#include <cublas_v2.h>
 #include <cublas_api.h>
+#include <cublas_v2.h>
 /* CUDABLAS API */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetAtomicsMode(cublasHandle_t handle, cublasAtomicsMode_t *mode) {
@@ -62,4 +62,4 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmStridedBatched(
   ava_unsupported;
 }
 
-#endif // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_UNIMPLEMENTED_H_
+#endif  // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_UNIMPLEMENTED_H_

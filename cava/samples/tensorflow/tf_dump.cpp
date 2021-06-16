@@ -10572,7 +10572,6 @@ __host__ cudaError_t CUDARTAPI cudaStreamQuery(cudaStream_t stream) { ava_argume
 
 __host__ cudaError_t CUDARTAPI cudaEventSynchronize(cudaEvent_t event) { ava_argument(event) ava_handle; }
 
-
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaFuncGetAttributes(struct cudaFuncAttributes *attr,
                                                                         const void *func) {
   ava_disable_native_call;

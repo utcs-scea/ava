@@ -1,7 +1,7 @@
 #ifndef _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSOLVER_UNIMPLEMENTED_H_
 #define _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSOLVER_UNIMPLEMENTED_H_
-#include <cusolver_common.h>
 #include <cusolverDn.h>
+#include <cusolver_common.h>
 
 /******* cusolver *********/
 cusolverStatus_t CUSOLVERAPI cusolverDnCreate(cusolverDnHandle_t *handle) { ava_unsupported; }
@@ -1499,4 +1499,4 @@ cusolverStatus_t CUSOLVERAPI cusolverDnZgesvdaStridedBatched(cusolverDnHandle_t 
   ava_unsupported;
 }
 
-#endif // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSOLVER_UNIMPLEMENTED_H_
+#endif  // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSOLVER_UNIMPLEMENTED_H_

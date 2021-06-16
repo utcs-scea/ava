@@ -2182,9 +2182,7 @@ cudnnStatus_t CUDNNWINAPI cudnnCreatePersistentRNNPlan(cudnnRNNDescriptor_t rnnD
   ava_unsupported;
 }
 
-cudnnStatus_t CUDNNWINAPI cudnnDestroyPersistentRNNPlan(cudnnPersistentRNNPlan_t plan) {
-  ava_unsupported;
-}
+cudnnStatus_t CUDNNWINAPI cudnnDestroyPersistentRNNPlan(cudnnPersistentRNNPlan_t plan) { ava_unsupported; }
 
 cudnnStatus_t CUDNNWINAPI cudnnSetPersistentRNNPlan(cudnnRNNDescriptor_t rnnDesc, cudnnPersistentRNNPlan_t plan) {
   ava_unsupported;
@@ -2274,13 +2272,9 @@ cudnnStatus_t CUDNNWINAPI cudnnGetRNNPaddingMode(cudnnRNNDescriptor_t rnnDesc, c
   ava_unsupported;
 }
 
-cudnnStatus_t CUDNNWINAPI cudnnCreateRNNDataDescriptor(cudnnRNNDataDescriptor_t *rnnDataDesc) {
-  ava_unsupported;
-}
+cudnnStatus_t CUDNNWINAPI cudnnCreateRNNDataDescriptor(cudnnRNNDataDescriptor_t *rnnDataDesc) { ava_unsupported; }
 
-cudnnStatus_t CUDNNWINAPI cudnnDestroyRNNDataDescriptor(cudnnRNNDataDescriptor_t rnnDataDesc) {
-  ava_unsupported;
-}
+cudnnStatus_t CUDNNWINAPI cudnnDestroyRNNDataDescriptor(cudnnRNNDataDescriptor_t rnnDataDesc) { ava_unsupported; }
 
 cudnnStatus_t CUDNNWINAPI cudnnSetRNNDataDescriptor(
     cudnnRNNDataDescriptor_t rnnDataDesc, cudnnDataType_t dataType, cudnnRNNDataLayout_t layout, int maxSeqLength,
@@ -3876,7 +3870,6 @@ __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaOccupancyMaxActiveBlocksPe
     return ret;
   }
 }
-
 
 /* ONNX */
 const char *CUDNNWINAPI cudnnGetErrorString(cudnnStatus_t status) {

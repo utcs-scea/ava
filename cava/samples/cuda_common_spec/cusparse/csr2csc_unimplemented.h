@@ -230,4 +230,4 @@ cusparseStatus_t CUSPARSEAPI cusparseSpMM_bufferSize(cusparseHandle_t handle, cu
   ava_unsupported;
 }
 
-#endif // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_CSR2CSC_UNIMPLEMENTED_H_
+#endif  // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_CSR2CSC_UNIMPLEMENTED_H_

@@ -58,4 +58,4 @@ __host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbol(void *dst, const void *symbo
   ava_argument(symbol) ava_opaque;
 }
 
-#endif // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUDART_H_
+#endif  // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUDART_H_

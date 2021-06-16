@@ -114,4 +114,4 @@ curandStatus_t CURANDAPI curandGetScrambleConstants32(unsigned int **constants) 
 
 curandStatus_t CURANDAPI curandGetScrambleConstants64(unsigned long long **constants) { ava_unsupported; }
 
-#endif // _AVA_SAMPLES_CUDA_COMMON_SPEC_CURAND_UNIMPLEMENTED_H_
+#endif  // _AVA_SAMPLES_CUDA_COMMON_SPEC_CURAND_UNIMPLEMENTED_H_

@@ -1,7 +1,7 @@
 #ifndef _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_UNIMPLEMENTED_H_
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_UNIMPLEMENTED_H_
-#include <cublas_v2.h>
 #include <cublas_api.h>
+#include <cublas_v2.h>
 /* ---------------- CUBLAS BLAS-like extension ---------------- */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgeam(cublasHandle_t handle, cublasOperation_t transa,
@@ -321,4 +321,4 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasZtrttp(cublasHandle_t handle, cublas
   ava_unsupported;
 }
 
-#endif // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_UNIMPLEMENTED_H_
+#endif  // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_UNIMPLEMENTED_H_

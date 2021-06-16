@@ -495,4 +495,4 @@ cusparseStatus_t CUSPARSEAPI cusparseZhybsv_solve(cusparseHandle_t handle, cuspa
   ava_unsupported;
 }
 
-#endif // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_SPARSE_LEVEL2_UNIMPLEMENTED_H_
+#endif  // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_SPARSE_LEVEL2_UNIMPLEMENTED_H_

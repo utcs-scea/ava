@@ -930,4 +930,4 @@ cusparseStatus_t CUSPARSEAPI cusparseZgpsvInterleavedBatch(cusparseHandle_t hand
                                                            int batchCount, void *pBuffer) {
   ava_unsupported;
 }
-#endif // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_PRECONDITIONER_UNIMPLEMENTED_H_
+#endif  // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_PRECONDITIONER_UNIMPLEMENTED_H_

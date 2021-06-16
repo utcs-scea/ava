@@ -15,5 +15,4 @@ curandStatus_t CURANDAPI curandDestroyGenerator(curandGenerator_t generator) {
   ava_argument(generator) ava_handle;
 }
 
-
-#endif // _AVA_SAMPLES_CUDA_COMMON_SPEC_CURAND_H_
+#endif  // _AVA_SAMPLES_CUDA_COMMON_SPEC_CURAND_H_

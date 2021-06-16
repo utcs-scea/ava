@@ -120,5 +120,4 @@ cusparseStatus_t CUSPARSEAPI cusparseCreatePruneInfo(pruneInfo_t *info) { ava_un
 
 cusparseStatus_t CUSPARSEAPI cusparseDestroyPruneInfo(pruneInfo_t info) { ava_unsupported; }
 
-
-#endif // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_UNIMPLEMENTED_H_
+#endif  // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_UNIMPLEMENTED_H_

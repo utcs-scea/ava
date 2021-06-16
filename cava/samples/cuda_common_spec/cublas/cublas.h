@@ -1,8 +1,8 @@
 #ifndef _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_H_
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_H_
 
-#include <cublas_v2.h>
 #include <cublas_api.h>
+#include <cublas_v2.h>
 /* CUDABLAS API */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCreate(cublasHandle_t *handle) {
@@ -56,12 +56,12 @@ EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSetPointerMode_v2(cublasHan
 }
 ava_end_replacement;
 
-#include "cublas_unimplemented.h"
 #include "blas1_unimplemented.h"
 #include "blas2_unimplemented.h"
 #include "blas3.h"
 #include "blas3_unimplemented.h"
 #include "blas_like_ext.h"
 #include "blas_like_ext_unimplemented.h"
+#include "cublas_unimplemented.h"
 
-#endif // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_H_
+#endif  // _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_H_
