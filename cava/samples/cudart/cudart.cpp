@@ -674,6 +674,13 @@ cudaMemGetInfo(size_t *_free, size_t *total)
     }
 }
 
+__host__ cudaError_t CUDARTAPI
+cudaRuntimeGetVersion(int *version)
+{
+    ava_argument(version) {
+        ava_out; ava_buffer(1);
+    }
+}
 /* CUDA driver API */
 
 CUresult CUDAAPI
