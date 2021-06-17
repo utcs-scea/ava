@@ -4,9 +4,8 @@ ava_identifier(PT_OPT);
 ava_number(13);
 ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -DAVA_PRELOAD_CUBIN);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
-ava_guestlib_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/cmd_batching.cpp);
-ava_worker_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/cmd_batching.cpp);
-ava_common_utility_srcs(extensions/cudart_10.1_utilities.cpp);
+ava_guestlib_srcs(../common/extensions/cudart_10.1_utilities.cpp extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp);
+ava_worker_srcs(../common/extensions/cudart_10.1_utilities.cpp extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp);
 ava_export_qualifier();
 ava_soname(libcuda.so libcuda.so.1 libcudart.so.10 libcudart.so.10.1 libcublas.so.10 libcublasLt.so.10 libcudnn.so.7 libcufft.so.10 libcurand.so.10 libcusolver.so.10 libcusparse.so.10);
 
@@ -51,12 +50,10 @@ ava_begin_utility;
 #include <cusolverDn.h>
 #include <cuda_profiler_api.h>
 #include <glib.h>
-
 #include "cudart_nw_internal.h"
 #include "common/linkage.h"
 #include "common/logging.h"
 #include "common/extensions/tf_optimization.h"
-#include "common/extensions/cmd_batching.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
 
 #if !defined(__dv)
@@ -300,20 +297,6 @@ __pool_cuEventDestroy(CUevent* hEvent, size_t count)
     ava_argument(hEvent) {
         ava_in; ava_buffer(count);
         ava_element ava_handle;
-    }
-}
-
-/* AvA internal APIs */
-
-void __do_batch_emit(void *command_buffer, size_t total_buffer_size)
-{
-    ava_async;
-    ava_argument(command_buffer) {
-        ava_in; ava_buffer(total_buffer_size);
-    }
-
-    if (ava_is_worker) {
-        // TODO: need to process return values
     }
 }
 
@@ -22958,3 +22941,4 @@ ava_utility void __helper_worker_init_epilogue() {
 ava_guestlib_init_prologue(__helper_guestlib_init_prologue());
 ava_guestlib_fini_prologue(__helper_guestlib_fini_prologue());
 ava_worker_init_epilogue(__helper_worker_init_epilogue());
+
