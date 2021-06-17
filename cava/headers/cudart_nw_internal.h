@@ -27,13 +27,8 @@ cudaError_t CUDARTAPI __cudaPopCallConfiguration(dim3 *gridDim, dim3 *blockDim, 
 
 void CUDARTAPI __cudaRegisterFatBinaryEnd(void **fatCubinHandle);
 
-extern void CUDARTAPI __cudaRegisterTexture  (void **fatCubinHandle,
-                        const void *hostVar,
-                        const void **deviceAddress,
-                        const char *deviceName,
-                        int dim,
-                        int norm,
-                        int ext);
+extern void CUDARTAPI __cudaRegisterTexture(void **fatCubinHandle, const void *hostVar, const void **deviceAddress,
+                                            const char *deviceName, int dim, int norm, int ext);
 
 #ifdef __cplusplus
 }  // extern "C"
