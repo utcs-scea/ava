@@ -2,6 +2,7 @@
 #define __AVA_LOGGING_H__
 
 #ifdef __cplusplus
+#include <fmt/core.h>
 #include <plog/Log.h>
 
 #include <memory>
@@ -177,6 +178,8 @@ T CheckNotNull(const char *file, int line, const char *exprtext, T &&t) {
 #define DCHECK_NOTNULL(val) val
 
 #endif  // DCHECK_IS_ON()
+
+#define AVA_LOG_F(l, fstr, ...) AVA_LOG(l) << fmt::format(fstr, __VA_ARGS__)
 
 #endif
 

@@ -12,6 +12,8 @@
 extern "C" {
 #endif
 
+void init_guestlib(void);
+void destroy_guestlib(void);
 void nw_init_guestlib(intptr_t api_id);
 void nw_destroy_guestlib(void);
 

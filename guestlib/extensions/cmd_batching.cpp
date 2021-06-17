@@ -7,6 +7,7 @@
 #include <gsl/gsl>
 
 #include "common/cmd_channel.hpp"
+#include "common/common_context.h"
 #include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
 #include "common/logging.h"
@@ -79,14 +80,13 @@ EXPORTED_WEAKLY void batch_insert_command(struct command_batch *cmd_batch, struc
   g_async_queue_push(cmd_batch->pending_cmds, (gpointer)wrap);
 }
 
-#define CALL_CUDART_OPT_CU_CTX_SET_CURRENT 102
-
 static void *batch_process_thread(void *opaque) {
+  auto common_context = ava::CommonContext::instance();
   struct command_batch *cmd_batch = (struct command_batch *)opaque;
   struct command_wrapper *wrap;
   gdouble elapsed_time;
   GTimer *timer = g_timer_new();
-  int64_t thread_id = shadow_thread_id(nw_shadow_thread_pool);
+  int64_t thread_id = shadow_thread_id(common_context->nw_shadow_thread_pool);
 
   cmd_batch->running = 1;
   if (pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL)) {

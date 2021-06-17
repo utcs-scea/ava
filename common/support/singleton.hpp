@@ -3,12 +3,15 @@
 
 #include <memory>
 
+namespace ava {
+namespace support {
+
 template <typename T>
 class Singleton {
  public:
-  static T &instance() {
+  static T *instance() {
     static const std::unique_ptr<T> instance{new T()};
-    return *instance;
+    return instance.get();
   }
 
   Singleton(const Singleton &) = delete;
@@ -18,14 +21,7 @@ class Singleton {
   Singleton() {}
 };
 
-class ApiServerSetting final : public Singleton<ApiServerSetting> {
- public:
-  void set_listen_port(unsigned int p) { listen_port = p; }
-
-  unsigned int get_listen_port() const { return listen_port; }
-
- private:
-  unsigned int listen_port;
-};
+}  // namespace support
+}  // namespace ava
 
 #endif  // AVA_SINGLETON_HPP_
