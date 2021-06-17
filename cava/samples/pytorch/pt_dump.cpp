@@ -36,6 +36,7 @@ ava_begin_utility;
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <driver_types.h>
+#include <texture_types.h>
 #include <fatbinary.h>
 #include <cublas_v2.h>
 #include <cublas_api.h>
@@ -665,6 +666,21 @@ EXPORTED void CUDARTAPI
 __cudaRegisterFatBinaryEnd(void **fatCubinHandle)
 {
 #warning This API is called for CUDA 10.1 and 10.2, but it seems to be able to be ignored.
+}
+ava_end_replacement;
+
+ava_begin_replacement;
+EXPORTED void CUDARTAPI
+__cudaRegisterTexture  (void **fatCubinHandle,
+                        const void *hostVar,        // struct textureReference *hostVar
+                        const void **deviceAddress,
+                        const char *deviceName,
+                        int dim,
+                        int norm,
+                        int ext)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 ava_end_replacement;
 
@@ -1578,6 +1594,26 @@ cublasStatus_t CUBLASWINAPI cublasGetVector (int n, int elemSize, const void *x,
                                              int incx, void *y, int incy)
 {
     ava_unsupported;
+}
+
+cublasStatus_t CUBLASWINAPI
+cublasSetVectorAsync (int n, int elemSize,
+                      const void *hostPtr, int incx,
+                      void *devicePtr, int incy,
+                      cudaStream_t stream)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
+}
+
+cublasStatus_t CUBLASWINAPI
+cublasGetVectorAsync (int n, int elemSize,
+                      const void *devicePtr, int incx,
+                      void *hostPtr, int incy,
+                      cudaStream_t stream)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
 }
 
 CUBLASAPI cublasStatus_t  CUBLASWINAPI
@@ -22293,3 +22329,13 @@ cudaProfilerInitialize(const char *configFile,
 __host__ cudaError_t CUDARTAPI cudaProfilerStart(void);
 
 __host__ cudaError_t CUDARTAPI cudaProfilerStop(void);
+
+__host__ cudaError_t CUDARTAPI cudaThreadSynchronize (void)
+{
+}
+
+__host__ cudaError_t CUDARTAPI cudaGetExportTable (const void **ppExportTable, const cudaUUID_t *pExportTableId)
+{
+    fprintf(stderr, "%s is not implemented\n", __func__);
+    abort();
+}
