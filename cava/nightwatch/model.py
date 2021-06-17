@@ -572,10 +572,8 @@ class API:
         self.guestlib_fini_prologue = ""
         self.guestlib_fini_epilogue = ""
         self.worker_init_epilogue = ""
-        self.send_code = ""
-        self.reply_code = ""
-        self.worker_argument_process_code = ""
         self.cplusplus = cplusplus
+        self._enabled_optimizations = []
 
         self.__dict__.update(kwargs)
 
@@ -658,3 +656,11 @@ class API:
     @property
     def directory_spelling(self) -> str:
         return f"{self.identifier.lower()}_nw"
+
+    @property
+    def enabled_optimizations(self) -> List[str]:
+        return self._enabled_optimizations
+
+    def enable_optimizations(self, opts: Optional[List[str]]):
+        if opts:
+            self._enabled_optimizations += opts

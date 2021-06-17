@@ -1,4 +1,4 @@
-from typing import Union
+from typing import List, Union
 
 from nightwatch import location, term
 from nightwatch.c_dsl import Expr, ExprOrStr
@@ -11,7 +11,7 @@ from nightwatch.generator.common import nl, pack_struct
 from nightwatch.model import Function, lines
 
 
-def function_implementation(f: Function) -> Union[str, Expr]:
+def function_implementation(f: Function, enabled_opts: List[str] = None) -> Union[str, Expr]:
     """
     Generate a stub function which sends the appropriate CALL command over the
     channel.
@@ -45,16 +45,20 @@ def function_implementation(f: Function) -> Union[str, Expr]:
 
         alloc_list = AllocList(f)
 
-        send_code = """
-            command_channel_send_command(__chan, (struct command_base*)__cmd);
-        """.strip()
-
-        if f.api.send_code:
-            import_code = f.api.send_code.encode("ascii", "ignore").decode("unicode_escape")[1:-1]
-            ldict = locals()
-            # pylint: disable=exec-used
-            exec(import_code, globals(), ldict)
-            send_code = ldict["send_code"]
+        if enabled_opts:
+            # Enable batching optimization: the APIs are batched into a `__do_batch_emit` call.
+            if "batching" in enabled_opts:
+                send_code = f"""
+                    batch_insert_command(nw_global_cmd_batch, (struct command_base*)__cmd, __chan, {int(is_async.is_true())});
+                    """.strip()
+                if f.name == "__do_batch_emit":
+                    send_code = """
+                    command_channel_send_command(__chan, (struct command_base*)__cmd);
+                    """.strip()
+        else:
+            send_code = """
+                command_channel_send_command(__chan, (struct command_base*)__cmd);
+            """.strip()
 
         return_code = is_async.if_then_else(
             forge_success,
