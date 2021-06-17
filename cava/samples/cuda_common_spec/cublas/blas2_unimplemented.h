@@ -1,7 +1,5 @@
 #ifndef _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS2_UNIMPLEMENTED_H_
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS2_UNIMPLEMENTED_H_
-#include <cublas_api.h>
-#include <cublas_v2.h>
 
 /* --------------- CUBLAS BLAS2 functions  ---------------- */
 

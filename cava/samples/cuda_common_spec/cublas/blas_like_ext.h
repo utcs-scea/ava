@@ -1,8 +1,5 @@
 #ifndef _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_H_
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_H_
-#include <cublas_api.h>
-#include <cublas_v2.h>
-
 /* ---------------- CUBLAS BLAS-like extension ---------------- */
 /* GEAM */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgeam(cublasHandle_t handle, cublasOperation_t transa,

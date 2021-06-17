@@ -3,6 +3,9 @@
 
 #include <cublas_api.h>
 #include <cublas_v2.h>
+
+#include "common/extensions/cudnn_optimization.h"
+
 /* CUDABLAS API */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCreate(cublasHandle_t *handle) {
@@ -39,22 +42,6 @@ cublasStatus_t CUBLASWINAPI cublasGetMatrix(int rows, int cols, int elemSize, co
     ava_buffer(rows * cols * elemSize);
   }
 }
-
-ava_begin_replacement;
-EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetPointerMode_v2(cublasHandle_t handle,
-                                                                       cublasPointerMode_t *mode) {
-  /* XXX seems ok for tensorflow but might be wrong !FIXME */
-  *mode = CUBLAS_POINTER_MODE_HOST;
-  return CUBLAS_STATUS_SUCCESS;
-}
-
-EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSetPointerMode_v2(cublasHandle_t handle,
-                                                                       cublasPointerMode_t mode) {
-  /* XXX seems ok for tensorflow but might be wrong ! FIXME */
-  assert(mode == CUBLAS_POINTER_MODE_HOST && "mode == CUBLAS_POINTER_MODE_HOST");
-  return CUBLAS_STATUS_SUCCESS;
-}
-ava_end_replacement;
 
 #include "blas1_unimplemented.h"
 #include "blas2_unimplemented.h"

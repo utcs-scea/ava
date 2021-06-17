@@ -1,8 +1,5 @@
 #ifndef _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS3_UNIMPLEMENTED_H_
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS3_UNIMPLEMENTED_H_
-#include <cublas_api.h>
-#include <cublas_v2.h>
-
 /* --------------- CUBLAS BLAS3 functions  ---------------- */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgemm_v2(cublasHandle_t handle, cublasOperation_t transa,
                                                      cublasOperation_t transb, int m, int n, int k,

@@ -385,9 +385,18 @@ __host__ cudaError_t CUDARTAPI cudaLaunchKernel(const void *func, dim3 gridDim, 
 }
 
 ava_begin_replacement;
-__host__ cudaError_t CUDARTAPI cudaMallocHost(void **ptr, size_t size) { *ptr = malloc(size); }
+EXPORTED __host__ cudaError_t CUDARTAPI cudaMallocHost(void **ptr, size_t size) {
+  *ptr = malloc(size);
+  if (ptr)
+    return cudaSuccess;
+  else
+    return cudaErrorMemoryAllocation;
+}
 
-__host__ cudaError_t CUDARTAPI cudaFreeHost(void *ptr) { free(ptr); }
+EXPORTED __host__ cudaError_t CUDARTAPI cudaFreeHost(void *ptr) {
+  free(ptr);
+  return cudaSuccess;
+}
 ava_end_replacement;
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMalloc(void **devPtr, size_t size) {
@@ -1056,6 +1065,21 @@ CUresult cuGetErrorName(CUresult error, const char **pStr) {
 }
 
 /* CUDABLAS API */
+ava_begin_replacement;
+EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetPointerMode_v2(cublasHandle_t handle,
+                                                                       cublasPointerMode_t *mode) {
+  /* XXX seems ok for tensorflow but might be wrong !FIXME */
+  *mode = CUBLAS_POINTER_MODE_HOST;
+  return CUBLAS_STATUS_SUCCESS;
+}
+
+EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSetPointerMode_v2(cublasHandle_t handle,
+                                                                       cublasPointerMode_t mode) {
+  /* XXX seems ok for tensorflow but might be wrong ! FIXME */
+  assert(mode == CUBLAS_POINTER_MODE_HOST && "mode == CUBLAS_POINTER_MODE_HOST");
+  return CUBLAS_STATUS_SUCCESS;
+}
+ava_end_replacement;
 
 #include "cava/samples/cuda_common_spec/cublas/cublas.h"
 

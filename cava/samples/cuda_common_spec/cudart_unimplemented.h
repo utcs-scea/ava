@@ -267,12 +267,6 @@ __host__ cudaError_t CUDARTAPI cudaMemcpy2DArrayToArray(cudaArray_t dst, size_t 
   ava_unsupported;
 }
 
-__host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbol(void *dst, const void *symbol, size_t count, size_t offset __dv(0),
-                                                    enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToHost)) {
-  /* kind is always cudaMemcpyDeviceToHost */
-  ava_unsupported;
-}
-
 __host__ cudaError_t CUDARTAPI cudaMemcpyPeerAsync(void *dst, int dstDevice, const void *src, int srcDevice,
                                                    size_t count, cudaStream_t stream __dv(0)) {
   ava_unsupported;
@@ -632,4 +626,4 @@ __host__ cudaError_t CUDARTAPI cudaGraphExecDestroy(cudaGraphExec_t graphExec) {
 
 __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph) { ava_unsupported; }
 
-// #endif // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUDART_UNIMPLEMENTED_H_
+#endif  // _AVA_SAMPLES_CUDA_COMMON_SPEC_CUDART_UNIMPLEMENTED_H_
