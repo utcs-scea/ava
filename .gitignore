@@ -8,6 +8,10 @@ cmake-build-*
 *.sqlite3
 *build
 
+# Outputs
+*.txt
+*.csv
+
 # Cloned repository
 benchmark/
 kvm/
