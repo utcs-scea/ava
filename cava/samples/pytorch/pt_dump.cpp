@@ -178,39 +178,6 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
     struct fatBinaryHeader *fbh = reinterpret_cast<struct fatBinaryHeader *>(wp->ptr);
     int fd, ret;
 
-    /* Increase fatbin counter */
-    static int fatbin_num = 0;
-    fatbin_num++;
-    if (ava_is_worker) {
-        char* file_name = "/tmp/fatbin-info.ava";
-        fd = open(file_name, O_RDWR | O_CREAT, 0666);
-        if (fd == -1) {
-            fprintf(stderr, "open %s [errno=%d, errstr=%s] at %s:%d",
-                file_name, errno, strerror(errno), __FILE__, __LINE__);
-            exit(EXIT_FAILURE);
-        }
-        AVA_DEBUG << "Fatbinary counter = " << fatbin_num;
-        ret = write(fd, (const void *)&fatbin_num, sizeof(int));
-        if (ret == -1) {
-            fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
-                errno, strerror(errno), __FILE__, __LINE__);
-            exit(EXIT_FAILURE);
-        }
-        ret = lseek(fd, 0, SEEK_END);
-        if (ret == -1) {
-            fprintf(stderr, "lseek [errno=%d, errstr=%s] at %s:%d",
-                errno, strerror(errno), __FILE__, __LINE__);
-            exit(EXIT_FAILURE);
-        }
-        ret = write(fd, (const void *)wp, sizeof(struct fatbin_wrapper));
-        if (ret == -1) {
-            fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
-                errno, strerror(errno), __FILE__, __LINE__);
-            exit(EXIT_FAILURE);
-        }
-        close(fd);
-    }
-
     /* Dump fat binary to a file */
     char fatbin_filename[32];
     if (ava_is_worker) {
@@ -245,19 +212,6 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
         *num_funcs = 0;
     }
 
-    /* Add separator to the functions of different fatbinaries */
-    if (ava_is_worker) {
-        if (ava_metadata(NULL)->fd_functions != 0) {
-            size = 0;
-            ret = write(ava_metadata(NULL)->fd_functions, (const void *)&size, sizeof(size_t));
-            if (ret == -1) {
-                fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
-                    errno, strerror(errno), __FILE__, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
-
     /*  Open the command pipe for reading */
     char pip_command[80];
     sprintf(pip_command, "/usr/local/cuda-10.1/bin/cuobjdump -elf /tmp/fatbin-%d.ava",
@@ -267,25 +221,20 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
 
     /* Open function argument dump file */
     int function_arg_fd;
-    char function_arg_filename[32];
-    if (ava_is_worker) {
-        sprintf(function_arg_filename, "/tmp/function_arg-%d.ava", ava_metadata(NULL)->num_fatbins);
-        function_arg_fd = open(function_arg_filename, O_WRONLY | O_TRUNC | O_CREAT, 0666);
-        if (function_arg_fd == -1) {
-            fprintf(stderr, "open %s [errno=%d, errstr=%s] at %s:%d",
-                function_arg_filename, errno, strerror(errno), __FILE__, __LINE__);
-            exit(EXIT_FAILURE);
-        }
-        AVA_DEBUG << "Dump function argument info to " << function_arg_filename;
-    }
+    bool has_funcs = FALSE;
 
     while (fgets(line, sizeof(line), fp_pipe) != NULL) {
         /* Search functions */
-        if (strncmp(line, ".nv.info._Z", 11) == 0) {
+        if (strncmp(line, ".nv.info.", 9) == 0) {
             sprintf(name, line + 9, strlen(line) - 10);
             assert(strlen(line) - 10 < MAX_KERNEL_NAME_LEN);
             name[strlen(line) - 10] = '\0';
-            ava_debug("[%d] %s@", *num_funcs, name);
+
+            // Skip duplicate function entries for multiple compute versions
+            if (g_hash_table_lookup(*fatbin_funcs, name) != NULL)
+              continue;
+
+            DEBUG_PRINT("[%d] %s@\n", *num_funcs, name);
 
             /* Create a new hash table entry */
             func = (struct fatbin_function *)g_malloc(sizeof(struct fatbin_function));
@@ -349,6 +298,20 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
 
             /* Dump the function argument sizes to file */
             if (ava_is_worker) {
+                /* Open function argument dump file on first valid function */
+                if (!has_funcs) {
+                    char function_arg_filename[32];
+
+                    sprintf(function_arg_filename, "/tmp/function_arg-%d.ava", ava_metadata(NULL)->num_fatbins);
+                    function_arg_fd = open(function_arg_filename, O_WRONLY | O_TRUNC | O_CREAT, 0666);
+                    if (function_arg_fd == -1) {
+                        fprintf(stderr, "open %s [errno=%d, errstr=%s] at %s:%d",
+                            function_arg_filename, errno, strerror(errno), __FILE__, __LINE__);
+                        exit(EXIT_FAILURE);
+                    }
+                    AVA_DEBUG << "Dump function argument info to " << function_arg_filename;
+                }
+
                 size = strlen(name) + 1;
                 ret = write(function_arg_fd, (void *)&size, sizeof(size_t));
                 if (ret == -1) {
@@ -370,20 +333,65 @@ ava_utility void __helper_dump_fatbin(void *fatCubin,
                 }
             }
 
+            has_funcs = TRUE;
+
             /* Insert the function into hash table */
-            if (g_hash_table_lookup(*fatbin_funcs, name) != NULL)
-                g_free(func);
-            else
-                g_hash_table_insert((*fatbin_funcs), g_strdup(name), (gpointer)func);
-            //func = (struct fatbin_function *)g_hash_table_lookup(*fatbin_funcs, name);
+            g_hash_table_insert((*fatbin_funcs), g_strdup(name), (gpointer)func);
         }
     }
 
+    if (has_funcs)
+        ++(ava_metadata(NULL)->num_fatbins);
+
+    // Were there any valid functions in the binary?
     if (ava_is_worker)
-        close(function_arg_fd);
+    {
+        if (has_funcs)
+        {
+            close(function_arg_fd);
+
+            char* file_name = "/tmp/fatbin-info.ava";
+            fd = open(file_name, O_RDWR | O_CREAT, 0666);
+            if (fd == -1) {
+                fprintf(stderr, "open %s [errno=%d, errstr=%s] at %s:%d",
+                    file_name, errno, strerror(errno), __FILE__, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            DEBUG_PRINT("Fatbinary counter = %d\n", ava_metadata(NULL)->num_fatbins);
+            ret = write(fd, (const void *)&(ava_metadata(NULL)->num_fatbins), sizeof(int));
+            if (ret == -1) {
+                fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+                    errno, strerror(errno), __FILE__, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            ret = lseek(fd, 0, SEEK_END);
+            if (ret == -1) {
+                fprintf(stderr, "lseek [errno=%d, errstr=%s] at %s:%d",
+                    errno, strerror(errno), __FILE__, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            ret = write(fd, (const void *)wp, sizeof(struct fatbin_wrapper));
+            if (ret == -1) {
+                fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+                    errno, strerror(errno), __FILE__, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            close(fd);
+
+            /* Add separator to the functions of different fatbinaries */
+            if (ava_metadata(NULL)->fd_functions != 0) {
+                size = 0;
+                ret = write(ava_metadata(NULL)->fd_functions, (const void *)&size, sizeof(size_t));
+                if (ret == -1) {
+                    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d",
+                        errno, strerror(errno), __FILE__, __LINE__);
+                    exit(EXIT_FAILURE);
+                }
+            }
+        }
+    }
 
     pclose(fp_pipe);
-    ++(ava_metadata(NULL)->num_fatbins);
 }
 
 ava_utility void __helper_init_module(struct fatbin_wrapper *fatCubin, void **handle) {
