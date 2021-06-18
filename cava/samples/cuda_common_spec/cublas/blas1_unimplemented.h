@@ -1,5 +1,6 @@
 #ifndef _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS1_UNIMPLEMENTED_H_
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS1_UNIMPLEMENTED_H_
+#include "cava/nightwatch/parser/c/nightwatch.h"
 
 /* ---------------- CUBLAS BLAS1 functions ---------------- */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasNrm2Ex(cublasHandle_t handle, int n, const void *x, cudaDataType xType,

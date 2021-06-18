@@ -1,6 +1,8 @@
 #ifndef _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_SPARSE_FORMAT_CONVERSION_UNIMPLEMENTED_H_
 #define _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_SPARSE_FORMAT_CONVERSION_UNIMPLEMENTED_H_
 #include <cusparse.h>
+
+#include "cava/nightwatch/parser/c/nightwatch.h"
 //##############################################################################
 //# SPARSE FORMAT CONVERSION
 //##############################################################################

@@ -2,6 +2,8 @@
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUDNN_H_
 #include <cudnn.h>
 
+#include "cava/nightwatch/parser/c/nightwatch.h"
+
 /* Tensor Bias addition : C = alpha * A + beta * C  */
 cudnnStatus_t CUDNNWINAPI cudnnAddTensor(cudnnHandle_t handle, const void *alpha, const cudnnTensorDescriptor_t aDesc,
                                          const void *A, const void *beta, const cudnnTensorDescriptor_t cDesc,

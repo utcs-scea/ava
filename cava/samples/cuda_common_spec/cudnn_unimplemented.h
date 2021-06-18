@@ -2,6 +2,8 @@
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUDNN_UNIMPLEMENTED_H_
 #include <cudnn.h>
 
+#include "cava/nightwatch/parser/c/nightwatch.h"
+
 cudnnStatus_t CUDNNWINAPI cudnnSetRNNDescriptor(cudnnHandle_t handle, cudnnRNNDescriptor_t rnnDesc,
                                                 const int hiddenSize, const int numLayers,
                                                 cudnnDropoutDescriptor_t dropoutDesc, cudnnRNNInputMode_t inputMode,

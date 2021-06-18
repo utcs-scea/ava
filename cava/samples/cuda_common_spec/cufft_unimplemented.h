@@ -2,6 +2,8 @@
 #define _AVA_SAMPLES_CUDA_COMMON_SPEC_CUFFT_UNIMPLEMENTED_H_
 #include <cufft.h>
 
+#include "cava/nightwatch/parser/c/nightwatch.h"
+
 /******** cufft *********/
 cufftResult CUFFTAPI cufftPlan1d(cufftHandle *plan, int nx, cufftType type, int batch) { ava_unsupported; }
 

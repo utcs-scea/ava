@@ -2,6 +2,8 @@
 #define _AVA_SAMPLES_CUDA_COMMON_SPEC_CURAND_UNIMPLEMENTED_H_
 #include <curand.h>
 
+#include "cava/nightwatch/parser/c/nightwatch.h"
+
 curandStatus_t CURANDAPI curandCreateGeneratorHost(curandGenerator_t *generator, curandRngType_t rng_type) {
   ava_unsupported;
 }

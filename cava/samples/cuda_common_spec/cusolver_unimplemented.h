@@ -3,6 +3,8 @@
 #include <cusolverDn.h>
 #include <cusolver_common.h>
 
+#include "cava/nightwatch/parser/c/nightwatch.h"
+
 /******* cusolver *********/
 cusolverStatus_t CUSOLVERAPI cusolverDnCreate(cusolverDnHandle_t *handle) { ava_unsupported; }
 

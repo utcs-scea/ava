@@ -2,6 +2,8 @@
 #define _AVA_SAMPLES_CUDA_COMMON_SPEC_CUSPARSE_H_
 #include <cusparse.h>
 
+#include "cava/nightwatch/parser/c/nightwatch.h"
+
 //##############################################################################
 //# HELPER ROUTINES
 //##############################################################################

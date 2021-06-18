@@ -4,6 +4,7 @@
 #include <cublas_api.h>
 #include <cublas_v2.h>
 
+#include "cava/nightwatch/parser/c/nightwatch.h"
 #include "common/extensions/cudnn_optimization.h"
 
 /* CUDABLAS API */

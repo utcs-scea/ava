@@ -2,6 +2,8 @@
 #define _AVA_SAMPLES_CUDA_COMMON_SPEC_CUDART_UNIMPLEMENTED_H_
 #include <cuda_runtime_api.h>
 
+#include "cava/nightwatch/parser/c/nightwatch.h"
+
 __host__ cudaError_t CUDARTAPI cudaDeviceSetLimit(enum cudaLimit limit, size_t value) { ava_unsupported; }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaDeviceGetLimit(size_t *pValue, enum cudaLimit limit) {

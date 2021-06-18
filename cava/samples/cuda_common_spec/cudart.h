@@ -2,6 +2,8 @@
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUDART_H_
 #include <cuda_runtime_api.h>
 
+#include "cava/nightwatch/parser/c/nightwatch.h"
+
 __host__ __cudart_builtin__ const char *CUDARTAPI cudaGetErrorName(cudaError_t error) {
   const char *ret = reinterpret_cast<const char *>(ava_execute());
   ava_return_value {

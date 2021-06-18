@@ -2,6 +2,8 @@
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUDADRV_UNIMPLEMENTED_H_
 #include <cuda.h>
 
+#include "cava/nightwatch/parser/c/nightwatch.h"
+
 CUresult CUDAAPI cuFuncSetCacheConfig(CUfunction hfunc, CUfunc_cache config) { ava_unsupported; }
 
 CUresult CUDAAPI cuCtxGetSharedMemConfig(CUsharedconfig *pConfig) { ava_unsupported; }

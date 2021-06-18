@@ -1,5 +1,6 @@
 #ifndef _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_UNIMPLEMENTED_H_
 #define _AVA_CAVA_SAMPLES_CUDA_COMMON_SPEC_CUBLAS_BLAS_LIKE_EXT_UNIMPLEMENTED_H_
+#include "cava/nightwatch/parser/c/nightwatch.h"
 /* ---------------- CUBLAS BLAS-like extension ---------------- */
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgeam(cublasHandle_t handle, cublasOperation_t transa,
