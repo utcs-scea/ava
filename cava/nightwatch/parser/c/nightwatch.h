@@ -1,3 +1,5 @@
+#ifndef _AVA_NIGHTWATCH_PARSER_C_NIGHTWATCH_H_
+#define _AVA_NIGHTWATCH_PARSER_C_NIGHTWATCH_H_
 #include <assert.h>
 #include <stdlib.h>
 
@@ -452,3 +454,5 @@ struct __ava_unknown;
 /// API. The actual return type is the return type of the API call. If
 /// the return value is captured, the variable name must be "ret".
 struct __ava_unknown *ava_execute();
+
+#endif  // _AVA_NIGHTWATCH_PARSER_C_NIGHTWATCH_H_
