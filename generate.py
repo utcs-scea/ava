@@ -57,7 +57,7 @@ def download_llvm_lib():
 
 
 CAVA_DIR = os.path.dirname(os.path.realpath(sys.argv[0])) + "/cava"
-CUDA_10_1_CFLAGS = "-I/usr/local/cuda-10.1/include".split(" ")
+CUDA_10_1_CFLAGS = "-I/usr/local/cuda-10.1/include -I/usr/local/cuda-10.1/nvvm/include".split(" ")
 GLIB2_CFLAGS = pkgconfig.cflags("glib-2.0").split(" ")
 FMT_CFLAGS = ["-I" + os.path.dirname(os.path.realpath(sys.argv[0])) + "/third_party/fmt/include"]
 

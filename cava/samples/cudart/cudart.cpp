@@ -3,8 +3,8 @@ ava_name("CUDA Runtime");
 ava_version("10.1.0");
 ava_identifier(CUDART);
 ava_number(9);
-ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers);
-ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn);
+ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -I/usr/local/cuda-10.1/nvvm/include);
+ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -L/usr/local/cuda-10.1/nvvm/lib64 -lnvvm);
 ava_common_utility_srcs(extensions/cudart_10.1_utilities.cpp);
 ava_soname(libcuda.so libcuda.so.1 libcudart.so.10.1);
 ava_export_qualifier();
@@ -27,6 +27,7 @@ ava_begin_utility;
 
 #include <cuda.h>
 #include <cuda_runtime_api.h>
+#include <nvvm.h>
 #include <driver_types.h>
 #include <fatbinary.h>
 #include <cublas_v2.h>
@@ -1058,6 +1059,16 @@ CUresult cuGetErrorName(CUresult error, const char **pStr) {
   }
 }
 
+CUresult CUDAAPI cuOccupancyMaxActiveBlocksPerMultiprocessor(int *numBlocks, CUfunction func, int blockSize,
+                                                             size_t dynamicSMemSize) {
+  ava_unsupported;
+}
+
+CUresult CUDAAPI cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(int *numBlocks, CUfunction func, int blockSize,
+                                                                      size_t dynamicSMemSize, unsigned int flags) {
+  ava_unsupported;
+}
+
 /* CUDABLAS API */
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCreate(cublasHandle_t *handle) {
   ava_argument(handle) {
@@ -1463,3 +1474,58 @@ cudnnStatus_t CUDNNWINAPI cudnnPoolingBackward(cudnnHandle_t handle, const cudnn
   ava_argument(dxDesc) ava_handle;
   ava_argument(dx) ava_handle;
 }
+
+/* NVVM */
+nvvmResult nvvmVersion(int *major, int *minor) {
+  ava_argument(major) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(minor) {
+    ava_out;
+    ava_buffer(1);
+  }
+}
+
+nvvmResult nvvmIRVersion(int *majorIR, int *minorIR, int *majorDbg, int *minorDbg) {
+  ava_argument(majorIR) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(minorIR) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(majorDbg) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(minorDbg) {
+    ava_out;
+    ava_buffer(1);
+  }
+}
+
+nvvmResult nvvmCreateProgram(nvvmProgram *prog) { ava_unsupported; }
+
+nvvmResult nvvmDestroyProgram(nvvmProgram *prog) { ava_unsupported; }
+
+nvvmResult nvvmAddModuleToProgram(nvvmProgram prog, const char *buffer, size_t size, const char *name) {
+  ava_unsupported;
+}
+
+nvvmResult nvvmLazyAddModuleToProgram(nvvmProgram prog, const char *buffer, size_t size, const char *name) {
+  ava_unsupported;
+}
+
+nvvmResult nvvmCompileProgram(nvvmProgram prog, int numOptions, const char **options) { ava_unsupported; }
+
+nvvmResult nvvmVerifyProgram(nvvmProgram prog, int numOptions, const char **options) { ava_unsupported; }
+
+nvvmResult nvvmGetCompiledResultSize(nvvmProgram prog, size_t *bufferSizeRet) { ava_unsupported; }
+
+nvvmResult nvvmGetCompiledResult(nvvmProgram prog, char *buffer) { ava_unsupported; }
+
+nvvmResult nvvmGetProgramLogSize(nvvmProgram prog, size_t *bufferSizeRet) { ava_unsupported; }
+
+nvvmResult nvvmGetProgramLog(nvvmProgram prog, char *buffer) { ava_unsupported; }
