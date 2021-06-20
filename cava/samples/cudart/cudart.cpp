@@ -389,9 +389,26 @@ __host__ cudaError_t CUDARTAPI cudaLaunchKernel(const void *func, dim3 gridDim, 
 }
 
 ava_begin_replacement;
-EXPORTED __host__ cudaError_t CUDARTAPI cudaMallocHost(void **ptr, size_t size) { *ptr = malloc(size); }
+EXPORTED __host__ cudaError_t CUDARTAPI cudaMallocHost(void **ptr, size_t size) {
+  *ptr = malloc(size);
+  if (ptr) {
+    return cudaSuccess;
+  } else {
+    return cudaErrorMemoryAllocation;
+  }
+}
 
-EXPORTED __host__ cudaError_t CUDARTAPI cudaFreeHost(void *ptr) { free(ptr); }
+EXPORTED __host__ cudaError_t CUDARTAPI cudaFreeHost(void *ptr) {
+  if (!ptr) {
+    return cudaErrorInvalidValue;
+  }
+  free(ptr);
+  return cudaSuccess;
+}
+
+EXPORTED __host__ cudaError_t CUDARTAPI cudaHostAlloc(void **ptr, size_t size, unsigned int flags) {
+  return cudaMallocHost(ptr, size);
+}
 ava_end_replacement;
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMalloc(void **devPtr, size_t size) {
@@ -401,6 +418,8 @@ __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMalloc(void **devPtr, size
     ava_element ava_opaque;
   }
 }
+
+__host__ cudaError_t CUDARTAPI cudaMallocManaged(void **devPtr, size_t size, unsigned int flags) { ava_unsupported; }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind) {
   ava_argument(dst) {
@@ -466,12 +485,37 @@ __host__ cudaError_t CUDARTAPI cudaDeviceReset(void);
 
 __host__ cudaError_t CUDARTAPI cudaSetDevice(int device);
 
+__host__ cudaError_t CUDARTAPI cudaGetSymbolAddress(void **devPtr, const void *symbol) {
+  ava_argument(devPtr) {
+    ava_out;
+    ava_buffer(1);
+    ava_element {
+      ava_allocates;
+      ava_opaque;
+    }
+  }
+  ava_argument(symbol) { ava_opaque; }
+}
+
+__host__ cudaError_t CUDARTAPI cudaGetSymbolSize(size_t *size, const void *symbol) {
+  ava_argument(size) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(symbol) { ava_opaque; }
+}
+
 __host__ cudaError_t CUDARTAPI cudaMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset,
                                                   enum cudaMemcpyKind kind) {
   ava_argument(symbol) { ava_opaque; }
   ava_argument(src) {
-    ava_in;
-    ava_buffer(count);
+    if (kind == cudaMemcpyHostToDevice) {
+      ava_in;
+      ava_buffer(count);
+    } else {
+      // kind == cudaMemcpyDeviceToDevice
+      ava_opaque;
+    }
   }
 }
 
@@ -636,6 +680,15 @@ __host__ cudaError_t CUDARTAPI cudaMemGetInfo(size_t *_free, size_t *total) {
     ava_out;
     ava_buffer(1);
   }
+}
+
+__host__ cudaError_t CUDARTAPI cudaMemPrefetchAsync(const void *devPtr, size_t count, int dstDevice,
+                                                    cudaStream_t stream) {
+  ava_unsupported;
+}
+
+__host__ cudaError_t CUDARTAPI cudaMemAdvise(const void *devPtr, size_t count, cudaMemoryAdvise advice, int device) {
+  ava_unsupported;
 }
 
 __host__ cudaError_t CUDARTAPI cudaRuntimeGetVersion(int *version) {
