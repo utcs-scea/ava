@@ -316,10 +316,10 @@ void CUDARTAPI __cudaRegisterFunction(void **fatCubinHandle, const char *hostFun
 }
 
 ava_begin_replacement;
-void CUDARTAPI __cudaRegisterVar(void **AVA_UNUSED(fatCubinHandle), char *AVA_UNUSED(hostVar),
-                                 char *AVA_UNUSED(deviceAddress), const char *AVA_UNUSED(deviceName),
-                                 int AVA_UNUSED(ext), size_t AVA_UNUSED(size), int AVA_UNUSED(constant),
-                                 int AVA_UNUSED(global)) {}
+EXPORTED void CUDARTAPI __cudaRegisterVar(void **AVA_UNUSED(fatCubinHandle), char *AVA_UNUSED(hostVar),
+                                          char *AVA_UNUSED(deviceAddress), const char *AVA_UNUSED(deviceName),
+                                          int AVA_UNUSED(ext), size_t AVA_UNUSED(size), int AVA_UNUSED(constant),
+                                          int AVA_UNUSED(global)) {}
 
 EXPORTED void CUDARTAPI __cudaRegisterFatBinaryEnd(void **AVA_UNUSED(fatCubinHandle)) {
 #warning This API is called for CUDA 10.1 and 10.2, but it seems to be able to be ignored.
@@ -388,9 +388,9 @@ __host__ cudaError_t CUDARTAPI cudaLaunchKernel(const void *func, dim3 gridDim, 
 }
 
 ava_begin_replacement;
-__host__ cudaError_t CUDARTAPI cudaMallocHost(void **ptr, size_t size) { *ptr = malloc(size); }
+EXPORTED __host__ cudaError_t CUDARTAPI cudaMallocHost(void **ptr, size_t size) { *ptr = malloc(size); }
 
-__host__ cudaError_t CUDARTAPI cudaFreeHost(void *ptr) { free(ptr); }
+EXPORTED __host__ cudaError_t CUDARTAPI cudaFreeHost(void *ptr) { free(ptr); }
 ava_end_replacement;
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMalloc(void **devPtr, size_t size) {
@@ -1088,15 +1088,15 @@ cublasStatus_t CUBLASWINAPI cublasGetMatrix(int rows, int cols, int elemSize, co
 }
 
 ava_begin_replacement;
-CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetPointerMode_v2(cublasHandle_t AVA_UNUSED(handle),
-                                                              cublasPointerMode_t *mode) {
+EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetPointerMode_v2(cublasHandle_t AVA_UNUSED(handle),
+                                                                       cublasPointerMode_t *mode) {
   /* XXX seems ok for tensorflow but might be wrong !FIXME */
   *mode = CUBLAS_POINTER_MODE_HOST;
   return CUBLAS_STATUS_SUCCESS;
 }
 
-CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSetPointerMode_v2(cublasHandle_t AVA_UNUSED(handle),
-                                                              cublasPointerMode_t AVA_UNUSED(mode)) {
+EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSetPointerMode_v2(cublasHandle_t AVA_UNUSED(handle),
+                                                                       cublasPointerMode_t AVA_UNUSED(mode)) {
   /* XXX seems ok for tensorflow but might be wrong ! FIXME */
   assert(mode == CUBLAS_POINTER_MODE_HOST);
   return CUBLAS_STATUS_SUCCESS;
