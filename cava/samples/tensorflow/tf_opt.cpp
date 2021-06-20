@@ -28,7 +28,6 @@ size_t __args_index_0;
 size_t __kernelParams_index_0;
 
 ava_begin_utility;
-#include <cublas_api.h>
 #include <cublas_v2.h>
 #include <cuda.h>
 #include <cuda_runtime_api.h>

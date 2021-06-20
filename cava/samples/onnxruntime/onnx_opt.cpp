@@ -42,7 +42,6 @@ ava_begin_utility;
 #include <driver_types.h>
 #include <fatbinary.h>
 #include <cublas_v2.h>
-#include <cublas_api.h>
 #include <cudnn.h>
 #include <curand.h>
 #include <cufft.h>
