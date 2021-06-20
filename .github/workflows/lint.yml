@@ -9,11 +9,11 @@ on:
       # - 'feature/**'
     tags:
       - r*.*
-    paths-ignore:
-      - 'cava/samples/**'
-  pull_request:
-    paths-ignore:
-      - 'cava/samples/**'
+#     paths-ignore:
+#       - 'cava/samples/**'
+#   pull_request:
+#     paths-ignore:
+#       - 'cava/samples/**'
 
 jobs:
   lint:
