@@ -18,7 +18,7 @@ fi
 
 ROOTS=("$@")
 FAILED=
-PRUNE_PATHS="cava/samples llvm cava/*_nw third_party"
+PRUNE_PATHS="llvm cava/*_nw third_party"
 PRUNE_NAMES="build*"
 
 emit_prunes() {
