@@ -14,6 +14,9 @@ RUN chmod gu+s `which gosu`
 COPY install_dependencies.sh /tmp
 RUN /tmp/install_dependencies.sh
 
+# add nvvm to LD_LIBRARY_PATH
+RUN echo /usr/local/cuda-10.1/nvvm/lib64 > /etc/ld.so.conf.d/nvvm.conf && ldconfig
+
 # Set the locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen
