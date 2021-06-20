@@ -1100,14 +1100,14 @@ cublasStatus_t CUBLASWINAPI cublasGetMatrix(int rows, int cols, int elemSize, co
 
 ava_begin_replacement;
 EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetPointerMode_v2(cublasHandle_t AVA_UNUSED(handle),
-                                                              cublasPointerMode_t *mode) {
+                                                                       cublasPointerMode_t *mode) {
   /* XXX seems ok for tensorflow but might be wrong !FIXME */
   *mode = CUBLAS_POINTER_MODE_HOST;
   return CUBLAS_STATUS_SUCCESS;
 }
 
 EXPORTED CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSetPointerMode_v2(cublasHandle_t AVA_UNUSED(handle),
-                                                              cublasPointerMode_t AVA_UNUSED(mode)) {
+                                                                       cublasPointerMode_t AVA_UNUSED(mode)) {
   /* XXX seems ok for tensorflow but might be wrong ! FIXME */
   assert(mode == CUBLAS_POINTER_MODE_HOST);
   return CUBLAS_STATUS_SUCCESS;
