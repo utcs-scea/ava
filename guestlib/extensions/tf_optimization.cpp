@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 #include "common/endpoint_lib.hpp"
-// #include "common/extensions/cmd_batching.h"
-#include "guestlib/extensions/command_batch_worker.h"
+#include "guestlib/extensions/guest_cmd_batching_queue.h"
+#include "guestlib/guest_context.h"
 #include "guestlib/guest_thread.h"
 
 GQueue *call_configuration_stack;
@@ -29,7 +29,7 @@ gint gpu_address_range_cmp(gconstpointer r1, gconstpointer r2, gpointer user_dat
   return 0;
 }
 
-void guestlib_tf_opt_init(void) {
+void guestlib_tf_opt_init(ava::GuestContext *gctx) {
   /* Emulate the call configuration stack */
   call_configuration_stack = g_queue_new();
 
@@ -43,12 +43,11 @@ void guestlib_tf_opt_init(void) {
   idle_cu_event_pool = g_queue_new();
 
   /* API batch */
-  // nw_global_cmd_batch = cmd_batch_thread_init();
-  batch_worker = new ava::CmdBatchingWorker();
-  batch_worker->Start();
+  gctx->guest_cmd_batching_queue_ = new ava::GuestCmdBatchingQueue();
+  gctx->guest_cmd_batching_queue_->Start();
 }
 
-void guestlib_tf_opt_fini(void) {
+void guestlib_tf_opt_fini(ava::GuestContext *gctx) {
   g_queue_free(call_configuration_stack);
   g_tree_destroy(gpu_address_set);
 
@@ -60,9 +59,8 @@ void guestlib_tf_opt_fini(void) {
   g_queue_free(cu_event_pool);
   g_queue_free(idle_cu_event_pool);
 
-  // cmd_batch_thread_fini(nw_global_cmd_batch);
-  batch_worker->Stop();
-  delete batch_worker;
+  gctx->guest_cmd_batching_queue_->Stop();
+  delete gctx->guest_cmd_batching_queue_;
 }
 
 int free_cu_event_pool(GQueue *pool) {

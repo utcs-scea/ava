@@ -7,7 +7,7 @@ ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -
 // To enable stat collecting, use the below line and uncomment the ava_stats definition
 // ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -DAVA_PRELOAD_CUBIN -D__AVA_ENABLE_STAT);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
-ava_guestlib_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/command_batch_worker.cpp queue_worker.cpp);
+ava_guestlib_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/guest_cmd_batching_queue.cpp extensions/extension_api.cpp);
 ava_worker_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/cmd_batching.cpp);
 ava_common_utility_srcs(extensions/cudart_10.1_utilities.cpp);
 ava_export_qualifier();
@@ -56,6 +56,7 @@ ava_begin_utility;
 #include "common/linkage.h"
 #include "common/logging.h"
 #include "cudart_nw_internal.h"
+#include "guestlib/extensions/guest_cmd_batching_queue.h"
 
 #if !defined(__dv)
 #define __dv(v)
@@ -11766,15 +11767,12 @@ __host__ cudaError_t CUDARTAPI cudaGraphExecDestroy(cudaGraphExec_t graphExec) {
 
 __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph) { ava_unsupported; }
 
-/**
- * Initialization code in the generated code.
- */
-ava_utility void __helper_guestlib_init_prologue() {
+ava_begin_replacement;
+void ava_preload_cubin_guestlib() {
 #ifdef AVA_PRELOAD_CUBIN
   /* Preload CUDA fat binaries */
   /* Read cubin number */
-  int fd;
-  ssize_t ret;
+  int fd, ret;
   int fatbin_num;
   fd = open("/cuda_dumps/fatbin-info.ava", O_RDONLY, 0666);
   if (fd == -1) {
@@ -11794,10 +11792,8 @@ ava_utility void __helper_guestlib_init_prologue() {
     __helper_load_function_arg_info_guest();
   }
 #endif
-  guestlib_tf_opt_init();
 }
-
-ava_utility void __helper_guestlib_fini_prologue() { guestlib_tf_opt_fini(); }
+ava_end_replacement;
 
 ava_utility void __helper_worker_init_epilogue() {
 #ifdef AVA_PRELOAD_CUBIN

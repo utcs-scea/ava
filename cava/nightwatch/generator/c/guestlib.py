@@ -9,16 +9,19 @@ def source(api: API) -> Tuple[str, str]:
     handle_command_func_code = handle_command_function(
         api, api.callback_functions, list(api.real_functions) + list(api.callback_functions)
     )
+
     code = f"""
 #define __AVA__ 1
 #define ava_is_worker 0
 #define ava_is_guest 1
 
 #include "guestlib.h"
+#include "guest_context.h"
 
 {handle_command_header(api)}
 
-void init_guestlib(void) {{
+namespace ava {{
+GuestContext::GuestContext() {{
     __handle_command_{api.identifier.lower()}_init();
     nw_init_log();
     {api.guestlib_init_prologue};
@@ -26,12 +29,13 @@ void init_guestlib(void) {{
     {api.guestlib_init_epilogue};
 }}
 
-void destroy_guestlib(void) {{
+GuestContext::~GuestContext() {{
     {api.guestlib_fini_prologue};
     nw_destroy_guestlib();
     {api.guestlib_fini_epilogue};
     __handle_command_{api.identifier.lower()}_destroy();
 }}
+}} //// namespace ava
 
 {handle_command_func_code}
 

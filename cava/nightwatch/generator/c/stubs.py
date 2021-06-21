@@ -55,7 +55,8 @@ def function_implementation(f: Function, enabled_opts: List[str] = None) -> Unio
             # Enable batching optimization: the APIs are batched into a `__do_batch_emit` call.
             if "batching" in enabled_opts:
                 send_code = f"""
-                    batch_worker->enqueue_cmd((struct command_base*)__cmd, __chan, {int(is_async.is_true())});
+                    auto guest_context = ava::GuestContext::instance();
+                    guest_context->guest_cmd_batching_queue->enqueue_cmd((struct command_base*)__cmd, __chan, {int(is_async.is_true())});
                     """.strip()
                 if f.name == "__do_batch_emit":
                     send_code = """

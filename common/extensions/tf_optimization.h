@@ -15,11 +15,16 @@
 #include "cudnn_optimization.h"
 
 #ifdef __cplusplus
+namespace ava {
+  class GuestContext;
+}
+
+void guestlib_tf_opt_init(ava::GuestContext* gctx);
+void guestlib_tf_opt_fini(ava::GuestContext* gctx);
+
 extern "C" {
 #endif
 
-void guestlib_tf_opt_init(void);
-void guestlib_tf_opt_fini(void);
 void worker_tf_opt_init(void);
 
 CUresult __pool_cuEventCreate(CUevent *phEvent, size_t count);

@@ -7,10 +7,3 @@
 
 static auto common_context = ava::CommonContext::instance();
 static auto guest_context = ava::GuestContext::instance();
-
-namespace ava {
-GuestContext::GuestContext() { init_guestlib(); }
-
-GuestContext::~GuestContext() { destroy_guestlib(); }
-
-}  // namespace ava

@@ -108,6 +108,7 @@ add_library(${{SUBPROJECT_PREFIX}}_guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel_socket_tcp.cpp
+  ${{CMAKE_SOURCE_DIR}}/common/cmd_queue.cpp
   ${{CMAKE_SOURCE_DIR}}/common/support/socket.cpp
   ${{CMAKE_SOURCE_DIR}}/common/support/fs.cpp
   ${{CMAKE_SOURCE_DIR}}/common/support/thread.cpp
