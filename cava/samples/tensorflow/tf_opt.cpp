@@ -49,13 +49,16 @@ ava_begin_utility;
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "cudart_nw_internal.h"
 #include "common/extensions/cmd_batching.h"
-#include "guestlib/extensions/command_batch_worker.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
 #include "common/extensions/tf_optimization.h"
 #include "common/linkage.h"
 #include "common/logging.h"
-#include "cudart_nw_internal.h"
+#include "common/support/time_util.h"
+#include "common/support/gen_stat.h"
+#include "common/support/io.h"
+#include "guestlib/extensions/extension_api.h"
 #include "guestlib/extensions/guest_cmd_batching_queue.h"
 
 #if !defined(__dv)
@@ -11833,6 +11836,6 @@ ava_utility void __helper_worker_init_epilogue() {
   worker_tf_opt_init();
 }
 
-ava_guestlib_init_prologue(__helper_guestlib_init_prologue());
-ava_guestlib_fini_prologue(__helper_guestlib_fini_prologue());
+ava_guestlib_init_prologue(__helper_guestlib_init_prologue(this));
+ava_guestlib_fini_prologue(__helper_guestlib_fini_prologue(this));
 ava_worker_init_epilogue(__helper_worker_init_epilogue());
