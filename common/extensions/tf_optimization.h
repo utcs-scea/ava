@@ -16,11 +16,11 @@
 
 #ifdef __cplusplus
 namespace ava {
-  class GuestContext;
+class GuestContext;
 }
 
-void guestlib_tf_opt_init(ava::GuestContext* gctx);
-void guestlib_tf_opt_fini(ava::GuestContext* gctx);
+void guestlib_tf_opt_init(ava::GuestContext *gctx);
+void guestlib_tf_opt_fini(ava::GuestContext *gctx);
 
 extern "C" {
 #endif
