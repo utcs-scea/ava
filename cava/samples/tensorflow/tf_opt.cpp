@@ -4,8 +4,10 @@ ava_version("10.1.0");
 ava_identifier(TF_OPT);
 ava_number(9);
 ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -DAVA_PRELOAD_CUBIN);
+// To enable stat collecting, use the below line and uncomment the ava_stats definition
+// ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -DAVA_PRELOAD_CUBIN -D__AVA_ENABLE_STAT);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
-ava_guestlib_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/cmd_batching.cpp);
+ava_guestlib_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/guest_cmd_batching_queue.cpp extensions/extension_api.cpp);
 ava_worker_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/cmd_batching.cpp);
 ava_common_utility_srcs(extensions/cudart_10.1_utilities.cpp);
 ava_export_qualifier();
@@ -47,12 +49,17 @@ ava_begin_utility;
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "cudart_nw_internal.h"
 #include "common/extensions/cmd_batching.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
 #include "common/extensions/tf_optimization.h"
 #include "common/linkage.h"
 #include "common/logging.h"
-#include "cudart_nw_internal.h"
+#include "common/support/time_util.h"
+#include "common/support/gen_stat.h"
+#include "common/support/io.h"
+#include "guestlib/extensions/extension_api.h"
+#include "guestlib/extensions/guest_cmd_batching_queue.h"
 
 #if !defined(__dv)
 #define __dv(v)
@@ -11763,15 +11770,12 @@ __host__ cudaError_t CUDARTAPI cudaGraphExecDestroy(cudaGraphExec_t graphExec) {
 
 __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph) { ava_unsupported; }
 
-/**
- * Initialization code in the generated code.
- */
-ava_utility void __helper_guestlib_init_prologue() {
+ava_begin_replacement;
+void ava_preload_cubin_guestlib() {
 #ifdef AVA_PRELOAD_CUBIN
   /* Preload CUDA fat binaries */
   /* Read cubin number */
-  int fd;
-  ssize_t ret;
+  int fd, ret;
   int fatbin_num;
   fd = open("/cuda_dumps/fatbin-info.ava", O_RDONLY, 0666);
   if (fd == -1) {
@@ -11791,10 +11795,8 @@ ava_utility void __helper_guestlib_init_prologue() {
     __helper_load_function_arg_info_guest();
   }
 #endif
-  guestlib_tf_opt_init();
 }
-
-ava_utility void __helper_guestlib_fini_prologue() { guestlib_tf_opt_fini(); }
+ava_end_replacement;
 
 ava_utility void __helper_worker_init_epilogue() {
 #ifdef AVA_PRELOAD_CUBIN
@@ -11834,6 +11836,6 @@ ava_utility void __helper_worker_init_epilogue() {
   worker_tf_opt_init();
 }
 
-ava_guestlib_init_prologue(__helper_guestlib_init_prologue());
-ava_guestlib_fini_prologue(__helper_guestlib_fini_prologue());
+ava_guestlib_init_prologue(__helper_guestlib_init_prologue(this));
+ava_guestlib_fini_prologue(__helper_guestlib_fini_prologue(this));
 ava_worker_init_epilogue(__helper_worker_init_epilogue());

@@ -92,6 +92,7 @@ add_library(${{SUBPROJECT_PREFIX}}_guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/guestlib/migration.cpp
   ${{CMAKE_SOURCE_DIR}}/guestlib/cmd_channel_socket_tcp.cpp
   ${{CMAKE_SOURCE_DIR}}/guestlib/guest_context.cpp
+  ${{CMAKE_SOURCE_DIR}}/guestlib/guest_thread.cpp
   {' '.join(guestlib_srcs)}
   {' '.join(common_utility_srcs)}
   {api.c_library_spelling}
@@ -107,7 +108,10 @@ add_library(${{SUBPROJECT_PREFIX}}_guestlib SHARED
   ${{CMAKE_SOURCE_DIR}}/common/shadow_thread_pool.cpp
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel_socket_utilities.cpp
   ${{CMAKE_SOURCE_DIR}}/common/cmd_channel_socket_tcp.cpp
+  ${{CMAKE_SOURCE_DIR}}/common/cmd_queue.cpp
   ${{CMAKE_SOURCE_DIR}}/common/support/socket.cpp
+  ${{CMAKE_SOURCE_DIR}}/common/support/fs.cpp
+  ${{CMAKE_SOURCE_DIR}}/common/support/thread.cpp
   ${{CMAKE_SOURCE_DIR}}/proto/manager_service.proto.cpp
 )
 target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
@@ -116,6 +120,7 @@ target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
   fmt::fmt
   GSL
   config++
+  absl::synchronization
   absl::strings
 )
 target_compile_options(${{SUBPROJECT_PREFIX}}_guestlib

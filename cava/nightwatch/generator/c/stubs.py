@@ -5,7 +5,13 @@ from nightwatch.c_dsl import Expr, ExprOrStr
 from nightwatch.generator import generate_requires
 from nightwatch.generator.c.buffer_handling import compute_total_size
 from nightwatch.generator.c.caller import compute_argument_value, attach_for_argument
-from nightwatch.generator.c.instrumentation import timing_code_guest, report_alloc_resources, report_consume_resources
+from nightwatch.generator.c.instrumentation import (
+    timing_code_guest,
+    report_alloc_resources,
+    report_consume_resources,
+    time_stamp_begin,
+    time_stamp_end,
+)
 from nightwatch.generator.c.util import AllocList
 from nightwatch.generator.common import nl, pack_struct
 from nightwatch.model import Function, lines
@@ -49,7 +55,8 @@ def function_implementation(f: Function, enabled_opts: List[str] = None) -> Unio
             # Enable batching optimization: the APIs are batched into a `__do_batch_emit` call.
             if "batching" in enabled_opts:
                 send_code = f"""
-                    batch_insert_command(nw_global_cmd_batch, (struct command_base*)__cmd, __chan, {int(is_async.is_true())});
+                    auto guest_context = ava::GuestContext::instance();
+                    guest_context->guest_cmd_batching_queue->enqueue_cmd((struct command_base*)__cmd, __chan, {int(is_async.is_true())});
                     """.strip()
                 if f.name == "__do_batch_emit":
                     send_code = """
@@ -60,11 +67,30 @@ def function_implementation(f: Function, enabled_opts: List[str] = None) -> Unio
                 command_channel_send_command(__chan, (struct command_base*)__cmd);
             """.strip()
 
+        collect_stats = ""
+        if f.generate_stats_code:
+            collect_stats = f"""
+            #ifdef __AVA_ENABLE_STAT
+            int guest_stats_fd = ava::get_guest_stats_fd();
+            fmt::memory_buffer output;
+            fmt::format_to(output, \"GuestlibStat {{}}, {{}}\\n\",
+                __FUNCTION__,
+                gsl::narrow_cast<int32_t>({str(f.name)}_end_ts - {str(f.name)}_begin_ts));
+            ava::guest_write_stats(output.data(), output.size());
+            #endif
+            """.strip()
+
         return_code = is_async.if_then_else(
-            forge_success,
+            f"""
+            {time_stamp_end(str(f.name), f.generate_stats_code)}
+            {collect_stats}
+            {forge_success}
+            """,
             f"""
                 shadow_thread_handle_command_until(
                   common_context->nw_shadow_thread_pool, __call_record->__call_complete);
+                {time_stamp_end(str(f.name), f.generate_stats_code)}
+                {collect_stats}
                 {return_statement}
             """.strip(),
         )
@@ -72,6 +98,7 @@ def function_implementation(f: Function, enabled_opts: List[str] = None) -> Unio
         return f"""
         EXPORTED {(f.api.export_qualifier + " ") if f.api.export_qualifier else ""}{f.return_value.type.spelling} {f.name}(
                     {", ".join(a.original_declaration for a in f.real_arguments)}) {{
+            {time_stamp_begin(str(f.name), f.generate_stats_code)}
             {timing_code_guest("before_marshal", str(f.name), f.generate_timing_code)}
 
             const int ava_is_in = 1, ava_is_out = 0;

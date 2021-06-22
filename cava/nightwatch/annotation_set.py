@@ -22,6 +22,7 @@ default_annotations = dict(
     userdata=False,
     callback_stub_function=c_dsl.Expr("NULL"),
     generate_timing_code=False,
+    generate_stats_code=False,
     lifetime=c_dsl.Expr("AVA_CALL"),
     lifetime_coupled=c_dsl.Expr("NULL"),
     disable_native=False,

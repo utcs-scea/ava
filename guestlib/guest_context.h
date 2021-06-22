@@ -11,6 +11,7 @@
 #include "common/linkage.h"
 #include "common/shadow_thread_pool.hpp"
 #include "common/support/singleton.hpp"
+#include "guestlib/extensions/guest_cmd_batching_queue.h"
 
 namespace ava {
 
@@ -20,6 +21,7 @@ class EXPORTED GuestContext final : public ava::support::Singleton<GuestContext>
   friend class ava::support::Singleton<GuestContext>;
 
   ~GuestContext();
+  ava::GuestCmdBatchingQueue *guest_cmd_batching_queue_{nullptr};
 
  private:
   GuestContext();

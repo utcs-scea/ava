@@ -4,8 +4,10 @@ ava_version("10.1.0");
 ava_identifier(ONNX_OPT);
 ava_number(10);
 ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -DAVA_PRELOAD_CUBIN);
+// To enable stat collecting, use the below line and uncomment the ava_stats definition
+// ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -DAVA_PRELOAD_CUBIN -D__AVA_ENABLE_STAT);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
-ava_guestlib_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/cmd_batching.cpp);
+ava_guestlib_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/guest_cmd_batching_queue.cpp extensions/extension_api.cpp);
 ava_worker_srcs(extensions/cudnn_optimization.cpp extensions/tf_optimization.cpp extensions/cmd_batching.cpp);
 ava_common_utility_srcs(extensions/cudart_10.1_utilities.cpp);
 ava_export_qualifier();
@@ -23,6 +25,8 @@ ava_soname(libcuda.so libcuda.so.1 libcudart.so.10 libcudart.so.10.1 libcublas.s
  */
 
 ava_non_transferable_types { ava_handle; }
+
+// ava_functions { ava_stats; }
 
 size_t __args_index_0;
 size_t __kernelParams_index_0;
@@ -55,6 +59,11 @@ ava_begin_utility;
 #include "common/linkage.h"
 #include "common/logging.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
+#include "common/support/time_util.h"
+#include "common/support/gen_stat.h"
+#include "common/support/io.h"
+#include "guestlib/extensions/extension_api.h"
+#include "guestlib/extensions/guest_cmd_batching_queue.h"
 
 #if !defined(__dv)
 #define __dv(v)
@@ -774,6 +783,10 @@ __cudaUnregisterFatBinary(void **fatCubinHandle)
 
 ava_begin_replacement;
 EXPORTED void **CUDARTAPI __cudaRegisterFatBinary(void *fatCubin) {
+#ifdef __AVA_ENABLE_STAT
+  auto begin_ts = ava::GetMonotonicNanoTimestamp();
+#endif
+
   void **dummy_fatbin = static_cast<void **>(malloc(sizeof(void *)));
   if (dummy_fatbin == NULL) {
     fprintf(stderr, "malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(void *), errno, strerror(errno), __FILE__,
@@ -781,6 +794,10 @@ EXPORTED void **CUDARTAPI __cudaRegisterFatBinary(void *fatCubin) {
     exit(EXIT_FAILURE);
   }
   *dummy_fatbin = (void *)0x100;
+
+#ifdef __AVA_ENABLE_STAT
+  ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
   return dummy_fatbin;
 }
 
@@ -816,7 +833,15 @@ ava_begin_replacement;
 EXPORTED void CUDARTAPI __cudaRegisterFunction(void **fatCubinHandle, const char *hostFun, char *deviceFun,
                                                const char *deviceName, int thread_limit, uint3 *tid, uint3 *bid,
                                                dim3 *bDim, dim3 *gDim, int *wSize) {
+#ifdef __AVA_ENABLE_STAT
+  auto begin_ts = ava::GetMonotonicNanoTimestamp();
+#endif
+
   __helper_assosiate_function((void *)hostFun, deviceName);
+
+#ifdef __AVA_ENABLE_STAT
+  ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
 }
 ava_end_replacement;
 
@@ -870,23 +895,39 @@ EXPORTED __host__ __device__ unsigned CUDARTAPI
 __cudaPushCallConfiguration(dim3 gridDim, dim3 blockDim,
                             size_t sharedMem,  // CHECKME: default argument in header
                             void *stream) {
+#ifdef __AVA_ENABLE_STAT
+  auto begin_ts = ava::GetMonotonicNanoTimestamp();
+#endif
+
   struct call_configuration *cc = static_cast<struct call_configuration *>(g_malloc(sizeof(struct call_configuration)));
   cc->gridDim = gridDim;
   cc->blockDim = blockDim;
   cc->sharedMem = sharedMem;
   cc->stream = stream;
   g_queue_push_tail(call_configuration_stack, (gpointer)cc);
+
+#ifdef __AVA_ENABLE_STAT
+  ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
   return 0;
 }
 
 EXPORTED cudaError_t CUDARTAPI __cudaPopCallConfiguration(dim3 *gridDim, dim3 *blockDim, size_t *sharedMem,
                                                           void *stream) {
+#ifdef __AVA_ENABLE_STAT
+  auto begin_ts = ava::GetMonotonicNanoTimestamp();
+#endif
+
   struct call_configuration *cc = static_cast<struct call_configuration *>(g_queue_pop_tail(call_configuration_stack));
   *gridDim = cc->gridDim;
   *blockDim = cc->blockDim;
   *sharedMem = cc->sharedMem;
   *(CUstream *)stream = (CUstream)cc->stream;
   g_free(cc);
+
+#ifdef __AVA_ENABLE_STAT
+  ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
   return cudaSuccess;
 }
 ava_end_replacement;
@@ -932,7 +973,15 @@ __host__ cudaError_t CUDARTAPI cudaLaunchKernel(const void *func, dim3 gridDim, 
 
 ava_begin_replacement;
 EXPORTED __host__ cudaError_t CUDARTAPI cudaMallocHost(void **ptr, size_t size) {
+#ifdef __AVA_ENABLE_STAT
+  auto begin_ts = ava::GetMonotonicNanoTimestamp();
+#endif
+
   *ptr = malloc(size);
+
+#ifdef __AVA_ENABLE_STAT
+  ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
   if (ptr)
     return cudaSuccess;
   else
@@ -940,7 +989,15 @@ EXPORTED __host__ cudaError_t CUDARTAPI cudaMallocHost(void **ptr, size_t size) 
 }
 
 EXPORTED __host__ cudaError_t CUDARTAPI cudaFreeHost(void *ptr) {
+#ifdef __AVA_ENABLE_STAT
+  auto begin_ts = ava::GetMonotonicNanoTimestamp();
+#endif
+
   free(ptr);
+
+#ifdef __AVA_ENABLE_STAT
+  ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
   return cudaSuccess;
 }
 ava_end_replacement;
@@ -1081,6 +1138,10 @@ ava_utility gint gpu_address_search_func(gconstpointer a, gconstpointer b) {
 ava_begin_replacement;
 EXPORTED __host__ cudaError_t CUDARTAPI cudaPointerGetAttributes(struct cudaPointerAttributes *attributes,
                                                                  const void *ptr) {
+#ifdef __AVA_ENABLE_STAT
+  auto begin_ts = ava::GetMonotonicNanoTimestamp();
+#endif
+
   if (!attributes) return cudaErrorInvalidDevice;
 
   /* Search in gpu_address_set */
@@ -1088,12 +1149,19 @@ EXPORTED __host__ cudaError_t CUDARTAPI cudaPointerGetAttributes(struct cudaPoin
   if (res) {
     attributes->type = cudaMemoryTypeDevice;  // maybe cudaMemoryTypeManaged?
     attributes->memoryType = cudaMemoryTypeDevice;
+#ifdef __AVA_ENABLE_STAT
+    ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
     return cudaSuccess;
   }
 
   attributes->type = cudaMemoryTypeUnregistered;
   attributes->memoryType = cudaMemoryTypeUnregistered;
   cuda_last_error = cudaErrorInvalidValue;
+
+#ifdef __AVA_ENABLE_STAT
+  ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
   return cudaErrorInvalidValue;
 }
 ava_end_replacement;
@@ -1455,7 +1523,15 @@ cuMemHostAlloc(void **pp, size_t bytesize, unsigned int Flags)
 
 ava_begin_replacement;
 EXPORTED CUresult CUDAAPI cuMemHostAlloc(void **pp, size_t bytesize, unsigned int Flags) {
+#ifdef __AVA_ENABLE_STAT
+  auto begin_ts = ava::GetMonotonicNanoTimestamp();
+#endif
+
   *pp = __helper_cu_mem_host_alloc_portable(bytesize);
+
+#ifdef __AVA_ENABLE_STAT
+  ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
   return (*pp) ? CUDA_SUCCESS : CUDA_ERROR_OUT_OF_MEMORY;
 }
 ava_end_replacement;
@@ -1596,6 +1672,10 @@ CUresult CUDAAPI cuDeviceGetPCIBusId(char *pciBusId, int len, CUdevice dev) {
 
 ava_begin_replacement;
 EXPORTED CUresult CUDAAPI cuEventCreate(CUevent *phEvent, unsigned int Flags) {
+#ifdef __AVA_ENABLE_STAT
+  auto begin_ts = ava::GetMonotonicNanoTimestamp();
+#endif
+
   CUresult res = CUDA_SUCCESS;
 
   if (g_queue_is_empty(cu_event_pool)) {
@@ -1609,9 +1689,18 @@ EXPORTED CUresult CUDAAPI cuEventCreate(CUevent *phEvent, unsigned int Flags) {
     }
   }
 
-  if (res != CUDA_SUCCESS) return res;
+  if (res != CUDA_SUCCESS) {
+#ifdef __AVA_ENABLE_STAT
+    ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
+    return res;
+  }
 
   *phEvent = (CUevent)g_queue_pop_head(cu_event_pool);
+
+#ifdef __AVA_ENABLE_STAT
+  ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
   return res;
 }
 ava_end_replacement;
@@ -1630,7 +1719,18 @@ CUresult __cuEventQuery(CUevent hEvent) {
 }
 
 ava_begin_replacement;
-EXPORTED CUresult CUDAAPI cuEventQuery(CUevent hEvent) { return __cuEventQuery(hEvent); }
+EXPORTED CUresult CUDAAPI cuEventQuery(CUevent hEvent) {
+#ifdef __AVA_ENABLE_STAT
+  auto begin_ts = ava::GetMonotonicNanoTimestamp();
+#endif
+
+  CUresult ret = __cuEventQuery(hEvent);
+
+#ifdef __AVA_ENABLE_STAT
+  ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
+  return ret;
+}
 ava_end_replacement;
 
 CUresult CUDAAPI cuEventRecord(CUevent hEvent, CUstream hStream) {
@@ -1667,8 +1767,19 @@ ava_end_replacement;
 
 ava_begin_replacement;
 EXPORTED CUresult cuEventDestroy(CUevent hEvent) {
+#ifdef __AVA_ENABLE_STAT
+  auto begin_ts = ava::GetMonotonicNanoTimestamp();
+#endif
   g_queue_push_tail(idle_cu_event_pool, (gpointer)hEvent);
-  if (idle_cu_event_pool->length >= DESCRITPOR_POOL_SIZE) return (CUresult)free_cu_event_pool(idle_cu_event_pool);
+  if (idle_cu_event_pool->length >= DESCRITPOR_POOL_SIZE) {
+#ifdef __AVA_ENABLE_STAT
+    ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
+    return (CUresult)free_cu_event_pool(idle_cu_event_pool);
+  }
+#ifdef __AVA_ENABLE_STAT
+  ava::support::stats_end(__FUNCTION__, begin_ts);
+#endif
   return CUDA_SUCCESS;
 }
 ava_end_replacement;
@@ -11842,38 +11953,6 @@ const char *CUDNNWINAPI cudnnGetErrorString(cudnnStatus_t status) {
   }
 }
 
-/**
- * Initialization code in the generated code.
- */
-ava_utility void __helper_guestlib_init_prologue() {
-#ifdef AVA_PRELOAD_CUBIN
-  /* Preload CUDA fat binaries */
-  /* Read cubin number */
-  int fd, ret;
-  int fatbin_num;
-  fd = open("/cuda_dumps/fatbin-info.ava", O_RDONLY, 0666);
-  if (fd == -1) {
-    fprintf(stderr, "open /cuda_dumps/fatbin-info.ava [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__,
-            __LINE__);
-    exit(EXIT_FAILURE);
-  }
-  ret = read(fd, (void *)&fatbin_num, sizeof(int));
-  if (ret == -1) {
-    fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
-  }
-  AVA_DEBUG << "Fatbinary number = " << fatbin_num;
-  int i;
-  ava_metadata(NULL)->num_fatbins = 0;
-  for (i = 0; i < fatbin_num; i++) {
-    __helper_load_function_arg_info_guest();
-  }
-#endif
-  guestlib_tf_opt_init();
-}
-
-ava_utility void __helper_guestlib_fini_prologue() { guestlib_tf_opt_fini(); }
-
 ava_utility void __helper_worker_init_epilogue() {
 #ifdef AVA_PRELOAD_CUBIN
   /* Preload CUDA fat binaries */
@@ -11911,6 +11990,6 @@ ava_utility void __helper_worker_init_epilogue() {
   worker_tf_opt_init();
 }
 
-ava_guestlib_init_prologue(__helper_guestlib_init_prologue());
-ava_guestlib_fini_prologue(__helper_guestlib_fini_prologue());
+ava_guestlib_init_prologue(__helper_guestlib_init_prologue(this));
+ava_guestlib_fini_prologue(__helper_guestlib_fini_prologue(this));
 ava_worker_init_epilogue(__helper_worker_init_epilogue());
