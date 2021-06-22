@@ -6,6 +6,7 @@ ava_number(9);
 ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers -I/usr/local/cuda-10.1/nvvm/include);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -L/usr/local/cuda-10.1/nvvm/lib64 -lnvvm);
 ava_common_utility_srcs(extensions/cudart_10.1_utilities.cpp);
+ava_guestlib_srcs(cuda/nvvm_helper.cpp);
 ava_soname(libcuda.so libcuda.so.1 libcudart.so.10.1);
 ava_export_qualifier();
 // clang-format on
@@ -39,6 +40,8 @@ ava_begin_utility;
 #include "common/logging.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
 #include "common/declaration.h"
+#include "guestlib/cuda/nvvm_helper.h"
+#include <iostream>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1559,26 +1562,112 @@ nvvmResult nvvmIRVersion(int *majorIR, int *minorIR, int *majorDbg, int *minorDb
   }
 }
 
-nvvmResult nvvmCreateProgram(nvvmProgram *prog) { ava_unsupported; }
+nvvmResult nvvmCreateProgram(nvvmProgram *prog) {
+  ava_argument(prog) {
+    ava_out;
+    ava_buffer(1);
+  }
+}
 
-nvvmResult nvvmDestroyProgram(nvvmProgram *prog) { ava_unsupported; }
+nvvmResult nvvmDestroyProgram(nvvmProgram *prog) {
+  ava_argument(prog) {
+    ava_in;
+    ava_buffer(1);
+  }
+}
 
 nvvmResult nvvmAddModuleToProgram(nvvmProgram prog, const char *buffer, size_t size, const char *name) {
-  ava_unsupported;
+  ava_argument(buffer) {
+    ava_in;
+    ava_buffer(size);
+  }
+  ava_argument(name) {
+    ava_in;
+    ava_buffer(strlen(name) + 1);
+  }
 }
 
 nvvmResult nvvmLazyAddModuleToProgram(nvvmProgram prog, const char *buffer, size_t size, const char *name) {
-  ava_unsupported;
+  ava_argument(buffer) {
+    ava_in;
+    ava_buffer(size);
+  }
+  ava_argument(name) {
+    ava_in;
+    ava_buffer(strlen(name) + 1);
+  }
 }
 
-nvvmResult nvvmCompileProgram(nvvmProgram prog, int numOptions, const char **options) { ava_unsupported; }
+nvvmResult nvvmCompileProgram(nvvmProgram prog, int numOptions, const char **options) {
+  ava_argument(options) {
+    ava_in;
+    ava_buffer(numOptions);
+    ava_element { ava_buffer(strlen(options[ava_index]) + 1); }
+  }
+}
 
-nvvmResult nvvmVerifyProgram(nvvmProgram prog, int numOptions, const char **options) { ava_unsupported; }
+nvvmResult nvvmVerifyProgram(nvvmProgram prog, int numOptions, const char **options) {
+  ava_argument(options) {
+    ava_in;
+    ava_buffer(numOptions);
+    ava_element { ava_buffer(strlen(options[ava_index]) + 1); }
+  }
+}
 
-nvvmResult nvvmGetCompiledResultSize(nvvmProgram prog, size_t *bufferSizeRet) { ava_unsupported; }
+ava_utility void __helper_save_compiled_result_size(nvvmProgram prog, size_t *bufferSizeRet, nvvmResult ret) {
+  if (ava_is_guest) {
+    std::cerr << "ret of nvvmGetCompiledResultSize is " << ret << std::endl;
+    if (ret == NVVM_SUCCESS) {
+      insert_compiled_result_size_map(prog, bufferSizeRet);
+      ava_debug("save compiled result for %lx: %u", prog, *bufferSizeRet);
+    }
+  }
+}
 
-nvvmResult nvvmGetCompiledResult(nvvmProgram prog, char *buffer) { ava_unsupported; }
+nvvmResult nvvmGetCompiledResultSize(nvvmProgram prog, size_t *bufferSizeRet) {
+  ava_argument(bufferSizeRet) {
+    ava_out;
+    ava_buffer(1);
+  }
+  auto ret = static_cast<nvvmResult>(reinterpret_cast<uintptr_t>(ava_execute()));
+  __helper_save_compiled_result_size(prog, bufferSizeRet, ret);
+}
 
-nvvmResult nvvmGetProgramLogSize(nvvmProgram prog, size_t *bufferSizeRet) { ava_unsupported; }
+nvvmResult nvvmGetCompiledResult(nvvmProgram prog, char *buffer) {
+  ava_implicit_argument size_t size = get_compiled_result_size_map(prog);
+  ava_argument(buffer) {
+    ava_out;
+    ava_buffer(size);
+#warning implicit arguments' dependency detection is broken.
+    ava_depends_on(size);
+  }
+}
 
-nvvmResult nvvmGetProgramLog(nvvmProgram prog, char *buffer) { ava_unsupported; }
+ava_utility void __helper_save_program_log_size(nvvmProgram prog, size_t *bufferSizeRet, nvvmResult ret) {
+  if (ava_is_guest) {
+    std::cerr << "ret of nvvmGetProgramLogSize is " << ret << std::endl;
+    if (ret == NVVM_SUCCESS) {
+      insert_program_log_size_map(prog, bufferSizeRet);
+      ava_debug("save program log size for %lx: %u", prog, *bufferSizeRet);
+    }
+  }
+}
+
+nvvmResult nvvmGetProgramLogSize(nvvmProgram prog, size_t *bufferSizeRet) {
+  ava_argument(bufferSizeRet) {
+    ava_out;
+    ava_buffer(1);
+  }
+  auto ret = static_cast<nvvmResult>(reinterpret_cast<uintptr_t>(ava_execute()));
+  __helper_save_program_log_size(prog, bufferSizeRet, ret);
+}
+
+nvvmResult nvvmGetProgramLog(nvvmProgram prog, char *buffer) {
+  ava_implicit_argument size_t size = get_program_log_size_map(prog);
+  ava_argument(buffer) {
+    ava_out;
+    ava_buffer(size);
+#warning implicit arguments' dependency detection is broken.
+    ava_depends_on(size);
+  }
+}

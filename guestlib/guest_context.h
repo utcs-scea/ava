@@ -5,7 +5,9 @@
 #error "This file should only be included by guestlib"
 #else
 
+#include <absl/container/flat_hash_map.h>
 #include <glib.h>
+#include <nvvm.h>
 
 #include "common/endpoint_lib.hpp"
 #include "common/linkage.h"
@@ -22,6 +24,8 @@ class EXPORTED GuestContext final : public ava::support::Singleton<GuestContext>
 
   ~GuestContext();
   ava::GuestCmdBatchingQueue *guest_cmd_batching_queue_{nullptr};
+  absl::flat_hash_map<nvvmProgram, size_t> compiled_result_size_map = {};
+  absl::flat_hash_map<nvvmProgram, size_t> program_log_size_map = {};
 
  private:
   GuestContext();

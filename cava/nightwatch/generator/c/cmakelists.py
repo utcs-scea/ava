@@ -122,6 +122,7 @@ target_link_libraries(${{SUBPROJECT_PREFIX}}_guestlib
   config++
   absl::synchronization
   absl::strings
+  absl::flat_hash_map
 )
 target_compile_options(${{SUBPROJECT_PREFIX}}_guestlib
   PUBLIC -fvisibility=hidden -DAVA_GUESTLIB
