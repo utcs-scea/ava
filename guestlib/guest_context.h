@@ -5,6 +5,7 @@
 #error "This file should only be included by guestlib"
 #else
 
+#include <absl/container/flat_hash_map.h>
 #include <glib.h>
 
 #include "common/endpoint_lib.hpp"
