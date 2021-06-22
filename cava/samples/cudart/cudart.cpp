@@ -1628,10 +1628,13 @@ nvvmResult nvvmGetCompiledResultSize(nvvmProgram prog, size_t *bufferSizeRet) {
     ava_buffer(1);
   }
   auto ret = static_cast<nvvmResult>(reinterpret_cast<uintptr_t>(ava_execute()));
+  // The returned buffer size is cached in a global `compiled_result_size_map` and later will be
+  // retrieved by nvvmGetCompiledResult.
   __helper_save_compiled_result_size(prog, bufferSizeRet, ret);
 }
 
 nvvmResult nvvmGetCompiledResult(nvvmProgram prog, char *buffer) {
+  // The log size was cached in the global `compiled_result_size_map` by nvvmGetCompiledResultSize.
   ava_implicit_argument size_t size = get_compiled_result_size_map(prog);
   ava_argument(buffer) {
     ava_out;
@@ -1656,10 +1659,13 @@ nvvmResult nvvmGetProgramLogSize(nvvmProgram prog, size_t *bufferSizeRet) {
     ava_buffer(1);
   }
   auto ret = static_cast<nvvmResult>(reinterpret_cast<uintptr_t>(ava_execute()));
+  // The returned buffer size is cached in a global `program_log_size_map` and later will be
+  // retrieved by nvvmGetProgramLog.
   __helper_save_program_log_size(prog, bufferSizeRet, ret);
 }
 
 nvvmResult nvvmGetProgramLog(nvvmProgram prog, char *buffer) {
+  // The log size was cached in the global `program_log_size_map` by nvvmGetProgramLogSize.
   ava_implicit_argument size_t size = get_program_log_size_map(prog);
   ava_argument(buffer) {
     ava_out;
