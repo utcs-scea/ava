@@ -11,9 +11,12 @@ on:
       - r*.*
 #     paths-ignore:
 #       - 'cava/samples/**'
-#   pull_request:
-#     paths-ignore:
-#       - 'cava/samples/**'
+  pull_request:
+    branches:
+      - master
+      - r*.*
+    tags:
+      - r*.*
 
 jobs:
   lint:
