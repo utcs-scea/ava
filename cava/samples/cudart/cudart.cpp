@@ -41,7 +41,6 @@ ava_begin_utility;
 #include "common/extensions/cudart_10.1_utilities.hpp"
 #include "common/declaration.h"
 #include "guestlib/cuda/nvvm_helper.h"
-#include <iostream>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1616,7 +1615,6 @@ nvvmResult nvvmVerifyProgram(nvvmProgram prog, int numOptions, const char **opti
 
 ava_utility void __helper_save_compiled_result_size(nvvmProgram prog, size_t *bufferSizeRet, nvvmResult ret) {
   if (ava_is_guest) {
-    std::cerr << "ret of nvvmGetCompiledResultSize is " << ret << std::endl;
     if (ret == NVVM_SUCCESS) {
       insert_compiled_result_size_map(prog, bufferSizeRet);
       ava_debug("save compiled result for %lx: %u", prog, *bufferSizeRet);
@@ -1645,7 +1643,6 @@ nvvmResult nvvmGetCompiledResult(nvvmProgram prog, char *buffer) {
 
 ava_utility void __helper_save_program_log_size(nvvmProgram prog, size_t *bufferSizeRet, nvvmResult ret) {
   if (ava_is_guest) {
-    std::cerr << "ret of nvvmGetProgramLogSize is " << ret << std::endl;
     if (ret == NVVM_SUCCESS) {
       insert_program_log_size_map(prog, bufferSizeRet);
       ava_debug("save program log size for %lx: %u", prog, *bufferSizeRet);
