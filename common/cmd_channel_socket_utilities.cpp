@@ -12,7 +12,6 @@
 #include "common/devconf.h"
 #include "common/guest_mem.h"
 #include "common/logging.h"
-#include <errno.h>
 
 namespace chansocketutil {
 
