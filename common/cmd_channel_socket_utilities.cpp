@@ -135,10 +135,11 @@ struct command_base *command_channel_socket_receive_command(struct command_chann
   struct command_base *cmd;
   ssize_t ret;
 
-  ret = poll(&chan->pfd, 1, -1);
+  do {
+    ret = poll(&chan->pfd, 1, -1);
+  } while (ret == -1 && errno == EINTR);
   if (ret < 0) {
-    AVA_ERROR << "Failed to poll";
-    exit(-1);
+    AVA_LOG_F(FATAL, "Failed to poll: errno: {}, {}", errno, strerror(errno));
   }
 
   if (chan->pfd.revents == 0) return NULL;
