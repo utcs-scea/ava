@@ -934,9 +934,8 @@ EXPORTED cudaError_t CUDARTAPI __cudaPopCallConfiguration(dim3 *gridDim, dim3 *b
 ava_end_replacement;
 
 void CUDARTAPI __cudaRegisterTexture(void **fatCubinHandle,
-    const void *hostVar,  // struct textureReference *hostVar
-    const void **deviceAddress, const char *deviceName, int dim, int norm,
-    int ext) {
+                                     const void *hostVar,  // struct textureReference *hostVar
+                                     const void **deviceAddress, const char *deviceName, int dim, int norm, int ext) {
   ava_unsupported;
 }
 
@@ -11350,30 +11349,21 @@ __host__ cudaError_t CUDARTAPI cudaDeviceGetByPCIBusId(int *device, const char *
 
 __host__ cudaError_t CUDARTAPI cudaDeviceGetPCIBusId(char *pciBusId, int len, int device) { ava_unsupported; }
 
-__host__ cudaError_t CUDARTAPI cudaIpcGetEventHandle(cudaIpcEventHandle_t *handle, cudaEvent_t event)
-{
-    ava_unsupported;
+__host__ cudaError_t CUDARTAPI cudaIpcGetEventHandle(cudaIpcEventHandle_t *handle, cudaEvent_t event) {
+  ava_unsupported;
 }
 
-__host__ cudaError_t CUDARTAPI cudaIpcOpenEventHandle(cudaEvent_t *event, cudaIpcEventHandle_t handle)
-{
-    ava_unsupported;
+__host__ cudaError_t CUDARTAPI cudaIpcOpenEventHandle(cudaEvent_t *event, cudaIpcEventHandle_t handle) {
+  ava_unsupported;
 }
 
-__host__ cudaError_t CUDARTAPI cudaIpcGetMemHandle(cudaIpcMemHandle_t *handle, void *devPtr)
-{
-    ava_unsupported;
+__host__ cudaError_t CUDARTAPI cudaIpcGetMemHandle(cudaIpcMemHandle_t *handle, void *devPtr) { ava_unsupported; }
+
+__host__ cudaError_t CUDARTAPI cudaIpcOpenMemHandle(void **devPtr, cudaIpcMemHandle_t handle, unsigned int flags) {
+  ava_unsupported;
 }
 
-__host__ cudaError_t CUDARTAPI cudaIpcOpenMemHandle(void **devPtr, cudaIpcMemHandle_t handle, unsigned int flags)
-{
-    ava_unsupported;
-}
-
-__host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr)
-{
-    ava_unsupported;
-}
+__host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr) { ava_unsupported; }
 
 ava_begin_replacement;
 EXPORTED __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaPeekAtLastError(void) { return cuda_last_error; }
