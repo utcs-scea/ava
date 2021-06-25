@@ -2850,48 +2850,39 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgemmStridedBatched(
     const float *A, int lda, long long int strideA,                    /* purposely signed */
     const float *B, int ldb, long long int strideB, const float *beta, /* host or device pointer */
     float *C, int ldc, long long int strideC, int batchCount) {
-  // ava_implicit_argument bool alpha_is_gpu = is_gpu_address(reinterpret_cast<uint64_t>(alpha));
-  // ava_implicit_argument bool beta_is_gpu = is_gpu_address(reinterpret_cast<uint64_t>(beta));
+  ava_implicit_argument bool alpha_is_gpu = is_gpu_address(reinterpret_cast<uint64_t>(alpha));
+  ava_implicit_argument bool beta_is_gpu = is_gpu_address(reinterpret_cast<uint64_t>(beta));
   ava_argument(handle) ava_handle;
   ava_argument(A) ava_opaque;
   ava_argument(B) ava_opaque;
   ava_argument(C) ava_opaque;
 
-  ava_argument(alpha) {
-    ava_in;
-    ava_buffer(1);
-    ava_depends_on(alpha);
+  // zzhu: not sure whether following is correct
+  if (alpha_is_gpu) {
+    ava_argument(alpha) {
+      ava_opaque;
+      ava_depends_on(alpha_is_gpu);
+    }
+  } else {
+    ava_argument(alpha) {
+      ava_in;
+      ava_buffer(1);
+      ava_depends_on(alpha_is_gpu);
+    }
   }
-  ava_argument(beta) {
-    ava_in;
-    ava_buffer(1);
-    ava_depends_on(beta);
-  }
-  // if (alpha_is_gpu) {
-  //   ava_argument(alpha) {
-  //     ava_opaque;
-  //     ava_depends_on(alpha);
-  //   }
-  // } else {
-  //   ava_argument(alpha) {
-  //     ava_in;
-  //     ava_buffer(1);
-  //     ava_depends_on(alpha);
-  //   }
-  // }
 
-  // if (beta_is_gpu) {
-  //   ava_argument(beta) {
-  //     ava_opaque;
-  //     ava_depends_on(beta);
-  //   }
-  // } else {
-  //   ava_argument(beta) {
-  //     ava_in;
-  //     ava_buffer(1);
-  //     ava_depends_on(beta);
-  //   }
-  // }
+  if (beta_is_gpu) {
+    ava_argument(beta) {
+      ava_opaque;
+      ava_depends_on(beta_is_gpu);
+    }
+  } else {
+    ava_argument(beta) {
+      ava_in;
+      ava_buffer(1);
+      ava_depends_on(beta_is_gpu);
+    }
+  }
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgemmStridedBatched(
