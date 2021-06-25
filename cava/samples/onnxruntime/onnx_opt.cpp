@@ -12035,6 +12035,34 @@ const char *CUDNNWINAPI cudnnGetErrorString(cudnnStatus_t status) {
   }
 }
 
+ava_begin_replacement;
+void ava_preload_cubin_guestlib() {
+#ifdef AVA_PRELOAD_CUBIN
+  /* Preload CUDA fat binaries */
+  /* Read cubin number */
+  int fd, ret;
+  int fatbin_num;
+  fd = open("/cuda_dumps/fatbin-info.ava", O_RDONLY, 0666);
+  if (fd == -1) {
+    fprintf(stderr, "open /cuda_dumps/fatbin-info.ava [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__,
+            __LINE__);
+    exit(EXIT_FAILURE);
+  }
+  ret = read(fd, (void *)&fatbin_num, sizeof(int));
+  if (ret == -1) {
+    fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
+    exit(EXIT_FAILURE);
+  }
+  AVA_DEBUG << "Fatbinary number = " << fatbin_num;
+  int i;
+  ava_metadata(NULL)->num_fatbins = 0;
+  for (i = 0; i < fatbin_num; i++) {
+    __helper_load_function_arg_info_guest();
+  }
+#endif
+}
+ava_end_replacement;
+
 ava_utility void __helper_worker_init_epilogue() {
 #ifdef AVA_PRELOAD_CUBIN
   /* Preload CUDA fat binaries */
