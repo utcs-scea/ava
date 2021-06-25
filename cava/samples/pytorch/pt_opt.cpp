@@ -1749,14 +1749,12 @@ cublasStatus_t CUBLASWINAPI cublasGetVector(int n, int elemSize, const void *x, 
 
 cublasStatus_t CUBLASWINAPI cublasSetVectorAsync(int n, int elemSize, const void *hostPtr, int incx, void *devicePtr,
                                                  int incy, cudaStream_t stream) {
-  fprintf(stderr, "%s is not implemented\n", __func__);
-  abort();
+  ava_unsupported;
 }
 
 cublasStatus_t CUBLASWINAPI cublasGetVectorAsync(int n, int elemSize, const void *devicePtr, int incx, void *hostPtr,
                                                  int incy, cudaStream_t stream) {
-  fprintf(stderr, "%s is not implemented\n", __func__);
-  abort();
+  ava_unsupported;
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetMathMode(cublasHandle_t handle, cublasMath_t *mode) { ava_unsupported; }
@@ -11871,8 +11869,7 @@ __host__ cudaError_t CUDARTAPI cudaProfilerStop(void);
 __host__ cudaError_t CUDARTAPI cudaThreadSynchronize(void) {}
 
 __host__ cudaError_t CUDARTAPI cudaGetExportTable(const void **ppExportTable, const cudaUUID_t *pExportTableId) {
-  fprintf(stderr, "%s is not implemented\n", __func__);
-  abort();
+  ava_unsupported;
 }
 
 ava_begin_replacement;

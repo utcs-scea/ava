@@ -39,6 +39,7 @@ ava_begin_utility;
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <driver_types.h>
+#include <texture_types.h>
 #include <fatbinary.h>
 #include <cublas_v2.h>
 #include <cudnn.h>
@@ -573,6 +574,12 @@ EXPORTED void CUDARTAPI __cudaRegisterFatBinaryEnd(void **fatCubinHandle) {
 #warning This API is called for CUDA 10.1 and 10.2, but it seems to be able to be ignored.
 }
 ava_end_replacement;
+
+void CUDARTAPI __cudaRegisterTexture(void **fatCubinHandle,
+                                     const void *hostVar,  // struct textureReference *hostVar
+                                     const void **deviceAddress, const char *deviceName, int dim, int norm, int ext) {
+  ava_unsupported;
+}
 
 __host__ __device__ unsigned CUDARTAPI
 __cudaPushCallConfiguration(dim3 gridDim, dim3 blockDim,
@@ -1297,6 +1304,16 @@ cublasStatus_t CUBLASWINAPI cublasSetVector(int n, int elemSize, const void *x, 
 }
 
 cublasStatus_t CUBLASWINAPI cublasGetVector(int n, int elemSize, const void *x, int incx, void *y, int incy) {
+  ava_unsupported;
+}
+
+cublasStatus_t CUBLASWINAPI cublasSetVectorAsync(int n, int elemSize, const void *hostPtr, int incx, void *devicePtr,
+                                                 int incy, cudaStream_t stream) {
+  ava_unsupported;
+}
+
+cublasStatus_t CUBLASWINAPI cublasGetVectorAsync(int n, int elemSize, const void *devicePtr, int incx, void *hostPtr,
+                                                 int incy, cudaStream_t stream) {
   ava_unsupported;
 }
 
@@ -10674,30 +10691,21 @@ __host__ cudaError_t CUDARTAPI cudaDeviceGetByPCIBusId(int *device, const char *
 
 __host__ cudaError_t CUDARTAPI cudaDeviceGetPCIBusId(char *pciBusId, int len, int device) { ava_unsupported; }
 
-// __host__ cudaError_t CUDARTAPI cudaIpcGetEventHandle(cudaIpcEventHandle_t *handle, cudaEvent_t event)
-// {
-//     ava_unsupported;
-// }
-//
-// __host__ cudaError_t CUDARTAPI cudaIpcOpenEventHandle(cudaEvent_t *event, cudaIpcEventHandle_t handle)
-// {
-//     ava_unsupported;
-// }
-//
-// __host__ cudaError_t CUDARTAPI cudaIpcGetMemHandle(cudaIpcMemHandle_t *handle, void *devPtr)
-// {
-//     ava_unsupported;
-// }
+__host__ cudaError_t CUDARTAPI cudaIpcGetEventHandle(cudaIpcEventHandle_t *handle, cudaEvent_t event) {
+  ava_unsupported;
+}
 
-// __host__ cudaError_t CUDARTAPI cudaIpcOpenMemHandle(void **devPtr, cudaIpcMemHandle_t handle, unsigned int flags)
-// {
-//     ava_unsupported;
-// }
-//
-// __host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr)
-// {
-//     ava_unsupported;
-// }
+__host__ cudaError_t CUDARTAPI cudaIpcOpenEventHandle(cudaEvent_t *event, cudaIpcEventHandle_t handle) {
+  ava_unsupported;
+}
+
+__host__ cudaError_t CUDARTAPI cudaIpcGetMemHandle(cudaIpcMemHandle_t *handle, void *devPtr) { ava_unsupported; }
+
+__host__ cudaError_t CUDARTAPI cudaIpcOpenMemHandle(void **devPtr, cudaIpcMemHandle_t handle, unsigned int flags) {
+  ava_unsupported;
+}
+
+__host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr) { ava_unsupported; }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaPeekAtLastError(void);
 
@@ -11397,6 +11405,12 @@ __host__ cudaError_t CUDARTAPI cudaGraphLaunch(cudaGraphExec_t graphExec, cudaSt
 __host__ cudaError_t CUDARTAPI cudaGraphExecDestroy(cudaGraphExec_t graphExec) { ava_unsupported; }
 
 __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph) { ava_unsupported; }
+
+__host__ cudaError_t CUDARTAPI cudaThreadSynchronize(void) {}
+
+__host__ cudaError_t CUDARTAPI cudaGetExportTable(const void **ppExportTable, const cudaUUID_t *pExportTableId) {
+  ava_unsupported;
+}
 
 /* ONNX */
 
