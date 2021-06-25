@@ -5,11 +5,11 @@
 
 #include "common/endpoint_lib.hpp"
 #include "guestlib/extensions/guest_cmd_batching_queue.h"
+#include "guestlib/extensions/gpu_address_tracking.h"
 #include "guestlib/guest_context.h"
 #include "guestlib/guest_thread.h"
 
 GQueue *call_configuration_stack;
-GTree *gpu_address_set;
 
 GQueue *cu_event_pool;
 GQueue *idle_cu_event_pool;
@@ -22,20 +22,11 @@ GPtrArray *fatbin_handle_list;
 #endif
 void worker_tf_opt_init(void) {}
 
-gint gpu_address_range_cmp(gconstpointer r1, gconstpointer r2, gpointer user_data) {
-  long diff = ((uintptr_t)r1 - (uintptr_t)r2);
-  if (diff < 0) return -1;
-  if (diff > 0) return 1;
-  return 0;
-}
-
 void guestlib_tf_opt_init(ava::GuestContext *gctx) {
   /* Emulate the call configuration stack */
   call_configuration_stack = g_queue_new();
 
-  /* Save allocated GPU memory addresses */
-  gpu_address_set = g_tree_new_full(gpu_address_range_cmp, NULL, NULL, g_free);
-
+  gpu_address_tracking_init();
   /* Pool descriptors */
   guestlib_cudnn_opt_init();
 
@@ -49,7 +40,7 @@ void guestlib_tf_opt_init(ava::GuestContext *gctx) {
 
 void guestlib_tf_opt_fini(ava::GuestContext *gctx) {
   g_queue_free(call_configuration_stack);
-  g_tree_destroy(gpu_address_set);
+  gpu_address_tracking_fini();
 
   /* Free descriptors */
   guestlib_cudnn_opt_fini();
