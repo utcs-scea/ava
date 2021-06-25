@@ -1,5 +1,6 @@
-#include <glib.h>
 #include <cuda.h>
+#include <glib.h>
+
 #include "common/logging.h"
 
 // address range
@@ -23,9 +24,7 @@ void gpu_address_tracking_init() {
   gpu_address_set = g_tree_new_full(gpu_address_range_cmp, NULL, NULL, g_free);
 }
 
-void gpu_address_tracking_fini() {
-  g_tree_destroy(gpu_address_set);
-}
+void gpu_address_tracking_fini() { g_tree_destroy(gpu_address_set); }
 
 void __helper_save_gpu_address_range(uintptr_t dptr, size_t bytesize, void *ret) {
   CUresult *cu_ret = static_cast<CUresult *>(ret);
@@ -51,7 +50,7 @@ bool is_gpu_address(uintptr_t ptr) {
 }
 
 void __helper_remove_gpu_address_range(uintptr_t dptr) {
-  auto ret = g_tree_remove(gpu_address_set, (gpointer) dptr);
+  auto ret = g_tree_remove(gpu_address_set, (gpointer)dptr);
   if (!ret) {
     AVA_LOG_F(ERROR, "address {} is not tracked", dptr);
   }

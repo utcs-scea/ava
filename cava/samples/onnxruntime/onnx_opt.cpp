@@ -1114,20 +1114,19 @@ __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemcpyAsync(void *dst, con
 
 __host__ cudaError_t CUDARTAPI cudaMemset(void *devPtr, int value, size_t count) { ava_argument(devPtr) ava_opaque; }
 
-__host__ cudaError_t CUDARTAPI
-__cudaPointerGetAttributes(struct cudaPointerAttributes *attributes, const void *ptr)
-{
-    ava_argument(attributes) {
-        ava_out; ava_buffer(1);
-    }
-    ava_argument(ptr) {
-        //ava_type_cast(CUdeviceptr);
-        //ava_handle;
-        ava_opaque;
-    }
-
-    //__helper_print_pointer_attributes(attributes, ptr);
-}
+// __host__ cudaError_t CUDARTAPI cudaPointerGetAttributes(struct cudaPointerAttributes *attributes, const void *ptr) {
+//   ava_argument(attributes) {
+//     ava_out;
+//     ava_buffer(1);
+//   }
+//   ava_argument(ptr) {
+//     // ava_type_cast(CUdeviceptr);
+//     // ava_handle;
+//     ava_opaque;
+//   }
+//
+//   //__helper_print_pointer_attributes(attributes, ptr);
+// }
 
 ava_begin_replacement;
 EXPORTED __host__ cudaError_t CUDARTAPI cudaPointerGetAttributes(struct cudaPointerAttributes *attributes,
