@@ -44,6 +44,7 @@ ava_begin_utility;
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <driver_types.h>
+#include <texture_types.h>
 #include <fatbinary.h>
 #include <cublas_v2.h>
 #include <cudnn.h>
@@ -52,6 +53,7 @@ ava_begin_utility;
 #include <cusparse.h>
 #include <cusolver_common.h>
 #include <cusolverDn.h>
+#include <cuda_profiler_api.h>
 
 #include "cudart_nw_internal.h"
 #include "common/extensions/tf_optimization.h"
@@ -268,6 +270,10 @@ CUresult __pool_cuEventDestroy(CUevent *hEvent, size_t count) {
     ava_element ava_handle;
   }
 }
+
+size_t CUDNNWINAPI cudnnGetVersion(void);
+
+size_t CUDNNWINAPI cudnnGetCudartVersion(void);
 
 cudnnStatus_t CUDNNWINAPI cudnnCreate(cudnnHandle_t *handle) {
   ava_disable_native_call;
@@ -927,6 +933,13 @@ EXPORTED cudaError_t CUDARTAPI __cudaPopCallConfiguration(dim3 *gridDim, dim3 *b
 }
 ava_end_replacement;
 
+void CUDARTAPI __cudaRegisterTexture(void **fatCubinHandle,
+    const void *hostVar,  // struct textureReference *hostVar
+    const void **deviceAddress, const char *deviceName, int dim, int norm,
+    int ext) {
+  ava_unsupported;
+}
+
 __host__ cudaError_t CUDARTAPI cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args,
                                                 size_t sharedMem, cudaStream_t stream) {
   /* May lead to TensorFlow internal race condition but safe for ONNX. */
@@ -1088,19 +1101,24 @@ __host__ cudaError_t CUDARTAPI cudaMemcpyToSymbol(const void *symbol, const void
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemcpyAsync(void *dst, const void *src, size_t count,
                                                                   enum cudaMemcpyKind kind, cudaStream_t stream) {
-  /* TensorFlow always copies data between device memories */
   ava_async;
 
-  /* TensorFlow always copies data between device memories
-  ava_argument(dst) ava_opaque;
-  ava_argument(src) ava_opaque;
-  */
+  ava_argument(dst) {
+    if (kind == cudaMemcpyHostToDevice) {
+      ava_opaque;
+    } else if (kind == cudaMemcpyDeviceToHost) {
+      ava_out;
+      ava_buffer(count);
+    }
+  }
 
-  /* ONNX always copies data from host to device */
-  ava_argument(dst) ava_opaque;
   ava_argument(src) {
-    ava_in;
-    ava_buffer(count);
+    if (kind == cudaMemcpyHostToDevice) {
+      ava_in;
+      ava_buffer(count);
+    } else if (kind == cudaMemcpyDeviceToHost) {
+      ava_opaque;
+    }
   }
 
   ava_argument(stream) ava_handle;
@@ -1838,6 +1856,16 @@ cublasStatus_t CUBLASWINAPI cublasSetVector(int n, int elemSize, const void *x, 
 }
 
 cublasStatus_t CUBLASWINAPI cublasGetVector(int n, int elemSize, const void *x, int incx, void *y, int incy) {
+  ava_unsupported;
+}
+
+cublasStatus_t CUBLASWINAPI cublasSetVectorAsync(int n, int elemSize, const void *hostPtr, int incx, void *devicePtr,
+                                                 int incy, cudaStream_t stream) {
+  ava_unsupported;
+}
+
+cublasStatus_t CUBLASWINAPI cublasGetVectorAsync(int n, int elemSize, const void *devicePtr, int incx, void *hostPtr,
+                                                 int incy, cudaStream_t stream) {
   ava_unsupported;
 }
 
@@ -5008,7 +5036,19 @@ cudnnStatus_t CUDNNWINAPI cudnnGetConvolutionBackwardFilterAlgorithm_v7(
     cudnnHandle_t handle, const cudnnTensorDescriptor_t srcDesc, const cudnnTensorDescriptor_t diffDesc,
     const cudnnConvolutionDescriptor_t convDesc, const cudnnFilterDescriptor_t gradDesc, const int requestedAlgoCount,
     int *returnedAlgoCount, cudnnConvolutionBwdFilterAlgoPerf_t *perfResults) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(srcDesc) ava_handle;
+  ava_argument(diffDesc) ava_handle;
+  ava_argument(convDesc) ava_handle;
+  ava_argument(gradDesc) ava_handle;
+  ava_argument(returnedAlgoCount) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(perfResults) {
+    ava_out;
+    cu_in_out_buffer(requestedAlgoCount, returnedAlgoCount);
+  }
 }
 
 /*
@@ -5092,7 +5132,19 @@ cudnnStatus_t CUDNNWINAPI cudnnGetConvolutionBackwardDataAlgorithm_v7(
     cudnnHandle_t handle, const cudnnFilterDescriptor_t filterDesc, const cudnnTensorDescriptor_t diffDesc,
     const cudnnConvolutionDescriptor_t convDesc, const cudnnTensorDescriptor_t gradDesc, const int requestedAlgoCount,
     int *returnedAlgoCount, cudnnConvolutionBwdDataAlgoPerf_t *perfResults) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(filterDesc) ava_handle;
+  ava_argument(diffDesc) ava_handle;
+  ava_argument(convDesc) ava_handle;
+  ava_argument(gradDesc) ava_handle;
+  ava_argument(returnedAlgoCount) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(perfResults) {
+    ava_out;
+    cu_in_out_buffer(requestedAlgoCount, returnedAlgoCount);
+  }
 }
 
 /* Helper function to return the minimum size of the workspace to be passed to the convolution given an algo*/
@@ -11298,30 +11350,30 @@ __host__ cudaError_t CUDARTAPI cudaDeviceGetByPCIBusId(int *device, const char *
 
 __host__ cudaError_t CUDARTAPI cudaDeviceGetPCIBusId(char *pciBusId, int len, int device) { ava_unsupported; }
 
-// __host__ cudaError_t CUDARTAPI cudaIpcGetEventHandle(cudaIpcEventHandle_t *handle, cudaEvent_t event)
-// {
-//     ava_unsupported;
-// }
-//
-// __host__ cudaError_t CUDARTAPI cudaIpcOpenEventHandle(cudaEvent_t *event, cudaIpcEventHandle_t handle)
-// {
-//     ava_unsupported;
-// }
-//
-// __host__ cudaError_t CUDARTAPI cudaIpcGetMemHandle(cudaIpcMemHandle_t *handle, void *devPtr)
-// {
-//     ava_unsupported;
-// }
+__host__ cudaError_t CUDARTAPI cudaIpcGetEventHandle(cudaIpcEventHandle_t *handle, cudaEvent_t event)
+{
+    ava_unsupported;
+}
 
-// __host__ cudaError_t CUDARTAPI cudaIpcOpenMemHandle(void **devPtr, cudaIpcMemHandle_t handle, unsigned int flags)
-// {
-//     ava_unsupported;
-// }
-//
-// __host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr)
-// {
-//     ava_unsupported;
-// }
+__host__ cudaError_t CUDARTAPI cudaIpcOpenEventHandle(cudaEvent_t *event, cudaIpcEventHandle_t handle)
+{
+    ava_unsupported;
+}
+
+__host__ cudaError_t CUDARTAPI cudaIpcGetMemHandle(cudaIpcMemHandle_t *handle, void *devPtr)
+{
+    ava_unsupported;
+}
+
+__host__ cudaError_t CUDARTAPI cudaIpcOpenMemHandle(void **devPtr, cudaIpcMemHandle_t handle, unsigned int flags)
+{
+    ava_unsupported;
+}
+
+__host__ cudaError_t CUDARTAPI cudaIpcCloseMemHandle(void *devPtr)
+{
+    ava_unsupported;
+}
 
 ava_begin_replacement;
 EXPORTED __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaPeekAtLastError(void) { return cuda_last_error; }
@@ -11691,7 +11743,9 @@ __host__ cudaError_t CUDARTAPI cudaMemset3D(struct cudaPitchedPtr pitchedDevPtr,
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemsetAsync(void *devPtr, int value, size_t count,
                                                                   cudaStream_t stream __dv(0)) {
-  ava_unsupported;
+  ava_async;
+  ava_argument(devPtr) ava_opaque;
+  ava_argument(stream) ava_handle;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemset2DAsync(void *devPtr, size_t pitch, int value, size_t width,
@@ -12026,6 +12080,34 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmStridedBatched(
   ava_unsupported;
 }
 
+cusparseStatus_t CUSPARSEAPI cusparseDcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const double *alpha, const cusparseMatDescr_t descrA,
+                                             const double *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const double *B, int ldb, const double *beta,
+                                             double *C, int ldc) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExec(cufftHandle plan, void *input, void *output, int direction) { ava_unsupported; }
+
+cufftResult CUFFTAPI cufftXtMakePlanMany(cufftHandle plan, int rank, long long int *n, long long int *inembed,
+                                         long long int istride, long long int idist, cudaDataType inputtype,
+                                         long long int *onembed, long long int ostride, long long int odist,
+                                         cudaDataType outputtype, long long int batch, size_t *workSize,
+                                         cudaDataType executiontype) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseScsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const float *alpha, const cusparseMatDescr_t descrA,
+                                             const float *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const float *B, int ldb, const float *beta,
+                                             float *C, int ldc) {
+  ava_unsupported;
+}
+
 const char *CUDNNWINAPI cudnnGetErrorString(cudnnStatus_t status) {
   const char *ret = reinterpret_cast<const char *>(ava_execute());
   ava_return_value {
@@ -12033,6 +12115,21 @@ const char *CUDNNWINAPI cudnnGetErrorString(cudnnStatus_t status) {
     ava_buffer(strlen(ret) + 1);
     ava_lifetime_static;
   }
+}
+
+__host__ cudaError_t CUDARTAPI cudaProfilerInitialize(const char *configFile, const char *outputFile,
+                                                      cudaOutputMode_t outputMode) {
+  ava_unsupported;
+}
+
+__host__ cudaError_t CUDARTAPI cudaProfilerStart(void);
+
+__host__ cudaError_t CUDARTAPI cudaProfilerStop(void);
+
+__host__ cudaError_t CUDARTAPI cudaThreadSynchronize(void);
+
+__host__ cudaError_t CUDARTAPI cudaGetExportTable(const void **ppExportTable, const cudaUUID_t *pExportTableId) {
+  ava_unsupported;
 }
 
 ava_begin_replacement;
