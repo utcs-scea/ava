@@ -5,7 +5,7 @@ ava_identifier(ONNX_DUMP);
 ava_number(10);
 ava_cxxflags(-I/usr/local/cuda-10.1/include -I${CMAKE_SOURCE_DIR}/cava/headers);
 ava_libs(-L/usr/local/cuda-10.1/lib64 -lcudart -lcuda -lcublas -lcudnn -lcufft -lcurand -lcusparse -lcusolver);
-ava_guestlib_srcs(../common/extensions/cudart_10.1_utilities.cpp);
+ava_guestlib_srcs(../common/extensions/cudart_10.1_utilities.cpp extensions/gpu_address_tracking.cpp);
 ava_worker_srcs(../common/extensions/cudart_10.1_utilities.cpp);
 ava_export_qualifier();
 ava_soname(libcuda.so libcuda.so.1 libcudart.so.10 libcudart.so.10.1 libcublas.so.10 libcublasLt.so.10 libcudnn.so.7 libcufft.so.10 libcurand.so.10 libcusolver.so.10 libcusparse.so.10);
@@ -52,6 +52,7 @@ ava_begin_utility;
 #include "common/linkage.h"
 #include "common/logging.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
+#include "guestlib/extensions/gpu_address_tracking.h"
 
 #if !defined(__dv)
 #define __dv(v)
@@ -639,6 +640,10 @@ __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMalloc(void **devPtr, size
     ava_buffer(1);
     ava_element ava_opaque;
   }
+  void *ret = reinterpret_cast<void *>(ava_execute());
+  if (ava_is_guest) {
+    __helper_save_gpu_address_range(reinterpret_cast<uint64_t>(*devPtr), size, static_cast<void *>(&ret));
+  }
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind) {
@@ -661,7 +666,14 @@ __host__ cudaError_t CUDARTAPI cudaMemcpy(void *dst, const void *src, size_t cou
   }
 }
 
-__host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaFree(void *devPtr) { ava_argument(devPtr) ava_opaque; }
+__host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaFree(void *devPtr) {
+  ava_async;
+  ava_argument(devPtr) ava_opaque;
+  ava_execute();
+  if (ava_is_guest) {
+    __helper_remove_gpu_address_range(reinterpret_cast<uint64_t>(devPtr));
+  }
+}
 
 /* Rich set of APIs */
 
@@ -1013,6 +1025,10 @@ CUresult CUDAAPI cuMemAlloc(CUdeviceptr *dptr, size_t bytesize) {
       ava_allocates;
     }
   }
+  void *ret = reinterpret_cast<void *>(ava_execute());
+  if (ava_is_guest) {
+    __helper_save_gpu_address_range((uint64_t)(*dptr), bytesize, static_cast<void *>(&ret));
+  }
 }
 
 CUresult CUDAAPI cuMemHostAlloc(void **pp, size_t bytesize, unsigned int Flags) {
@@ -1284,9 +1300,17 @@ cublasStatus_t CUBLASWINAPI cublasGetVector(int n, int elemSize, const void *x, 
   ava_unsupported;
 }
 
-CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetMathMode(cublasHandle_t handle, cublasMath_t *mode) { ava_unsupported; }
+CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetMathMode(cublasHandle_t handle, cublasMath_t *mode) {
+  ava_argument(handle) ava_handle;
+  ava_argument(mode) {
+    ava_out;
+    ava_buffer(1);
+  }
+}
 
-CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSetMathMode(cublasHandle_t handle, cublasMath_t mode) { ava_unsupported; }
+CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSetMathMode(cublasHandle_t handle, cublasMath_t mode) {
+  ava_argument(handle) ava_handle;
+}
 
 cublasStatus_t CUBLASWINAPI cublasSetMatrix(int rows, int cols, int elemSize, const void *A, int lda, void *B,
                                             int ldb) {
@@ -2826,7 +2850,39 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSgemmStridedBatched(
     const float *A, int lda, long long int strideA,                    /* purposely signed */
     const float *B, int ldb, long long int strideB, const float *beta, /* host or device pointer */
     float *C, int ldc, long long int strideC, int batchCount) {
-  ava_unsupported;
+  ava_implicit_argument bool alpha_is_gpu = is_gpu_address(reinterpret_cast<uint64_t>(alpha));
+  ava_implicit_argument bool beta_is_gpu = is_gpu_address(reinterpret_cast<uint64_t>(beta));
+  ava_argument(handle) ava_handle;
+  ava_argument(A) ava_opaque;
+  ava_argument(B) ava_opaque;
+  ava_argument(C) ava_opaque;
+
+  // zzhu: not sure whether following is correct
+  if (alpha_is_gpu) {
+    ava_argument(alpha) {
+      ava_opaque;
+      ava_depends_on(alpha_is_gpu);
+    }
+  } else {
+    ava_argument(alpha) {
+      ava_in;
+      ava_buffer(1);
+      ava_depends_on(alpha_is_gpu);
+    }
+  }
+
+  if (beta_is_gpu) {
+    ava_argument(beta) {
+      ava_opaque;
+      ava_depends_on(beta_is_gpu);
+    }
+  } else {
+    ava_argument(beta) {
+      ava_in;
+      ava_buffer(1);
+      ava_depends_on(beta_is_gpu);
+    }
+  }
 }
 
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDgemmStridedBatched(
@@ -4012,7 +4068,11 @@ cudnnStatus_t CUDNNWINAPI cudnnOpTensor(cudnnHandle_t handle, const cudnnOpTenso
 }
 
 cudnnStatus_t CUDNNWINAPI cudnnCreateReduceTensorDescriptor(cudnnReduceTensorDescriptor_t *reduceTensorDesc) {
-  ava_unsupported;
+  ava_argument(reduceTensorDesc) {
+    ava_out;
+    ava_buffer(1);
+    ava_element ava_handle;
+  }
 }
 
 cudnnStatus_t CUDNNWINAPI cudnnSetReduceTensorDescriptor(cudnnReduceTensorDescriptor_t reduceTensorDesc,
@@ -4021,7 +4081,7 @@ cudnnStatus_t CUDNNWINAPI cudnnSetReduceTensorDescriptor(cudnnReduceTensorDescri
                                                          cudnnNanPropagation_t reduceTensorNanOpt,
                                                          cudnnReduceTensorIndices_t reduceTensorIndices,
                                                          cudnnIndicesType_t reduceTensorIndicesType) {
-  ava_unsupported;
+  ava_argument(reduceTensorDesc) ava_handle;
 }
 
 cudnnStatus_t CUDNNWINAPI cudnnGetReduceTensorDescriptor(const cudnnReduceTensorDescriptor_t reduceTensorDesc,
@@ -4030,11 +4090,31 @@ cudnnStatus_t CUDNNWINAPI cudnnGetReduceTensorDescriptor(const cudnnReduceTensor
                                                          cudnnNanPropagation_t *reduceTensorNanOpt,
                                                          cudnnReduceTensorIndices_t *reduceTensorIndices,
                                                          cudnnIndicesType_t *reduceTensorIndicesType) {
-  ava_unsupported;
+  ava_argument(reduceTensorDesc) ava_handle;
+  ava_argument(reduceTensorOp) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(reduceTensorCompType) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(reduceTensorNanOpt) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(reduceTensorIndices) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(reduceTensorIndicesType) {
+    ava_out;
+    ava_buffer(1);
+  }
 }
 
 cudnnStatus_t CUDNNWINAPI cudnnDestroyReduceTensorDescriptor(cudnnReduceTensorDescriptor_t reduceTensorDesc) {
-  ava_unsupported;
+  ava_argument(reduceTensorDesc) ava_handle;
 }
 
 /* Helper function to return the minimum size of the index space to be passed to the reduction given the input and
@@ -4043,7 +4123,14 @@ cudnnStatus_t CUDNNWINAPI cudnnGetReductionIndicesSize(cudnnHandle_t handle,
                                                        const cudnnReduceTensorDescriptor_t reduceTensorDesc,
                                                        const cudnnTensorDescriptor_t aDesc,
                                                        const cudnnTensorDescriptor_t cDesc, size_t *sizeInBytes) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(reduceTensorDesc) ava_handle;
+  ava_argument(aDesc) ava_handle;
+  ava_argument(cDesc) ava_handle;
+  ava_argument(sizeInBytes) {
+    ava_out;
+    ava_buffer(1);
+  }
 }
 
 /* Helper function to return the minimum size of the workspace to be passed to the reduction given the input and output
@@ -4052,7 +4139,14 @@ cudnnStatus_t CUDNNWINAPI cudnnGetReductionWorkspaceSize(cudnnHandle_t handle,
                                                          const cudnnReduceTensorDescriptor_t reduceTensorDesc,
                                                          const cudnnTensorDescriptor_t aDesc,
                                                          const cudnnTensorDescriptor_t cDesc, size_t *sizeInBytes) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(reduceTensorDesc) ava_handle;
+  ava_argument(aDesc) ava_handle;
+  ava_argument(cDesc) ava_handle;
+  ava_argument(sizeInBytes) {
+    ava_out;
+    ava_buffer(1);
+  }
 }
 
 /* Tensor operation : C = reduce op( alpha * A ) + beta * C */
@@ -4063,19 +4157,42 @@ cudnnStatus_t CUDNNWINAPI cudnnReduceTensor(cudnnHandle_t handle, const cudnnRed
                                             size_t workspaceSizeInBytes, const void *alpha,
                                             const cudnnTensorDescriptor_t aDesc, const void *A, const void *beta,
                                             const cudnnTensorDescriptor_t cDesc, void *C) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(reduceTensorDesc) ava_handle;
+  ava_argument(alpha) {
+    ava_type_cast(const double *);
+    ava_in;
+    ava_buffer(1);
+  }
+  ava_argument(aDesc) ava_handle;
+  ava_argument(A) ava_opaque;
+  ava_argument(beta) {
+    ava_type_cast(const double *);
+    ava_in;
+    ava_buffer(1);
+  }
+  ava_argument(cDesc) ava_handle;
+  ava_argument(C) ava_opaque;
+  ava_argument(workspace) ava_opaque;
+  ava_argument(indices) ava_opaque;
 }
 
 /* Set all values of a tensor to a given value : y[i] = value[0] */
 cudnnStatus_t CUDNNWINAPI cudnnSetTensor(cudnnHandle_t handle, const cudnnTensorDescriptor_t yDesc, void *y,
                                          const void *valuePtr) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(yDesc) ava_handle;
+  ava_argument(y) ava_opaque;
+  ava_argument(valuePtr) ava_opaque;
 }
 
 /* Scale all values of a tensor by a given factor : y[i] = alpha * y[i] */
 cudnnStatus_t CUDNNWINAPI cudnnScaleTensor(cudnnHandle_t handle, const cudnnTensorDescriptor_t yDesc, void *y,
                                            const void *alpha) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(yDesc) ava_handle;
+  ava_argument(y) ava_opaque;
+  ava_argument(alpha) ava_opaque;
 }
 
 cudnnStatus_t CUDNNWINAPI cudnnSetFilter4dDescriptor(cudnnFilterDescriptor_t filterDesc,
@@ -11310,3 +11427,6 @@ const char *CUDNNWINAPI cudnnGetErrorString(cudnnStatus_t status) {
     ava_lifetime_static;
   }
 }
+
+ava_guestlib_init_prologue(gpu_address_tracking_init());
+ava_guestlib_fini_prologue(gpu_address_tracking_fini());
