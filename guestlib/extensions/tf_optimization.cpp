@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 #include "common/endpoint_lib.hpp"
-#include "guestlib/extensions/guest_cmd_batching_queue.h"
 #include "guestlib/extensions/gpu_address_tracking.h"
+#include "guestlib/extensions/guest_cmd_batching_queue.h"
 #include "guestlib/guest_context.h"
 #include "guestlib/guest_thread.h"
 
