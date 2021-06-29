@@ -11307,7 +11307,8 @@ __host__ cudaError_t CUDARTAPI cudaMemset3D(struct cudaPitchedPtr pitchedDevPtr,
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemsetAsync(void *devPtr, int value, size_t count,
                                                                   cudaStream_t stream __dv(0)) {
-  ava_unsupported;
+  ava_async;
+  ava_argument(devPtr) ava_opaque;
 }
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemset2DAsync(void *devPtr, size_t pitch, int value, size_t width,
