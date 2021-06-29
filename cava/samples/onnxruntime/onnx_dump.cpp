@@ -55,6 +55,7 @@ ava_begin_utility;
 #include "common/linkage.h"
 #include "common/logging.h"
 #include "common/extensions/cudart_10.1_utilities.hpp"
+#include "common/support/io.h"
 #include "guestlib/extensions/gpu_address_tracking.h"
 
 #if !defined(__dv)
@@ -69,6 +70,9 @@ typedef union Algorithm {
   cudnnRNNAlgo_t RNNAlgo;
   cudnnCTCLossAlgo_t CTCLossAlgo;
 };
+
+#define FAILURE_PRINT(sys_call) \
+  ava_fatal("" #sys_call " [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__)
 ava_end_utility;
 
 ava_type(cudaError_t) { ava_success(cudaSuccess); }
@@ -143,7 +147,8 @@ char CUDARTAPI __cudaInitModule(void **fatCubinHandle) {
 ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs, int *num_funcs) {
   struct fatbin_wrapper *wp = static_cast<struct fatbin_wrapper *>(fatCubin);
   struct fatBinaryHeader *fbh = reinterpret_cast<struct fatBinaryHeader *>(wp->ptr);
-  int fd, ret;
+  int fd, retval;
+  bool ret;
 
   /* Increase fatbin counter */
   static int fatbin_num = 0;
@@ -152,43 +157,36 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
     char *file_name = "/tmp/fatbin-info.ava";
     fd = open(file_name, O_RDWR | O_CREAT, 0666);
     if (fd == -1) {
-      fprintf(stderr, "open %s [errno=%d, errstr=%s] at %s:%d", file_name, errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", file_name, errno, strerror(errno), __FILE__, __LINE__);
     }
     AVA_DEBUG << "Fatbinary counter = " << fatbin_num;
-    ret = write(fd, (const void *)&fatbin_num, sizeof(int));
-    if (ret == -1) {
-      fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+    ret = ava::support::WriteData(fd, (const char *)&fatbin_num, sizeof(int));
+    if (!ret) {
+      FAILURE_PRINT("write");
     }
-    ret = lseek(fd, 0, SEEK_END);
-    if (ret == -1) {
-      fprintf(stderr, "lseek [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+    retval = lseek(fd, 0, SEEK_END);
+    if (retval == -1) {
+      FAILURE_PRINT("lseek");
     }
-    ret = write(fd, (const void *)wp, sizeof(struct fatbin_wrapper));
-    if (ret == -1) {
-      fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+    ret = ava::support::WriteData(fd, (const char *)wp, sizeof(struct fatbin_wrapper));
+    if (!ret) {
+      FAILURE_PRINT("write");
     }
     close(fd);
   }
 
   /* Dump fat binary to a file */
-  char fatbin_filename[32];
   if (ava_is_worker) {
-    sprintf(fatbin_filename, "/tmp/fatbin-%d.ava", ava_metadata(NULL)->num_fatbins);
-    fd = open(fatbin_filename, O_WRONLY | O_TRUNC | O_CREAT, 0666);
+    auto fatbin_filename = fmt::format("/tmp/fatbin-{}.ava", ava_metadata(NULL)->num_fatbins);
+    fd = open(fatbin_filename.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0666);
     if (fd == -1) {
-      fprintf(stderr, "open %s [errno=%d, errstr=%s] at %s:%d", fatbin_filename, errno, strerror(errno), __FILE__,
-              __LINE__);
-      exit(EXIT_FAILURE);
+      ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", fatbin_filename.c_str(), errno, strerror(errno), __FILE__,
+                __LINE__);
     }
     AVA_DEBUG << "Dump fatbinary to " << fatbin_filename;
-    ret = write(fd, (const void *)wp->ptr, fbh->headerSize + fbh->fatSize);
-    if (ret == -1) {
-      fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+    ret = ava::support::WriteData(fd, (const char *)wp->ptr, fbh->headerSize + fbh->fatSize);
+    if (!ret) {
+      FAILURE_PRINT("write");
     }
     close(fd);
   }
@@ -211,32 +209,29 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
   if (ava_is_worker) {
     if (ava_metadata(NULL)->fd_functions != 0) {
       size = 0;
-      ret = write(ava_metadata(NULL)->fd_functions, (const void *)&size, sizeof(size_t));
-      if (ret == -1) {
-        fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
+      ret = ava::support::WriteData(ava_metadata(NULL)->fd_functions, (const char *)&size, sizeof(size_t));
+      if (!ret) {
+        FAILURE_PRINT("write");
       }
     }
   }
 
   /*  Open the command pipe for reading */
-  char pip_command[80];
-  sprintf(pip_command, "/usr/local/cuda-10.1/bin/cuobjdump -elf /tmp/fatbin-%d.ava", ava_metadata(NULL)->num_fatbins);
-  fp_pipe = popen(pip_command, "r");
+  auto pip_command =
+      fmt::format("/usr/local/cuda-10.1/bin/cuobjdump -elf /tmp/fatbin-{}.ava", ava_metadata(NULL)->num_fatbins);
+  fp_pipe = popen(pip_command.c_str(), "r");
   assert(fp_pipe);
 
   /* Open function argument dump file */
   int function_arg_fd;
-  char function_arg_filename[32];
   if (ava_is_worker) {
-    sprintf(function_arg_filename, "/tmp/function_arg-%d.ava", ava_metadata(NULL)->num_fatbins);
-    function_arg_fd = open(function_arg_filename, O_WRONLY | O_TRUNC | O_CREAT, 0666);
+    auto function_arg_filename = fmt::format("/tmp/function_arg-{}.ava", ava_metadata(NULL)->num_fatbins);
+    function_arg_fd = open(function_arg_filename.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0666);
     if (function_arg_fd == -1) {
-      fprintf(stderr, "open %s [errno=%d, errstr=%s] at %s:%d", function_arg_filename, errno, strerror(errno), __FILE__,
-              __LINE__);
-      exit(EXIT_FAILURE);
+      ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", function_arg_filename.c_str(), errno, strerror(errno),
+                __FILE__, __LINE__);
     }
-    AVA_DEBUG << "Dump function argument info to " << function_arg_filename;
+    AVA_LOG_F(DEBUG, "Dump function argument info to {}", function_arg_filename);
   }
 
   while (fgets(line, sizeof(line), fp_pipe) != NULL) {
@@ -273,8 +268,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
               if (feof(fp_pipe)) {
                 fprintf(stderr, "End of file");
               } else if (ferror(fp_pipe)) {
-                fprintf(stderr, "fgets [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-                exit(EXIT_FAILURE);
+                FAILURE_PRINT("fgets");
               }
             }
             fgets_ret = fgets(line, sizeof(line), fp_pipe);
@@ -282,8 +276,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
               if (feof(fp_pipe)) {
                 fprintf(stderr, "End of file");
               } else if (ferror(fp_pipe)) {
-                fprintf(stderr, "fgets [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-                exit(EXIT_FAILURE);
+                FAILURE_PRINT("fgets");
               }
             }
 
@@ -308,20 +301,17 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
       /* Dump the function argument sizes to file */
       if (ava_is_worker) {
         size = strlen(name) + 1;
-        ret = write(function_arg_fd, (void *)&size, sizeof(size_t));
-        if (ret == -1) {
-          fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-          exit(EXIT_FAILURE);
+        ret = ava::support::WriteData(function_arg_fd, (const char *)&size, sizeof(size_t));
+        if (!ret) {
+          FAILURE_PRINT("write");
         }
-        ret = write(function_arg_fd, (void *)name, size);
-        if (ret == -1) {
-          fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-          exit(EXIT_FAILURE);
+        ret = ava::support::WriteData(function_arg_fd, (const char *)name, size);
+        if (!ret) {
+          FAILURE_PRINT("write");
         }
-        ret = write(function_arg_fd, (void *)func, sizeof(struct fatbin_function));
-        if (ret == -1) {
-          fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-          exit(EXIT_FAILURE);
+        ret = ava::support::WriteData(function_arg_fd, (const char *)func, sizeof(struct fatbin_function));
+        if (!ret) {
+          FAILURE_PRINT("write");
         }
       }
 
@@ -334,7 +324,9 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
     }
   }
 
-  if (ava_is_worker) close(function_arg_fd);
+  if (ava_is_worker) {
+    close(function_arg_fd);
+  }
 
   pclose(fp_pipe);
   ++(ava_metadata(NULL)->num_fatbins);
@@ -405,102 +397,89 @@ ava_utility void __helper_dump_cuda_function(char *deviceFun, const char *device
   if (fd == 0) {
     fd = open("/tmp/fatfunction.ava", O_WRONLY | O_TRUNC | O_CREAT, 0666);
     if (fd == -1) {
-      fprintf(stderr, "open /tmp/fatfunction.ava [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__,
-              __LINE__);
-      exit(EXIT_FAILURE);
+      ava_fatal("open /tmp/fatfunction.ava [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
     }
     ava_metadata(NULL)->fd_functions = fd;
   }
 
   size_t size;
   int exists;
-  ssize_t ret;
+  bool ret;
   size = strlen(deviceFun) + 1;
-  ret = write(fd, (const void *)&size, sizeof(size_t));
-  if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+  ret = ava::support::WriteData(fd, (const char *)&size, sizeof(size_t));
+  if (!ret) {
+    FAILURE_PRINT("write");
   }
-  ret = write(fd, (const void *)deviceFun, size);
-  if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+  ret = ava::support::WriteData(fd, (const char *)deviceFun, size);
+  if (!ret) {
+    FAILURE_PRINT("write");
   }
   size = strlen(deviceName) + 1;
-  ret = write(fd, (const void *)&size, sizeof(size_t));
-  if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+  ret = ava::support::WriteData(fd, (const char *)&size, sizeof(size_t));
+  if (!ret) {
+    FAILURE_PRINT("write");
   }
-  ret = write(fd, (const void *)deviceName, size);
-  if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+  ret = ava::support::WriteData(fd, (const char *)deviceName, size);
+  if (!ret) {
+    FAILURE_PRINT("write");
   }
-  ret = write(fd, (const void *)&thread_limit, sizeof(int));
-  if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+  ret = ava::support::WriteData(fd, (const char *)&thread_limit, sizeof(int));
+  if (!ret) {
+    FAILURE_PRINT("write");
   }
   exists = (tid != NULL);
-  ret = write(fd, (const void *)&exists, sizeof(int));
-  if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+  ret = ava::support::WriteData(fd, (const char *)&exists, sizeof(int));
+  if (!ret) {
+    FAILURE_PRINT("write");
   }
   if (exists) {
-    ret = write(fd, (const void *)tid, sizeof(uint3));
+    ret = ava::support::WriteData(fd, (const char *)tid, sizeof(uint3));
     if (ret == -1) {
-      fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      FAILURE_PRINT("write");
     }
   }
   exists = (bid != NULL);
-  ret = write(fd, (const void *)&exists, sizeof(int));
+  ret = ava::support::WriteData(fd, (const char *)&exists, sizeof(int));
+  if (!ret) {
+    FAILURE_PRINT("write");
+  }
   if (exists) {
-    ret = write(fd, (const void *)bid, sizeof(uint3));
-    if (ret == -1) {
-      fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+    ret = ava::support::WriteData(fd, (const char *)bid, sizeof(uint3));
+    if (!ret) {
+      FAILURE_PRINT("write");
     }
   }
   exists = (bDim != NULL);
-  ret = write(fd, (const void *)&exists, sizeof(int));
-  if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+  ret = ava::support::WriteData(fd, (const char *)&exists, sizeof(int));
+  if (!ret) {
+    FAILURE_PRINT("write");
   }
   if (exists) {
-    ret = write(fd, (const void *)bDim, sizeof(dim3));
-    if (ret == -1) {
-      fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+    ret = ava::support::WriteData(fd, (const char *)bDim, sizeof(dim3));
+    if (!ret) {
+      FAILURE_PRINT("write");
     }
   }
   exists = (gDim != NULL);
-  ret = write(fd, (const void *)&exists, sizeof(int));
-  if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+  ret = ava::support::WriteData(fd, (const char *)&exists, sizeof(int));
+  if (!ret) {
+    FAILURE_PRINT("write");
   }
   if (exists) {
-    ret = write(fd, (const void *)gDim, sizeof(dim3));
-    if (ret == -1) {
-      fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+    ret = ava::support::WriteData(fd, (const char *)gDim, sizeof(dim3));
+    if (!ret) {
+      FAILURE_PRINT("write");
     }
   }
   exists = (wSize != NULL);
-  ret = write(fd, (const void *)&exists, sizeof(int));
-  if (ret == -1) {
-    fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+  ret = ava::support::WriteData(fd, (const char *)&exists, sizeof(int));
+  if (!ret) {
+    FAILURE_PRINT("write");
   }
   if (exists) {
-    ret = write(fd, (const void *)wSize, sizeof(int));
-    if (ret == -1) {
-      fprintf(stderr, "write [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+    ret = ava::support::WriteData(fd, (const char *)wSize, sizeof(int));
+    if (!ret) {
+      FAILURE_PRINT("write");
     }
   }
 }
