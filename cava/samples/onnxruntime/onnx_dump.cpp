@@ -69,7 +69,8 @@ typedef union Algorithm {
   cudnnCTCLossAlgo_t CTCLossAlgo;
 };
 
-#define FAILURE_PRINT(sys_call) fmt::print(stderr, "" #sys_call " [errno={}, errstr={}] at {}:{}", errno, strerror(errno), __FILE__, __LINE__)
+#define FAILURE_PRINT(sys_call) \
+  fmt::print(stderr, "" #sys_call " [errno={}, errstr={}] at {}:{}", errno, strerror(errno), __FILE__, __LINE__)
 ava_end_utility;
 
 ava_type(cudaError_t) { ava_success(cudaSuccess); }
@@ -154,7 +155,8 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
     char *file_name = "/tmp/fatbin-info.ava";
     fd = open(file_name, O_RDWR | O_CREAT, 0666);
     if (fd == -1) {
-      fmt::print(stderr, "open {} [errno={}, errstr={}] at {}:{}", file_name, errno, strerror(errno), __FILE__, __LINE__);
+      fmt::print(stderr, "open {} [errno={}, errstr={}] at {}:{}", file_name, errno, strerror(errno), __FILE__,
+                 __LINE__);
       exit(EXIT_FAILURE);
     }
     AVA_DEBUG << "Fatbinary counter = " << fatbin_num;
@@ -181,8 +183,8 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
     auto fatbin_filename = fmt::format("/tmp/fatbin-{}.ava", ava_metadata(NULL)->num_fatbins);
     fd = open(fatbin_filename.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0666);
     if (fd == -1) {
-      fprintf(stderr, "open %s [errno=%d, errstr=%s] at %s:%d", fatbin_filename.c_str(), errno, strerror(errno), __FILE__,
-              __LINE__);
+      fprintf(stderr, "open %s [errno=%d, errstr=%s] at %s:%d", fatbin_filename.c_str(), errno, strerror(errno),
+              __FILE__, __LINE__);
       exit(EXIT_FAILURE);
     }
     AVA_DEBUG << "Dump fatbinary to " << fatbin_filename;
@@ -221,7 +223,8 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
   }
 
   /*  Open the command pipe for reading */
-  auto pip_command = fmt::format("/usr/local/cuda-10.1/bin/cuobjdump -elf /tmp/fatbin-{}.ava", ava_metadata(NULL)->num_fatbins);
+  auto pip_command =
+      fmt::format("/usr/local/cuda-10.1/bin/cuobjdump -elf /tmp/fatbin-{}.ava", ava_metadata(NULL)->num_fatbins);
   fp_pipe = popen(pip_command.c_str(), "r");
   assert(fp_pipe);
 
@@ -231,8 +234,8 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
     auto function_arg_filename = fmt::format("/tmp/function_arg-{}.ava", ava_metadata(NULL)->num_fatbins);
     function_arg_fd = open(function_arg_filename.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0666);
     if (function_arg_fd == -1) {
-      fmt::print(stderr, "open {} [errno={}, errstr={}] at {}:{}", function_arg_filename, errno, strerror(errno), __FILE__,
-          __LINE__);
+      fmt::print(stderr, "open {} [errno={}, errstr={}] at {}:{}", function_arg_filename, errno, strerror(errno),
+                 __FILE__, __LINE__);
       exit(EXIT_FAILURE);
     }
     AVA_LOG_F(DEBUG, "Dump function argument info to {}", function_arg_filename);
