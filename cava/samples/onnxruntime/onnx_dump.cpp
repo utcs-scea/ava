@@ -70,7 +70,7 @@ typedef union Algorithm {
 };
 
 #define FAILURE_PRINT(sys_call) \
-  AVA_LOG_F(FATAL, "" #sys_call " [errno={}, errstr={}] at {}:{}", errno, strerror(errno), __FILE__, __LINE__)
+  ava_fatal("" #sys_call " [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__)
 ava_end_utility;
 
 ava_type(cudaError_t) { ava_success(cudaSuccess); }
@@ -155,7 +155,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
     char *file_name = "/tmp/fatbin-info.ava";
     fd = open(file_name, O_RDWR | O_CREAT, 0666);
     if (fd == -1) {
-      AVA_LOG_F(FATAL, "open {} [errno={}, errstr={}] at {}:{}", file_name, errno, strerror(errno), __FILE__, __LINE__);
+      ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", file_name, errno, strerror(errno), __FILE__, __LINE__);
     }
     AVA_DEBUG << "Fatbinary counter = " << fatbin_num;
     ret = ava::support::WriteData(fd, (const char *)&fatbin_num, sizeof(int));
@@ -178,8 +178,8 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
     auto fatbin_filename = fmt::format("/tmp/fatbin-{}.ava", ava_metadata(NULL)->num_fatbins);
     fd = open(fatbin_filename.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0666);
     if (fd == -1) {
-      AVA_LOG_F(FATAL, "open {} [errno={}, errstr={}] at {}:{}", fatbin_filename.c_str(), errno, strerror(errno),
-                __FILE__, __LINE__);
+      ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", fatbin_filename.c_str(), errno, strerror(errno), __FILE__,
+                __LINE__);
     }
     AVA_DEBUG << "Dump fatbinary to " << fatbin_filename;
     ret = ava::support::WriteData(fd, (const char *)wp->ptr, fbh->headerSize + fbh->fatSize);
@@ -226,8 +226,8 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
     auto function_arg_filename = fmt::format("/tmp/function_arg-{}.ava", ava_metadata(NULL)->num_fatbins);
     function_arg_fd = open(function_arg_filename.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0666);
     if (function_arg_fd == -1) {
-      AVA_LOG_F(FATAL, "open {} [errno={}, errstr={}] at {}:{}", function_arg_filename, errno, strerror(errno),
-                __FILE__, __LINE__);
+      ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", function_arg_filename, errno, strerror(errno), __FILE__,
+                __LINE__);
     }
     AVA_LOG_F(DEBUG, "Dump function argument info to {}", function_arg_filename);
   }
@@ -395,8 +395,7 @@ ava_utility void __helper_dump_cuda_function(char *deviceFun, const char *device
   if (fd == 0) {
     fd = open("/tmp/fatfunction.ava", O_WRONLY | O_TRUNC | O_CREAT, 0666);
     if (fd == -1) {
-      AVA_LOG_F(FATAL, "open /tmp/fatfunction.ava [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__,
-                __LINE__);
+      ava_fatal("open /tmp/fatfunction.ava [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
     }
     ava_metadata(NULL)->fd_functions = fd;
   }
