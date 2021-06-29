@@ -8546,6 +8546,78 @@ cusparseStatus_t CUSPARSEAPI cusparseZhybsv_solve(cusparseHandle_t handle, cuspa
 //##############################################################################
 //# SPARSE LEVEL 3 ROUTINES
 //##############################################################################
+/* Description: sparse - dense matrix multiplication C = alpha * op(A) * B  + beta * C,
+   where A is a sparse matrix in CSR format, B and C are dense tall matrices.  */
+cusparseStatus_t CUSPARSEAPI cusparseScsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const float *alpha, const cusparseMatDescr_t descrA,
+                                            const float *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const float *B, int ldb, const float *beta,
+                                            float *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseDcsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const double *alpha, const cusparseMatDescr_t descrA,
+                                            const double *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const double *B, int ldb, const double *beta,
+                                            double *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseCcsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const cuComplex *alpha, const cusparseMatDescr_t descrA,
+                                            const cuComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const cuComplex *B, int ldb,
+                                            const cuComplex *beta, cuComplex *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseZcsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const cuDoubleComplex *alpha, const cusparseMatDescr_t descrA,
+                                            const cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const cuDoubleComplex *B, int ldb,
+                                            const cuDoubleComplex *beta, cuDoubleComplex *C, int ldc) {
+  ava_unsupported;
+}
+
+/* Description: sparse - dense matrix multiplication C = alpha * op(A) * B  + beta * C,
+   where A is a sparse matrix in CSR format, B and C are dense tall matrices.
+   This routine allows transposition of matrix B, which may improve performance. */
+cusparseStatus_t CUSPARSEAPI cusparseScsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const float *alpha, const cusparseMatDescr_t descrA,
+                                             const float *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const float *B, int ldb, const float *beta,
+                                             float *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseDcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const double *alpha, const cusparseMatDescr_t descrA,
+                                             const double *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const double *B, int ldb, const double *beta,
+                                             double *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseCcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const cuComplex *alpha, const cusparseMatDescr_t descrA,
+                                             const cuComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const cuComplex *B, int ldb,
+                                             const cuComplex *beta, cuComplex *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseZcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const cuDoubleComplex *alpha, const cusparseMatDescr_t descrA,
+                                             const cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const cuDoubleComplex *B, int ldb,
+                                             const cuDoubleComplex *beta, cuDoubleComplex *C, int ldc) {
+  ava_unsupported;
+}
 
 cusparseStatus_t CUSPARSEAPI cusparseSbsrmm(cusparseHandle_t handle, cusparseDirection_t dirA,
                                             cusparseOperation_t transA, cusparseOperation_t transB, int mb, int n,
@@ -12177,34 +12249,6 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmStridedBatched(
     const __half *A, int lda, long long int strideA,                     /* purposely signed */
     const __half *B, int ldb, long long int strideB, const __half *beta, /* host or device pointer */
     __half *C, int ldc, long long int strideC, int batchCount) {
-  ava_unsupported;
-}
-
-cusparseStatus_t CUSPARSEAPI cusparseDcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
-                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
-                                             const double *alpha, const cusparseMatDescr_t descrA,
-                                             const double *csrSortedValA, const int *csrSortedRowPtrA,
-                                             const int *csrSortedColIndA, const double *B, int ldb, const double *beta,
-                                             double *C, int ldc) {
-  ava_unsupported;
-}
-
-cufftResult CUFFTAPI cufftXtExec(cufftHandle plan, void *input, void *output, int direction) { ava_unsupported; }
-
-cufftResult CUFFTAPI cufftXtMakePlanMany(cufftHandle plan, int rank, long long int *n, long long int *inembed,
-                                         long long int istride, long long int idist, cudaDataType inputtype,
-                                         long long int *onembed, long long int ostride, long long int odist,
-                                         cudaDataType outputtype, long long int batch, size_t *workSize,
-                                         cudaDataType executiontype) {
-  ava_unsupported;
-}
-
-cusparseStatus_t CUSPARSEAPI cusparseScsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
-                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
-                                             const float *alpha, const cusparseMatDescr_t descrA,
-                                             const float *csrSortedValA, const int *csrSortedRowPtrA,
-                                             const int *csrSortedColIndA, const float *B, int ldb, const float *beta,
-                                             float *C, int ldc) {
   ava_unsupported;
 }
 

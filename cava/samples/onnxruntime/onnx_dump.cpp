@@ -49,6 +49,7 @@ ava_begin_utility;
 #include <cusparse.h>
 #include <cusolver_common.h>
 #include <cusolverDn.h>
+#include <cuda_profiler_api.h>
 
 #include "cudart_nw_internal.h"
 #include "common/linkage.h"
@@ -3297,6 +3298,9 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasSscal(cublasHandle_t handle, int n,
 }
 
 /***** CUDNN (OOF) ******/
+
+size_t CUDNNWINAPI cudnnGetVersion(void);
+size_t CUDNNWINAPI cudnnGetCudartVersion(void);
 
 cudnnStatus_t CUDNNWINAPI cudnnBatchNormalizationForwardInference(
     cudnnHandle_t handle, cudnnBatchNormMode_t mode, const void *alpha, /* alpha[0] = result blend factor */
@@ -7922,6 +7926,78 @@ cusparseStatus_t CUSPARSEAPI cusparseZhybsv_solve(cusparseHandle_t handle, cuspa
 //##############################################################################
 //# SPARSE LEVEL 3 ROUTINES
 //##############################################################################
+/* Description: sparse - dense matrix multiplication C = alpha * op(A) * B  + beta * C,
+   where A is a sparse matrix in CSR format, B and C are dense tall matrices.  */
+cusparseStatus_t CUSPARSEAPI cusparseScsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const float *alpha, const cusparseMatDescr_t descrA,
+                                            const float *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const float *B, int ldb, const float *beta,
+                                            float *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseDcsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const double *alpha, const cusparseMatDescr_t descrA,
+                                            const double *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const double *B, int ldb, const double *beta,
+                                            double *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseCcsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const cuComplex *alpha, const cusparseMatDescr_t descrA,
+                                            const cuComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const cuComplex *B, int ldb,
+                                            const cuComplex *beta, cuComplex *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseZcsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const cuDoubleComplex *alpha, const cusparseMatDescr_t descrA,
+                                            const cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const cuDoubleComplex *B, int ldb,
+                                            const cuDoubleComplex *beta, cuDoubleComplex *C, int ldc) {
+  ava_unsupported;
+}
+
+/* Description: sparse - dense matrix multiplication C = alpha * op(A) * B  + beta * C,
+   where A is a sparse matrix in CSR format, B and C are dense tall matrices.
+   This routine allows transposition of matrix B, which may improve performance. */
+cusparseStatus_t CUSPARSEAPI cusparseScsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const float *alpha, const cusparseMatDescr_t descrA,
+                                             const float *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const float *B, int ldb, const float *beta,
+                                             float *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseDcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const double *alpha, const cusparseMatDescr_t descrA,
+                                             const double *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const double *B, int ldb, const double *beta,
+                                             double *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseCcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const cuComplex *alpha, const cusparseMatDescr_t descrA,
+                                             const cuComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const cuComplex *B, int ldb,
+                                             const cuComplex *beta, cuComplex *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseZcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const cuDoubleComplex *alpha, const cusparseMatDescr_t descrA,
+                                             const cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const cuDoubleComplex *B, int ldb,
+                                             const cuDoubleComplex *beta, cuDoubleComplex *C, int ldc) {
+  ava_unsupported;
+}
 
 cusparseStatus_t CUSPARSEAPI cusparseSbsrmm(cusparseHandle_t handle, cusparseDirection_t dirA,
                                             cusparseOperation_t transA, cusparseOperation_t transB, int mb, int n,
@@ -11545,6 +11621,15 @@ __host__ cudaError_t CUDARTAPI cudaGraphLaunch(cudaGraphExec_t graphExec, cudaSt
 __host__ cudaError_t CUDARTAPI cudaGraphExecDestroy(cudaGraphExec_t graphExec) { ava_unsupported; }
 
 __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph) { ava_unsupported; }
+
+__host__ cudaError_t CUDARTAPI cudaProfilerInitialize(const char *configFile, const char *outputFile,
+                                                      cudaOutputMode_t outputMode) {
+  ava_unsupported;
+}
+
+__host__ cudaError_t CUDARTAPI cudaProfilerStart(void);
+
+__host__ cudaError_t CUDARTAPI cudaProfilerStop(void);
 
 __host__ cudaError_t CUDARTAPI cudaThreadSynchronize(void) {}
 
