@@ -45,6 +45,7 @@ ava_begin_utility;
 #include <cudnn.h>
 #include <curand.h>
 #include <cufft.h>
+#include <cufftXt.h>
 #include <cusparse.h>
 #include <cusolver_common.h>
 #include <cusolverDn.h>
@@ -4363,7 +4364,28 @@ cudnnStatus_t CUDNNWINAPI cudnnConvolutionBiasActivationForward(
     cudnnConvolutionFwdAlgo_t algo, void *workSpace, size_t workSpaceSizeInBytes, const void *alpha2,
     const cudnnTensorDescriptor_t zDesc, const void *z, const cudnnTensorDescriptor_t biasDesc, const void *bias,
     const cudnnActivationDescriptor_t activationDesc, const cudnnTensorDescriptor_t yDesc, void *y) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(alpha1) {
+    ava_in;
+    ava_buffer(1);
+  }
+  ava_argument(xDesc) ava_handle;
+  ava_argument(x) ava_opaque;
+  ava_argument(wDesc) ava_handle;
+  ava_argument(w) ava_opaque;
+  ava_argument(convDesc) ava_handle;
+  ava_argument(workSpace) ava_opaque;
+  ava_argument(alpha2) {
+    ava_in;
+    ava_buffer(1);
+  }
+  ava_argument(zDesc) ava_handle;
+  ava_argument(z) ava_opaque;
+  ava_argument(biasDesc) ava_handle;
+  ava_argument(bias) ava_opaque;
+  ava_argument(activationDesc) ava_handle;
+  ava_argument(yDesc) ava_handle;
+  ava_argument(y) ava_opaque;
 }
 
 /* Function to compute the bias gradient for batch convolution */
@@ -4371,7 +4393,19 @@ cudnnStatus_t CUDNNWINAPI cudnnConvolutionBackwardBias(cudnnHandle_t handle, con
                                                        const cudnnTensorDescriptor_t dyDesc, const void *dy,
                                                        const void *beta, const cudnnTensorDescriptor_t dbDesc,
                                                        void *db) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(alpha) {
+    ava_in;
+    ava_buffer(1);
+  }
+  ava_argument(dyDesc) ava_handle;
+  ava_argument(dy) ava_opaque;
+  ava_argument(beta) {
+    ava_in;
+    ava_buffer(1);
+  }
+  ava_argument(dbDesc) ava_handle;
+  ava_argument(db) ava_opaque;
 }
 
 cudnnStatus_t CUDNNWINAPI cudnnGetConvolutionBackwardFilterAlgorithmMaxCount(cudnnHandle_t handle, int *count) {
@@ -4596,23 +4630,39 @@ cudnnStatus_t CUDNNWINAPI cudnnGetPooling2dForwardOutputDim(const cudnnPoolingDe
 
 /* Activation functions: All of the form "output = alpha * Op(inputs) + beta * output" */
 cudnnStatus_t CUDNNWINAPI cudnnCreateActivationDescriptor(cudnnActivationDescriptor_t *activationDesc) {
-  ava_unsupported;
+  ava_argument(activationDesc) {
+    ava_out;
+    ava_buffer(1);
+    ava_element ava_handle;
+  }
 }
 
 cudnnStatus_t CUDNNWINAPI cudnnSetActivationDescriptor(cudnnActivationDescriptor_t activationDesc,
                                                        cudnnActivationMode_t mode, cudnnNanPropagation_t reluNanOpt,
                                                        double coef) {
-  ava_unsupported;
+  ava_argument(activationDesc) ava_handle;
 } /* ceiling for clipped RELU, alpha for ELU */
 
 cudnnStatus_t CUDNNWINAPI cudnnGetActivationDescriptor(const cudnnActivationDescriptor_t activationDesc,
                                                        cudnnActivationMode_t *mode, cudnnNanPropagation_t *reluNanOpt,
                                                        double *coef) {
-  ava_unsupported;
+  ava_argument(activationDesc) ava_handle;
+  ava_argument(mode) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(reluNanOpt) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(coef) {
+    ava_out;
+    ava_buffer(1);
+  }
 } /* ceiling for clipped RELU, alpha for ELU */
 
 cudnnStatus_t CUDNNWINAPI cudnnDestroyActivationDescriptor(cudnnActivationDescriptor_t activationDesc) {
-  ava_unsupported;
+  ava_argument(activationDesc) ava_handle;
 }
 
 /* Function to perform forward activation  */
@@ -5559,6 +5609,91 @@ cufftResult CUFFTAPI cufftDestroy(cufftHandle plan) { ava_unsupported; }
 cufftResult CUFFTAPI cufftGetVersion(int *version) { ava_unsupported; }
 
 cufftResult CUFFTAPI cufftGetProperty(libraryPropertyType type, int *value) { ava_unsupported; }
+
+/******* cufftXt *********/
+cufftResult CUFFTAPI cufftXtSetGPUs(cufftHandle handle, int nGPUs, int *whichGPUs) { ava_unsupported; }
+
+cufftResult CUFFTAPI cufftXtMalloc(cufftHandle plan, cudaLibXtDesc **descriptor, cufftXtSubFormat format) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtMemcpy(cufftHandle plan, void *dstPointer, void *srcPointer, cufftXtCopyType type) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtFree(cudaLibXtDesc *descriptor) { ava_unsupported; }
+
+cufftResult CUFFTAPI cufftXtSetWorkArea(cufftHandle plan, void **workArea) { ava_unsupported; }
+
+cufftResult CUFFTAPI cufftXtExecDescriptorC2C(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output,
+                                              int direction) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExecDescriptorR2C(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExecDescriptorC2R(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExecDescriptorZ2Z(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output,
+                                              int direction) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExecDescriptorD2Z(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExecDescriptorZ2D(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output) {
+  ava_unsupported;
+}
+
+// Utility functions
+
+cufftResult CUFFTAPI cufftXtQueryPlan(cufftHandle plan, void *queryStruct, cufftXtQueryType queryType) {
+  ava_unsupported;
+}
+
+// callbacks
+
+cufftResult CUFFTAPI cufftXtSetCallback(cufftHandle plan, void **callback_routine, cufftXtCallbackType cbType,
+                                        void **caller_info) {
+  ava_unsupported;
+}
+cufftResult CUFFTAPI cufftXtClearCallback(cufftHandle plan, cufftXtCallbackType cbType) { ava_unsupported; }
+cufftResult CUFFTAPI cufftXtSetCallbackSharedSize(cufftHandle plan, cufftXtCallbackType cbType, size_t sharedSize) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtMakePlanMany(cufftHandle plan, int rank, long long int *n, long long int *inembed,
+                                         long long int istride, long long int idist, cudaDataType inputtype,
+                                         long long int *onembed, long long int ostride, long long int odist,
+                                         cudaDataType outputtype, long long int batch, size_t *workSize,
+                                         cudaDataType executiontype) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtGetSizeMany(cufftHandle plan, int rank, long long int *n, long long int *inembed,
+                                        long long int istride, long long int idist, cudaDataType inputtype,
+                                        long long int *onembed, long long int ostride, long long int odist,
+                                        cudaDataType outputtype, long long int batch, size_t *workSize,
+                                        cudaDataType executiontype) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExec(cufftHandle plan, void *input, void *output, int direction) { ava_unsupported; }
+
+cufftResult CUFFTAPI cufftXtExecDescriptor(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output,
+                                           int direction) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtSetWorkAreaPolicy(cufftHandle plan, cufftXtWorkAreaPolicy policy, size_t *workSize) {
+  ava_unsupported;
+}
 
 /******* cusolver *********/
 cusolverStatus_t CUSOLVERAPI cusolverDnCreate(cusolverDnHandle_t *handle) { ava_unsupported; }
@@ -11078,7 +11213,12 @@ __host__ cudaError_t CUDARTAPI cudaMemcpyToSymbolAsync(const void *symbol, const
 
 __host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbolAsync(void *dst, const void *symbol, size_t count, size_t offset,
                                                          enum cudaMemcpyKind kind, cudaStream_t stream __dv(0)) {
-  ava_unsupported;
+  ava_async;
+  ava_argument(dst) {
+    ava_out;
+    ava_buffer(count);
+  }
+  ava_argument(symbol) ava_opaque;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemset2D(void *devPtr, size_t pitch, int value, size_t width, size_t height) {
