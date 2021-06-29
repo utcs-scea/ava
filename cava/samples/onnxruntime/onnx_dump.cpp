@@ -226,8 +226,8 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
     auto function_arg_filename = fmt::format("/tmp/function_arg-{}.ava", ava_metadata(NULL)->num_fatbins);
     function_arg_fd = open(function_arg_filename.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0666);
     if (function_arg_fd == -1) {
-      ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", function_arg_filename.c_str(), errno, strerror(errno), __FILE__,
-                __LINE__);
+      ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", function_arg_filename.c_str(), errno, strerror(errno),
+                __FILE__, __LINE__);
     }
     AVA_LOG_F(DEBUG, "Dump function argument info to {}", function_arg_filename);
   }
