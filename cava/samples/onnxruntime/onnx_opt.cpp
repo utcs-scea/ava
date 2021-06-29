@@ -50,6 +50,7 @@ ava_begin_utility;
 #include <cudnn.h>
 #include <curand.h>
 #include <cufft.h>
+#include <cufftXt.h>
 #include <cusparse.h>
 #include <cusolver_common.h>
 #include <cusolverDn.h>
@@ -5250,23 +5251,39 @@ cudnnStatus_t CUDNNWINAPI cudnnGetPooling2dForwardOutputDim(const cudnnPoolingDe
 
 /* Activation functions: All of the form "output = alpha * Op(inputs) + beta * output" */
 cudnnStatus_t CUDNNWINAPI cudnnCreateActivationDescriptor(cudnnActivationDescriptor_t *activationDesc) {
-  ava_unsupported;
+  ava_argument(activationDesc) {
+    ava_out;
+    ava_buffer(1);
+    ava_element ava_handle;
+  }
 }
 
 cudnnStatus_t CUDNNWINAPI cudnnSetActivationDescriptor(cudnnActivationDescriptor_t activationDesc,
                                                        cudnnActivationMode_t mode, cudnnNanPropagation_t reluNanOpt,
                                                        double coef) {
-  ava_unsupported;
+  ava_argument(activationDesc) ava_handle;
 } /* ceiling for clipped RELU, alpha for ELU */
 
 cudnnStatus_t CUDNNWINAPI cudnnGetActivationDescriptor(const cudnnActivationDescriptor_t activationDesc,
                                                        cudnnActivationMode_t *mode, cudnnNanPropagation_t *reluNanOpt,
                                                        double *coef) {
-  ava_unsupported;
+  ava_argument(activationDesc) ava_handle;
+  ava_argument(mode) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(reluNanOpt) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(coef) {
+    ava_out;
+    ava_buffer(1);
+  }
 } /* ceiling for clipped RELU, alpha for ELU */
 
 cudnnStatus_t CUDNNWINAPI cudnnDestroyActivationDescriptor(cudnnActivationDescriptor_t activationDesc) {
-  ava_unsupported;
+  ava_argument(activationDesc) ava_handle;
 }
 
 /* Function to perform forward activation  */
@@ -6217,6 +6234,91 @@ cufftResult CUFFTAPI cufftDestroy(cufftHandle plan) { ava_unsupported; }
 cufftResult CUFFTAPI cufftGetVersion(int *version) { ava_unsupported; }
 
 cufftResult CUFFTAPI cufftGetProperty(libraryPropertyType type, int *value) { ava_unsupported; }
+
+/******* cufftXt *********/
+cufftResult CUFFTAPI cufftXtSetGPUs(cufftHandle handle, int nGPUs, int *whichGPUs) { ava_unsupported; }
+
+cufftResult CUFFTAPI cufftXtMalloc(cufftHandle plan, cudaLibXtDesc **descriptor, cufftXtSubFormat format) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtMemcpy(cufftHandle plan, void *dstPointer, void *srcPointer, cufftXtCopyType type) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtFree(cudaLibXtDesc *descriptor) { ava_unsupported; }
+
+cufftResult CUFFTAPI cufftXtSetWorkArea(cufftHandle plan, void **workArea) { ava_unsupported; }
+
+cufftResult CUFFTAPI cufftXtExecDescriptorC2C(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output,
+                                              int direction) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExecDescriptorR2C(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExecDescriptorC2R(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExecDescriptorZ2Z(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output,
+                                              int direction) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExecDescriptorD2Z(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExecDescriptorZ2D(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output) {
+  ava_unsupported;
+}
+
+// Utility functions
+
+cufftResult CUFFTAPI cufftXtQueryPlan(cufftHandle plan, void *queryStruct, cufftXtQueryType queryType) {
+  ava_unsupported;
+}
+
+// callbacks
+
+cufftResult CUFFTAPI cufftXtSetCallback(cufftHandle plan, void **callback_routine, cufftXtCallbackType cbType,
+                                        void **caller_info) {
+  ava_unsupported;
+}
+cufftResult CUFFTAPI cufftXtClearCallback(cufftHandle plan, cufftXtCallbackType cbType) { ava_unsupported; }
+cufftResult CUFFTAPI cufftXtSetCallbackSharedSize(cufftHandle plan, cufftXtCallbackType cbType, size_t sharedSize) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtMakePlanMany(cufftHandle plan, int rank, long long int *n, long long int *inembed,
+                                         long long int istride, long long int idist, cudaDataType inputtype,
+                                         long long int *onembed, long long int ostride, long long int odist,
+                                         cudaDataType outputtype, long long int batch, size_t *workSize,
+                                         cudaDataType executiontype) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtGetSizeMany(cufftHandle plan, int rank, long long int *n, long long int *inembed,
+                                        long long int istride, long long int idist, cudaDataType inputtype,
+                                        long long int *onembed, long long int ostride, long long int odist,
+                                        cudaDataType outputtype, long long int batch, size_t *workSize,
+                                        cudaDataType executiontype) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtExec(cufftHandle plan, void *input, void *output, int direction) { ava_unsupported; }
+
+cufftResult CUFFTAPI cufftXtExecDescriptor(cufftHandle plan, cudaLibXtDesc *input, cudaLibXtDesc *output,
+                                           int direction) {
+  ava_unsupported;
+}
+
+cufftResult CUFFTAPI cufftXtSetWorkAreaPolicy(cufftHandle plan, cufftXtWorkAreaPolicy policy, size_t *workSize) {
+  ava_unsupported;
+}
 
 /******* cusolver *********/
 cusolverStatus_t CUSOLVERAPI cusolverDnCreate(cusolverDnHandle_t *handle) { ava_unsupported; }
@@ -8445,6 +8547,78 @@ cusparseStatus_t CUSPARSEAPI cusparseZhybsv_solve(cusparseHandle_t handle, cuspa
 //##############################################################################
 //# SPARSE LEVEL 3 ROUTINES
 //##############################################################################
+/* Description: sparse - dense matrix multiplication C = alpha * op(A) * B  + beta * C,
+   where A is a sparse matrix in CSR format, B and C are dense tall matrices.  */
+cusparseStatus_t CUSPARSEAPI cusparseScsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const float *alpha, const cusparseMatDescr_t descrA,
+                                            const float *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const float *B, int ldb, const float *beta,
+                                            float *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseDcsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const double *alpha, const cusparseMatDescr_t descrA,
+                                            const double *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const double *B, int ldb, const double *beta,
+                                            double *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseCcsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const cuComplex *alpha, const cusparseMatDescr_t descrA,
+                                            const cuComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const cuComplex *B, int ldb,
+                                            const cuComplex *beta, cuComplex *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseZcsrmm(cusparseHandle_t handle, cusparseOperation_t transA, int m, int n, int k,
+                                            int nnz, const cuDoubleComplex *alpha, const cusparseMatDescr_t descrA,
+                                            const cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                            const int *csrSortedColIndA, const cuDoubleComplex *B, int ldb,
+                                            const cuDoubleComplex *beta, cuDoubleComplex *C, int ldc) {
+  ava_unsupported;
+}
+
+/* Description: sparse - dense matrix multiplication C = alpha * op(A) * B  + beta * C,
+   where A is a sparse matrix in CSR format, B and C are dense tall matrices.
+   This routine allows transposition of matrix B, which may improve performance. */
+cusparseStatus_t CUSPARSEAPI cusparseScsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const float *alpha, const cusparseMatDescr_t descrA,
+                                             const float *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const float *B, int ldb, const float *beta,
+                                             float *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseDcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const double *alpha, const cusparseMatDescr_t descrA,
+                                             const double *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const double *B, int ldb, const double *beta,
+                                             double *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseCcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const cuComplex *alpha, const cusparseMatDescr_t descrA,
+                                             const cuComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const cuComplex *B, int ldb,
+                                             const cuComplex *beta, cuComplex *C, int ldc) {
+  ava_unsupported;
+}
+
+cusparseStatus_t CUSPARSEAPI cusparseZcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
+                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
+                                             const cuDoubleComplex *alpha, const cusparseMatDescr_t descrA,
+                                             const cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA,
+                                             const int *csrSortedColIndA, const cuDoubleComplex *B, int ldb,
+                                             const cuDoubleComplex *beta, cuDoubleComplex *C, int ldc) {
+  ava_unsupported;
+}
 
 cusparseStatus_t CUSPARSEAPI cusparseSbsrmm(cusparseHandle_t handle, cusparseDirection_t dirA,
                                             cusparseOperation_t transA, cusparseOperation_t transB, int mb, int n,
@@ -11686,7 +11860,11 @@ __host__ cudaError_t CUDARTAPI cudaMemcpy2DArrayToArray(cudaArray_t dst, size_t 
 __host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbol(void *dst, const void *symbol, size_t count, size_t offset __dv(0),
                                                     enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToHost)) {
   /* kind is always cudaMemcpyDeviceToHost */
-  ava_unsupported;
+  ava_argument(dst) {
+    ava_out;
+    ava_buffer(count);
+  }
+  ava_argument(symbol) ava_opaque;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemcpyPeerAsync(void *dst, int dstDevice, const void *src, int srcDevice,
@@ -11720,7 +11898,12 @@ __host__ cudaError_t CUDARTAPI cudaMemcpyToSymbolAsync(const void *symbol, const
 
 __host__ cudaError_t CUDARTAPI cudaMemcpyFromSymbolAsync(void *dst, const void *symbol, size_t count, size_t offset,
                                                          enum cudaMemcpyKind kind, cudaStream_t stream __dv(0)) {
-  ava_unsupported;
+  ava_async;
+  ava_argument(dst) {
+    ava_out;
+    ava_buffer(count);
+  }
+  ava_argument(symbol) ava_opaque;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMemset2D(void *devPtr, size_t pitch, int value, size_t width, size_t height) {
@@ -12067,34 +12250,6 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasHgemmStridedBatched(
     const __half *A, int lda, long long int strideA,                     /* purposely signed */
     const __half *B, int ldb, long long int strideB, const __half *beta, /* host or device pointer */
     __half *C, int ldc, long long int strideC, int batchCount) {
-  ava_unsupported;
-}
-
-cusparseStatus_t CUSPARSEAPI cusparseDcsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
-                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
-                                             const double *alpha, const cusparseMatDescr_t descrA,
-                                             const double *csrSortedValA, const int *csrSortedRowPtrA,
-                                             const int *csrSortedColIndA, const double *B, int ldb, const double *beta,
-                                             double *C, int ldc) {
-  ava_unsupported;
-}
-
-cufftResult CUFFTAPI cufftXtExec(cufftHandle plan, void *input, void *output, int direction) { ava_unsupported; }
-
-cufftResult CUFFTAPI cufftXtMakePlanMany(cufftHandle plan, int rank, long long int *n, long long int *inembed,
-                                         long long int istride, long long int idist, cudaDataType inputtype,
-                                         long long int *onembed, long long int ostride, long long int odist,
-                                         cudaDataType outputtype, long long int batch, size_t *workSize,
-                                         cudaDataType executiontype) {
-  ava_unsupported;
-}
-
-cusparseStatus_t CUSPARSEAPI cusparseScsrmm2(cusparseHandle_t handle, cusparseOperation_t transA,
-                                             cusparseOperation_t transB, int m, int n, int k, int nnz,
-                                             const float *alpha, const cusparseMatDescr_t descrA,
-                                             const float *csrSortedValA, const int *csrSortedRowPtrA,
-                                             const int *csrSortedColIndA, const float *B, int ldb, const float *beta,
-                                             float *C, int ldc) {
   ava_unsupported;
 }
 
