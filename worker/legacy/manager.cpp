@@ -1,3 +1,4 @@
+#include <absl/debugging/symbolize.h>
 #include <absl/flags/parse.h>
 #include <sys/wait.h>
 
@@ -92,6 +93,7 @@ std::unique_ptr<LegacyManager> manager;
 
 int main(int argc, const char *argv[]) {
   absl::ParseCommandLine(argc, const_cast<char **>(argv));
+  absl::InitializeSymbolizer(argv[0]);
   cfgWorkerPoolDisabled = absl::GetFlag(FLAGS_disable_worker_pool);
   cfgWorkerPoolSize = absl::GetFlag(FLAGS_worker_pool_size);
 
