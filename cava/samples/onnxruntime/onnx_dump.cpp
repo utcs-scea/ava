@@ -150,31 +150,6 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
   int fd, retval;
   bool ret;
 
-  /* Increase fatbin counter */
-  static int fatbin_num = 0;
-  fatbin_num++;
-  if (ava_is_worker) {
-    char *file_name = "/tmp/fatbin-info.ava";
-    fd = open(file_name, O_RDWR | O_CREAT, 0666);
-    if (fd == -1) {
-      ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", file_name, errno, strerror(errno), __FILE__, __LINE__);
-    }
-    AVA_DEBUG << "Fatbinary counter = " << fatbin_num;
-    ret = ava::support::WriteData(fd, (const char *)&fatbin_num, sizeof(int));
-    if (!ret) {
-      FAILURE_PRINT("write");
-    }
-    retval = lseek(fd, 0, SEEK_END);
-    if (retval == -1) {
-      FAILURE_PRINT("lseek");
-    }
-    ret = ava::support::WriteData(fd, (const char *)wp, sizeof(struct fatbin_wrapper));
-    if (!ret) {
-      FAILURE_PRINT("write");
-    }
-    close(fd);
-  }
-
   /* Dump fat binary to a file */
   if (ava_is_worker) {
     auto fatbin_filename = fmt::format("/tmp/fatbin-{}.ava", ava_metadata(NULL)->num_fatbins);
@@ -205,17 +180,6 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
     *num_funcs = 0;
   }
 
-  /* Add separator to the functions of different fatbinaries */
-  if (ava_is_worker) {
-    if (ava_metadata(NULL)->fd_functions != 0) {
-      size = 0;
-      ret = ava::support::WriteData(ava_metadata(NULL)->fd_functions, (const char *)&size, sizeof(size_t));
-      if (!ret) {
-        FAILURE_PRINT("write");
-      }
-    }
-  }
-
   /*  Open the command pipe for reading */
   auto pip_command =
       fmt::format("/usr/local/cuda-10.1/bin/cuobjdump -elf /tmp/fatbin-{}.ava", ava_metadata(NULL)->num_fatbins);
@@ -224,22 +188,20 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
 
   /* Open function argument dump file */
   int function_arg_fd;
-  if (ava_is_worker) {
-    auto function_arg_filename = fmt::format("/tmp/function_arg-{}.ava", ava_metadata(NULL)->num_fatbins);
-    function_arg_fd = open(function_arg_filename.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0666);
-    if (function_arg_fd == -1) {
-      ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", function_arg_filename.c_str(), errno, strerror(errno),
-                __FILE__, __LINE__);
-    }
-    AVA_LOG_F(DEBUG, "Dump function argument info to {}", function_arg_filename);
-  }
+  bool has_funcs = false;
 
   while (fgets(line, sizeof(line), fp_pipe) != NULL) {
     /* Search functions */
-    if (strncmp(line, ".nv.info._Z", 11) == 0) {
+    if (strncmp(line, ".nv.info.", 9) == 0) {
       sprintf(name, line + 9, strlen(line) - 10);
       assert(strlen(line) - 10 < MAX_KERNEL_NAME_LEN);
       name[strlen(line) - 10] = '\0';
+
+      // Skip duplicate function entries for multiple compute versions
+      if (g_hash_table_lookup(*fatbin_funcs, name) != NULL) {
+        continue;
+      }
+
       ava_debug("[%d] %s@", *num_funcs, name);
 
       /* Create a new hash table entry */
@@ -300,6 +262,17 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
 
       /* Dump the function argument sizes to file */
       if (ava_is_worker) {
+        /* Open function argument dump file on first valid function */
+        if (!has_funcs) {
+          auto function_arg_filename = fmt::format("/tmp/function_arg-{}.ava", ava_metadata(NULL)->num_fatbins);
+          function_arg_fd = open(function_arg_filename.c_str(), O_WRONLY | O_TRUNC | O_CREAT, 0666);
+          if (function_arg_fd == -1) {
+            ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", function_arg_filename.c_str(), errno, strerror(errno),
+                __FILE__, __LINE__);
+          }
+          AVA_LOG_F(DEBUG, "Dump function argument info to {}", function_arg_filename);
+        }
+
         size = strlen(name) + 1;
         ret = ava::support::WriteData(function_arg_fd, (const char *)&size, sizeof(size_t));
         if (!ret) {
@@ -314,22 +287,56 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
           FAILURE_PRINT("write");
         }
       }
+      has_funcs = true;
 
       /* Insert the function into hash table */
-      if (g_hash_table_lookup(*fatbin_funcs, name) != NULL)
-        g_free(func);
-      else
-        g_hash_table_insert((*fatbin_funcs), g_strdup(name), (gpointer)func);
+      // if (g_hash_table_lookup(*fatbin_funcs, name) != NULL)
+      //   g_free(func);
+      // else
+      g_hash_table_insert((*fatbin_funcs), g_strdup(name), (gpointer)func);
       // func = (struct fatbin_function *)g_hash_table_lookup(*fatbin_funcs, name);
     }
   }
+  if (has_funcs) {
+    ++(ava_metadata(NULL)->num_fatbins);
+  }
 
+  // Were there any valid functions in the binary?
   if (ava_is_worker) {
-    close(function_arg_fd);
+    if (has_funcs) {
+      close(function_arg_fd);
+      char *file_name = "/tmp/fatbin-info.ava";
+      fd = open(file_name, O_RDWR | O_CREAT, 0666);
+      if (fd == -1) {
+        ava_fatal("open %s [errno=%d, errstr=%s] at %s:%d", file_name, errno, strerror(errno), __FILE__, __LINE__);
+      }
+      AVA_LOG_F(DEBUG, "Fatbinary counter = {}", ava_metadata(NULL)->num_fatbins);
+      ret = ava::support::WriteData(fd, (const char *)&(ava_metadata(NULL)->num_fatbins), sizeof(int));
+      if (!ret) {
+        FAILURE_PRINT("write");
+      }
+      retval = lseek(fd, 0, SEEK_END);
+      if (retval == -1) {
+        FAILURE_PRINT("lseek");
+      }
+      ret = ava::support::WriteData(fd, (const char *)wp, sizeof(struct fatbin_wrapper));
+      if (!ret) {
+        FAILURE_PRINT("write");
+      }
+      close(fd);
+
+      /* Add separator to the functions of different fatbinaries */
+      if (ava_metadata(NULL)->fd_functions != 0) {
+        size = 0;
+        ret = ava::support::WriteData(ava_metadata(NULL)->fd_functions, (const char *)&size, sizeof(size_t));
+        if (!ret) {
+          FAILURE_PRINT("write");
+        }
+      }
+    }
   }
 
   pclose(fp_pipe);
-  ++(ava_metadata(NULL)->num_fatbins);
 }
 
 ava_utility void __helper_init_module(struct fatbin_wrapper *fatCubin, void **handle) {
