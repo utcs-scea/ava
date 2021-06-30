@@ -1,5 +1,6 @@
 #include "manager.h"
 
+#include <absl/debugging/symbolize.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <grpc++/grpc++.h>
@@ -393,6 +394,7 @@ void setupSignalHandler() {
 int main(int argc, char *argv[]) {
   config = parseArguments(argc, argv);
   config->Print();
+  absl::InitializeSymbolizer(argv[0]);
 
   setupSignalHandler();
   std::thread server_thread(runManagerService, config);

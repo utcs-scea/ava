@@ -1,3 +1,4 @@
+#include <absl/debugging/symbolize.h>
 #include <absl/flags/parse.h>
 
 #include <algorithm>
@@ -20,6 +21,7 @@ class DemoManager : public ManagerServiceServerBase {
 
 int main(int argc, const char *argv[]) {
   absl::ParseCommandLine(argc, const_cast<char **>(argv));
+  absl::InitializeSymbolizer(argv[0]);
 
   ava_manager::setupSignalHandlers();
   auto worker_argv = absl::GetFlag(FLAGS_worker_argv);

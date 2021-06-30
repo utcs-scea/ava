@@ -1,5 +1,7 @@
 #include "worker.h"
 
+#include <absl/debugging/failure_signal_handler.h>
+#include <absl/debugging/symbolize.h>
 #include <errno.h>
 #include <execinfo.h>
 #include <fcntl.h>
@@ -79,6 +81,7 @@ int main(int argc, char *argv[]) {
         argv[0], argv[0]);
     return 0;
   }
+  absl::InitializeSymbolizer(argv[0]);
 
   /* Read GPU provision information. */
   char const *cuda_uuid_str = getenv("CUDA_VISIBLE_DEVICES");
@@ -99,6 +102,10 @@ int main(int argc, char *argv[]) {
   if ((original_sigsegv_handler = signal(SIGSEGV, sigsegv_handler)) == SIG_ERR) printf("failed to catch SIGSEGV\n");
 
   if ((original_sigchld_handler = signal(SIGCHLD, SIG_IGN)) == SIG_ERR) printf("failed to ignore SIGCHLD\n");
+
+  absl::FailureSignalHandlerOptions options;
+  options.call_previous_handler = true;
+  absl::InstallFailureSignalHandler(options);
 
   /* define arguments */
   auto wctx = ava::WorkerContext::instance();
