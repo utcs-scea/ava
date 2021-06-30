@@ -351,7 +351,7 @@ ava_utility CUmodule __helper_init_module(struct fatbin_wrapper *fatCubin, void 
   return mod;
 }
 
-ava_utility void __helper_load_function_arg_info_guest(void) {
+ava_utility void __helper_load_function_arg_info(void) {
   GPtrArray *fatbin_funcs;
   GHashTable *ht;
   if (ava_metadata(NULL)->fatbin_funcs == NULL) {
@@ -399,68 +399,6 @@ ava_utility void __helper_load_function_arg_info_guest(void) {
       fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
       exit(EXIT_FAILURE);
     }
-    ava_debug("function %d (%s) has argc = %d", fatbin_funcs->len - 1, func_name, func->argc);
-    /* Insert into the function table */
-    g_ptr_array_add(fatbin_funcs, (gpointer)func);
-
-    /* Add name->index mapping */
-    if (g_hash_table_lookup(ht, func_name) == NULL) {
-      assert(fatbin_funcs->len > 1 && "fatbin_funcs->len <= 1");
-      g_hash_table_insert(ht, g_strdup(func_name), (gpointer)((uintptr_t)fatbin_funcs->len - 1));
-    }
-  }
-  close(fd);
-
-  ++(ava_metadata(NULL)->num_fatbins);
-}
-
-/**
- * Loads the function argument information from dump.
- */
-ava_utility GHashTable *__helper_load_function_arg_info(void) {
-  GPtrArray *fatbin_funcs;
-  if (ava_metadata(NULL)->fatbin_funcs == NULL) {
-    ava_metadata(NULL)->fatbin_funcs = g_ptr_array_new_with_free_func(g_free);
-    g_ptr_array_add(ava_metadata(NULL)->fatbin_funcs, (gpointer)NULL);  // func_id starts from 1
-  }
-  fatbin_funcs = ava_metadata(NULL)->fatbin_funcs;
-
-  GHashTable *ht = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-
-  int fd, read_ret;
-  char filename[50];
-  sprintf(filename, "/cuda_dumps/function_arg-%d.ava", ava_metadata(NULL)->num_fatbins);
-  AVA_DEBUG << "Loading " << filename;
-  fd = open(filename, O_RDONLY, 0666);
-  if (fd == -1) {
-    fprintf(stderr, "open [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
-  }
-
-  struct fatbin_function *func;
-  size_t name_size;
-  char func_name[MAX_KERNEL_NAME_LEN];
-
-  while (1) {
-    read_ret = read(fd, (void *)&name_size, sizeof(size_t));
-    if (read_ret == 0) break;
-    if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
-    }
-    assert(name_size < MAX_KERNEL_NAME_LEN && "name_size >= MAX_KERNEL_NAME_LEN");
-    read_ret = read(fd, (void *)func_name, name_size);
-    if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
-    }
-
-    func = g_new(struct fatbin_function, 1);
-    read_ret = read(fd, (void *)func, sizeof(struct fatbin_function));
-    if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
-    }
 
     ava_debug("function %d (%s) has argc = %d", fatbin_funcs->len - 1, func_name, func->argc);
     /* Insert into the function table */
@@ -475,7 +413,6 @@ ava_utility GHashTable *__helper_load_function_arg_info(void) {
   close(fd);
 
   ++(ava_metadata(NULL)->num_fatbins);
-  return ht;
 }
 
 /**
@@ -530,7 +467,9 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
   CUmodule mod = __helper_init_module(wrapper, fatbin_handle);
 
   /* Load function argument information */
-  GHashTable *ht = __helper_load_function_arg_info();
+  // GHashTable *ht = __helper_load_function_arg_info();
+  __helper_load_function_arg_info();
+  GHashTable *ht = ava_metadata(NULL)->ht_name2idx;
 
   /* Register CUDA functions */
   GPtrArray *fatbin_funcs = ava_metadata(NULL)->fatbin_funcs;
@@ -712,7 +651,6 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     if (wSize) free(wSize);
   }
 
-  g_hash_table_destroy(ht);
   return fatbin_handle;
 }
 
@@ -12299,7 +12237,7 @@ void ava_preload_cubin_guestlib() {
   int i;
   ava_metadata(NULL)->num_fatbins = 0;
   for (i = 0; i < fatbin_num; i++) {
-    __helper_load_function_arg_info_guest();
+    __helper_load_function_arg_info();
   }
 #endif
 }
