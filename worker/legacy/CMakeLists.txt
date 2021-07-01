@@ -10,6 +10,8 @@ add_executable(legacy-manager
 target_link_libraries(legacy-manager
   ${manager_service_libraries}
   ${absl_flags_libraries}
+  absl::symbolize
+  absl::failure_signal_handler
 )
 set_target_properties(legacy-manager
   PROPERTIES OUTPUT_NAME manager

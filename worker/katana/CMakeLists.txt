@@ -59,6 +59,8 @@ target_link_libraries(katana-manager
   ${_PROTOBUF_LIBPROTOBUF}
   ${_FLATBUFFERS}
   Threads::Threads
+  absl::symbolize
+  absl::failure_signal_handler
   ${NVML_LIB}
 )
 set_target_properties(katana-manager

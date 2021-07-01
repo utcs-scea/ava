@@ -78,7 +78,9 @@ target_link_libraries(${{SUBPROJECT_PREFIX}}_worker
   Threads::Threads
   fmt::fmt
   GSL
+  absl::failure_signal_handler
   absl::strings
+  absl::symbolize
   {api.libs}
 )
 target_compile_options(${{SUBPROJECT_PREFIX}}_worker

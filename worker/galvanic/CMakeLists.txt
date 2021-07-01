@@ -61,6 +61,8 @@ target_link_libraries(galvanic-manager
   ${_FLATBUFFERS}
   Threads::Threads
   ${absl_flags_libraries}
+  absl::symbolize
+  absl::failure_signal_handler
   ${NVML_LIB}
 )
 set_target_properties(galvanic-manager

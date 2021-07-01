@@ -1,5 +1,6 @@
 #include "manager.h"
 
+#include <absl/debugging/symbolize.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <grpc++/grpc++.h>
@@ -357,6 +358,8 @@ void setupSignalHandler() {
 
 int main(int argc, char *argv[]) {
   absl::ParseCommandLine(argc, const_cast<char **>(argv));
+  absl::InitializeSymbolizer(argv[0]);
+
   config = getManagerConfig();
   config->Print();
 
