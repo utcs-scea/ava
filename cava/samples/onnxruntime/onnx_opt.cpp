@@ -371,8 +371,7 @@ ava_utility void __helper_load_function_arg_info(void) {
   AVA_DEBUG << "Loading " << filename;
   fd = open(filename, O_RDONLY, 0666);
   if (fd == -1) {
-    fprintf(stderr, "open [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+    SYSCALL_FAILURE_PRINT("open");
   }
 
   struct fatbin_function *func;
@@ -383,21 +382,18 @@ ava_utility void __helper_load_function_arg_info(void) {
     read_ret = read(fd, (void *)&name_size, sizeof(size_t));
     if (read_ret == 0) break;
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
     assert(name_size < MAX_KERNEL_NAME_LEN && "name_size >= MAX_KERNEL_NAME_LEN");
     read_ret = read(fd, (void *)func_name, name_size);
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
 
     func = g_new(struct fatbin_function, 1);
     read_ret = read(fd, (void *)func, sizeof(struct fatbin_function));
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
 
     ava_debug("function %d (%s) has argc = %d", fatbin_funcs->len - 1, func_name, func->argc);
@@ -428,27 +424,23 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
   AVA_DEBUG << "Loading " << filename;
   fd = open(filename, O_RDONLY, 0666);
   if (fd == -1) {
-    fprintf(stderr, "open [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+    SYSCALL_FAILURE_PRINT("open");
   }
 
   /* Create and read fatbin buffer */
   ret = fstat(fd, &file_stat);
   if (ret == -1) {
-    fprintf(stderr, "fstat [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+    SYSCALL_FAILURE_PRINT("fstat");
   }
   size_t fatbin_size = (size_t)file_stat.st_size;
   void *fatbin = malloc(fatbin_size);
   if (fatbin == NULL) {
-    fprintf(stderr, "malloc size=%lu [errno=%d, errstr=%s] at %s:%d", fatbin_size, errno, strerror(errno), __FILE__,
-            __LINE__);
-    exit(EXIT_FAILURE);
+    ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", fatbin_size, errno, strerror(errno), __FILE__,
+        __LINE__);
   }
   read_ret = read(fd, fatbin, fatbin_size);
   if (read_ret == -1) {
-    fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-    exit(EXIT_FAILURE);
+    SYSCALL_FAILURE_PRINT("read");
   }
   close(fd);
 
@@ -498,8 +490,7 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
       break;
     }
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
     if (size == 0) {  // Meet separator
       ava_debug("Finish reading functions for fatbin-%d.ava", ava_metadata(NULL)->num_fatbins - 1);
@@ -507,131 +498,110 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     }
     deviceFun = (char *)malloc(size);
     if (deviceFun == NULL) {
-      fprintf(stderr, "malloc size=0x%lx [errno=%d, errstr=%s] at %s:%d", size, errno, strerror(errno), __FILE__,
-              __LINE__);
-      exit(EXIT_FAILURE);
+      ava_fatal("malloc size=0x%lx [errno=%d, errstr=%s] at %s:%d", size, errno, strerror(errno), __FILE__,
+          __LINE__);
     }
     read_ret = read(fd, (void *)deviceFun, size);
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
 
     read_ret = read(fd, (void *)&size, sizeof(size_t));
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
     deviceName = (char *)malloc(size);
     if (deviceName == NULL) {
-      fprintf(stderr, "malloc [errno=%d, errstr=%s] at %s:%d, size=0x%lx", errno, strerror(errno), __FILE__, __LINE__,
-              size);
-      exit(EXIT_FAILURE);
+      ava_fatal("malloc [errno=%d, errstr=%s] at %s:%d, size=0x%lx", errno, strerror(errno), __FILE__, __LINE__,
+          size);
     }
     read_ret = read(fd, (void *)deviceName, size);
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d, size=0x%lx", errno, strerror(errno), __FILE__, __LINE__,
-              size);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
 
     read_ret = read(fd, (void *)&thread_limit, sizeof(int));
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
 
     read_ret = read(fd, (void *)&exists, sizeof(int));
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
     if (exists) {
       tid = (uint3 *)malloc(sizeof(uint3));
       if (tid == NULL) {
-        fprintf(stderr, "malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(uint3), errno, strerror(errno),
-                __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
+        ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(uint3), errno, strerror(errno),
+            __FILE__, __LINE__);
       }
       read_ret = read(fd, (void *)tid, sizeof(uint3));
       if (read_ret == -1) {
-        fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
+        SYSCALL_FAILURE_PRINT("read");
       }
     } else
       tid = NULL;
 
     read_ret = read(fd, (void *)&exists, sizeof(int));
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
     if (exists) {
       bid = (uint3 *)malloc(sizeof(uint3));
       if (bid == NULL) {
-        fprintf(stderr, "malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(uint3), errno, strerror(errno),
-                __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
+        ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(uint3), errno, strerror(errno),
+            __FILE__, __LINE__);
       }
       read_ret = read(fd, (void *)bid, sizeof(uint3));
       if (read_ret == -1) {
-        fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
+        SYSCALL_FAILURE_PRINT("read");
       }
     } else
       bid = NULL;
 
     read_ret = read(fd, (void *)&exists, sizeof(int));
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
     if (exists) {
       bDim = (dim3 *)malloc(sizeof(dim3));
       read_ret = read(fd, (void *)bDim, sizeof(dim3));
       if (read_ret == -1) {
-        fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
+        SYSCALL_FAILURE_PRINT("read");
       }
     } else
       bDim = NULL;
 
     read_ret = read(fd, (void *)&exists, sizeof(int));
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
     if (exists) {
       gDim = (dim3 *)malloc(sizeof(dim3));
       if (gDim == NULL) {
-        fprintf(stderr, "malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(dim3), errno, strerror(errno),
-                __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
+        ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(dim3), errno, strerror(errno),
+            __FILE__, __LINE__);
       }
       read_ret = read(fd, (void *)gDim, sizeof(dim3));
       if (read_ret == -1) {
-        fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
+        SYSCALL_FAILURE_PRINT("read");
       }
     } else
       gDim = NULL;
 
     read_ret = read(fd, (void *)&exists, sizeof(int));
     if (read_ret == -1) {
-      fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-      exit(EXIT_FAILURE);
+      SYSCALL_FAILURE_PRINT("read");
     }
     if (exists) {
       wSize = (int *)malloc(sizeof(int));
       if (wSize == NULL) {
-        fprintf(stderr, "malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(int), errno, strerror(errno), __FILE__,
-                __LINE__);
-        exit(EXIT_FAILURE);
+        ava_fatal(stderr, "malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(int), errno, strerror(errno), __FILE__,
+            __LINE__);
       }
       read_ret = read(fd, (void *)wSize, sizeof(int));
       if (read_ret == -1) {
-        fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
+        SYSCALL_FAILURE_PRINT("read");
       }
     } else
       wSize = NULL;
@@ -729,9 +699,8 @@ EXPORTED void **CUDARTAPI __cudaRegisterFatBinary(void *fatCubin) {
 
   void **dummy_fatbin = static_cast<void **>(malloc(sizeof(void *)));
   if (dummy_fatbin == NULL) {
-    fprintf(stderr, "malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(void *), errno, strerror(errno), __FILE__,
-            __LINE__);
-    exit(EXIT_FAILURE);
+    ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(void *), errno, strerror(errno), __FILE__,
+        __LINE__);
   }
   *dummy_fatbin = (void *)0x100;
 

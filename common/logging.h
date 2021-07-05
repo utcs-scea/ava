@@ -204,6 +204,8 @@ void ava_info(const char *format, ...);
 void ava_warning(const char *format, ...);
 void ava_error(const char *format, ...);
 void ava_fatal(const char *format, ...);
+#define SYSCALL_FAILURE_PRINT(sys_call) \
+  ava_fatal("" #sys_call " [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__)
 
 #ifdef __cplusplus
 }
