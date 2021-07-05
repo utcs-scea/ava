@@ -311,15 +311,15 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
       AVA_LOG_F(DEBUG, "Fatbinary counter = {}", ava_metadata(NULL)->num_fatbins);
       ret = ava::support::WriteData(fd, (const char *)&(ava_metadata(NULL)->num_fatbins), sizeof(int));
       if (!ret) {
-        FAILURE_PRINT("write");
+        SYSCALL_FAILURE_PRINT("write");
       }
       retval = lseek(fd, 0, SEEK_END);
       if (retval == -1) {
-        FAILURE_PRINT("lseek");
+        SYSCALL_FAILURE_PRINT("lseek");
       }
       ret = ava::support::WriteData(fd, (const char *)wp, sizeof(struct fatbin_wrapper));
       if (!ret) {
-        FAILURE_PRINT("write");
+        SYSCALL_FAILURE_PRINT("write");
       }
       close(fd);
 
@@ -328,7 +328,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
         size = 0;
         ret = ava::support::WriteData(ava_metadata(NULL)->fd_functions, (const char *)&size, sizeof(size_t));
         if (!ret) {
-          FAILURE_PRINT("write");
+          SYSCALL_FAILURE_PRINT("write");
         }
       }
     }

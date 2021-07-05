@@ -594,15 +594,16 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     if (exists) {
       wSize = (int *)malloc(sizeof(int));
       if (wSize == NULL) {
-        ava_fatal(stderr, "malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(int), errno, strerror(errno),
-                  __FILE__, __LINE__);
+        ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(int), errno, strerror(errno), __FILE__,
+                  __LINE__);
       }
       read_ret = read(fd, (void *)wSize, sizeof(int));
       if (read_ret == -1) {
         SYSCALL_FAILURE_PRINT("read");
       }
-    } else
+    } else {
       wSize = NULL;
+    }
 
     AVA_DEBUG << "Register function deviceName = " << deviceName;
     func_id = (void *)g_hash_table_lookup(ht, deviceName);
