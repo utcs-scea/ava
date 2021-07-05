@@ -71,8 +71,6 @@ typedef union Algorithm {
   cudnnCTCLossAlgo_t CTCLossAlgo;
 };
 
-#define FAILURE_PRINT(sys_call) \
-  ava_fatal("" #sys_call " [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__)
 ava_end_utility;
 
 ava_type(cudaError_t) { ava_success(cudaSuccess); }
@@ -161,7 +159,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
     AVA_DEBUG << "Dump fatbinary to " << fatbin_filename;
     ret = ava::support::WriteData(fd, (const char *)wp->ptr, fbh->headerSize + fbh->fatSize);
     if (!ret) {
-      FAILURE_PRINT("write");
+      SYSCALL_FAILURE_PRINT("write");
     }
     close(fd);
   }
@@ -230,7 +228,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
               if (feof(fp_pipe)) {
                 fprintf(stderr, "End of file");
               } else if (ferror(fp_pipe)) {
-                FAILURE_PRINT("fgets");
+                SYSCALL_FAILURE_PRINT("fgets");
               }
             }
             fgets_ret = fgets(line, sizeof(line), fp_pipe);
@@ -238,7 +236,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
               if (feof(fp_pipe)) {
                 fprintf(stderr, "End of file");
               } else if (ferror(fp_pipe)) {
-                FAILURE_PRINT("fgets");
+                SYSCALL_FAILURE_PRINT("fgets");
               }
             }
 
@@ -276,15 +274,15 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
         size = strlen(name) + 1;
         ret = ava::support::WriteData(function_arg_fd, (const char *)&size, sizeof(size_t));
         if (!ret) {
-          FAILURE_PRINT("write");
+          SYSCALL_FAILURE_PRINT("write");
         }
         ret = ava::support::WriteData(function_arg_fd, (const char *)name, size);
         if (!ret) {
-          FAILURE_PRINT("write");
+          SYSCALL_FAILURE_PRINT("write");
         }
         ret = ava::support::WriteData(function_arg_fd, (const char *)func, sizeof(struct fatbin_function));
         if (!ret) {
-          FAILURE_PRINT("write");
+          SYSCALL_FAILURE_PRINT("write");
         }
       }
       has_funcs = true;
@@ -313,15 +311,15 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
       AVA_LOG_F(DEBUG, "Fatbinary counter = {}", ava_metadata(NULL)->num_fatbins);
       ret = ava::support::WriteData(fd, (const char *)&(ava_metadata(NULL)->num_fatbins), sizeof(int));
       if (!ret) {
-        FAILURE_PRINT("write");
+        SYSCALL_FAILURE_PRINT("write");
       }
       retval = lseek(fd, 0, SEEK_END);
       if (retval == -1) {
-        FAILURE_PRINT("lseek");
+        SYSCALL_FAILURE_PRINT("lseek");
       }
       ret = ava::support::WriteData(fd, (const char *)wp, sizeof(struct fatbin_wrapper));
       if (!ret) {
-        FAILURE_PRINT("write");
+        SYSCALL_FAILURE_PRINT("write");
       }
       close(fd);
 
@@ -330,7 +328,7 @@ ava_utility void __helper_dump_fatbin(void *fatCubin, GHashTable **fatbin_funcs,
         size = 0;
         ret = ava::support::WriteData(ava_metadata(NULL)->fd_functions, (const char *)&size, sizeof(size_t));
         if (!ret) {
-          FAILURE_PRINT("write");
+          SYSCALL_FAILURE_PRINT("write");
         }
       }
     }
@@ -415,78 +413,78 @@ ava_utility void __helper_dump_cuda_function(char *deviceFun, const char *device
   size = strlen(deviceFun) + 1;
   ret = ava::support::WriteData(fd, (const char *)&size, sizeof(size_t));
   if (!ret) {
-    FAILURE_PRINT("write");
+    SYSCALL_FAILURE_PRINT("write");
   }
   ret = ava::support::WriteData(fd, (const char *)deviceFun, size);
   if (!ret) {
-    FAILURE_PRINT("write");
+    SYSCALL_FAILURE_PRINT("write");
   }
   size = strlen(deviceName) + 1;
   ret = ava::support::WriteData(fd, (const char *)&size, sizeof(size_t));
   if (!ret) {
-    FAILURE_PRINT("write");
+    SYSCALL_FAILURE_PRINT("write");
   }
   ret = ava::support::WriteData(fd, (const char *)deviceName, size);
   if (!ret) {
-    FAILURE_PRINT("write");
+    SYSCALL_FAILURE_PRINT("write");
   }
   ret = ava::support::WriteData(fd, (const char *)&thread_limit, sizeof(int));
   if (!ret) {
-    FAILURE_PRINT("write");
+    SYSCALL_FAILURE_PRINT("write");
   }
   exists = (tid != NULL);
   ret = ava::support::WriteData(fd, (const char *)&exists, sizeof(int));
   if (!ret) {
-    FAILURE_PRINT("write");
+    SYSCALL_FAILURE_PRINT("write");
   }
   if (exists) {
     ret = ava::support::WriteData(fd, (const char *)tid, sizeof(uint3));
     if (ret == -1) {
-      FAILURE_PRINT("write");
+      SYSCALL_FAILURE_PRINT("write");
     }
   }
   exists = (bid != NULL);
   ret = ava::support::WriteData(fd, (const char *)&exists, sizeof(int));
   if (!ret) {
-    FAILURE_PRINT("write");
+    SYSCALL_FAILURE_PRINT("write");
   }
   if (exists) {
     ret = ava::support::WriteData(fd, (const char *)bid, sizeof(uint3));
     if (!ret) {
-      FAILURE_PRINT("write");
+      SYSCALL_FAILURE_PRINT("write");
     }
   }
   exists = (bDim != NULL);
   ret = ava::support::WriteData(fd, (const char *)&exists, sizeof(int));
   if (!ret) {
-    FAILURE_PRINT("write");
+    SYSCALL_FAILURE_PRINT("write");
   }
   if (exists) {
     ret = ava::support::WriteData(fd, (const char *)bDim, sizeof(dim3));
     if (!ret) {
-      FAILURE_PRINT("write");
+      SYSCALL_FAILURE_PRINT("write");
     }
   }
   exists = (gDim != NULL);
   ret = ava::support::WriteData(fd, (const char *)&exists, sizeof(int));
   if (!ret) {
-    FAILURE_PRINT("write");
+    SYSCALL_FAILURE_PRINT("write");
   }
   if (exists) {
     ret = ava::support::WriteData(fd, (const char *)gDim, sizeof(dim3));
     if (!ret) {
-      FAILURE_PRINT("write");
+      SYSCALL_FAILURE_PRINT("write");
     }
   }
   exists = (wSize != NULL);
   ret = ava::support::WriteData(fd, (const char *)&exists, sizeof(int));
   if (!ret) {
-    FAILURE_PRINT("write");
+    SYSCALL_FAILURE_PRINT("write");
   }
   if (exists) {
     ret = ava::support::WriteData(fd, (const char *)wSize, sizeof(int));
     if (!ret) {
-      FAILURE_PRINT("write");
+      SYSCALL_FAILURE_PRINT("write");
     }
   }
 }

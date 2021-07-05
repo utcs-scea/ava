@@ -97,6 +97,13 @@ T CheckNotNull(const char *file, int line, const char *exprtext, T &&t) {
   return std::forward<T>(t);
 }
 
+}  // namespace logging
+}  // namespace ava
+
+#endif  // __CAVA__
+
+namespace ava {
+namespace logging {
 class LogMessageFatal {
  public:
   LogMessageFatal(const char *file, int line);
@@ -109,11 +116,8 @@ class LogMessageFatal {
   LogMessageFatal(const LogMessageFatal &) = delete;
   void operator=(const LogMessageFatal &) = delete;
 };
-
 }  // namespace logging
 }  // namespace ava
-
-#endif  // __CAVA__
 
 #define AVA_VERBOSE PLOG(plog::verbose)
 #define AVA_TRACE PLOG(plog::verbose)
@@ -204,6 +208,8 @@ void ava_info(const char *format, ...);
 void ava_warning(const char *format, ...);
 void ava_error(const char *format, ...);
 void ava_fatal(const char *format, ...);
+#define SYSCALL_FAILURE_PRINT(sys_call) \
+  ava_fatal("" #sys_call " [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__)
 
 #ifdef __cplusplus
 }
