@@ -436,7 +436,7 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
   void *fatbin = malloc(fatbin_size);
   if (fatbin == NULL) {
     ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", fatbin_size, errno, strerror(errno), __FILE__,
-        __LINE__);
+              __LINE__);
   }
   read_ret = read(fd, fatbin, fatbin_size);
   if (read_ret == -1) {
@@ -498,8 +498,7 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     }
     deviceFun = (char *)malloc(size);
     if (deviceFun == NULL) {
-      ava_fatal("malloc size=0x%lx [errno=%d, errstr=%s] at %s:%d", size, errno, strerror(errno), __FILE__,
-          __LINE__);
+      ava_fatal("malloc size=0x%lx [errno=%d, errstr=%s] at %s:%d", size, errno, strerror(errno), __FILE__, __LINE__);
     }
     read_ret = read(fd, (void *)deviceFun, size);
     if (read_ret == -1) {
@@ -512,8 +511,7 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     }
     deviceName = (char *)malloc(size);
     if (deviceName == NULL) {
-      ava_fatal("malloc [errno=%d, errstr=%s] at %s:%d, size=0x%lx", errno, strerror(errno), __FILE__, __LINE__,
-          size);
+      ava_fatal("malloc [errno=%d, errstr=%s] at %s:%d, size=0x%lx", errno, strerror(errno), __FILE__, __LINE__, size);
     }
     read_ret = read(fd, (void *)deviceName, size);
     if (read_ret == -1) {
@@ -532,8 +530,8 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     if (exists) {
       tid = (uint3 *)malloc(sizeof(uint3));
       if (tid == NULL) {
-        ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(uint3), errno, strerror(errno),
-            __FILE__, __LINE__);
+        ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(uint3), errno, strerror(errno), __FILE__,
+                  __LINE__);
       }
       read_ret = read(fd, (void *)tid, sizeof(uint3));
       if (read_ret == -1) {
@@ -549,8 +547,8 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     if (exists) {
       bid = (uint3 *)malloc(sizeof(uint3));
       if (bid == NULL) {
-        ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(uint3), errno, strerror(errno),
-            __FILE__, __LINE__);
+        ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(uint3), errno, strerror(errno), __FILE__,
+                  __LINE__);
       }
       read_ret = read(fd, (void *)bid, sizeof(uint3));
       if (read_ret == -1) {
@@ -579,8 +577,8 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     if (exists) {
       gDim = (dim3 *)malloc(sizeof(dim3));
       if (gDim == NULL) {
-        ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(dim3), errno, strerror(errno),
-            __FILE__, __LINE__);
+        ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(dim3), errno, strerror(errno), __FILE__,
+                  __LINE__);
       }
       read_ret = read(fd, (void *)gDim, sizeof(dim3));
       if (read_ret == -1) {
@@ -596,8 +594,8 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     if (exists) {
       wSize = (int *)malloc(sizeof(int));
       if (wSize == NULL) {
-        ava_fatal(stderr, "malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(int), errno, strerror(errno), __FILE__,
-            __LINE__);
+        ava_fatal(stderr, "malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(int), errno, strerror(errno),
+                  __FILE__, __LINE__);
       }
       read_ret = read(fd, (void *)wSize, sizeof(int));
       if (read_ret == -1) {
@@ -700,7 +698,7 @@ EXPORTED void **CUDARTAPI __cudaRegisterFatBinary(void *fatCubin) {
   void **dummy_fatbin = static_cast<void **>(malloc(sizeof(void *)));
   if (dummy_fatbin == NULL) {
     ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(void *), errno, strerror(errno), __FILE__,
-        __LINE__);
+              __LINE__);
   }
   *dummy_fatbin = (void *)0x100;
 
