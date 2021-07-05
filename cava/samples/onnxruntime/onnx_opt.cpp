@@ -365,7 +365,9 @@ ava_utility void __helper_load_function_arg_info(void) {
   }
   ht = ava_metadata(NULL)->ht_name2idx;
 
-  int fd, read_ret;
+  int fd;
+  bool read_ret;
+  bool eof_ret;
   char filename[50];
   sprintf(filename, "/cuda_dumps/function_arg-%d.ava", ava_metadata(NULL)->num_fatbins);
   AVA_DEBUG << "Loading " << filename;
@@ -379,20 +381,20 @@ ava_utility void __helper_load_function_arg_info(void) {
   char func_name[MAX_KERNEL_NAME_LEN];
 
   while (1) {
-    read_ret = read(fd, (void *)&name_size, sizeof(size_t));
-    if (read_ret == 0) break;
-    if (read_ret == -1) {
+    read_ret = ava::support::ReadData(fd, (char *)&name_size, sizeof(size_t), &eof_ret);
+    if (eof_ret) break;
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
     assert(name_size < MAX_KERNEL_NAME_LEN && "name_size >= MAX_KERNEL_NAME_LEN");
-    read_ret = read(fd, (void *)func_name, name_size);
-    if (read_ret == -1) {
+    read_ret = ava::support::ReadData(fd, (char *)func_name, name_size, &eof_ret);
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
 
     func = g_new(struct fatbin_function, 1);
-    read_ret = read(fd, (void *)func, sizeof(struct fatbin_function));
-    if (read_ret == -1) {
+    read_ret = ava::support::ReadData(fd, (char *)func, sizeof(struct fatbin_function), &eof_ret);
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
 
@@ -417,7 +419,8 @@ ava_utility void __helper_load_function_arg_info(void) {
 ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
   /* Read fatbin dump */
   int fd, ret;
-  int read_ret;
+  bool read_ret;
+  bool eof_ret;
   struct stat file_stat;
   char filename[50];
   sprintf(filename, "/cuda_dumps/fatbin-%d.ava", ava_metadata(NULL)->num_fatbins);
@@ -438,8 +441,8 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", fatbin_size, errno, strerror(errno), __FILE__,
               __LINE__);
   }
-  read_ret = read(fd, fatbin, fatbin_size);
-  if (read_ret == -1) {
+  read_ret = ava::support::ReadData(fd, (char *)fatbin, fatbin_size, &eof_ret);
+  if (!read_ret) {
     SYSCALL_FAILURE_PRINT("read");
   }
   close(fd);
@@ -484,12 +487,12 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
   dim3 *gDim;
   int *wSize;
   while (1) {
-    read_ret = read(fd, (void *)&size, sizeof(size_t));
-    if (read_ret == 0) {  // EOF
+    read_ret = ava::support::ReadData(fd, (char *)&size, sizeof(size_t), &eof_ret);
+    if (eof_ret) {  // EOF
       close(fd);
       break;
     }
-    if (read_ret == -1) {
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
     if (size == 0) {  // Meet separator
@@ -500,31 +503,31 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
     if (deviceFun == NULL) {
       ava_fatal("malloc size=0x%lx [errno=%d, errstr=%s] at %s:%d", size, errno, strerror(errno), __FILE__, __LINE__);
     }
-    read_ret = read(fd, (void *)deviceFun, size);
+    read_ret = ava::support::ReadData(fd, (char *)deviceFun, size, &eof_ret);
     if (read_ret == -1) {
       SYSCALL_FAILURE_PRINT("read");
     }
 
-    read_ret = read(fd, (void *)&size, sizeof(size_t));
-    if (read_ret == -1) {
+    read_ret = ava::support::ReadData(fd, (char *)&size, sizeof(size_t), &eof_ret);
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
     deviceName = (char *)malloc(size);
     if (deviceName == NULL) {
       ava_fatal("malloc [errno=%d, errstr=%s] at %s:%d, size=0x%lx", errno, strerror(errno), __FILE__, __LINE__, size);
     }
-    read_ret = read(fd, (void *)deviceName, size);
-    if (read_ret == -1) {
+    read_ret = ava::support::ReadData(fd, (char *)deviceName, size, &eof_ret);
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
 
-    read_ret = read(fd, (void *)&thread_limit, sizeof(int));
-    if (read_ret == -1) {
+    read_ret = ava::support::ReadData(fd, (char *)&thread_limit, sizeof(int), &eof_ret);
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
 
-    read_ret = read(fd, (void *)&exists, sizeof(int));
-    if (read_ret == -1) {
+    read_ret = ava::support::ReadData(fd, (char *)&exists, sizeof(int), &eof_ret);
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
     if (exists) {
@@ -533,15 +536,16 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
         ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(uint3), errno, strerror(errno), __FILE__,
                   __LINE__);
       }
-      read_ret = read(fd, (void *)tid, sizeof(uint3));
-      if (read_ret == -1) {
+      read_ret = ava::support::ReadData(fd, (char *)tid, sizeof(uint3), &eof_ret);
+      if (!read_ret) {
         SYSCALL_FAILURE_PRINT("read");
       }
-    } else
+    } else {
       tid = NULL;
+    }
 
-    read_ret = read(fd, (void *)&exists, sizeof(int));
-    if (read_ret == -1) {
+    read_ret = ava::support::ReadData(fd, (char *)&exists, sizeof(int), &eof_ret);
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
     if (exists) {
@@ -550,28 +554,29 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
         ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(uint3), errno, strerror(errno), __FILE__,
                   __LINE__);
       }
-      read_ret = read(fd, (void *)bid, sizeof(uint3));
-      if (read_ret == -1) {
+      read_ret = ava::support::ReadData(fd, (char *)bid, sizeof(uint3), &eof_ret);
+      if (!read_ret) {
         SYSCALL_FAILURE_PRINT("read");
       }
     } else
       bid = NULL;
 
-    read_ret = read(fd, (void *)&exists, sizeof(int));
-    if (read_ret == -1) {
+    read_ret = ava::support::ReadData(fd, (char *)&exists, sizeof(int), &eof_ret);
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
     if (exists) {
       bDim = (dim3 *)malloc(sizeof(dim3));
-      read_ret = read(fd, (void *)bDim, sizeof(dim3));
-      if (read_ret == -1) {
+      read_ret = ava::support::ReadData(fd, (char *)bDim, sizeof(dim3), &eof_ret);
+      if (!read_ret) {
         SYSCALL_FAILURE_PRINT("read");
       }
-    } else
+    } else {
       bDim = NULL;
+    }
 
-    read_ret = read(fd, (void *)&exists, sizeof(int));
-    if (read_ret == -1) {
+    read_ret = ava::support::ReadData(fd, (char *)&exists, sizeof(int), &eof_ret);
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
     if (exists) {
@@ -580,15 +585,15 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
         ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(dim3), errno, strerror(errno), __FILE__,
                   __LINE__);
       }
-      read_ret = read(fd, (void *)gDim, sizeof(dim3));
-      if (read_ret == -1) {
+      read_ret = ava::support::ReadData(fd, (char *)gDim, sizeof(dim3), &eof_ret);
+      if (!read_ret) {
         SYSCALL_FAILURE_PRINT("read");
       }
     } else
       gDim = NULL;
 
-    read_ret = read(fd, (void *)&exists, sizeof(int));
-    if (read_ret == -1) {
+    read_ret = ava::support::ReadData(fd, (char *)&exists, sizeof(int), &eof_ret);
+    if (!read_ret) {
       SYSCALL_FAILURE_PRINT("read");
     }
     if (exists) {
@@ -597,8 +602,8 @@ ava_utility void **__helper_load_and_register_fatbin(void *fatCubin) {
         ava_fatal("malloc size=%lu [errno=%d, errstr=%s] at %s:%d", sizeof(int), errno, strerror(errno), __FILE__,
                   __LINE__);
       }
-      read_ret = read(fd, (void *)wSize, sizeof(int));
-      if (read_ret == -1) {
+      read_ret = ava::support::ReadData(fd, (char *)wSize, sizeof(int), &eof_ret);
+      if (!read_ret) {
         SYSCALL_FAILURE_PRINT("read");
       }
     } else {
@@ -12188,7 +12193,8 @@ void ava_preload_cubin_guestlib() {
 #ifdef AVA_PRELOAD_CUBIN
   /* Preload CUDA fat binaries */
   /* Read cubin number */
-  int fd, ret;
+  int fd;
+  bool ret;
   int fatbin_num;
   fd = open("/cuda_dumps/fatbin-info.ava", O_RDONLY, 0666);
   if (fd == -1) {
@@ -12196,8 +12202,8 @@ void ava_preload_cubin_guestlib() {
             __LINE__);
     exit(EXIT_FAILURE);
   }
-  ret = read(fd, (void *)&fatbin_num, sizeof(int));
-  if (ret == -1) {
+  ret = ava::support::ReadData(fd, (char *)&fatbin_num, sizeof(int), nullptr);
+  if (!ret) {
     fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
     exit(EXIT_FAILURE);
   }
@@ -12216,7 +12222,8 @@ ava_utility void __helper_worker_init_epilogue() {
   /* Preload CUDA fat binaries */
   fatbin_handle_list = g_ptr_array_new();
   /* Read cubin number */
-  int fd, ret;
+  int fd;
+  bool ret;
   int fatbin_num;
   fd = open("/cuda_dumps/fatbin-info.ava", O_RDONLY, 0666);
   if (fd == -1) {
@@ -12224,8 +12231,8 @@ ava_utility void __helper_worker_init_epilogue() {
             __LINE__);
     exit(EXIT_FAILURE);
   }
-  ret = read(fd, (void *)&fatbin_num, sizeof(int));
-  if (ret == -1) {
+  ret = ava::support::ReadData(fd, (char *)&fatbin_num, sizeof(int), nullptr);
+  if (!ret) {
     fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
     exit(EXIT_FAILURE);
   }
@@ -12235,8 +12242,8 @@ ava_utility void __helper_worker_init_epilogue() {
   void **fatbin_handle;
   for (i = 0; i < fatbin_num; i++) {
     fatCubin = malloc(sizeof(struct fatbin_wrapper));
-    ret = read(fd, fatCubin, sizeof(struct fatbin_wrapper));
-    if (ret == -1) {
+    ret = ava::support::ReadData(fd, (char *)fatCubin, sizeof(struct fatbin_wrapper), nullptr);
+    if (!ret) {
       fprintf(stderr, "read [errno=%d, errstr=%s] at %s:%d", errno, strerror(errno), __FILE__, __LINE__);
       exit(EXIT_FAILURE);
     }
