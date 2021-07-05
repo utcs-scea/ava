@@ -55,6 +55,7 @@ inline bool RecvData(int fd, char *buffer, size_t size, bool *eof) {
   }
   return true;
 }
+const auto ReadData = RecvData;
 
 }  // namespace support
 }  // namespace ava
