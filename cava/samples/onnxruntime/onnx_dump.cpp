@@ -4427,7 +4427,19 @@ cudnnStatus_t CUDNNWINAPI cudnnGetConvolutionBackwardFilterAlgorithm_v7(
     cudnnHandle_t handle, const cudnnTensorDescriptor_t srcDesc, const cudnnTensorDescriptor_t diffDesc,
     const cudnnConvolutionDescriptor_t convDesc, const cudnnFilterDescriptor_t gradDesc, const int requestedAlgoCount,
     int *returnedAlgoCount, cudnnConvolutionBwdFilterAlgoPerf_t *perfResults) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(srcDesc) ava_handle;
+  ava_argument(diffDesc) ava_handle;
+  ava_argument(convDesc) ava_handle;
+  ava_argument(gradDesc) ava_handle;
+  ava_argument(returnedAlgoCount) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(perfResults) {
+    ava_out;
+    cu_in_out_buffer(requestedAlgoCount, returnedAlgoCount);
+  }
 }
 
 /*
@@ -4511,7 +4523,19 @@ cudnnStatus_t CUDNNWINAPI cudnnGetConvolutionBackwardDataAlgorithm_v7(
     cudnnHandle_t handle, const cudnnFilterDescriptor_t filterDesc, const cudnnTensorDescriptor_t diffDesc,
     const cudnnConvolutionDescriptor_t convDesc, const cudnnTensorDescriptor_t gradDesc, const int requestedAlgoCount,
     int *returnedAlgoCount, cudnnConvolutionBwdDataAlgoPerf_t *perfResults) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(filterDesc) ava_handle;
+  ava_argument(diffDesc) ava_handle;
+  ava_argument(convDesc) ava_handle;
+  ava_argument(gradDesc) ava_handle;
+  ava_argument(returnedAlgoCount) {
+    ava_out;
+    ava_buffer(1);
+  }
+  ava_argument(perfResults) {
+    ava_out;
+    cu_in_out_buffer(requestedAlgoCount, returnedAlgoCount);
+  }
 }
 
 /* Helper function to return the minimum size of the workspace to be passed to the convolution given an algo*/

@@ -4905,7 +4905,28 @@ cudnnStatus_t CUDNNWINAPI cudnnConvolutionBiasActivationForward(
     cudnnConvolutionFwdAlgo_t algo, void *workSpace, size_t workSpaceSizeInBytes, const void *alpha2,
     const cudnnTensorDescriptor_t zDesc, const void *z, const cudnnTensorDescriptor_t biasDesc, const void *bias,
     const cudnnActivationDescriptor_t activationDesc, const cudnnTensorDescriptor_t yDesc, void *y) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(alpha1) {
+    ava_in;
+    ava_buffer(1);
+  }
+  ava_argument(xDesc) ava_handle;
+  ava_argument(x) ava_opaque;
+  ava_argument(wDesc) ava_handle;
+  ava_argument(w) ava_opaque;
+  ava_argument(convDesc) ava_handle;
+  ava_argument(workSpace) ava_opaque;
+  ava_argument(alpha2) {
+    ava_in;
+    ava_buffer(1);
+  }
+  ava_argument(zDesc) ava_handle;
+  ava_argument(z) ava_opaque;
+  ava_argument(biasDesc) ava_handle;
+  ava_argument(bias) ava_opaque;
+  ava_argument(activationDesc) ava_handle;
+  ava_argument(yDesc) ava_handle;
+  ava_argument(y) ava_opaque;
 }
 
 /* Function to compute the bias gradient for batch convolution */
@@ -4913,7 +4934,19 @@ cudnnStatus_t CUDNNWINAPI cudnnConvolutionBackwardBias(cudnnHandle_t handle, con
                                                        const cudnnTensorDescriptor_t dyDesc, const void *dy,
                                                        const void *beta, const cudnnTensorDescriptor_t dbDesc,
                                                        void *db) {
-  ava_unsupported;
+  ava_argument(handle) ava_handle;
+  ava_argument(alpha) {
+    ava_in;
+    ava_buffer(1);
+  }
+  ava_argument(dyDesc) ava_handle;
+  ava_argument(dy) ava_opaque;
+  ava_argument(beta) {
+    ava_in;
+    ava_buffer(1);
+  }
+  ava_argument(dbDesc) ava_handle;
+  ava_argument(db) ava_opaque;
 }
 
 cudnnStatus_t CUDNNWINAPI cudnnGetConvolutionBackwardFilterAlgorithmMaxCount(cudnnHandle_t handle, int *count) {
