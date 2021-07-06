@@ -11538,7 +11538,8 @@ __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamDestroy(cudaStream_t
 
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamWaitEvent(cudaStream_t stream, cudaEvent_t event,
                                                                       unsigned int flags) {
-  ava_unsupported;
+  ava_argument(stream) ava_handle;
+  ava_argument(event) ava_handle;
 }
 
 __host__ cudaError_t CUDARTAPI cudaStreamSynchronize(cudaStream_t stream) { ava_argument(stream) ava_handle; }
@@ -11546,7 +11547,7 @@ __host__ cudaError_t CUDARTAPI cudaStreamSynchronize(cudaStream_t stream) { ava_
 __host__ cudaError_t CUDARTAPI cudaStreamQuery(cudaStream_t stream) { ava_argument(stream) ava_handle; }
 
 __host__ cudaError_t CUDARTAPI cudaStreamBeginCapture(cudaStream_t stream, enum cudaStreamCaptureMode mode) {
-  ava_unsupported;
+  ava_argument(stream) ava_handle;
 }
 
 __host__ cudaError_t CUDARTAPI cudaThreadExchangeStreamCaptureMode(enum cudaStreamCaptureMode *mode) {
