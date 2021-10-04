@@ -56,6 +56,7 @@ typedef struct {
   GHashTable *fatbin_funcs; /* for NULL, the hash table */
   int num_funcs;
   struct fatbin_function *func; /* for functions */
+  size_t buffer_size;
 
   /* global states */
   CUmodule cur_module;
@@ -413,12 +414,39 @@ EXPORTED __host__ cudaError_t CUDARTAPI cudaHostAlloc(void **ptr, size_t size, u
 }
 ava_end_replacement;
 
+/// Migration: @mem_extract_tag
+ava_utility void *object_extract(void *obj, size_t *length) {
+  // called from host
+  void *buffer;
+  printf("object_replay: object=%lx\n", (uintptr_t)obj);
+  cudaDeviceSynchronize();
+
+  *length = ava_metadata(obj)->buffer_size;
+  buffer = malloc(*length);
+  cudaMemcpy(buffer, obj, *length, cudaMemcpyDeviceToHost);
+  return buffer;
+}
+
+ava_utility void object_replace(void *obj, void *data, size_t length) {
+  printf("object_replace: object=%lx, len=%lu\n", (uintptr_t)obj, length);
+  assert(length != 0);
+  cudaMemcpy(obj, data, length, cudaMemcpyHostToDevice);
+}
+
 __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMalloc(void **devPtr, size_t size) {
   ava_argument(devPtr) {
     ava_out;
     ava_buffer(1);
-    ava_element ava_opaque;
+    ava_element {
+      ava_allocates;
+      ava_handle;
+      ava_object_explicit_state_functions(object_extract, object_replace);
+      ava_object_record;
+    }
   }
+
+  ava_execute();
+  ava_metadata(*devPtr)->buffer_size = size;
 }
 
 __host__ cudaError_t CUDARTAPI cudaMallocManaged(void **devPtr, size_t size, unsigned int flags) { ava_unsupported; }
@@ -426,7 +454,8 @@ __host__ cudaError_t CUDARTAPI cudaMallocManaged(void **devPtr, size_t size, uns
 __host__ cudaError_t CUDARTAPI cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind) {
   ava_argument(dst) {
     if (kind == cudaMemcpyHostToDevice) {
-      ava_opaque;
+      ava_handle;
+      ava_object_record;
     } else if (kind == cudaMemcpyDeviceToHost) {
       ava_out;
       ava_buffer(count);
@@ -438,12 +467,17 @@ __host__ cudaError_t CUDARTAPI cudaMemcpy(void *dst, const void *src, size_t cou
       ava_in;
       ava_buffer(count);
     } else if (kind == cudaMemcpyDeviceToHost) {
-      ava_opaque;
+      ava_handle;
     }
   }
 }
 
-__host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaFree(void *devPtr) { ava_argument(devPtr) ava_opaque; }
+__host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaFree(void *devPtr) {
+  ava_argument(devPtr) {
+    ava_handle;
+    ava_object_record;
+  }
+}
 
 /* Rich set of APIs */
 
